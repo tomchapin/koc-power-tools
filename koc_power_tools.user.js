@@ -4078,6 +4078,7 @@ Tabs.Marches = {
 				    
 				    if (marchstatus =="returning" && marchType != 2) marchType = 100;
 				    if (marchstatus =="returning" && marchType == 2 && marchStatus == 2) marchType = 102;
+				    if (marchstatus =="returning" && marchType == 4 && marchStatus == 2) marchType = 102;
 				    if (marchstatus =="returning" && marchType == 2 && Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) && marchStatus != 2) marchType = 100;
 				    
 				    switch (marchType) {
