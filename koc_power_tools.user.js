@@ -1845,8 +1845,19 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
 },
 
   
-  
-  
+   init : function (div){
+    var t = Tabs.AllianceList;
+    t.cont = div;
+    unsafeWindow.PTgetMembers = t.eventGetMembers;
+    unsafeWindow.PTpd = t.clickedPlayerDetail;
+    unsafeWindow.PTpl = t.clickedPlayerLeaderboard;
+    unsafeWindow.PTpl2 = t.clickedPlayerLeaderboard2;
+    unsafeWindow.PTalClickPrev = t.eventListPrev;
+    unsafeWindow.PTalClickNext = t.eventListNext;
+    t.show();
+  },
+ 
+ /* 
   init : function (div){
     var t = Tabs.AllianceList;
     t.cont = div;
@@ -1854,13 +1865,12 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     unsafeWindow.PTgetMembers = t.eventGetMembers;
     unsafeWindow.PTpd = t.clickedPlayerDetail;
     unsafeWindow.PTpl = t.clickedPlayerLeaderboard;
-    unsafeWindow.PCplo = t.clickedPlayerGetLastLogin;
     if (getMyAlliance()[0] == 0) {
       t.cont.innerHTML = '<BR><BR><CENTER>You need to be in an alliance to use this feature.</center>';
       t.state = 1;
       return;
     }
-    var m = '<DIV class=ptentry><TABLE width=100% cellpadding=0>\
+    var m = '<div ><DIV class=ptentry><TABLE width=100% cellpadding=0>\
         <TR><TD class=xtab align=right></td><TD class=xtab>Enter all or part of a player name: &nbsp;</td>\
           <TD width=80% class=xtab><INPUT id=allPlayName size=20 type=text /> &nbsp; <INPUT id=playSubmit type=submit value="Find Player" /></td>\
           <TD class="xtab ptErrText"><SPAN id=ptplayErr></span></td></tr>\
@@ -1868,7 +1878,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
           <TD class=xtab><INPUT id=allAllName type=text /> &nbsp; <INPUT id=allSubmit type=submit value="Find Alliance" /> &nbsp; <INPUT id=myAllSubmit type=submit value="'+ getMyAlliance()[1] +'" /></td>\
           <TD class="xtab ptErrText"><SPAN id=ptallErr></span></td></tr>\
         </table><span style="vertical-align:middle;" id=altInput></span></div>\
-        <SPAN id=allListOut></span>';
+        <div style="overflow-y:auto;"; id=allListOut ></div></div>';
     t.cont.innerHTML = m;
     document.getElementById('allSubmit').addEventListener ('click', t.eventSubmit, false);
     document.getElementById('myAllSubmit').addEventListener ('click', t.eventMyAllianceSubmit, false);
@@ -1876,11 +1886,65 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     document.getElementById('allAllName').addEventListener ('focus', function (){document.getElementById('ptallErr').innerHTML='';}, false);
     document.getElementById('allPlayName').addEventListener ('focus', function (){document.getElementById('ptplayErr').innerHTML='';}, false);
   },
-
+*/
   hide : function (){
   },
 
   show : function (){
+    var t = Tabs.AllianceList;
+    if (t.state == null){
+      if (getMyAlliance()[0] == 0) {
+        t.cont.innerHTML = '<BR><BR><CENTER>You need to be in an alliance to use this feature.</center>';
+        t.state = 1;
+        return;
+      }
+      var m = '<DIV class=ptentry><TABLE width=100% cellpadding=0>\
+          <TR><TD class=xtab align=right></td><TD class=xtab>Enter all or part of a player name: &nbsp;</td>\
+            <TD width=80% class=xtab><INPUT id=allPlayName size=20 type=text /> &nbsp; <INPUT id=playSubmit type=submit value="Find Player" /></td>\
+            <TD class="xtab ptErrText"><SPAN id=ptplayErr></span></td></tr>\
+          <TR><TD class=xtab>OR: </td><TD class=xtab> Enter all or part of an alliance name: &nbsp;</td>\
+            <TD class=xtab><INPUT id=allAllName type=text /> &nbsp; <INPUT id=allSubmit type=submit value="Find Alliance" /></td>\
+            <TD class="xtab ptErrText"><SPAN id=ptallErr></span></td></tr>\
+           <TR><TD class=xtab>OR: </td><TD class=xtab> &nbsp;\
+            <INPUT align=left id=allListSubmit type=submit value="List Alliances" /></td>\
+            <TD class=xtab><INPUT align=right id=allGotoPage type=submit value="Page" />\
+             <INPUT align=right id=idPageNum type="text" value='+t.curPage+' size=4 />\
+             <span align=left id=idMaxPageNum ></span>\
+             <INPUT align=left id=idMyAllSubmit type=submit value="'+ getMyAlliance()[1] +'"/>\
+             <span align=right <b>Model ETA with: </b></span></td>\
+             <TD class=xtab ><div><select id="idFindETASelect">\
+        <option value="0,250" > -- Select -- </option>\
+        <option value="0,180" > Supply </option>\
+        <option value="0,200" > Militia </option>\
+        <option value="0,3000" > Scout </option>\
+        <option value="0,300" > Pikeman </option>\
+        <option value="0,275" > Swordsman </option>\
+        <option value="0,250" > Archer </option>\
+        <option value="1,1000" > Cavalry </option>\
+        <option value="1,750" > Heavy Cavalry </option>\
+        <option value="1,150" > Supply Wagon </option>\
+        <option value="1,100" > Balista </option>\
+        <option value="1,120" > Ram </option>\
+        <option value="1,80" > Catapult </option>\
+        </select></div>\
+        </td></tr>\
+         </table><span style="vertical-align:middle;" id=altInput></span></div><SPAN id=allListOut></span>';
+      t.cont.innerHTML = m;
+      document.getElementById('allSubmit').addEventListener ('click', t.eventSubmit, false);
+      document.getElementById('playSubmit').addEventListener ('click', t.eventPlayerSubmit, false);
+      document.getElementById('allAllName').addEventListener ('focus', function (){document.getElementById('ptallErr').innerHTML='';}, false);
+      document.getElementById('allPlayName').addEventListener ('focus', function (){document.getElementById('ptplayErr').innerHTML='';}, false);
+      document.getElementById('allListSubmit').addEventListener ('click', t.eventListSubmit, false);
+      document.getElementById('allGotoPage').addEventListener ('click', t.gotoPage, false);
+      document.getElementById('idMyAllSubmit').addEventListener ('click', t.showMyAlliance, false);
+      document.getElementById('idFindETASelect').addEventListener ('click', t.handleEtaSelect, false);
+      document.getElementById('allGotoPage').disabled = true;
+      document.getElementById('idFindETASelect').disabled = true;
+      t.ModelCity=Cities.cities[0];
+      t.curPage = 0;
+      t.MaxPage = -1;
+      t.state = 1;
+    }
   },
 
   pName : '',
@@ -1911,9 +1975,6 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     t.fetchPlayerStatus (uList, function(r){t.eventGotPlayerOnlineList(r)});    
   },    
     
-
-
-
   eventGotPlayerOnlineList : function (rslt){
     var t = Tabs.AllianceList;
     if (!rslt.ok){
@@ -1921,7 +1982,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       return;
     }
     var m = '<DIV class=ptstat>Showing players matching <B>"'+ t.pName +'"</b></div>\
-      <DIV style="height:575px; max-height:575px; overflow-y:hidden">\
+      <DIV style="height:575px; max-height:575px; overflow-y:auto">\
       <TABLE width=100% align=center class=ptTab cellspacing=0><TR style="font-weight:bold"><TD>Name</td>\
       <TD align=right>Might</td><TD> &nbsp; Online</td><TD> &nbsp;Facebook &nbsp; </td><TD width=75%>Lookup </td></tr>';
     var row=0;
@@ -1935,7 +1996,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       m += '<TR '+ cl +'valign=top><TD>'+ u.genderAndName +'</td><TD align=right>'+ addCommasInt(u.might) +'</td>\
           <TD>'+ (rslt.data[u.userId]?"&nbsp;<SPAN class=boldDarkRed>ONLINE</span>":"") +'</td>\
           <TD align=center><A target="_tab" href="http://www.facebook.com/profile.php?id='+ u.fbuid +'">profile</a></td>\
-          <TD><SPAN onclick="PTpd(this, '+ u.userId +')"><A>details</a> &nbsp; <BR></span><SPAN onclick="PTpl(this, \''+ u.userId +'\')"><A>leaderboard</a></span>&nbsp; <BR></span><SPAN onclick="PCplo(this, \''+ u.userId +'\')"><A>last Login</a></span></td></tr>';
+          <TD><SPAN onclick="PTpd(this, '+ u.userId +')"><A>details</a> &nbsp; <BR></span><SPAN onclick="PTpl2(this, \''+ u.userId +'\')"><A>leaderboard</a></span></td></tr>';
     }
     m += '</table></div>';
     document.getElementById('allListOut').innerHTML = m;
@@ -1955,34 +2016,43 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     span.innerHTML = "fetching leaderboard info ...";
     t.fetchLeaderboard (uid, function (r) {t.gotPlayerLeaderboard(r, span)});
   },
- 
- clickedPlayerGetLastLogin : function (span, uid){
+
+  clickedPlayerLeaderboard2 : function (span, uid){
     var t = Tabs.AllianceList;
     span.onclick = '';
-    span.innerHTML = "fetching login date ...";
-    t.fetchPlayerLastLogin (uid, function (r) {t.gotPlayerLastLogin(r, span)});
+    span.innerHTML = "fetching leaderboard info ...";
+    t.fetchLeaderboard (uid, function (r) {t.gotPlayerLeaderboard2(r, span)});
   },
 
-
-  gotPlayerLastLogin : function (rslt, span){
+  gotPlayerLeaderboard2 : function (rslt,span){
     var t = Tabs.AllianceList;
     if (!rslt.ok){
       span.innerHTML = rslt.errorMsg;
       return;
     }
-
-    var p = rslt.playerInfo;
-    var lastLogin = rslt.playerInfo.lastLogin;
-
-    if (lastLogin) {
-      m = '<span style="color:black">Last login: '+lastLogin+'</span>';
-    } else {
-       m = '<span style="color:red">No login date found: '+lastLogin+'</span>';
+    if (rslt.totalResults == 0){
+      span.innerHTML = '<B>Leaderboard:</b> Not found! (misted?)';
+      return;
     }
-    span.innerHTML = m + '';
+    var myA = getMyAlliance ();
+    t.dat = [];
+    //logit ("gotPlayerLeaderboard2 -1 "+JSON2.stringify(rslt));
+    var p = rslt.results[0];
+        if ( myA[0] == p.allianceId)
+           t.friendEta = true;
+        else
+           t.friendEta = false;
+        for (var c=0; c<p.cities.length; c++){
+          t.dat.push ([p.displayName, parseInt(p.might), p.officerType, parseInt(p.numCities), parseInt(p.cities[c].tileLevel),
+               parseInt(p.cities[c].xCoord), parseInt(p.cities[c].yCoord), p.cities[c].cityName, 0, 1]);
+        }
+        t.setDistances (Cities.cities[0].x, Cities.cities[0].y);
+        t.ModelCity=Cities.cities[0];
+        t.setEta();
+        t.displayPlayer ();
   },
-
-
+  
+  
   gotPlayerLeaderboard : function (rslt, span){
     var t = Tabs.AllianceList;
     if (!rslt.ok){
@@ -1999,6 +2069,8 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       an = 'none';
     else
       an += ' ('+ officerId2String(p.officerType) +')';
+    pStr = JSON2.stringify(p);
+    logit (pStr);
     m = '<TABLE cellspacing=0 class=ptTab><TR><TD><B>Leaderboard: </b></td><TD colspan=2> Might: '+ p.might  +' &nbsp; Alliance: '+ an +'</td></tr>'; 
     for (var i=0; i<p.cities.length; i++){
       var c = p.cities[i];
@@ -2055,6 +2127,20 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       t.fetchAllianceList (t.aName, null, t.eventGotAllianceList);
   },
 
+  eventListSubmit : function (){
+    var t = Tabs.AllianceList;
+    var myA = getMyAlliance ();
+    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER> ...</center>';
+    if (myA[0]!=0  ) {
+       t.curPage=1;
+       t.fetchOtherAllianceInfo ( 1, t.eventGotOtherAlliancePage);
+       document.getElementById('allGotoPage').disabled = false;
+    }
+    else {
+       document.getElementById('allListOut').innerHTML = 'You must be an alliance member to use this feature.';
+    }
+  },
+
   eventGotAllianceList : function (rslt){
     var t = Tabs.AllianceList;
     if (!rslt.ok){
@@ -2072,12 +2158,118 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       else if (all.relation && all.relation==2)
         dip = 'Hostile';
       m += '<TR><TD class=xtab>'+ all.allianceName +'</td><TD align=right class=xtab>'+ all.ranking +'</td><TD align=right class=xtab>'+ all.membersCount +'</td>\
-       <TD align=right class=xtab>'+ addCommasInt(all.might) +'</td><TD class=xtab>'+ dip +'</td> \
+       <TD align=right class=xtab>'+ addCommasInt(all.might) +'</td><TD class=xtab>'+ dip +'</td>\
        <TD class=xtab><a onclick="PTgetMembers('+ all.allianceId +')">View Members</a></td></tr>';
     }
     document.getElementById('allListOut').innerHTML = m;
   },
 
+
+  showMyAlliance : function (){
+    var t = Tabs.AllianceList;
+    var myA = getMyAlliance ();
+    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER> ...</center>';
+    if (myA[0]!=0  ) {
+       t.eventGetMembers(myA[0]);
+    }
+    else {
+       document.getElementById('allListOut').innerHTML = 'You must be an alliance member to use this feature.';
+    }
+  },
+
+  curPage : 0,
+  MaxPage : 0,
+
+  eventListNext : function (amt){
+    var t = Tabs.AllianceList;
+    if( parseInt(amt) >= 9999 )
+       t.curPage = t.MaxPage;
+    else {
+	    t.curPage = parseInt(t.curPage) + parseInt(amt);
+	    if ( t.curPage > t.MaxPage) {
+	      t.curPage = t.MaxPage;
+	    }
+    }
+    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER> ...</center>';
+    t.fetchOtherAllianceInfo (t.curPage, t.eventGotOtherAlliancePage);
+  },
+
+  eventListPrev : function (amt){
+    var t = Tabs.AllianceList;
+    if(amt <= -1)
+       t.curPage = 1;
+    else {
+	    t.curPage-=amt;
+	    if ( t.curPage < 1 ) {
+	      t.curPage = 1;
+	    }
+    }
+    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER> ...</center>';
+    t.fetchOtherAllianceInfo (t.curPage, t.eventGotOtherAlliancePage);
+  },
+
+  gotoPage : function (){
+    var t = Tabs.AllianceList;
+    var val = document.getElementById('idPageNum').value;
+    if (t.MaxPage < 0 ) {
+      document.getElementById('allListOut').innerHTML = 'List Alliances first.';
+      return;
+    }
+    if (t.MaxPage < 0 || val > t.MaxPage || val < 1) {
+      document.getElementById('allListOut').innerHTML = 'Page number out of range';
+      return;
+    }
+    t.curPage = val;
+    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER> ...</center>';
+    t.fetchOtherAllianceInfo (t.curPage, t.eventGotOtherAlliancePage);
+  },
+
+  eventGotOtherAlliancePage : function (rslt){
+    var t = Tabs.AllianceList;
+
+    if (!rslt.ok){
+      document.getElementById('allListOut').innerHTML = rslt.errorMsg;
+      return;
+    }
+
+    document.getElementById('idPageNum').value = t.curPage;
+
+    t.MaxPage=rslt.noOfPages;
+    document.getElementById('idMaxPageNum').innerHTML = 'of ' + t.MaxPage;
+
+    var m = '<div style="overflow:auto; height:556px;width:564px;"><TABLE><thead><TR style="font-weight:bold"> \
+        <th class=xtab>Alliance Name</th><th class=xtab>Rank</th><th class=xtab>Members</th>\
+        <th align=right class=xtab>Might</th><th class=xtab>Diplomacy</th><th class=xtab></th></tr></thead><tbody>';
+    document.getElementById('allListOut').innerHTML = m;
+
+    for (var i=0; i<rslt.otherAlliances.length; i++) {
+      var alliance = rslt.otherAlliances[i];
+      var dip = '';
+      dip = getDiplomacy2(alliance.allianceId);
+
+      m += '<TR class="'+ dip + '"><TD class=xtab>' + alliance.name +'</td><TD align=right class=xtab>'+ alliance.ranking +'</td><TD align=right class=xtab>'+ alliance.membersCount +'</td>\
+       <TD align=right class=xtab>'+ addCommasInt(alliance.might) +'</td><TD class=xtab>'+ dip +'</td>\
+       <TD class=xtab><a onclick="PTgetMembers('+ alliance.allianceId +')">View Members</a></td></tr>';
+    }
+    m += '</tbody></TABLE><div style="font-weight:bold"; height:20px;width:560px; ><span> <a onclick="PTalClickPrev(-1)"> [Begin] </a><a onclick="PTalClickPrev(10)"> [-10] </a><a onclick="PTalClickPrev(5)"> [-5] </a><a onclick="PTalClickPrev(1)"> [Prev] </a> \
+          <a onclick="PTalClickNext(1)"> [Next] </a><a onclick="PTalClickNext(5)"> [+5] </a><a onclick="PTalClickNext(10)"> [+10] </a><a onclick="PTalClickNext(9999)"> [End] </a> </span></div>';
+    m += '</div>';
+    document.getElementById('allListOut').innerHTML = m;
+ },
+
+  showCurrentPage : function (){
+    var t = Tabs.AllianceList;
+    var myA = getMyAlliance ();
+
+    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER> ...</center>';
+    if (myA[0]!=0  ) {
+       t.fetchOtherAllianceInfo ( t.curPage, t.eventGotOtherAlliancePage);
+    }
+    else {
+       t.fetchOtherAllianceInfo ( t.curPage, t.eventGotOtherAlliancePage);
+    }
+
+  },
 
   eventGotMemberList : function (rslt){
     var t = Tabs.AllianceList;
@@ -2096,6 +2288,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     var t = Tabs.AllianceList;
     var numInvalid = 0;
     var numPlayers = 0;
+    var myA = getMyAlliance ();
     t.dat = [];
     for (var i=0; i<t.memberListRslt.results.length; i++){
       p = t.memberListRslt.results[i];
@@ -2103,13 +2296,19 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
         ++numInvalid;
       } else {
         ++numPlayers;
+        if ( myA[0] == p.allianceId)
+           t.friendEta = true;
+        else
+           t.friendEta = false;
         for (var c=0; c<p.cities.length; c++){
           t.dat.push ([p.displayName, parseInt(p.might), p.officerType, parseInt(p.numCities), parseInt(p.cities[c].tileLevel),
-               parseInt(p.cities[c].xCoord), parseInt(p.cities[c].yCoord), p.cities[c].cityName, 0, rslt.data[p.userId]?1:0]);
+               parseInt(p.cities[c].xCoord), parseInt(p.cities[c].yCoord), p.cities[c].cityName, 0, rslt.data[p.userId]?1:0,'NA']);
         }
       }
     }
     t.setDistances (Cities.cities[0].x, Cities.cities[0].y);
+    t.ModelCity=Cities.cities[0];
+    t.setEta();
     t.displayMembers (t.memberListRslt.allianceName, numPlayers);
   },
 
@@ -2140,17 +2339,17 @@ return 0;
          +'</td><TD align=center class=xxtab>'+ t.dat[i][3] +'</td><TD class=xxtab>'+ officerId2String(t.dat[i][2])                       
          +'</td><TD class=xxtab>'+ (t.dat[i][9]?'<SPAN class=boldDarkRed>ONLINE</span>':'') +'</td><TD class=xxtab>'+ t.dat[i][7] +'</td><TD align=right class=xxtab>'+ t.dat[i][4] 
          +'</td><TD align=center class=xxtab><DIV onclick="ptGotoMap('+ t.dat[i][5] +','+ t.dat[i][6] +')"><A>'+ t.dat[i][5] +','+ t.dat[i][6] +'</a></div></td>\
-            <TD align=right class=xxtab style="padding-right:20px;">'+ t.dat[i][8].toFixed(2) +'</td></tr>';
+            <TD align=right class=xxtab style="padding-right:20px;">'+ t.dat[i][8].toFixed(2) +'</td>\
+         </td><TD  nowrap class=xxtab>'+ (t.dat[i][10]?'<SPAN>'+ (t.dat[i][10]>0?timestr(t.dat[i][10],1):'NA') +'</span>':'<SPAN>NA</span>') +'</td></tr>';
     }
     var tbody = document.getElementById('allBody');
-    tbody.style.maxHeight = '200px';
-    tbody.style.height = '200px';
-    tbody.style.overflow= "scroll";
+    tbody.style.maxHeight = '';
     tbody.innerHTML = m;
-    if (parseInt(tbody.clientHeight) > 475){
-      tbody.style.height = '200px';
-      tbody.style.maxHeight = '200px';
-      tbody.style.overflow= "scroll";
+
+
+    if (parseInt(tbody.clientHeight) > 470){
+      tbody.style.height = '470px';
+      tbody.style.maxHeight = '470px';
     }
 //new CtableToText('tabAllMembers').toText();
   },
@@ -2160,6 +2359,29 @@ return 0;
     var t = Tabs.AllianceList;
     for (var i=0; i<t.dat.length; i++)
       t.dat[i][8] = distance (x, y, t.dat[i][5], t.dat[i][6]);
+  },
+
+  friendEta:false,
+
+  setEta : function (){
+    var t = Tabs.AllianceList;
+    for (var i=0; i<t.dat.length; i++) {
+      if (t.dat[i][8]) {
+        var eta = t.estETA(parseFloat(t.dat[i][8]));
+        if (t.friendEta)
+           t.dat[i][10] = eta.friendETA;
+        else
+           t.dat[i][10] = eta.ETA;
+      }
+    }
+  },
+
+
+
+  handleEtaSelect : function (){
+    var t = Tabs.AllianceList;
+    t.setEta();
+    t.reDisp();
   },
 
   sortColNum : 8,
@@ -2179,12 +2401,12 @@ return 0;
       t.reDisp();
     }
     unsafeWindow.PTalClickSort = alClickSort;
-    var m = '<STYLE>.clickable{background-color:#ddd; border:2px outset; border-color:#555; padding-left:5px; padding-right:5px;}\
+    var m = '<STYLE>.clickable{background-color:#ddd; border:2px outset; border-color:#555; padding-left:5px; padding-right:5px}\
             .clickableSel{background-color:#ffffcc;}\
-            .xxtab{background-color:none; padding-left:5px; padding-right:5px; overflow-y:scroll;} </style>\
-      <DIV class=ptstat><TABLE id=tabAllMembers cellpadding=0  width=100% overflow-y="scroll"><TR font-weight:bold"><TD class=xtab> &nbsp; '+ allName +'</td>\
+            .xxtab{background-color:none; padding-left:5px; padding-right:5px;} </style>\
+      <DIV class=ptstat ><TABLE id=tabAllMembers cellpadding=0  width=100%><TR font-weight:bold"><TD class=xtab> &nbsp; '+ allName +'</td>\
         <TD class=xtab width=80% align=center>Distance is from <SPAN id=distFrom>'+ Cities.cities[0].name +' ('+ Cities.cities[0].x +','+ Cities.cities[0].y +')</span></td><TD class=xtab align=right>'+ numPlayers +' players found &nbsp; </td></tr></table></div>\
-      <TABLE id=tabAllMembers align=center cellpadding=0 cellspacing=0><THEAD>\
+      <div style="max-height:470px; height:470px; overflow-y:auto;"><TABLE id=tabAllMembers align=center cellpadding=0 cellspacing=0><THEAD style="overflow-y:hidden;">\
       <TR style="font-weight:bold"><TD id=clickCol0 onclick="PTalClickSort(this)" class=clickable><A><DIV>Player</div></a></td>\
         <TD id=clickCol1 onclick="PTalClickSort(this)" class=clickable align=center><A><DIV>Might</a></div></td>\
         <TD id=clickCol3 onclick="PTalClickSort(this)" class=clickable><A><DIV>Cities</a></div></td>\
@@ -2193,19 +2415,64 @@ return 0;
         <TD id=clickCol7 onclick="PTalClickSort(this)" class=clickable><A><DIV>City Name</a></div></td>\
         <TD id=clickCol4 onclick="PTalClickSort(this)" class=clickable><A><DIV>Lvl</a></div></td>\
         <TD id=clickCol5 onclick="PTalClickSort(this)" class=clickable><A><DIV>Coords</a></div></td>\
-        <TD id=clickCol8 onclick="PTalClickSort(this)" class=clickable><A><DIV>Distance</a></div></td></tr></thead>\
-      <TBODY id=allBody style="background-color:#ffffff; overflow-y:scroll; overflow-x:hidden;"></tbody></table>\
-      <DIV style="top:670px; left:0px; position:absolute; width:100%; overflow-y:auto;  background-color:#ffffff; border-top:1px solid; margin-top:8px; color:#700; font-weight:bold;">\
+        <TD id=clickCol8 onclick="PTalClickSort(this)" class=clickable><A><DIV>Distance</a></div></td>\
+        <TD id=clickCol10 onclick="PTalClickSort(this)" class=clickable><A><DIV>Eta</a></div></td></tr></thead>\
+      <TBODY id=allBody style="background-color:#ffffff;"></tbody></table></div>\
+      <DIV  width:100%; style="top:670px; left:0px; position:absolute; background-color:#ffffff; border-top:1px solid; margin-top:8px; color:#700; font-weight:bold;">\
         <TABLE width=100%><TR><TD class=xtab>Data is from the leaderboard and may be up to 24 hours old!</td>\
           <TD class=xtab align=right>Click on column headers to sort</td></tr></table></div>';
-    document.getElementById('allListOut').innerHTML = m;
-    document.getElementById('altInput').innerHTML = '<HR><TABLE width=100% cellpaddding=0 overflowy=scroll><TR align=center>\
+    document.getElementById('allListOut').innerHTML = m;//style="top:670px; left:0px; position:absolute;
+    document.getElementById('altInput').innerHTML = '<HR><TABLE width=100% cellpaddding=0><TR align=center>\
         <TD class=xtab>Show distance from: &nbsp; X: <INPUT size=2 type=text id=plyrX /> Y: <INPUT size=2 type=text id=plyrY /> &nbsp; Or, choose city: <span id=dmcoords></span></td></tr></table>';
     document.getElementById('clickCol'+t.sortColNum).className = 'clickable clickableSel';
+
     t.reDisp();
     new CdispCityPicker ('plyrdcp', document.getElementById ('dmcoords'), true, t.eventCoords, 0).bindToXYboxes(document.getElementById('plyrX'), document.getElementById('plyrY'));
+    document.getElementById('idFindETASelect').disabled = false;
   },
+  
+  displayPlayer : function (){
+    var t = Tabs.AllianceList;
+    function alClickSort (e){
+      var t = Tabs.AllianceList;
+      var newColNum = e.id.substr(8);
+      document.getElementById('clickCol'+t.sortColNum).className = 'clickable';
+      e.className='clickable clickableSel';
+      if (newColNum == t.sortColNum)
+        t.sortDir *= -1;
+      else
+        t.sortColNum = newColNum;
+      t.reDisp();
+    }
+    unsafeWindow.PTalClickSort = alClickSort;
+    var m = '<STYLE>.clickable{background-color:#ddd; border:2px outset; border-color:#555; padding-left:5px; padding-right:5px}\
+            .clickableSel{background-color:#ffffcc;}\
+            .xxtab{background-color:none; padding-left:5px; padding-right:5px;} </style>\
+      <div style="max-height:470px; height:470px; overflow-y:auto;"><TABLE id=tabAllMembers align=center cellpadding=0 cellspacing=0><THEAD style="overflow-y:hidden;">\
+      <TR style="font-weight:bold"><TD id=clickCol0 onclick="PTalClickSort(this)" class=clickable><A><DIV>Player</div></a></td>\
+        <TD id=clickCol1 onclick="PTalClickSort(this)" class=clickable align=center><A><DIV>Might</a></div></td>\
+        <TD id=clickCol3 onclick="PTalClickSort(this)" class=clickable><A><DIV>Cities</a></div></td>\
+        <TD id=clickCol2 onclick="PTalClickSort(this)" class=clickable align=center><A><DIV>Rank</a></div></td>\
+        <TD id=clickCol9 onclick="PTalClickSort(this)" class=clickable align=center><A><DIV>Online</a></div></td>\
+        <TD id=clickCol7 onclick="PTalClickSort(this)" class=clickable><A><DIV>City Name</a></div></td>\
+        <TD id=clickCol4 onclick="PTalClickSort(this)" class=clickable><A><DIV>Lvl</a></div></td>\
+        <TD id=clickCol5 onclick="PTalClickSort(this)" class=clickable><A><DIV>Coords</a></div></td>\
+        <TD id=clickCol8 onclick="PTalClickSort(this)" class=clickable><A><DIV>Distance</a></div></td>\
+        <TD id=clickCol10 onclick="PTalClickSort(this)" class=clickable><A><DIV>Eta</a></div></td></tr></thead>\
+      <TBODY id=allBody style="background-color:#ffffff;"></tbody></table></div>\
+      <DIV  width:100%; style="top:670px; left:0px; position:absolute; background-color:#ffffff; border-top:1px solid; margin-top:8px; color:#700; font-weight:bold;">\
+        <TABLE width=100%><TR><TD class=xtab>Data is from the leaderboard and may be up to 24 hours old!</td>\
+          <TD class=xtab align=right>Click on column headers to sort</td></tr></table></div>';
+    document.getElementById('allListOut').innerHTML = m;//style="top:670px; left:0px; position:absolute;
+    document.getElementById('altInput').innerHTML = '<HR><TABLE width=100% cellpaddding=0><TR align=center>\
+        <TD class=xtab>Show distance from: &nbsp; X: <INPUT size=2 type=text id=plyrX /> Y: <INPUT size=2 type=text id=plyrY /> &nbsp; Or, choose city: <span id=dmcoords></span></td></tr></table>';
+    document.getElementById('clickCol'+t.sortColNum).className = 'clickable clickableSel';
 
+    t.reDisp();
+    new CdispCityPicker ('plyrdcp', document.getElementById ('dmcoords'), true, t.eventCoords, 0).bindToXYboxes(document.getElementById('plyrX'), document.getElementById('plyrY'));
+    document.getElementById('idFindETASelect').disabled = false;
+  },
+  
   eventCoords : function (city, x, y){
     var t = Tabs.AllianceList;
     var m = '';
@@ -2213,8 +2480,12 @@ return 0;
       m = city.name +' ('+ city.x +','+ city.y +')';
     else
       m = x +','+ y;
-    document.getElementById('distFrom').innerHTML = m;
+    var distFrom = document.getElementById('distFrom');
+    if (distFrom)
+        distFrom.innerHTML = m;
+    t.ModelCity=city;
     t.setDistances(x,y);
+    t.setEta();
     t.reDisp();
   },
 
@@ -2356,23 +2627,7 @@ return 0;
       },
     });
   },
-
-
-  fetchPlayerLastLogin : function (uid, notify){
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-    params.pid = uid;
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/viewCourt.php" + unsafeWindow.g_ajaxsuffix, {
-      method: "post",
-      parameters: params,
-      onSuccess: function (rslt) {
-        notify (rslt);
-      },
-      onFailure: function (rslt) {
-        notify ({errorMsg:'AJAX error'});
-      },
-    });
-  },
-
+  
 /***
 ajax/getOnline.php:
   (string) ok = true
@@ -2393,6 +2648,60 @@ ajax/getOnline.php:
         notify ({errorMsg:'AJAX error'});
       },
     });
+  },
+
+  ModelCity : {},
+
+  estETA : function(dist) { // Need Relief Station Levels to estimate transport, reinf, or reassign times. 
+    var t = Tabs.AllianceList;
+    var ret={ETA:0,etaStr:'NA',friendETA:0,friendEtaStr:'NA'};    
+    var cityID;
+    if (dist <= 0) return ret;
+    var EtaType = document.getElementById('idFindETASelect');
+    var baseSpeedSel = EtaType.options[EtaType.selectedIndex].value;
+    var m = baseSpeedSel.split(',');
+    var horse = 0;
+    var baseSpeed = 0;
+    if(m) {
+      horse = parseInt(m[0]);
+      baseSpeed = parseInt(m[1]);
+    }
+    if (baseSpeed == 0) return ret;
+    var mmLvl = parseInt(Seed.tech.tch11);//Magical Mapping
+    var Speed = 0;
+    if (horse){
+   //HorsesSiegeSpeed = Base * (1 + MM/10) * (1 + AH/20) 
+      var hsLvl = parseInt(Seed.tech.tch12);//Alloy Horse Shoes
+      Speed = baseSpeed * (1 + mmLvl/10.0) * (1 + hsLvl/20.0);
+    }
+    else {
+    //FootSpeed = Base * (1 + MM/10)
+      Speed = baseSpeed * (1 + mmLvl/10.0);
+    }
+    //Grid Speed (tiles/second) = Speed (100ths/min) / 6000 
+    var gSpeed = 0;
+    var estSec;
+    if (Speed>0) {
+      gSpeed = Speed/6000.0;//0.48333 mm=10, hs=9
+      estSec = (parseFloat(dist)/gSpeed).toFixed(0);
+    }
+    ret.ETA = (parseInt((estSec+''))+30); 
+    ret.etaStr = timestr (ret.ETA,1);
+    //ret.etaStr = ret.ETA + ', ' + timestr (ret.ETA,1);
+    //RS - Cities Relief Station Level
+    //Friendly Speed = Speed * (1 + RS/2)
+    if (t.ModelCity) {
+      cityID = t.ModelCity.id;
+      var building = getCityBuilding (cityID, 18);
+      if (building) {
+        fSpeed = Speed * (1 + parseInt(building.maxLevel)/2);
+        gSpeed = fSpeed/6000;
+        estSec = (dist/gSpeed).toFixed(0);
+        ret.friendETA = parseInt((estSec+''))+30; 
+        ret.friendEtaStr = timestr ((ret.friendETA+''),1);
+      }
+   }
+    return ret;
   },
 };
 
@@ -3979,7 +4288,7 @@ Tabs.Marches = {
     unsafeWindow.cancelMarch = t.butcancelmarch;
     
     t.cont = div;
-    t.cont.innerHTML = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubA type=submit value=Incoming Attacks></td>\
+    t.cont.innerHTML = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubA type=submit value=Incoming></td>\
           <TD><INPUT class=pbSubtab ID=ptmrchSubM type=submit value=Marches></td>\
           <TD><INPUT class=pbSubtab ID=ptmrchSubR type=submit value=Reinforcements></td></tr></table><HR class=ptThin>\
       <DIV id=ptMarchOutput style="margin-top:10px; background-color:white; height:500px; max-width:740px; overflow:scroll;"></div>';
@@ -4023,18 +4332,132 @@ Tabs.Marches = {
     else if (t.curTabName == 'M')
       t.showMarches();
     else
-      t.showAttacks();
+      t.showIncoming();
    mainPop.div.style.height = 500 + 'px';
   },
  
   
-  /***   ATTACKS SUBTAB  ***/
-  showAttacks : function (){
-    var t = Tabs.Marches;
-    t.marchDiv.innerHTML = 'INCOMING Attacks coming soon!';;
-  },
-  
-  
+  /***   Incoming SUBTAB  ***/
+      showIncoming : function (){
+        var t = Tabs.Marches;
+        t.marchDiv.innerHTML =null;	
+        //var updatemarch = Seed.queue_atkinc;
+        var icon;
+        var status;
+        var FROM;
+        var cityname;
+
+        //var z = '<TD><INPUT id=TEST type=submit value="TEST"></td>';
+        //z += '<TD><INPUT id=TEST2 type=submit value="TEST2"></td>';
+        var z = '<TABLE id=pdmarches cellpadding=10 width=100% height=0% class=pbTab>';
+       
+       for (k in Seed.queue_atkinc) {
+          if(Seed.queue_atkinc.length !=0){
+            if  (parseInt(Seed.queue_atkinc[k]["marchType"]==3 || parseInt(Seed.queue_atkinc[k]["marchType"]==4){
+             		now = unixTime();
+             		var marchType = parseInt(Seed.queue_atkinc[k]["marchType"]);
+             		var marchStatus = parseInt(Seed.queue_atkinc[k]["marchStatus"]);
+             		
+             		for (var i=0; i<Seed.cities.length;i++) {
+      	       			if (Seed.cities[i][0] == Seed.queue_atkinc[k]["toCityId"]) cityname = Seed.cities[i][1];
+             		}   
+             				
+             		if (Seed.queue_atkinc[k]["destinationUnixTime"] < (now) || marchStatus == 8) marchstatus = "returning";
+             		else marchstatus = "going";	
+             		
+             		if (marchStatus == 2) destinationUnixTime = now - Seed.queue_atkinc[k]["arrivalTime"]; //- now;
+             		if (marchStatus == 1) destinationUnixTime = Seed.queue_atkinc[k]["arrivalTime"] - now;
+             		marchtime = timestr(destinationUnixTime, true)
+             				       					
+             		if (marchType != 3 && marchType !=4){
+             			for (players in Seed.players){
+             				if (('u'+Seed.queue_atkinc[k]["fromPlayerId"]) == players){ FROM = Seed.players[players]["n"];}
+             			}
+             		}
+             		else {
+             			for (var player in Seed.queue_atkinc[k]["players"]) { 
+             				if (marchType == 3 || marchType == 4) FROM = Seed.queue_atkinc[k]["players"][player]["n"];
+             			}
+             		}
+             		
+             		if (marchType == 2 && marchStatus == 2) marchType = 102;
+             		
+             		switch (marchType) {
+             		    case 1: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status="Transport";break;
+             		    case 2: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status="Reinforce";break;
+             		    case 3: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/scouting.jpg";status="Scout";break;
+             		    case 4: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status="Attack";break;
+             		    case 5: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status="Reassign";break;
+             		    case 100: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status="Returning";break;
+             		    case 102: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status="Encamped";break;
+             		} 
+             		
+             		z += '<TD width="10px"><img src='+ icon +'></td>';
+             		z += '<TD width="40px">'+ status +'</td>';
+             		z += '<TD>' + cityname + '</td>';
+             		z += '<TD>'+ marchtime +'</td>';
+             		z +='<TD>From:' + FROM + '</td>';
+             		if (Seed.queue_atkinc[k]["knightId"] !=0) z +='<TD>Knight:' + Seed.queue_atkinc[k]["knightCombat"] + '</td>';
+             		
+             		if (Seed.queue_atkinc[k]["gold"] > 0) z += '<TD>Gold:'+ addCommas(Seed.queue_atkinc[k]["gold"]) +'</td>';
+             		if (Seed.queue_atkinc[k]["resource1"] > 0) z += '<TD>Food: '+ addCommas(Seed.queue_atkinc[k]["resource1"]) +'</td>';
+      		 	if (Seed.queue_atkinc[k]["resource2"] > 0) z += '<TD>Wood: '+ addCommas(Seed.queue_atkinc[k]["resource2"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["resource3"] > 0) z += '<TD>Stone: '+ addCommas(Seed.queue_atkinc[k]["resource3"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["resource4"] > 0) z += '<TD>Ore: '+ addCommas(Seed.queue_atkinc[k]["resource4"]) +'</td>';
+      		    
+      		    if (Seed.queue_atkinc[k]["unit0Count"] > 0 && marchstatus == "going") z += '<TD???'+ addCommas(Seed.queue_atkinc[k]["unit0Count"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["unit0Return"] > 0 && marchstatus == "returning") z += '<TD>???: '+ addCommas(Seed.queue_atkinc[k]["unit0Return"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["unit1Count"] > 0 && marchstatus == "going") z += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkinc[k]["unit1Count"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["unit1Return"] > 0 && marchstatus == "returning") z += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkinc[k]["unit1Return"]) +'</td>';
+      		    
+      		    if (Seed.queue_atkinc[k]["unit2Count"] > 0 && marchstatus == "going") z += '<TD>Militiaman: '+ addCommas(Seed.queue_atkinc[k]["unit2Count"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["unit2Return"] > 0 && marchstatus == "returning") z += '<TD>Militiaman: '+ addCommas(Seed.queue_atkinc[k]["unit2Return"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["unit3Count"] > 0 && marchstatus =="going") z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unit3Count"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["unit3Return"] > 0 && marchstatus == "returning") z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unit3Return"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["unit4Count"] > 0 && marchstatus =="going") z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unit4Count"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["unit4Return"] > 0 && marchstatus == "returning") z += '<TD>Pikeman: '+ addCommas(Seed.queue_atkinc[k]["unit4Return"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["unit5Count"] > 0 && marchstatus =="going") z += '<TD>Pikeman: '+ addCommas(Seed.queue_atkinc[k]["unit5Count"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["unit5Return"] > 0 && marchstatus == "returning") z += '<TD>Swordsman: '+ addCommas(Seed.queue_atkinc[k]["unit5Return"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["unit6Count"] > 0 && marchstatus =="going") z += '<TD>Archer: '+ addCommas(Seed.queue_atkinc[k]["unit6Count"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["unit6Return"] > 0 && marchstatus == "returning") z += '<TD>Archer: '+ addCommas(Seed.queue_atkinc[k]["unit6Return"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["unit7Count"] > 0 && marchstatus =="going") z += '<TD>Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unit7Count"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["unit7Return"] > 0 && marchstatus == "returning") z += '<TD>Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unit7Return"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["unit8Count"] > 0 && marchstatus =="going") z += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unit8Count"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["unit8Return"] > 0 && marchstatus == "returning") z += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unit8Return"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["unit9Count"] > 0 && marchstatus =="going") z += '<TD>Supply Wagons: '+ addCommas(Seed.queue_atkinc[k]["unit9Count"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["unit9Return"] > 0 && marchstatus == "returning") z += '<TD>Supply Wagons: '+ addCommas(Seed.queue_atkinc[k]["unit9Return"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["unit10Count"] > 0 && marchstatus =="going") z += '<TD>Ballista: '+ addCommas(Seed.queue_atkinc[k]["unit10Count"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["unit10Return"] > 0 && marchstatus == "returning") z += '<TD>Ballista: '+ addCommas(Seed.queue_atkinc[k]["unit10Return"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["unit11Count"] > 0 && marchstatus =="going") z += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkinc[k]["unit11Count"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["unit11Return"] > 0 && marchstatus == "returning") z += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkinc[k]["unit11Return"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["unit12Count"] > 0 && marchstatus =="going") z += '<TD>Catapult: '+ addCommas(Seed.queue_atkinc[k]["unit12Count"]) +'</td>';
+      		    if (Seed.queue_atkinc[k]["unit12Return"] > 0 && marchstatus == "returning") z += '<TD>Catapult: '+ addCommas(Seed.queue_atkinc[k]["unit12Return"]) +'</td>';
+      		    
+      		    if (marchType == 3 && Seed.queue_atkinc[k]["unts"]["u3"] > 0) z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u3"]) +'</td>';
+      		    if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u1"] > 0) z += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u1"]) +'</td>';
+             		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u2"] > 0) z += '<TD>Militiaman: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u2"]) +'</td>';
+             		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u3"] > 0) z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u3"]) +'</td>';
+             		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u4"] > 0) z += '<TD>Pikeman: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u4"]) +'</td>';
+             		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u5"] > 0) z += '<TD>Swordsman: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u5"]) +'</td>';
+             		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u6"] > 0) z += '<TD>Archer: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u6"]) +'</td>';
+             		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u7"] > 0) z += '<TD>Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u7"]) +'</td>';
+             		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u8"] > 0) z += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u8"]) +'</td>';
+             		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u9"] > 0) z += '<TD>Supply Wagons: '+ SaddCommas(eed.queue_atkinc[k]["unts"]["u9"]) +'</td>';
+             		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u10"] > 0) z += '<TD>Ballista: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u10"]) +'</td>';
+             		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u11"] > 0) z += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u11"]) +'</td>';
+             		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u12"] > 0) z += '<TD>Catapult: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u12"]) +'</td>';
+             		z += '</tr>';
+       }
+       }
+     }
+     z += '</table>';
+     t.marchDiv.innerHTML = z;
+     	 	     
+    
+     t.displayTimer = setTimeout (t.showIncoming, 500);  
+   },   
+      
+        
   /***   MARCHES SUBTAB  ***/
     showMarches : function (){
       var t = Tabs.Marches;
@@ -4044,16 +4467,15 @@ Tabs.Marches = {
       var status;
       var number = 0;
      
-    var m = '<TD><INPUT id=TEST type=submit value="TEST"></td>';
-      m += '<TABLE id=pdmarches cellpadding=10 width=100% height=0% class=pbTab>';
-     
-     var cityID ="city8774";
-     
+     var  m = '<TABLE id=pdmarches cellpadding=10 width=100% height=0% class=pbTab>';
+          
      for (var c=0; c< Seed.cities.length;c++) {
      		cityname = Seed.cities[c][1];
-     		cityID = 'city' + Seed.cities[c][0];    
+     		cityID = 'city' + Seed.cities[c][0];
+     		var cityTo;    
     		number=0;	
-    			if (Seed.queue_atkp[cityID].length !=0) m+= '<TR><TD style=\'background: #99CCFF;\' align=center><B>' + cityname +': </b></td></tr>';
+    		
+    		if (Seed.queue_atkp[cityID].length !=0) m+= '<TR><TD style=\'background: #99CCFF;\' align=center><B>' + cityname +': </b></td></tr>';
   		    for (k in Seed.queue_atkp[cityID]){
   				 if (Seed.queue_atkp[cityID].length !=0) {
   				    var marchID = new String(k);
@@ -4062,6 +4484,14 @@ Tabs.Marches = {
   				    var marchStatus = parseInt(Seed.queue_atkp[cityID][k]["marchStatus"]);
   				    now = unixTime();
   				    number++;
+  				    cityTo=null; 
+  				    var knight=null;
+  				    
+  				    for (var i=0; i<Seed.cities.length;i++) {
+  				    		if (Seed.cities[i][2] == Seed.queue_atkp[cityID][k]["toXCoord"] && Seed.cities[i][3] == Seed.queue_atkp[cityID][k]["toYCoord"]) cityTo = Seed.cities[i][1];
+  				    		
+  				    }
+  				    
   				    destinationUnixTime = Seed.queue_atkp[cityID][k]["destinationUnixTime"] - now;
   				    returnUnixTime = Seed.queue_atkp[cityID][k]["returnUnixTime"] - now;
   				    encampedUnixTime = now - Seed.queue_atkp[cityID][k]["destinationUnixTime"];
@@ -4075,6 +4505,8 @@ Tabs.Marches = {
   				   
   				    if (marchstatus =="returning" && marchType == 2 && Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) && marchStatus != 2) marchtime = timestr(returnUnixTime, true);
   				    if (marchstatus =="returning" && marchType == 4 && Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) && marchStatus == 2) marchtime = timestr(returnUnixTime, true);
+  				    if (marchStatus == 2 && Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) && marchType !=2) marchtime = timestr(returnUnixTime, true);
+  				    if (marchStatus == 8 && Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now)) marchtime = timestr(returnUnixTime, true);
   				    if (parseInt(Seed.queue_atkp[cityID][k]["marchType"]) == 4 && marchStatus == 2) marchtime = timestr(destinationUnixTime, true);;
   				    
   				    
@@ -4097,55 +4529,65 @@ Tabs.Marches = {
   					    case 100: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status="Returning";break;
   					    case 102: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status="Encamped";break;
   				    } 
-  				    
+  				      				    
+  				    if (Seed.queue_atkp[cityID][k]["knightId"] !=0){
+  				    	for (i in Seed.knights[cityID]) {
+  				    			if (i == ("knt" + Seed.queue_atkp[cityID][k]["knightId"]) ) knight = Seed.knights[cityID][i]["combat"];
+  				    	}
+  				    } else knight = null;
+  				      				    
   				    if (status=="Encamped") m += '<TR><TD width="5px"><A><SPAN onclick="undefend('+ marchID +')">X</span></a></td>'
   				    else m += '<TR><TD width="5px"><A><SPAN onclick="cancelMarch('+ marchID +')">X</span></a></td>'
   				    m += '<TD>'+ number +'</td>';
   				    m += '<TD width="10px"><img src='+ icon +'></td>';
   				    m += '<TD width="40px">'+ status +'</td>';
   				    m += '<TD>'+ marchtime +'</td>';
-  				    m += '<TD style="padding-right:10px;">'+ Seed.queue_atkp[cityID][k]["toXCoord"] + ',' + Seed.queue_atkp[cityID][k]["toYCoord"] + '</td>';
+  				    
+  				    if (cityTo == null) m += '<TD style="padding-right:10px;">'+ Seed.queue_atkp[cityID][k]["toXCoord"] + ',' + Seed.queue_atkp[cityID][k]["toYCoord"] + '</td>';
+  				    else m += '<TD style="padding-right:10px;">'+ cityTo +'</td>';
+  				    
+  				    if (knight != null)  m += '<TD>Knight:'+ knight +'</td>';
   				    
   				    if (Seed.queue_atkp[cityID][k]["toTileType"] == 11) m+='<TD>Lake Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
   				    else if (Seed.queue_atkp[cityID][k]["toTileType"] == 20) m+='<TD>Grassland Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
   				    else if (Seed.queue_atkp[cityID][k]["toTileType"] == 30) m+='<TD>Hills Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
   				    else if (Seed.queue_atkp[cityID][k]["toTileType"] == 40) m+='<TD>Mountain Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
   				    else if (Seed.queue_atkp[cityID][k]["toTileType"] == 50) m+='<TD>Plain Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
-  					else m +='<TD>Lvl: '+Seed.queue_atkp[cityID][k]["toTileLevel"]+'</td>';
+  					else if (Seed.queue_atkp[cityID][k]["toCityId"] ==0) m +='<TD>Barb Lvl: '+Seed.queue_atkp[cityID][k]["toTileLevel"]+'</td>';
   		
   				    if (Seed.queue_atkp[cityID][k]["gold"] > 0) m += '<TD>Gold:'+ Seed.queue_atkp[cityID][k]["gold"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["resource1"] > 0) m += '<TD>Food: '+ Seed.queue_atkp[cityID][k]["resource1"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["resource2"] > 0) m += '<TD>Wood: '+ Seed.queue_atkp[cityID][k]["resource2"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["resource3"] > 0) m += '<TD>Stone: '+ Seed.queue_atkp[cityID][k]["resource3"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["resource4"] > 0) m += '<TD>Ore: '+ Seed.queue_atkp[cityID][k]["resource4"] +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["resource1"] > 0) m += '<TD>Food: '+ addCommas(Seed.queue_atkp[cityID][k]["resource1"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["resource2"] > 0) m += '<TD>Wood: '+ addCommas(Seed.queue_atkp[cityID][k]["resource2"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["resource3"] > 0) m += '<TD>Stone: '+ addCommas(Seed.queue_atkp[cityID][k]["resource3"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["resource4"] > 0) m += '<TD>Ore: '+ addCommas(Seed.queue_atkp[cityID][k]["resource4"]) +'</td>';
   				    
-  				    if (Seed.queue_atkp[cityID][k]["unit0Count"] > 0 && marchstatus == "going") m += '<TD???'+ Seed.queue_atkp[cityID][k]["unit0Count"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit0Return"] > 0 && marchstatus == "returning") m += '<TD>???: '+ Seed.queue_atkp[cityID][k]["unit0Return"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit1Count"] > 0 && marchstatus == "going") m += '<TD>Supply Troops: '+ Seed.queue_atkp[cityID][k]["unit1Count"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit1Return"] > 0 && marchstatus == "returning") m += '<TD>Supply Troops: '+ Seed.queue_atkp[cityID][k]["unit1Return"] +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit0Count"] > 0 && marchstatus == "going") m += '<TD???'+ addCommas(Seed.queue_atkp[cityID][k]["unit0Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit0Return"] > 0 && marchstatus == "returning") m += '<TD>???: '+ addCommas(Seed.queue_atkp[cityID][k]["unit0Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit1Count"] > 0 && marchstatus == "going") m += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkp[cityID][k]["unit1Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit1Return"] > 0 && marchstatus == "returning") m += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkp[cityID][k]["unit1Return"]) +'</td>';
   				    
-  				    if (Seed.queue_atkp[cityID][k]["unit2Count"] > 0 && marchstatus == "going") m += '<TD>Militiaman: '+ Seed.queue_atkp[cityID][k]["unit2Count"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit2Return"] > 0 && marchstatus == "returning") m += '<TD>Militiaman: '+ Seed.queue_atkp[cityID][k]["unit2Return"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit3Count"] > 0 && marchstatus =="going") m += '<TD>Scouts: '+ Seed.queue_atkp[cityID][k]["unit3Count"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit3Return"] > 0 && marchstatus == "returning") m += '<TD>Scouts: '+ Seed.queue_atkp[cityID][k]["unit3Return"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit4Count"] > 0 && marchstatus =="going") m += '<TD>Pikeman: '+ Seed.queue_atkp[cityID][k]["unit4Count"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit4Return"] > 0 && marchstatus == "returning") m += '<TD>Pikeman: '+ Seed.queue_atkp[cityID][k]["unit4Return"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit5Count"] > 0 && marchstatus =="going") m += '<TD>Swordsman: '+ Seed.queue_atkp[cityID][k]["unit5Count"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit5Return"] > 0 && marchstatus == "returning") m += '<TD>Swordsman: '+ Seed.queue_atkp[cityID][k]["unit5Return"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit6Count"] > 0 && marchstatus =="going") m += '<TD>Archer: '+ Seed.queue_atkp[cityID][k]["unit6Count"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit6Return"] > 0 && marchstatus == "returning") m += '<TD>Archer: '+ Seed.queue_atkp[cityID][k]["unit6Return"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit7Count"] > 0 && marchstatus =="going") m += '<TD>Cavalry: '+ Seed.queue_atkp[cityID][k]["unit7Count"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit7Return"] > 0 && marchstatus == "returning") m += '<TD>Cavalry: '+ Seed.queue_atkp[cityID][k]["unit7Return"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit8Count"] > 0 && marchstatus =="going") m += '<TD>Heavy Cavalry: '+ Seed.queue_atkp[cityID][k]["unit8Count"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit8Return"] > 0 && marchstatus == "returning") m += '<TD>Heavy Cavalry: '+ Seed.queue_atkp[cityID][k]["unit8Return"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit9Count"] > 0 && marchstatus =="going") m += '<TD>Supply Wagons: '+ Seed.queue_atkp[cityID][k]["unit9Count"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit9Return"] > 0 && marchstatus == "returning") m += '<TD>Supply Wagons: '+ Seed.queue_atkp[cityID][k]["unit9Return"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit10Count"] > 0 && marchstatus =="going") m += '<TD>Ballista: '+ Seed.queue_atkp[cityID][k]["unit10Count"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit10Return"] > 0 && marchstatus == "returning") m += '<TD>Ballista: '+ Seed.queue_atkp[cityID][k]["unit10Return"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit11Count"] > 0 && marchstatus =="going") m += '<TD>Battering Ram: '+ Seed.queue_atkp[cityID][k]["unit11Count"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit11Return"] > 0 && marchstatus == "returning") m += '<TD>Battering Ram: '+ Seed.queue_atkp[cityID][k]["unit11Return"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit12Count"] > 0 && marchstatus =="going") m += '<TD>Catapult: '+ Seed.queue_atkp[cityID][k]["unit12Count"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit12Return"] > 0 && marchstatus == "returning") m += '<TD>Catapult	: '+ Seed.queue_atkp[cityID][k]["unit12Return"] +'</td></tr>';
+  				    if (Seed.queue_atkp[cityID][k]["unit2Count"] > 0 && marchstatus == "going") m += '<TD>Militiaman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit2Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit2Return"] > 0 && marchstatus == "returning") m += '<TD>Militiaman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit2Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit3Count"] > 0 && marchstatus =="going") m += '<TD>Scouts: '+ addCommas(Seed.queue_atkp[cityID][k]["unit3Count"])+'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit3Return"] > 0 && marchstatus == "returning") m += '<TD>Scouts: '+ addCommas(Seed.queue_atkp[cityID][k]["unit3Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit4Count"] > 0 && marchstatus =="going") m += '<TD>Pikeman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit4Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit4Return"] > 0 && marchstatus == "returning") m += '<TD>Pikeman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit4Return"])+'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit5Count"] > 0 && marchstatus =="going") m += '<TD>Swordsman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit5Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit5Return"] > 0 && marchstatus == "returning") m += '<TD>Swordsman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit5Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit6Count"] > 0 && marchstatus =="going") m += '<TD>Archer: '+ addCommas(Seed.queue_atkp[cityID][k]["unit6Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit6Return"] > 0 && marchstatus == "returning") m += '<TD>Archer: '+ addCommas(Seed.queue_atkp[cityID][k]["unit6Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit7Count"] > 0 && marchstatus =="going") m += '<TD>Cavalry: '+ addCommas(Seed.queue_atkp[cityID][k]["unit7Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit7Return"] > 0 && marchstatus == "returning") m += '<TD>Cavalry: '+ addCommas(Seed.queue_atkp[cityID][k]["unit7Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit8Count"] > 0 && marchstatus =="going") m += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkp[cityID][k]["unit8Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit8Return"] > 0 && marchstatus == "returning") m += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkp[cityID][k]["unit8Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit9Count"] > 0 && marchstatus =="going") m += '<TD>Supply Wagons: '+ addCommas(Seed.queue_atkp[cityID][k]["unit9Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit9Return"] > 0 && marchstatus == "returning") m += '<TD>Supply Wagons: '+ addCommas(Seed.queue_atkp[cityID][k]["unit9Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit10Count"] > 0 && marchstatus =="going") m += '<TD>Ballista: '+ addCommas(Seed.queue_atkp[cityID][k]["unit10Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit10Return"] > 0 && marchstatus == "returning") m += '<TD>Ballista: '+ addCommas(Seed.queue_atkp[cityID][k]["unit10Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit11Count"] > 0 && marchstatus =="going") m += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkp[cityID][k]["unit11Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit11Return"] > 0 && marchstatus == "returning") m += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkp[cityID][k]["unit11Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit12Count"] > 0 && marchstatus =="going") m += '<TD>Catapult: '+ addCommas(Seed.queue_atkp[cityID][k]["unit12Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit12Return"] > 0 && marchstatus == "returning") m += '<TD>Catapult	: '+ addCommas(Seed.queue_atkp[cityID][k]["unit12Return"]) +'</td></tr>';
    			  }
   		    }
   	
@@ -4153,11 +4595,8 @@ Tabs.Marches = {
   	}
   	m += '</table>';
   	t.marchDiv.innerHTML = m;
-  	 	     
-      document.getElementById('TEST').addEventListener('click', function(){
-       alert(Seed.queue_atkp.toSource());
-       }, false);
-     t.displayTimer = setTimeout (t.showMarches, 500);  
+  		     
+    t.displayTimer = setTimeout (t.showMarches, 500);  
     },
     
     butcancelmarch: function(marchID){
@@ -4197,6 +4636,7 @@ Tabs.Marches = {
     	 	         notify(rslt.errorMsg);
     	 	     },
     	 	 });
+    	 	 
     	 },
     
     butundefend: function(marchID){
@@ -4226,7 +4666,7 @@ Tabs.Marches = {
     	       var ut = unixTime();
     	       if (unsafeWindow.seed.playerEffects.returnExpire > unixtime())
     	         marchtime *= 0.5
-    	       march.returnUnixTime = ut + marchtime;
+    	       march.returnUnixTime = marchtime;
     	       march.destinationUnixTime = ut;
     	       march.marchUnixTime = ut - marchtime;
     	       if (notify != null)
