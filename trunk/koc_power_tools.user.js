@@ -4346,114 +4346,122 @@ Tabs.Marches = {
         var status;
         var FROM;
         var cityname;
-
+        var FROMmight;
         //var z = '<TD><INPUT id=TEST type=submit value="TEST"></td>';
         //z += '<TD><INPUT id=TEST2 type=submit value="TEST2"></td>';
-        var z = '<TABLE id=pdmarches cellpadding=10 width=100% height=0% class=pbTab>';
+         var z = '<TABLE id=pdincoming cellSpacing=10 width=100% height=0% class=pbTab>';
        
        for (k in Seed.queue_atkinc) {
           if(Seed.queue_atkinc.length !=0){
-            if  (parseInt(Seed.queue_atkinc[k]["marchType"]==3 || parseInt(Seed.queue_atkinc[k]["marchType"]==4){
-             		now = unixTime();
-             		var marchType = parseInt(Seed.queue_atkinc[k]["marchType"]);
-             		var marchStatus = parseInt(Seed.queue_atkinc[k]["marchStatus"]);
-             		
-             		for (var i=0; i<Seed.cities.length;i++) {
-      	       			if (Seed.cities[i][0] == Seed.queue_atkinc[k]["toCityId"]) cityname = Seed.cities[i][1];
-             		}   
-             				
-             		if (Seed.queue_atkinc[k]["destinationUnixTime"] < (now) || marchStatus == 8) marchstatus = "returning";
-             		else marchstatus = "going";	
-             		
-             		if (marchStatus == 2) destinationUnixTime = now - Seed.queue_atkinc[k]["arrivalTime"]; //- now;
-             		if (marchStatus == 1) destinationUnixTime = Seed.queue_atkinc[k]["arrivalTime"] - now;
-             		marchtime = timestr(destinationUnixTime, true)
-             				       					
-             		if (marchType != 3 && marchType !=4){
-             			for (players in Seed.players){
-             				if (('u'+Seed.queue_atkinc[k]["fromPlayerId"]) == players){ FROM = Seed.players[players]["n"];}
-             			}
-             		}
-             		else {
-             			for (var player in Seed.queue_atkinc[k]["players"]) { 
-             				if (marchType == 3 || marchType == 4) FROM = Seed.queue_atkinc[k]["players"][player]["n"];
-             			}
-             		}
-             		
-             		if (marchType == 2 && marchStatus == 2) marchType = 102;
-             		
-             		switch (marchType) {
-             		    case 1: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status="Transport";break;
-             		    case 2: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status="Reinforce";break;
-             		    case 3: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/scouting.jpg";status="Scout";break;
-             		    case 4: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status="Attack";break;
-             		    case 5: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status="Reassign";break;
-             		    case 100: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status="Returning";break;
-             		    case 102: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status="Encamped";break;
-             		} 
-             		
-             		z += '<TD width="10px"><img src='+ icon +'></td>';
-             		z += '<TD width="40px">'+ status +'</td>';
-             		z += '<TD>' + cityname + '</td>';
-             		z += '<TD>'+ marchtime +'</td>';
-             		z +='<TD>From:' + FROM + '</td>';
-             		if (Seed.queue_atkinc[k]["knightId"] !=0) z +='<TD>Knight:' + Seed.queue_atkinc[k]["knightCombat"] + '</td>';
-             		
-             		if (Seed.queue_atkinc[k]["gold"] > 0) z += '<TD>Gold:'+ addCommas(Seed.queue_atkinc[k]["gold"]) +'</td>';
-             		if (Seed.queue_atkinc[k]["resource1"] > 0) z += '<TD>Food: '+ addCommas(Seed.queue_atkinc[k]["resource1"]) +'</td>';
-      		 	if (Seed.queue_atkinc[k]["resource2"] > 0) z += '<TD>Wood: '+ addCommas(Seed.queue_atkinc[k]["resource2"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["resource3"] > 0) z += '<TD>Stone: '+ addCommas(Seed.queue_atkinc[k]["resource3"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["resource4"] > 0) z += '<TD>Ore: '+ addCommas(Seed.queue_atkinc[k]["resource4"]) +'</td>';
-      		    
-      		    if (Seed.queue_atkinc[k]["unit0Count"] > 0 && marchstatus == "going") z += '<TD???'+ addCommas(Seed.queue_atkinc[k]["unit0Count"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["unit0Return"] > 0 && marchstatus == "returning") z += '<TD>???: '+ addCommas(Seed.queue_atkinc[k]["unit0Return"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["unit1Count"] > 0 && marchstatus == "going") z += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkinc[k]["unit1Count"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["unit1Return"] > 0 && marchstatus == "returning") z += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkinc[k]["unit1Return"]) +'</td>';
-      		    
-      		    if (Seed.queue_atkinc[k]["unit2Count"] > 0 && marchstatus == "going") z += '<TD>Militiaman: '+ addCommas(Seed.queue_atkinc[k]["unit2Count"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["unit2Return"] > 0 && marchstatus == "returning") z += '<TD>Militiaman: '+ addCommas(Seed.queue_atkinc[k]["unit2Return"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["unit3Count"] > 0 && marchstatus =="going") z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unit3Count"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["unit3Return"] > 0 && marchstatus == "returning") z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unit3Return"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["unit4Count"] > 0 && marchstatus =="going") z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unit4Count"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["unit4Return"] > 0 && marchstatus == "returning") z += '<TD>Pikeman: '+ addCommas(Seed.queue_atkinc[k]["unit4Return"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["unit5Count"] > 0 && marchstatus =="going") z += '<TD>Pikeman: '+ addCommas(Seed.queue_atkinc[k]["unit5Count"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["unit5Return"] > 0 && marchstatus == "returning") z += '<TD>Swordsman: '+ addCommas(Seed.queue_atkinc[k]["unit5Return"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["unit6Count"] > 0 && marchstatus =="going") z += '<TD>Archer: '+ addCommas(Seed.queue_atkinc[k]["unit6Count"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["unit6Return"] > 0 && marchstatus == "returning") z += '<TD>Archer: '+ addCommas(Seed.queue_atkinc[k]["unit6Return"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["unit7Count"] > 0 && marchstatus =="going") z += '<TD>Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unit7Count"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["unit7Return"] > 0 && marchstatus == "returning") z += '<TD>Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unit7Return"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["unit8Count"] > 0 && marchstatus =="going") z += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unit8Count"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["unit8Return"] > 0 && marchstatus == "returning") z += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unit8Return"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["unit9Count"] > 0 && marchstatus =="going") z += '<TD>Supply Wagons: '+ addCommas(Seed.queue_atkinc[k]["unit9Count"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["unit9Return"] > 0 && marchstatus == "returning") z += '<TD>Supply Wagons: '+ addCommas(Seed.queue_atkinc[k]["unit9Return"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["unit10Count"] > 0 && marchstatus =="going") z += '<TD>Ballista: '+ addCommas(Seed.queue_atkinc[k]["unit10Count"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["unit10Return"] > 0 && marchstatus == "returning") z += '<TD>Ballista: '+ addCommas(Seed.queue_atkinc[k]["unit10Return"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["unit11Count"] > 0 && marchstatus =="going") z += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkinc[k]["unit11Count"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["unit11Return"] > 0 && marchstatus == "returning") z += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkinc[k]["unit11Return"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["unit12Count"] > 0 && marchstatus =="going") z += '<TD>Catapult: '+ addCommas(Seed.queue_atkinc[k]["unit12Count"]) +'</td>';
-      		    if (Seed.queue_atkinc[k]["unit12Return"] > 0 && marchstatus == "returning") z += '<TD>Catapult: '+ addCommas(Seed.queue_atkinc[k]["unit12Return"]) +'</td>';
-      		    
-      		    if (marchType == 3 && Seed.queue_atkinc[k]["unts"]["u3"] > 0) z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u3"]) +'</td>';
-      		    if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u1"] > 0) z += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u1"]) +'</td>';
-             		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u2"] > 0) z += '<TD>Militiaman: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u2"]) +'</td>';
-             		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u3"] > 0) z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u3"]) +'</td>';
-             		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u4"] > 0) z += '<TD>Pikeman: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u4"]) +'</td>';
-             		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u5"] > 0) z += '<TD>Swordsman: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u5"]) +'</td>';
-             		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u6"] > 0) z += '<TD>Archer: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u6"]) +'</td>';
-             		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u7"] > 0) z += '<TD>Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u7"]) +'</td>';
-             		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u8"] > 0) z += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u8"]) +'</td>';
-             		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u9"] > 0) z += '<TD>Supply Wagons: '+ SaddCommas(eed.queue_atkinc[k]["unts"]["u9"]) +'</td>';
-             		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u10"] > 0) z += '<TD>Ballista: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u10"]) +'</td>';
-             		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u11"] > 0) z += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u11"]) +'</td>';
-             		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u12"] > 0) z += '<TD>Catapult: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u12"]) +'</td>';
-             		z += '</tr>';
-       }
-       }
+       		if  (parseInt(Seed.queue_atkinc[k]["marchType"]) ==3 || parseInt(Seed.queue_atkinc[k]["marchType"])==4){
+                   now = unixTime();
+               		var marchType = parseInt(Seed.queue_atkinc[k]["marchType"]);
+               		var marchStatus = parseInt(Seed.queue_atkinc[k]["marchStatus"]);
+               		
+               		for (var i=0; i<Seed.cities.length;i++) {
+        	       			if (Seed.cities[i][0] == Seed.queue_atkinc[k]["toCityId"]) cityname = Seed.cities[i][1];
+               		}   
+               				
+               		if (Seed.queue_atkinc[k]["destinationUnixTime"] < (now) || marchStatus == 8) marchstatus = "returning";
+               		else marchstatus = "going";	
+               		
+               		if (marchStatus == 2) destinationUnixTime = now - Seed.queue_atkinc[k]["arrivalTime"]; //- now;
+               		if (marchStatus == 1) destinationUnixTime = Seed.queue_atkinc[k]["arrivalTime"] - now;
+               		else  destinationUnixTime = Seed.queue_atkinc[k]["arrivalTime"] - now;
+               		marchtime = timestr(destinationUnixTime, true)
+               			       					
+               		if (marchType != 3 && marchType !=4){
+               			for (players in Seed.players){
+               				if (('u'+Seed.queue_atkinc[k]["fromPlayerId"]) == players){ FROM = Seed.players[players]["n"];}
+               			}
+               		}
+               		else {
+               		for (players in Seed.players){
+               				if (marchType == 3 || marchType == 4){ 
+                        if (('u'+Seed.queue_atkinc[k]["pid"]) == players){ 
+                              FROM = Seed.players[players]["n"];
+                              FROMmight = Seed.players[players]["m"];
+                        }
+                      }
+               			}
+               		}
+               		
+               		if (marchType == 2 && marchStatus == 2) marchType = 102;
+               		
+               		switch (marchType) {
+               		    case 1: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status="Transport";break;
+               		    case 2: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status="Reinforce";break;
+               		    case 3: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/scouting.jpg";status="Scout";break;
+               		    case 4: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status="Attack";break;
+               		    case 5: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status="Reassign";break;
+               		    case 100: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status="Returning";break;
+               		    case 102: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status="Encamped";break;
+               		} 
+               		
+               		z += '<TD width="10px"><img src='+ icon +'></td>';
+               		z += '<TD width="40px">'+ status +'</td>';
+               		z += '<TD>' + cityname + '</td>';
+               		z += '<TD>'+ marchtime +'</td>';
+               		z +='<TD>From:' + FROM + '</td>';
+               		z +='<TD>Might:' + addCommas(FROMmight) + '</td>';
+               		z +='<TD>Knight:'+ Seed.queue_atkinc[k]["knt"]["cbt"]+'</td>';
+               		
+                   //if (Seed.queue_atkinc[k]["knightId"] !=0) z +='<TD>Knight:' + Seed.queue_atkinc[k]["knightCombat"] + '</td>';
+               		
+               	if (Seed.queue_atkinc[k]["gold"] > 0) z += '<TD>Gold:'+ addCommas(Seed.queue_atkinc[k]["gold"]) +'</td>';
+               	if (Seed.queue_atkinc[k]["resource1"] > 0) z += '<TD>Food: '+ addCommas(Seed.queue_atkinc[k]["resource1"]) +'</td>';
+        		 	  if (Seed.queue_atkinc[k]["resource2"] > 0) z += '<TD>Wood: '+ addCommas(Seed.queue_atkinc[k]["resource2"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["resource3"] > 0) z += '<TD>Stone: '+ addCommas(Seed.queue_atkinc[k]["resource3"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["resource4"] > 0) z += '<TD>Ore: '+ addCommas(Seed.queue_atkinc[k]["resource4"]) +'</td>';
+        		    
+        		    if (Seed.queue_atkinc[k]["unit0Count"] > 0 && marchstatus == "going") z += '<TD???'+ addCommas(Seed.queue_atkinc[k]["unit0Count"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["unit0Return"] > 0 && marchstatus == "returning") z += '<TD>???: '+ addCommas(Seed.queue_atkinc[k]["unit0Return"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["unit1Count"] > 0 && marchstatus == "going") z += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkinc[k]["unit1Count"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["unit1Return"] > 0 && marchstatus == "returning") z += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkinc[k]["unit1Return"]) +'</td>';
+        		    
+        		    if (Seed.queue_atkinc[k]["unit2Count"] > 0 && marchstatus == "going") z += '<TD>Militiaman: '+ addCommas(Seed.queue_atkinc[k]["unit2Count"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["unit2Return"] > 0 && marchstatus == "returning") z += '<TD>Militiaman: '+ addCommas(Seed.queue_atkinc[k]["unit2Return"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["unit3Count"] > 0 && marchstatus =="going") z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unit3Count"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["unit3Return"] > 0 && marchstatus == "returning") z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unit3Return"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["unit4Count"] > 0 && marchstatus =="going") z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unit4Count"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["unit4Return"] > 0 && marchstatus == "returning") z += '<TD>Pikeman: '+ addCommas(Seed.queue_atkinc[k]["unit4Return"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["unit5Count"] > 0 && marchstatus =="going") z += '<TD>Pikeman: '+ addCommas(Seed.queue_atkinc[k]["unit5Count"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["unit5Return"] > 0 && marchstatus == "returning") z += '<TD>Swordsman: '+ addCommas(Seed.queue_atkinc[k]["unit5Return"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["unit6Count"] > 0 && marchstatus =="going") z += '<TD>Archer: '+ addCommas(Seed.queue_atkinc[k]["unit6Count"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["unit6Return"] > 0 && marchstatus == "returning") z += '<TD>Archer: '+ addCommas(Seed.queue_atkinc[k]["unit6Return"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["unit7Count"] > 0 && marchstatus =="going") z += '<TD>Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unit7Count"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["unit7Return"] > 0 && marchstatus == "returning") z += '<TD>Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unit7Return"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["unit8Count"] > 0 && marchstatus =="going") z += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unit8Count"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["unit8Return"] > 0 && marchstatus == "returning") z += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unit8Return"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["unit9Count"] > 0 && marchstatus =="going") z += '<TD>Supply Wagons: '+ addCommas(Seed.queue_atkinc[k]["unit9Count"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["unit9Return"] > 0 && marchstatus == "returning") z += '<TD>Supply Wagons: '+ addCommas(Seed.queue_atkinc[k]["unit9Return"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["unit10Count"] > 0 && marchstatus =="going") z += '<TD>Ballista: '+ addCommas(Seed.queue_atkinc[k]["unit10Count"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["unit10Return"] > 0 && marchstatus == "returning") z += '<TD>Ballista: '+ addCommas(Seed.queue_atkinc[k]["unit10Return"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["unit11Count"] > 0 && marchstatus =="going") z += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkinc[k]["unit11Count"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["unit11Return"] > 0 && marchstatus == "returning") z += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkinc[k]["unit11Return"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["unit12Count"] > 0 && marchstatus =="going") z += '<TD>Catapult: '+ addCommas(Seed.queue_atkinc[k]["unit12Count"]) +'</td>';
+        		    if (Seed.queue_atkinc[k]["unit12Return"] > 0 && marchstatus == "returning") z += '<TD>Catapult: '+ addCommas(Seed.queue_atkinc[k]["unit12Return"]) +'</td>';
+        		    
+        		    if (marchType == 3 && Seed.queue_atkinc[k]["unts"]["u3"] > 0) z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u3"]) +'</td>';
+        		    if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u1"] > 0) z += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u1"]) +'</td>';
+               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u2"] > 0) z += '<TD>Militiaman: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u2"]) +'</td>';
+               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u3"] > 0) z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u3"]) +'</td>';
+               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u4"] > 0) z += '<TD>Pikeman: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u4"]) +'</td>';
+               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u5"] > 0) z += '<TD>Swordsman: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u5"]) +'</td>';
+               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u6"] > 0) z += '<TD>Archer: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u6"]) +'</td>';
+               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u7"] > 0) z += '<TD>Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u7"]) +'</td>';
+               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u8"] > 0) z += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u8"]) +'</td>';
+               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u9"] > 0) z += '<TD>Supply Wagons: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u9"]) +'</td>';
+               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u10"] > 0) z += '<TD>Ballista: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u10"]) +'</td>';
+               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u11"] > 0) z += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u11"]) +'</td>';
+               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u12"] > 0) z += '<TD>Catapult: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u12"]) +'</td>';
+               		z += '</tr>';
+              } 
+         } 
      }
      z += '</table>';
      t.marchDiv.innerHTML = z;
      	 	     
-    
      t.displayTimer = setTimeout (t.showIncoming, 500);  
    },   
       
@@ -4467,7 +4475,7 @@ Tabs.Marches = {
       var status;
       var number = 0;
      
-     var  m = '<TABLE id=pdmarches cellpadding=10 width=100% height=0% class=pbTab>';
+     var  m = '<TABLE id=pdmarches cellSpacing=10 width=100% height=0% class=pbTab>';
           
      for (var c=0; c< Seed.cities.length;c++) {
      		cityname = Seed.cities[c][1];
