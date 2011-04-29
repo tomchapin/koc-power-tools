@@ -6,7 +6,7 @@
 // @icon		       http://koc.comuf.com/logo.png
 // ==/UserScript==
 
-var Version = '20110424a';
+var Version = '20110429a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
