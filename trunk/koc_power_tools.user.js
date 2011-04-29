@@ -4404,8 +4404,8 @@ Tabs.Marches = {
                		z += '<TD>'+ marchtime +'</td>';
                		z +='<TD>From:' + FROM + '</td>';
                		z +='<TD>Might:' + addCommas(FROMmight) + '</td>';
-               		z +='<TD>Knight:'+ Seed.queue_atkinc[k]["knt"]["cbt"]+'</td>';
-               		
+               		if (Seed.queue_atkinc[k]["knt"] != undefined) z +='<TD>Knight:'+ Seed.queue_atkinc[k]["knt"]["cbt"]+'</td>';
+               		 //alert(Seed.queue_atkinc.toSource());
                    //if (Seed.queue_atkinc[k]["knightId"] !=0) z +='<TD>Knight:' + Seed.queue_atkinc[k]["knightCombat"] + '</td>';
                		
                	if (Seed.queue_atkinc[k]["gold"] > 0) z += '<TD>Gold:'+ addCommas(Seed.queue_atkinc[k]["gold"]) +'</td>';
