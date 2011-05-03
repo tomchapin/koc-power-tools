@@ -2050,7 +2050,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
            t.friendEta = false;
         for (var c=0; c<p.cities.length; c++){
           t.dat.push ([p.displayName, parseInt(p.might), p.officerType, parseInt(p.numCities), parseInt(p.cities[c].tileLevel),
-               parseInt(p.cities[c].xCoord), parseInt(p.cities[c].yCoord), p.cities[c].cityName, 0, 1]);
+               parseInt(p.cities[c].xCoord), parseInt(p.cities[c].yCoord), p.cities[c].cityName, 0, 1,0,p.userId]);
         }
         t.setDistances (Cities.cities[0].x, Cities.cities[0].y);
         t.ModelCity=Cities.cities[0];
@@ -2310,7 +2310,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
            t.friendEta = false;
         for (var c=0; c<p.cities.length; c++){
           t.dat.push ([p.displayName, parseInt(p.might), p.officerType, parseInt(p.numCities), parseInt(p.cities[c].tileLevel),
-               parseInt(p.cities[c].xCoord), parseInt(p.cities[c].yCoord), p.cities[c].cityName, 0, rslt.data[p.userId]?1:0,'NA']);
+               parseInt(p.cities[c].xCoord), parseInt(p.cities[c].yCoord), p.cities[c].cityName, 0, rslt.data[p.userId]?1:0,'NA',p.userId]);
         }
       }
     }
@@ -2348,7 +2348,7 @@ return 0;
          +'</td><TD class=xxtab>'+ (t.dat[i][9]?'<SPAN class=boldDarkRed>ONLINE</span>':'') +'</td><TD class=xxtab>'+ t.dat[i][7] +'</td><TD align=right class=xxtab>'+ t.dat[i][4] 
          +'</td><TD align=center class=xxtab><DIV onclick="ptGotoMap('+ t.dat[i][5] +','+ t.dat[i][6] +')"><A>'+ t.dat[i][5] +','+ t.dat[i][6] +'</a></div></td>\
             <TD align=right class=xxtab style="padding-right:20px;">'+ t.dat[i][8].toFixed(2) +'</td>\
-         </td><TD  nowrap class=xxtab>'+ (t.dat[i][10]?'<SPAN>'+ (t.dat[i][10]>0?timestr(t.dat[i][10],1):'NA') +'</span>':'<SPAN>NA</span>') +'</td></tr>';
+         </td><TD  nowrap class=xxtab>'+ (t.dat[i][10]?'<SPAN>'+ (t.dat[i][10]>0?timestr(t.dat[i][10],1):'NA') +'</span>':'<SPAN>NA</span>') +'<td class=xxtab><SPAN onclick="PCplo(this, \''+ t.dat[i][11] +'\')"><A>last Login</a></span><td></tr>';
     }
     var tbody = document.getElementById('allBody');
     tbody.style.maxHeight = '';
@@ -2424,7 +2424,8 @@ return 0;
         <TD id=clickCol4 onclick="PTalClickSort(this)" class=clickable><A><DIV>Lvl</a></div></td>\
         <TD id=clickCol5 onclick="PTalClickSort(this)" class=clickable><A><DIV>Coords</a></div></td>\
         <TD id=clickCol8 onclick="PTalClickSort(this)" class=clickable><A><DIV>Distance</a></div></td>\
-        <TD id=clickCol10 onclick="PTalClickSort(this)" class=clickable><A><DIV>Eta</a></div></td></tr></thead>\
+        <TD id=clickCol10 onclick="PTalClickSort(this)" class=clickable><A><DIV>Eta</a></div></td>\
+        <TD class=clickable><A><DIV>Last Login</a></div></td></tr></thead>\
       <TBODY id=allBody style="background-color:#ffffff;"></tbody></table></div>';
       
     document.getElementById('allListOut').innerHTML = m; //style="top:670px; left:0px; position:absolute;
@@ -2466,7 +2467,8 @@ return 0;
         <TD id=clickCol4 onclick="PTalClickSort(this)" class=clickable><A><DIV>Lvl</a></div></td>\
         <TD id=clickCol5 onclick="PTalClickSort(this)" class=clickable><A><DIV>Coords</a></div></td>\
         <TD id=clickCol8 onclick="PTalClickSort(this)" class=clickable><A><DIV>Distance</a></div></td>\
-        <TD id=clickCol10 onclick="PTalClickSort(this)" class=clickable><A><DIV>Eta</a></div></td></tr></thead>\
+        <TD id=clickCol10 onclick="PTalClickSort(this)" class=clickable><A><DIV>Eta</a></div></td>\
+		<TD class=clickable><A><DIV>Last Login</a></div></td></tr></thead>\
       <TBODY id=allBody style="background-color:#ffffff;"></tbody></table></div>\
       <DIV  width:100%; style="top:670px; left:0px; position:absolute; background-color:#ffffff; border-top:1px solid; margin-top:8px; color:#700; font-weight:bold;">';
     document.getElementById('allListOut').innerHTML = m;  //style="top:670px; left:0px; position:absolute;
@@ -4734,17 +4736,20 @@ Tabs.Marches = {
     	 }    
     	 
     	 
-    	 new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/undefend.php" + unsafeWindow.g_ajaxsuffix, {
+    	 new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/undefend.php" + unsafeWindow.g_ajaxsuffix, {
     	     method: "post",
     	     parameters: params,
-    	     onSuccess: function (rslt) {
+    	     onSuccess: function (transport) {
+    	       var rslt = eval("("+transport.responseText+")");
+    	       alert(rslt.returnUnixTime);
     	       var march = unsafeWindow.seed.queue_atkp["city" + params.cid]["m" + params.mid];
     	       march.marchStatus = 8;
     	       var marchtime = parseInt(march.returnUnixTime) - parseInt(march.destinationUnixTime);
+    	       //var marchtime = parseInt(march.destinationUnixTime) - parseInt(march.returnUnixTime);
     	       var ut = unixTime();
     	       if (unsafeWindow.seed.playerEffects.returnExpire > unixtime())
     	         marchtime *= 0.5
-    	       march.returnUnixTime = marchtime;
+    	       march.returnUnixTime = ut; //=+ ( parseInt(march.marchUnixTime) - parseInt(march.destinationUnixTime));
     	       march.destinationUnixTime = ut;
     	       march.marchUnixTime = ut - marchtime;
     	       if (notify != null)
