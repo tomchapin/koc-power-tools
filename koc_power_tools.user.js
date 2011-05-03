@@ -6,7 +6,7 @@
 // @icon		       http://koc.comuf.com/logo.png
 // ==/UserScript==
 
-var Version = '20110429b';
+var Version = '20110429a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -1854,6 +1854,8 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     unsafeWindow.PTpl2 = t.clickedPlayerLeaderboard2;
     unsafeWindow.PTalClickPrev = t.eventListPrev;
     unsafeWindow.PTalClickNext = t.eventListNext;
+    unsafeWindow.PCplo = t.clickedPlayerGetLastLogin;
+    Lastlogin=0;
     t.show();
   },
  
@@ -1905,13 +1907,10 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
           <TR><TD class=xtab>OR: </td><TD class=xtab> Enter all or part of an alliance name: &nbsp;</td>\
             <TD class=xtab><INPUT id=allAllName type=text /> &nbsp; <INPUT id=allSubmit type=submit value="Find Alliance" /></td>\
             <TD class="xtab ptErrText"><SPAN id=ptallErr></span></td></tr>\
-           <TR><TD class=xtab>OR: </td><TD class=xtab> &nbsp;\
-            <INPUT align=left id=allListSubmit type=submit value="List Alliances" /></td>\
-            <TD class=xtab><INPUT align=right id=allGotoPage type=submit value="Page" />\
-             <INPUT align=right id=idPageNum type="text" value='+t.curPage+' size=4 />\
-             <span align=left id=idMaxPageNum ></span>\
-             <INPUT align=left id=idMyAllSubmit type=submit value="'+ getMyAlliance()[1] +'"/>\
-             <span align=right <b>Model ETA with: </b></span></td>\
+           <TR><TD class=xtab></td><TD class=xtab> &nbsp;\
+            </td>\
+            <TD class=xtab><INPUT align=right id=idMyAllSubmit type=submit value="'+ getMyAlliance()[1] +'"/>\
+             <TD class=xtab><span align=right <b>Model ETA with: </b></span></td>\
              <TD class=xtab ><div><select id="idFindETASelect">\
         <option value="0,250" > -- Select -- </option>\
         <option value="0,180" > Supply </option>\
@@ -1934,11 +1933,11 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       document.getElementById('playSubmit').addEventListener ('click', t.eventPlayerSubmit, false);
       document.getElementById('allAllName').addEventListener ('focus', function (){document.getElementById('ptallErr').innerHTML='';}, false);
       document.getElementById('allPlayName').addEventListener ('focus', function (){document.getElementById('ptplayErr').innerHTML='';}, false);
-      document.getElementById('allListSubmit').addEventListener ('click', t.eventListSubmit, false);
-      document.getElementById('allGotoPage').addEventListener ('click', t.gotoPage, false);
+      //document.getElementById('allListSubmit').addEventListener ('click', t.eventListSubmit, false);
+      //document.getElementById('allGotoPage').addEventListener ('click', t.gotoPage, false);
       document.getElementById('idMyAllSubmit').addEventListener ('click', t.showMyAlliance, false);
       document.getElementById('idFindETASelect').addEventListener ('click', t.handleEtaSelect, false);
-      document.getElementById('allGotoPage').disabled = true;
+      //document.getElementById('allGotoPage').disabled = true;
       document.getElementById('idFindETASelect').disabled = true;
       t.ModelCity=Cities.cities[0];
       t.curPage = 0;
@@ -1996,7 +1995,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       m += '<TR '+ cl +'valign=top><TD>'+ u.genderAndName +'</td><TD align=right>'+ addCommasInt(u.might) +'</td>\
           <TD>'+ (rslt.data[u.userId]?"&nbsp;<SPAN class=boldDarkRed>ONLINE</span>":"") +'</td>\
           <TD align=center><A target="_tab" href="http://www.facebook.com/profile.php?id='+ u.fbuid +'">profile</a></td>\
-          <TD><SPAN onclick="PTpd(this, '+ u.userId +')"><A>details</a> &nbsp; <BR></span><SPAN onclick="PTpl2(this, \''+ u.userId +'\')"><A>leaderboard</a></span></td></tr>';
+          <TD><SPAN onclick="PTpd(this, '+ u.userId +')"><A>details</a> &nbsp; <BR></span><SPAN onclick="PTpl2(this, \''+ u.userId +'\')"><A>leaderboard</a><BR></span><SPAN onclick="PCplo(this, \''+ u.userId +'\')"><A>last Login</a></span></td></tr>';
     }
     m += '</table></div>';
     document.getElementById('allListOut').innerHTML = m;
@@ -2021,10 +2020,17 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     var t = Tabs.AllianceList;
     span.onclick = '';
     span.innerHTML = "fetching leaderboard info ...";
-    t.fetchLeaderboard (uid, function (r) {t.gotPlayerLeaderboard2(r, span)});
+    t.fetchLeaderboard (uid, function (r) {t.gotPlayerLeaderboard2(r, span,uid)});
   },
+  
+  clickedPlayerGetLastLogin : function (span, uid){
+     var t = Tabs.AllianceList;
+     span.onclick = '';
+     span.innerHTML = "fetching login date ...";
+     t.fetchPlayerLastLogin (uid, function (r) {t.gotPlayerLastLogin(r, span)});
+   },
 
-  gotPlayerLeaderboard2 : function (rslt,span){
+  gotPlayerLeaderboard2 : function (rslt,span,uid){
     var t = Tabs.AllianceList;
     if (!rslt.ok){
       span.innerHTML = rslt.errorMsg;
@@ -2049,7 +2055,9 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
         t.setDistances (Cities.cities[0].x, Cities.cities[0].y);
         t.ModelCity=Cities.cities[0];
         t.setEta();
-        t.displayPlayer ();
+        t.fetchPlayerLastLogin (uid, function (r) {t.displayPlayer(p.allianceName,r)});
+        //t.fetchPlayerLastLogin();
+        //t.displayPlayer (p.allianceId);
   },
   
   
@@ -2417,11 +2425,9 @@ return 0;
         <TD id=clickCol5 onclick="PTalClickSort(this)" class=clickable><A><DIV>Coords</a></div></td>\
         <TD id=clickCol8 onclick="PTalClickSort(this)" class=clickable><A><DIV>Distance</a></div></td>\
         <TD id=clickCol10 onclick="PTalClickSort(this)" class=clickable><A><DIV>Eta</a></div></td></tr></thead>\
-      <TBODY id=allBody style="background-color:#ffffff;"></tbody></table></div>\
-      <DIV  width:100%; style="top:670px; left:0px; position:absolute; background-color:#ffffff; border-top:1px solid; margin-top:8px; color:#700; font-weight:bold;">\
-        <TABLE width=100%><TR><TD class=xtab>Data is from the leaderboard and may be up to 24 hours old!</td>\
-          <TD class=xtab align=right>Click on column headers to sort</td></tr></table></div>';
-    document.getElementById('allListOut').innerHTML = m;//style="top:670px; left:0px; position:absolute;
+      <TBODY id=allBody style="background-color:#ffffff;"></tbody></table></div>';
+      
+    document.getElementById('allListOut').innerHTML = m; //style="top:670px; left:0px; position:absolute;
     document.getElementById('altInput').innerHTML = '<HR><TABLE width=100% cellpaddding=0><TR align=center>\
         <TD class=xtab>Show distance from: &nbsp; X: <INPUT size=2 type=text id=plyrX /> Y: <INPUT size=2 type=text id=plyrY /> &nbsp; Or, choose city: <span id=dmcoords></span></td></tr></table>';
     document.getElementById('clickCol'+t.sortColNum).className = 'clickable clickableSel';
@@ -2431,7 +2437,7 @@ return 0;
     document.getElementById('idFindETASelect').disabled = false;
   },
   
-  displayPlayer : function (){
+  displayPlayer : function (allName,rslt){
     var t = Tabs.AllianceList;
     function alClickSort (e){
       var t = Tabs.AllianceList;
@@ -2448,6 +2454,8 @@ return 0;
     var m = '<STYLE>.clickable{background-color:#ddd; border:2px outset; border-color:#555; padding-left:5px; padding-right:5px}\
             .clickableSel{background-color:#ffffcc;}\
             .xxtab{background-color:none; padding-left:5px; padding-right:5px;} </style>\
+            <DIV class=ptstat ><TABLE id=tabAllMembers cellpadding=0  width=100%><TR font-weight:bold"><TD class=xtab>Alliance: '+ allName +'</td>\
+              <TD class=xtab width=80% align=center>Last login: <SPAN id=lastlogin>'+  rslt.playerInfo.lastLogin+'</span></td><TD class=xtab align=right></td></tr></table></div>\
       <div style="max-height:470px; height:470px; overflow-y:auto;"><TABLE id=tabAllMembers align=center cellpadding=0 cellspacing=0><THEAD style="overflow-y:hidden;">\
       <TR style="font-weight:bold"><TD id=clickCol0 onclick="PTalClickSort(this)" class=clickable><A><DIV>Player</div></a></td>\
         <TD id=clickCol1 onclick="PTalClickSort(this)" class=clickable align=center><A><DIV>Might</a></div></td>\
@@ -2460,10 +2468,8 @@ return 0;
         <TD id=clickCol8 onclick="PTalClickSort(this)" class=clickable><A><DIV>Distance</a></div></td>\
         <TD id=clickCol10 onclick="PTalClickSort(this)" class=clickable><A><DIV>Eta</a></div></td></tr></thead>\
       <TBODY id=allBody style="background-color:#ffffff;"></tbody></table></div>\
-      <DIV  width:100%; style="top:670px; left:0px; position:absolute; background-color:#ffffff; border-top:1px solid; margin-top:8px; color:#700; font-weight:bold;">\
-        <TABLE width=100%><TR><TD class=xtab>Data is from the leaderboard and may be up to 24 hours old!</td>\
-          <TD class=xtab align=right>Click on column headers to sort</td></tr></table></div>';
-    document.getElementById('allListOut').innerHTML = m;//style="top:670px; left:0px; position:absolute;
+      <DIV  width:100%; style="top:670px; left:0px; position:absolute; background-color:#ffffff; border-top:1px solid; margin-top:8px; color:#700; font-weight:bold;">';
+    document.getElementById('allListOut').innerHTML = m;  //style="top:670px; left:0px; position:absolute;
     document.getElementById('altInput').innerHTML = '<HR><TABLE width=100% cellpaddding=0><TR align=center>\
         <TD class=xtab>Show distance from: &nbsp; X: <INPUT size=2 type=text id=plyrX /> Y: <INPUT size=2 type=text id=plyrY /> &nbsp; Or, choose city: <span id=dmcoords></span></td></tr></table>';
     document.getElementById('clickCol'+t.sortColNum).className = 'clickable clickableSel';
@@ -2649,6 +2655,39 @@ ajax/getOnline.php:
       },
     });
   },
+  
+  fetchPlayerLastLogin : function (uid, notify){
+      var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+      params.pid = uid;
+      new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/viewCourt.php" + unsafeWindow.g_ajaxsuffix, {
+        method: "post",
+        parameters: params,
+        onSuccess: function (rslt) {
+          notify (rslt);
+        },
+        onFailure: function (rslt) {
+          notify ({errorMsg:'AJAX error'});
+        },
+      });
+    },
+    
+    gotPlayerLastLogin : function (rslt, span){
+        var t = Tabs.AllianceList;
+        if (!rslt.ok){
+          span.innerHTML = rslt.errorMsg;
+          return;
+        }
+    
+        var p = rslt.playerInfo;
+        var lastLogin = rslt.playerInfo.lastLogin;
+    
+        if (lastLogin) {
+          m = '<span style="color:black">Last login: '+lastLogin+'</span>';
+        } else {
+           m = '<span style="color:red">No login date found: '+lastLogin+'</span>';
+        }
+        span.innerHTML = m + '';
+      },
 
   ModelCity : {},
 
@@ -4353,7 +4392,7 @@ Tabs.Marches = {
        
        for (k in Seed.queue_atkinc) {
           if(Seed.queue_atkinc.length !=0){
-       		if  (parseInt(Seed.queue_atkinc[k]["marchType"]) ==3 || parseInt(Seed.queue_atkinc[k]["marchType"])==4){
+       		//if  (parseInt(Seed.queue_atkinc[k]["marchType"]) ==3 || parseInt(Seed.queue_atkinc[k]["marchType"])==4){
                    now = unixTime();
                		var marchType = parseInt(Seed.queue_atkinc[k]["marchType"]);
                		var marchStatus = parseInt(Seed.queue_atkinc[k]["marchStatus"]);
@@ -4457,7 +4496,7 @@ Tabs.Marches = {
                		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u12"] > 0) z += '<TD>Catapult: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u12"]) +'</td>';
                		z += '</tr>';
               } 
-         } 
+        // } 
      }
      z += '</table>';
      t.marchDiv.innerHTML = z;
@@ -4476,6 +4515,7 @@ Tabs.Marches = {
       var number = 0;
      
      var  m = '<TABLE id=pdmarches cellSpacing=10 width=100% height=0% class=pbTab>';
+     m += '<TD><INPUT id=TEST type=submit value="TEST"></td>';
           
      for (var c=0; c< Seed.cities.length;c++) {
      		cityname = Seed.cities[c][1];
@@ -4603,6 +4643,36 @@ Tabs.Marches = {
   	}
   	m += '</table>';
   	t.marchDiv.innerHTML = m;
+  	
+  	document.getElementById('TEST').addEventListener('click', function(){
+		
+		var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+  			new AjaxRequest(unsafeWindow.g_ajaxpath + "/fb/e2/src/main_src.php?g=&y=0&n=nan001&l=nl_NL&messagebox=&standalone=0&res=1&iframe=1&lang=en&ts=1304248288.7067&s=250&appBar=" + unsafeWindow.g_ajaxsuffix, {
+  			    method: "POST",
+  			    parameters: params,
+  			    onSuccess: function (rslt) {
+  			        //rslt = eval("(" + message + ")");
+  			        var mainSrcHTMLCode = rslt.responseText;
+  			    	//var mainSrcHTMLCode; // get and set this by pulling in the main_src.php file via AJAX
+  			    	var myregexp = /var seed=\{.*?\};/;
+  			    	var match = myregexp.exec(mainSrcHTMLCode);
+  			    	
+  			    	if (match != null) {
+  			    	result = match[0];
+  			    	result = result.substr(4);
+  			    	var seed;
+  			    	eval(result);
+	  			    alert(seed.toSource());
+	  			    unsafeWindow.document.seed = seed;
+  			    	}
+  			    },
+  			    onFailure: function () {
+  			      if (notify != null)
+  			        notify(rslt.errorMsg);
+  			    },
+  			});
+	
+  	}, false);
   		     
     t.displayTimer = setTimeout (t.showMarches, 500);  
     },
