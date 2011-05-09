@@ -4661,12 +4661,13 @@ Tabs.Marches = {
   			    	
   			    	if (match != null) {
   			    	result = match[0];
-  			    	result = result.substr(4);
-  			    	var seed;
-  			    	eval(result);
-	  			    alert(seed.toSource());
-	  			    unsafeWindow.document.seed = seed;
-  			    	}
+  			    	result = result.substr(9);
+  			    	//eval(result);
+	  			    result = new Array(result);
+	  			    unsafeWindow.seed = result;
+	  			    Seed = unsafeWindow.seed;
+	  			    logit(Seed);
+  				   	}
   			    },
   			    onFailure: function () {
   			      if (notify != null)
@@ -7076,6 +7077,20 @@ t.state = null;
       t.eOut.appendChild(document.createElement('hr'));
     }
   },
+};
+
+DoUnsafeWindow:function(func, execute_by_embed) {
+if(this.isChrome || execute_by_embed) {
+var scr=document.createElement('script');
+scr.innerHTML=func;
+document.body.appendChild(scr);
+} else {
+try {
+eval("unsafeWindow."+func);
+} catch (error) {
+this.Log("A javascript error has occurred when executing a function via DoUnsafeWindow. Error description: "+error.description);
+}
+}
 };
 
 ptStartup ();
