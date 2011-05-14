@@ -56,6 +56,7 @@ TODO: New Marches tab
 
     
 var Options = {
+  includeCity	: true,
   includeMarching:true,
   includeTraining:false,
   encRemaining : true,
@@ -222,7 +223,6 @@ if (TEST_WIDE){
   battleReports.init ();
   CoordBox.init ();
   tabManager.init (mainPop.getMainDiv());
-  AttackDialog.init();
   GMTclock.init ();
   AudioAlert.init();
   
@@ -4452,13 +4452,20 @@ if (TEST_WIDE)
       str += _row ('Stone', rows[3]);
       str += _row ('Ore', rows[4]);
       str += '<TR><TD colspan=10><BR></td></tr>';
-      for (r=1; r<13; r++){
+	  for (r=1; r<13; r++){
         rows[r] = [];
-        for(i=0; i<Cities.numCities; i++) {
-          cityID = 'city'+ Cities.cities[i].id;
-          rows[r][i] = parseInt(Seed.units[cityID]['unt'+r]);
+		for(i=0; i<Cities.numCities; i++) {
+            rows[r][i] = 0;
         }
-      }
+	  }
+	  if (Options.includeCity){
+        for (r=1; r<13; r++){
+          for(i=0; i<Cities.numCities; i++) {
+            cityID = 'city'+ Cities.cities[i].id;
+            rows[r][i] = parseInt(Seed.units[cityID]['unt'+r]);
+          }
+        }
+	  }
       if (Options.includeMarching){
         for (var i=0; i<13; i++)
           rows[i][Cities.numCities] = march.marchUnits[i];
@@ -4572,12 +4579,14 @@ if (TEST_WIDE)
           row[i] = timestr(totTime);
       }    
       str += _row ('WallQue', row, true);
-      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><BR><INPUT type=CHECKBOX id=idCheck'+ (Options.includeMarching?' CHECKED':'') +'>Include Marching Troops/Resources</td></tr>';
-      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=ptoverIncTraining'+ (Options.includeTraining?' CHECKED':'') +'>Include troops in training</td></tr>';
+      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><BR><INPUT type=CHECKBOX id=ptoverOriginal'+ (Options.includeCity?' CHECKED':'') +'>Show Troops in City</td></tr>';
+      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=idCheck'+ (Options.includeMarching?' CHECKED':'') +'>Show Marching Troops/Resources</td></tr>';
+      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=ptoverIncTraining'+ (Options.includeTraining?' CHECKED':'') +'>Show troops in training</td></tr>';
       str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=ptOverOver'+ (Options.overviewAllowOverflow?' CHECKED':'') +'>Allow width overflow \
          &nbsp; &nbsp; FONT SIZE: '+ htmlSelector ({9:9, 10:10, 11:11, 12:12}, Options.overviewFontSize, 'id=ptoverfont') +'</td></tr>';
       str += "</table></div>";
       Tabs.Overview.cont.innerHTML = str;
+      document.getElementById('ptoverOriginal').addEventListener('click', e_clickEnableTroops, false);
       document.getElementById('idCheck').addEventListener('click', e_clickEnableMarch, false);
       document.getElementById('ptoverIncTraining').addEventListener('click', e_clickEnableTraining, false);
       document.getElementById('ptOverOver').addEventListener('click', e_allowWidthOverflow, false);
@@ -4588,6 +4597,11 @@ if (TEST_WIDE)
     }   
     t.displayTimer = setTimeout (t.show, 5000);
 
+    function e_clickEnableTroops (){
+      var t = Tabs.Overview;
+      Options.includeCity = document.getElementById('ptoverOriginal').checked;
+      t.show ();
+    }
     function e_clickEnableMarch (){
       var t = Tabs.Overview;
       Options.includeMarching = document.getElementById('idCheck').checked;
@@ -4842,12 +4856,10 @@ Tabs.Marches = {
       var t = Tabs.Marches;
       t.marchDiv.innerHTML =null;	
       var updatemarch = Seed.queue_atkp;
-      var icon;
-      var status;
-      var number = 0;
+      var icon, status, type
      
      var  m = '<TABLE id=pdmarches cellSpacing=10 width=100% height=0% class=pbTab>';
-     m += '<TD><INPUT id=TEST type=submit value="Get Seed"></td>';
+     m += '<TR><TD colspan=4><INPUT id=TEST type=submit value="Get Seed"></td></tr>';
           
      for (var c=0; c< Seed.cities.length;c++) {
      		cityname = Seed.cities[c][1];
@@ -4855,7 +4867,7 @@ Tabs.Marches = {
      		var cityTo;    
     		number=0;	
     		
-    		if (Seed.queue_atkp[cityID].length !=0) m+= '<TR><TD colspan=4 style=\'background: #99CCFF;\' align=center><B>' + cityname +': </b></td></tr>';
+    		if (Seed.queue_atkp[cityID].length !=0) m+= '<TR><TD colspan=5 style=\'background: #99CCFF;\' align=center><B>' + cityname +': </b></td></tr>';
   		    for (k in Seed.queue_atkp[cityID]){
   				 if (Seed.queue_atkp[cityID].length !=0) {
   				    var marchID = new String(k);
@@ -4880,20 +4892,20 @@ Tabs.Marches = {
   				    
   				    if (Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) && marchType == 2) marchtime = timestr(encampedUnixTime, true);
   				  
-  				    if (Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) || marchStatus == 8) marchstatus = "returning";
-  				    else marchstatus = "going";
+  				    if (Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) || marchStatus == 8) type = "returning";
+  				    else type = "going";
   				   
-  				    if (marchstatus =="returning" && marchType == 2 && Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) && marchStatus != 2) marchtime = timestr(returnUnixTime, true);
-  				    if (marchstatus =="returning" && marchType == 4 && Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) && marchStatus == 2) marchtime = timestr(returnUnixTime, true);
+  				    if (type =="returning" && marchType == 2 && Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) && marchStatus != 2) marchtime = timestr(returnUnixTime, true);
+  				    if (type =="returning" && marchType == 4 && Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) && marchStatus == 2) marchtime = timestr(returnUnixTime, true);
   				    if (marchStatus == 2 && Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) && marchType !=2) marchtime = timestr(returnUnixTime, true);
   				    if (marchStatus == 8 && Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now)) marchtime = timestr(returnUnixTime, true);
   				    if (parseInt(Seed.queue_atkp[cityID][k]["marchType"]) == 4 && marchStatus == 2) marchtime = timestr(destinationUnixTime, true);;
   				    
   				    
-  				    if (marchstatus =="returning" && marchType != 2) marchType = 100;
-  				    if (marchstatus =="returning" && marchType == 2 && marchStatus == 2) marchType = 102;
+  				    if (type =="returning" && marchType != 2) marchType = 100;
+  				    if (type =="returning" && marchType == 2 && marchStatus == 2) marchType = 102;
   				    
-  				    if (marchstatus =="returning" && marchType == 2 && Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) && marchStatus != 2) marchType = 100;
+  				    if (type =="returning" && marchType == 2 && Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) && marchStatus != 2) marchType = 100;
   				    
   				    if (parseInt(Seed.queue_atkp[cityID][k]["marchType"]) == 4 && marchStatus == 2) {
   						marchType = 102;
@@ -4916,8 +4928,8 @@ Tabs.Marches = {
   				    	}
   				    } else knight = null;
   				    
-  				    m += '<TR><TD width=10px >'+ number +'</td>';
-  				   if (status=="Encamped")
+  				    m += '<TR><TD>'+ number +'</td>';
+  				   if (status=="Encamped" && !t.isMyself(Seed.queue_atkp[cityID][k].fromPlayerId))
 						m += '<TD><A onclick="r8x6Home('+ marchID +')"><img src='+ icon +'></a></td>';
   				    else if(status=='Returning')
 						m += '<TD><img src='+ icon +'></td>';
@@ -4944,33 +4956,34 @@ Tabs.Marches = {
   				    if (Seed.queue_atkp[cityID][k]["resource3"] > 0) m += '<TD>Stone: '+ addCommas(Seed.queue_atkp[cityID][k]["resource3"]) +'</td>';
   				    if (Seed.queue_atkp[cityID][k]["resource4"] > 0) m += '<TD>Ore: '+ addCommas(Seed.queue_atkp[cityID][k]["resource4"]) +'</td>';
   				    
-  				    if (Seed.queue_atkp[cityID][k]["unit0Count"] > 0 && marchstatus == "going") m += '<TD???'+ addCommas(Seed.queue_atkp[cityID][k]["unit0Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit0Return"] > 0 && marchstatus == "returning") m += '<TD>???: '+ addCommas(Seed.queue_atkp[cityID][k]["unit0Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit1Count"] > 0 && marchstatus == "going") m += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkp[cityID][k]["unit1Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit1Return"] > 0 && marchstatus == "returning") m += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkp[cityID][k]["unit1Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit0Count"] > 0 && type == "going") m += '<TD???'+ addCommas(Seed.queue_atkp[cityID][k]["unit0Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit0Return"] > 0 && type == "returning") m += '<TD>???: '+ addCommas(Seed.queue_atkp[cityID][k]["unit0Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit1Count"] > 0 && type == "going") m += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkp[cityID][k]["unit1Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit1Return"] > 0 && type == "returning") m += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkp[cityID][k]["unit1Return"]) +'</td>';
   				    
-  				    if (Seed.queue_atkp[cityID][k]["unit2Count"] > 0 && marchstatus == "going") m += '<TD>Militiaman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit2Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit2Return"] > 0 && marchstatus == "returning") m += '<TD>Militiaman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit2Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit3Count"] > 0 && marchstatus =="going") m += '<TD>Scouts: '+ addCommas(Seed.queue_atkp[cityID][k]["unit3Count"])+'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit3Return"] > 0 && marchstatus == "returning") m += '<TD>Scouts: '+ addCommas(Seed.queue_atkp[cityID][k]["unit3Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit4Count"] > 0 && marchstatus =="going") m += '<TD>Pikeman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit4Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit4Return"] > 0 && marchstatus == "returning") m += '<TD>Pikeman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit4Return"])+'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit5Count"] > 0 && marchstatus =="going") m += '<TD>Swordsman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit5Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit5Return"] > 0 && marchstatus == "returning") m += '<TD>Swordsman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit5Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit6Count"] > 0 && marchstatus =="going") m += '<TD>Archer: '+ addCommas(Seed.queue_atkp[cityID][k]["unit6Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit6Return"] > 0 && marchstatus == "returning") m += '<TD>Archer: '+ addCommas(Seed.queue_atkp[cityID][k]["unit6Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit7Count"] > 0 && marchstatus =="going") m += '<TD>Cavalry: '+ addCommas(Seed.queue_atkp[cityID][k]["unit7Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit7Return"] > 0 && marchstatus == "returning") m += '<TD>Cavalry: '+ addCommas(Seed.queue_atkp[cityID][k]["unit7Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit8Count"] > 0 && marchstatus =="going") m += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkp[cityID][k]["unit8Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit8Return"] > 0 && marchstatus == "returning") m += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkp[cityID][k]["unit8Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit9Count"] > 0 && marchstatus =="going") m += '<TD>Supply Wagons: '+ addCommas(Seed.queue_atkp[cityID][k]["unit9Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit9Return"] > 0 && marchstatus == "returning") m += '<TD>Supply Wagons: '+ addCommas(Seed.queue_atkp[cityID][k]["unit9Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit10Count"] > 0 && marchstatus =="going") m += '<TD>Ballista: '+ addCommas(Seed.queue_atkp[cityID][k]["unit10Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit10Return"] > 0 && marchstatus == "returning") m += '<TD>Ballista: '+ addCommas(Seed.queue_atkp[cityID][k]["unit10Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit11Count"] > 0 && marchstatus =="going") m += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkp[cityID][k]["unit11Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit11Return"] > 0 && marchstatus == "returning") m += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkp[cityID][k]["unit11Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit12Count"] > 0 && marchstatus =="going") m += '<TD>Catapult: '+ addCommas(Seed.queue_atkp[cityID][k]["unit12Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit12Return"] > 0 && marchstatus == "returning") m += '<TD>Catapult	: '+ addCommas(Seed.queue_atkp[cityID][k]["unit12Return"]) +'</td></tr>';
+  				    if (Seed.queue_atkp[cityID][k]["unit2Count"] > 0 && type == "going") m += '<TD>Militiaman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit2Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit2Return"] > 0 && type == "returning") m += '<TD>Militiaman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit2Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit3Count"] > 0 && type =="going") m += '<TD>Scouts: '+ addCommas(Seed.queue_atkp[cityID][k]["unit3Count"])+'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit3Return"] > 0 && type == "returning") m += '<TD>Scouts: '+ addCommas(Seed.queue_atkp[cityID][k]["unit3Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit4Count"] > 0 && type =="going") m += '<TD>Pikeman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit4Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit4Return"] > 0 && type == "returning") m += '<TD>Pikeman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit4Return"])+'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit5Count"] > 0 && type =="going") m += '<TD>Swordsman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit5Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit5Return"] > 0 && type == "returning") m += '<TD>Swordsman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit5Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit6Count"] > 0 && type =="going") m += '<TD>Archer: '+ addCommas(Seed.queue_atkp[cityID][k]["unit6Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit6Return"] > 0 && type == "returning") m += '<TD>Archer: '+ addCommas(Seed.queue_atkp[cityID][k]["unit6Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit7Count"] > 0 && type =="going") m += '<TD>Cavalry: '+ addCommas(Seed.queue_atkp[cityID][k]["unit7Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit7Return"] > 0 && type == "returning") m += '<TD>Cavalry: '+ addCommas(Seed.queue_atkp[cityID][k]["unit7Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit8Count"] > 0 && type =="going") m += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkp[cityID][k]["unit8Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit8Return"] > 0 && type == "returning") m += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkp[cityID][k]["unit8Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit9Count"] > 0 && type =="going") m += '<TD>Supply Wagons: '+ addCommas(Seed.queue_atkp[cityID][k]["unit9Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit9Return"] > 0 && type == "returning") m += '<TD>Supply Wagons: '+ addCommas(Seed.queue_atkp[cityID][k]["unit9Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit10Count"] > 0 && type =="going") m += '<TD>Ballista: '+ addCommas(Seed.queue_atkp[cityID][k]["unit10Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit10Return"] > 0 && type == "returning") m += '<TD>Ballista: '+ addCommas(Seed.queue_atkp[cityID][k]["unit10Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit11Count"] > 0 && type =="going") m += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkp[cityID][k]["unit11Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit11Return"] > 0 && type == "returning") m += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkp[cityID][k]["unit11Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit12Count"] > 0 && type =="going") m += '<TD>Catapult: '+ addCommas(Seed.queue_atkp[cityID][k]["unit12Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit12Return"] > 0 && type == "returning") m += '<TD>Catapult	: '+ addCommas(Seed.queue_atkp[cityID][k]["unit12Return"]) +'</td>';
+					
    			  }
   		    }
   	
@@ -4997,7 +5010,7 @@ Tabs.Marches = {
   			    	result = result.substr(4);
   			    	var seed = eval(result);
 	  			    WinLog.write ("seed @ "+ unixTime()  +" ("+ now +")\n\n"+ inspect (seed, 8, 1));
-	  			    unsafeWindow.document.seed = seed;
+	  			    unsafeWindow.document.seed = result;
   			    	}
   			    },
   			    onFailure: function () {
@@ -5010,6 +5023,14 @@ Tabs.Marches = {
   		     
     t.displayTimer = setTimeout (t.showMarches, 500);  
     },
+	
+	isMyself: function(userID){
+		if(Seed.players["u"+userID].n == Seed.player.name)
+			return true;
+		else
+			return false;
+		return false;
+	},
     
     butcancelmarch: function(marchID){
     	 var t = Tabs.Marches;
@@ -5337,7 +5358,7 @@ function kickout_allies(mid, cid, fromUid, fromCid, upkeep) {
           march.marchStatus = 8;
           var marchtime = parseInt(march.returnUnixTime) - parseInt(march.destinationUnixTime);
           var ut = unixTime();
-          if (unsafeWindow.seed.playerEffects.returnExpire > unixtime())
+          if (unsafeWindow.seed.playerEffects.returnExpire > unixTime())
             marchtime *= 0.5
           march.returnUnixTime = ut + marchtime;
           march.destinationUnixTime = ut;
