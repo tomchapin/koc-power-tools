@@ -5127,7 +5127,7 @@ if (TEST_WIDE)
       str += _row ('Reicht für', row, true);
 		  }
 		  if (Options.includeTruppen) {
-﻿    str += '<TR><TD class=ptstat>Truppen</td></tr>';
+	  str += '<TR><TD class=ptstat>Truppen</td></tr>';
       rownum = 0;
       str += _row ('Versorger', rows[1]);
       str += _row ('Miliz', rows[2]);
@@ -5257,7 +5257,7 @@ if (TEST_WIDE)
       Tabs.Overview.cont.innerHTML = str;
 	  document.getElementById('ptIncRessis').addEventListener('click', e_clickEnableRessis, false);
 	  document.getElementById('ptIncNahrungUnten').addEventListener('click', e_clickEnableNahrungUnten, false);
-﻿    document.getElementById('ptIncNahrung').addEventListener('click', e_clickEnableNahrung, false);
+	  document.getElementById('ptIncNahrung').addEventListener('click', e_clickEnableNahrung, false);
       document.getElementById('ptoverOriginal').addEventListener('click', e_clickEnableTroops, false);
 	   document.getElementById('ptIncWachturm').addEventListener('click', e_clickEnableWachturm, false);
       document.getElementById('idCheck').addEventListener('click', e_clickEnableMarch, false);
@@ -5297,7 +5297,7 @@ if (TEST_WIDE)
       Options.includeTruppen = document.getElementById('ptIncTruppen').checked;
       t.show ();
     }
-﻿      function e_clickEnableNahrungUnten (){
+	    function e_clickEnableNahrungUnten (){
       var t = Tabs.Overview;
       Options.includeNahrungUnten = document.getElementById('ptIncNahrungUnten').checked;
       t.show ();
@@ -5662,32 +5662,32 @@ if (type =="returning" && marchType != 2) marchType = 100;
   				    if (Seed.queue_atkp[cityID][k]["resource4"] > 0) m += '<TD>Erz: '+ addCommas(Seed.queue_atkp[cityID][k]["resource4"]) +'</td>';
   				    
   				   if (Seed.queue_atkp[cityID][k]["unit0Count"] > 0 && type == "going") m += '<TD???'+ addCommas(Seed.queue_atkp[cityID][k]["unit0Count"]) +'</td>';
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit0Return"] > 0 && type == "returning") m += '<TD>???: '+ addCommas(Seed.queue_atkp[cityID][k]["unit0Return"]) +'</td>';
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit1Count"] > 0 && type == "going") m += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkp[cityID][k]["unit1Count"]) +'</td>';
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit1Return"] > 0 && type == "returning") m += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkp[cityID][k]["unit1Return"]) +'</td>';
-  ﻿  ﻿  ﻿  ﻿      
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit2Count"] > 0 && type == "going") m += '<TD>Miliz: '+ addCommas(Seed.queue_atkp[cityID][k]["unit2Count"]) +'</td>';
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit2Return"] > 0 && type == "returning") m += '<TD>Miliz: '+ addCommas(Seed.queue_atkp[cityID][k]["unit2Return"]) +'</td>';
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit3Count"] > 0 && type =="going") m += '<TD>Späher: '+ addCommas(Seed.queue_atkp[cityID][k]["unit3Count"])+'</td>';
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit3Return"] > 0 && type == "returning") m += '<TD>Späher: '+ addCommas(Seed.queue_atkp[cityID][k]["unit3Return"]) +'</td>';
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit4Count"] > 0 && type =="going") m += '<TD>Lanzen: '+ addCommas(Seed.queue_atkp[cityID][k]["unit4Count"]) +'</td>';
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit4Return"] > 0 && type == "returning") m += '<TD>Lanzen: '+ addCommas(Seed.queue_atkp[cityID][k]["unit4Return"])+'</td>';
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit5Count"] > 0 && type =="going") m += '<TD>Schwerter: '+ addCommas(Seed.queue_atkp[cityID][k]["unit5Count"]) +'</td>';
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit5Return"] > 0 && type == "returning") m += '<TD>Schwerter: '+ addCommas(Seed.queue_atkp[cityID][k]["unit5Return"]) +'</td>';
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit6Count"] > 0 && type =="going") m += '<TD>Bogen: '+ addCommas(Seed.queue_atkp[cityID][k]["unit6Count"]) +'</td>';
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit6Return"] > 0 && type == "returning") m += '<TD>Bogen: '+ addCommas(Seed.queue_atkp[cityID][k]["unit6Return"]) +'</td>';
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit7Count"] > 0 && type =="going") m += '<TD>Kav: '+ addCommas(Seed.queue_atkp[cityID][k]["unit7Count"]) +'</td>';
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit7Return"] > 0 && type == "returning") m += '<TD>Kav: '+ addCommas(Seed.queue_atkp[cityID][k]["unit7Return"]) +'</td>';
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit8Count"] > 0 && type =="going") m += '<TD>S-Kav: '+ addCommas(Seed.queue_atkp[cityID][k]["unit8Count"]) +'</td>';
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit8Return"] > 0 && type == "returning") m += '<TD>S-Kav: '+ addCommas(Seed.queue_atkp[cityID][k]["unit8Return"]) +'</td>';
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit9Count"] > 0 && type =="going") m += '<TD>Wagen: '+ addCommas(Seed.queue_atkp[cityID][k]["unit9Count"]) +'</td>';
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit9Return"] > 0 && type == "returning") m += '<TD>Wagen: '+ addCommas(Seed.queue_atkp[cityID][k]["unit9Return"]) +'</td>';
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit10Count"] > 0 && type =="going") m += '<TD>Ballis: '+ addCommas(Seed.queue_atkp[cityID][k]["unit10Count"]) +'</td>';
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit10Return"] > 0 && type == "returning") m += '<TD>Ballisa: '+ addCommas(Seed.queue_atkp[cityID][k]["unit10Return"]) +'</td>';
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit11Count"] > 0 && type =="going") m += '<TD>Ram: '+ addCommas(Seed.queue_atkp[cityID][k]["unit11Count"]) +'</td>';
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit11Return"] > 0 && type == "returning") m += '<TD>Ram: '+ addCommas(Seed.queue_atkp[cityID][k]["unit11Return"]) +'</td>';
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit12Count"] > 0 && type =="going") m += '<TD>Katas: '+ addCommas(Seed.queue_atkp[cityID][k]["unit12Count"]) +'</td>';
-  ﻿  ﻿  ﻿  ﻿      if (Seed.queue_atkp[cityID][k]["unit12Return"] > 0 && type == "returning") m += '<TD>Katas﻿  : '+ addCommas(Seed.queue_atkp[cityID][k]["unit12Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit0Return"] > 0 && type == "returning") m += '<TD>???: '+ addCommas(Seed.queue_atkp[cityID][k]["unit0Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit1Count"] > 0 && type == "going") m += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkp[cityID][k]["unit1Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit1Return"] > 0 && type == "returning") m += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkp[cityID][k]["unit1Return"]) +'</td>';
+  				    
+  				    if (Seed.queue_atkp[cityID][k]["unit2Count"] > 0 && type == "going") m += '<TD>Miliz: '+ addCommas(Seed.queue_atkp[cityID][k]["unit2Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit2Return"] > 0 && type == "returning") m += '<TD>Miliz: '+ addCommas(Seed.queue_atkp[cityID][k]["unit2Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit3Count"] > 0 && type =="going") m += '<TD>Späher: '+ addCommas(Seed.queue_atkp[cityID][k]["unit3Count"])+'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit3Return"] > 0 && type == "returning") m += '<TD>Späher: '+ addCommas(Seed.queue_atkp[cityID][k]["unit3Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit4Count"] > 0 && type =="going") m += '<TD>Lanzen: '+ addCommas(Seed.queue_atkp[cityID][k]["unit4Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit4Return"] > 0 && type == "returning") m += '<TD>Lanzen: '+ addCommas(Seed.queue_atkp[cityID][k]["unit4Return"])+'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit5Count"] > 0 && type =="going") m += '<TD>Schwerter: '+ addCommas(Seed.queue_atkp[cityID][k]["unit5Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit5Return"] > 0 && type == "returning") m += '<TD>Schwerter: '+ addCommas(Seed.queue_atkp[cityID][k]["unit5Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit6Count"] > 0 && type =="going") m += '<TD>Bogen: '+ addCommas(Seed.queue_atkp[cityID][k]["unit6Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit6Return"] > 0 && type == "returning") m += '<TD>Bogen: '+ addCommas(Seed.queue_atkp[cityID][k]["unit6Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit7Count"] > 0 && type =="going") m += '<TD>Kav: '+ addCommas(Seed.queue_atkp[cityID][k]["unit7Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit7Return"] > 0 && type == "returning") m += '<TD>Kav: '+ addCommas(Seed.queue_atkp[cityID][k]["unit7Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit8Count"] > 0 && type =="going") m += '<TD>S-Kav: '+ addCommas(Seed.queue_atkp[cityID][k]["unit8Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit8Return"] > 0 && type == "returning") m += '<TD>S-Kav: '+ addCommas(Seed.queue_atkp[cityID][k]["unit8Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit9Count"] > 0 && type =="going") m += '<TD>Wagen: '+ addCommas(Seed.queue_atkp[cityID][k]["unit9Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit9Return"] > 0 && type == "returning") m += '<TD>Wagen: '+ addCommas(Seed.queue_atkp[cityID][k]["unit9Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit10Count"] > 0 && type =="going") m += '<TD>Ballis: '+ addCommas(Seed.queue_atkp[cityID][k]["unit10Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit10Return"] > 0 && type == "returning") m += '<TD>Ballisa: '+ addCommas(Seed.queue_atkp[cityID][k]["unit10Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit11Count"] > 0 && type =="going") m += '<TD>Ram: '+ addCommas(Seed.queue_atkp[cityID][k]["unit11Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit11Return"] > 0 && type == "returning") m += '<TD>Ram: '+ addCommas(Seed.queue_atkp[cityID][k]["unit11Return"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit12Count"] > 0 && type =="going") m += '<TD>Katas: '+ addCommas(Seed.queue_atkp[cityID][k]["unit12Count"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["unit12Return"] > 0 && type == "returning") m += '<TD>Katas	: '+ addCommas(Seed.queue_atkp[cityID][k]["unit12Return"]) +'</td>';
    			  }
   		    }
   	
