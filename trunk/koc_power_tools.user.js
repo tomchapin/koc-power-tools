@@ -3,7 +3,7 @@
 // @namespace      mat
 // @include        http://*.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
-// @icon		       http://koc.comuf.com/logo.png
+// @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
 var Version = '20110503a';
@@ -427,6 +427,7 @@ anticd.init ();
 
 
 /***
+
 <img src='http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/avatars/25/m16.jpg'/>
 <div class='content'>
   <div class='info'> 
@@ -453,6 +454,7 @@ anticd.init ();
       ok, heading out to dinner with family... be back laters
     </div>
   </div>
+
 </div>
 
 
@@ -487,6 +489,7 @@ WHISPER (chatDivContentHook) .....
       </div>
     </div>
   </div>
+
 </div>
 ****/
   
@@ -1442,6 +1445,7 @@ var AllianceReports = {
 /***
         
 MY reports, reins works ...
+
 <div><a href="#" onclick="jQuery('#modal_msg_body').trigger('viewReinforcedReport', ['6076798','67674','Elroy','IV','13412958','Duke_Swan','6329','Erisvil',662,477]);return false;">View Report</a></div>
 
     
@@ -4243,44 +4247,311 @@ function getWallInfo (cityId, objOut){
   }
 }    
 
-/*********************************** Forum TAB ***********************************/
+/********************************* Messages Tab *************************************/
 
-
-var alliancecheck = '';
-if (getMyAlliance()[0] == 28) 
-	alliancecheck = true;
-  else 
-	alliancecheck = false;
-
-Tabs.Forum = {
+Tabs.msg = {
   tabOrder : 110,
-  myDiv : null,
-  tabDisabled : !alliancecheck,
-  timer : null,
+  tabLabel : 'Messages',
+  cont:null,
+  state : null,
+  maxPages:1,
+  data:[],
+  totalPages:0,
+  content:"",
+
+  init : function (div){
+    var t = Tabs.msg;
+    t.cont=div;
+    unsafeWindow.getmsg = t.getEmailBody;
+
+    t.getAllianceReports();
+    
+    var m = '<DIV class=ptstat>Search inbox or alliance reports</div>';
+    m += '<DIV class=ptentry style="height:30px"><table>';
+    m += '<TABLE width=95% class=ptTab><TD>Search in: <select id="searchSelect"><option value="Reports">Reports</options>';
+    m += '<option value="inbox">Inbox</option>';
+    m += '<option value="outbox">Outbox</option></select></td>';
+    
+    m += '<TD>Pages: <select id="pagesSelect">';
+    m += '<option value=1> 1 </option>'
+    m += '<option value=5> 5 </option>'
+    m += '<option value=10> 10 </option>'
+    m += '<option value=20> 20 </option>'
+    m += '<option value=30> 30 </option>'
+    m += '<option value=40> 40 </option>'
+    m += '<option value=50> 50 </option>'
+    m += '<option value=60> 60 </option>'
+    m += '<option value=70> 70 </option>'
+    m += '<option value=80> 80 </option>'
+    m += '<option value=90> 90 </option>'
+    m += '<option value=100> 100 </option>'
+    m += '<option value=101> All </option></select></td>'
+    
+    m += '<TD>Search in: <select disabled=true id="searchForSelect"><option value="Subject">Subject</options>';
+    m += '<option value="User">User</option></select></td>';
+    
+    m += '<TD>Search for:<INPUT id=searchString disabled=true type=text size=10 maxlength=25 value=""</td>';
+    m += '<TD><INPUT id=StartSearch type=submit value="Start Search"></td>';
+    m += '<TD><DIV id="searchStatus"></div></td></table>';
+    m += '<BR><DIV id="ReportResults" style="height:470px; max-height:470px; width=100%;"></div>';
+    
+    t.cont.innerHTML = m;
+        
+    document.getElementById('StartSearch').addEventListener ('click', function(){ 
+        	 if (document.getElementById('searchSelect').value == "Reports") {t.data=[];t.handleArcSearch();}
+        	 else {
+        	 	t.data=[];
+        	 	t.content = '<center><table><thead><th>Click</th><th>Page#</th><th>Date</th><th>From</th><th>Subject</th></thead><tbody>';
+        	 	t.searchMail("",1); 
+        	 }
+        }, false);
+    document.getElementById('searchSelect').addEventListener ('change', function(){ 
+        	if (document.getElementById('searchSelect').value == "Reports")  {
+              document.getElementById('searchString').disabled=true;
+              document.getElementById('searchForSelect').disabled=true;
+          }
+        	else {
+              document.getElementById('searchString').disabled=false;
+              document.getElementById('searchForSelect').disabled=false;
+          }
+        }, false);
+        
+    return this.cont;
+  },
+
+  searchMail : function() {
+    var t = Tabs.msg;
+    var results=document.getElementById("ReportResults");
+    t.maxPages=document.getElementById("pagesSelect").value;
+    if ( t.maxPages==101)
+       t.maxPages=t.totalPages;
+    results.innerHTML = '<center><b>...Searching '+t.maxPages+' pages...</b></center>';
+    t.data=[];
+    t.getAllianceReports(1);
+  },
   
-  forumlink :  'http://elenium.hostingdelivered.com',
-
-  init : function (div){    // called once, upon script startup
-    var t = Tabs.Forum;	
-	
-    t.myDiv = div;
-    div.innerHTML = '<iframe src="'+ t.forumlink +'" width="98%" height="98%" name="KOC Forum" </iframe>';
+  
+  DisplayReports : function (){
+    var t = Tabs.msg;
+    var data = t.data;
+    var results=document.getElementById("ReportResults");
+    if(!t.data.length) {
+       results.innerHTML = '<center>No attacks on your alliance found</center>';
+       return;
+    }
+    var m = '<center><table><thead><th>Page#</th><th>Date</th><th>Attacker</th><th>From</th><th>Alliance</th><th>Action</th><th>Target</th><th>At</th></thead>';
+    m += '<tbody>';
+    for ( var i=0; i<t.data.length;i++) {
+       var rpt = data[i];
+       if (rpt.side0Name=='undefined') 
+          continue;
+       m += '<tr><td>'+rpt.page+'</td>\
+            <td>'+unsafeWindow.formatDateByUnixTime(rpt.reportUnixTime)+'</td>\
+            <td>'+rpt.side1Name+'</td>\
+            <td>'+rpt.side1XCoord+','+rpt.side1YCoord+'</td>\
+            <td>'+rpt.side1AllianceName+'</td>\
+            <td>'+rpt.marchName+'</td>\
+            <td>'+rpt.side0Name+'</td>\
+            <td>'+rpt.side0XCoord+','+rpt.side0YCoord+'</td>\
+            </tr>';
+    }
+    m += '</tbody></table></center>';
+    results.innerHTML = m;
   },
 
-  hide : function (){         // called whenever the main window is hidden, or another tab is selected
-    var t = Tabs.Forum;
-    mainPop.div.style.width = 750 + 'px';
+  handleArcSelect : function(rslt, page) {
+    var t = Tabs.msg;
+    t.maxPages=document.getElementById("pagesSelect").value;
+    if ( t.maxPages==99999)
+       t.maxPages=t.totalPages;
+  },
+  handleArcSearchCB : function(rslt, page) {
+    var t = Tabs.msg;
+    if (rslt) {
+       if (!rslt.ok) {
+          document.getElementById("idSpanArcErrorMsg").innerHTML = rslt.errorMsg;
+          return;
+       }
+       t.totalPages=rslt.totalPages;
+       if (rslt.arReports && page) {
+         var ar = rslt.arReports;
+         var rptkeys = unsafeWindow.Object.keys(ar);
+         var myAllianceId = getMyAlliance()[0];
+         for (var i = 0; i < rptkeys.length; i++) {
+              var rpt = ar[rptkeys[i]];
+              rpt.page = page;     
+              var side0Name = rslt.arPlayerNames['p'+rpt.side0PlayerId];
+              rpt.side0Name = side0Name;
+              rpt.side1Name = rslt.arPlayerNames['p'+rpt.side1PlayerId];
+              if (rpt.side0AllianceId > 0)
+                rpt.side0AllianceName = rslt.arAllianceNames['a'+rpt.side0AllianceId];
+              else
+                rpt.side0AllianceName = 'unaligned';
+              if (rpt.side1AllianceId > 0)
+                rpt.side1AllianceName = rslt.arAllianceNames['a'+rpt.side1AllianceId];
+              else
+                rpt.side1AllianceName = 'unaligned';
+
+              if (rpt.side0CityId > 0)
+                rpt.side0CityName = rslt.arCityNames['c'+rpt.side0CityId];
+              else
+                rpt.side0CityName = 'none';
+              if (rpt.side1CityId > 0)
+                rpt.side1CityName = rslt.arCityNames['c'+rpt.side1CityId];
+              else
+                rpt.side1CityName = 'none';
+              if (rpt.marchType == 1)
+                  rpt.marchName = 'Transport';
+              else if (rpt.marchType == 3)
+                  rpt.marchName = '<SPAN class=sco> Scouted</span>';
+              else if (rpt.marchType == 2)
+                  rpt.marchName = 'Reinf';
+              else if (rpt.marchType == 4)
+                  rpt.marchName = '<SPAN class=atk> Attacked</span>';
+              else rpt.marchName = 'unknown';
+              if (myAllianceId != rpt.side1AllianceId)
+                 t.data.push(rpt);
+         }
+       }
+       if (parseInt(page)+1 <= t.maxPages) {
+          var results=document.getElementById("ReportResults");
+          results.innerHTML = '<center><b>...Searching '+(parseInt(page)+1)+'...</b></center>';
+          t.getAllianceReports(parseInt(page)+1);
+       }
+       else if (page) 
+           t.DisplayReports();
+    }
   },
 
-  show : function (){         // called whenever this tab is shown
-    var t = Tabs.Forum;   
-	mainPop.div.style.width = 1100 + 'px';	
-	//mainPop.div.style.overflowX = 'visible';
-	
+  
+
+  handleArcSearch : function() {
+    var t = Tabs.msg;
+    var results=document.getElementById("ReportResults");
+    //logit("handleArcSearch");
+    t.maxPages=document.getElementById("pagesSelect").value;
+    if ( t.maxPages==99999)
+       t.maxPages=t.totalPages;
+    results.innerHTML = '<center><b>...Searching '+t.maxPages+' pages...</b></center>';
+    t.data=[];
+    t.getAllianceReports(1);
   },
-}
 
+  getAllianceReports : function (pageNum){
+    var t = Tabs.msg;
+    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    if (pageNum)
+      params.pageNo = pageNum;
+    params.group = "a";
+    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/listReports.php" + unsafeWindow.g_ajaxsuffix, {
+      method: "post",
+      parameters: params,
+      onSuccess: function (rslt) {
+          t.handleArcSearchCB (rslt, pageNum);     
+      },
+      onFailure: function (rslt) {
+          t..handleArcSearchCB (rslt, pageNum);     
+      },
+    }, false);
+  },
+  
+  searchMail : function(rslt, pageNum) {
+    var t = Tabs.msg;
+    t.maxPages=document.getElementById("pagesSelect").value;
+    if ( t.maxPages==99999)
+       t.maxPages=t.totalPages;
+    t.data+=rslt;
+    if (parseInt(pageNum) <= t.maxPages) {
+          document.getElementById('searchStatus').innerHTML = pageNum;
+          t.getMail(pageNum);
+          t.searchInMail(rslt,pageNum);
+       }
+       else {
+          document.getElementById('searchStatus').innerHTML = "DONE";
+       } 
+  },
+  
+  getMail : function (pageNum){
+    var t = Tabs.msg;
+    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    if (pageNum)
+      params.pf=0;
+      params.requestType="GET_MESSAGE_HEADERS_FOR_USER_INBOX";
+      params.boxType = document.getElementById('searchSelect').value;
+      params.pageNo = pageNum;
+         
+    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/getEmail.php" + unsafeWindow.g_ajaxsuffix, {
+      method: "post",
+      parameters: params,
+      onSuccess: function (rslt) {
+          if (rslt.ok) pageNum++;
+          t.searchMail(rslt, pageNum);     
+      },
+      onFailure: function () {
+      },
+    }, false);
+  },
+  
+  getEmailBody : function(ID){
+    var t = Tabs.msg;
+    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+      params.messageId=ID;
+      params.requestType="GET_MESSAGE_FOR_ID";
+     
+    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/getEmail.php" + unsafeWindow.g_ajaxsuffix, {
+      method: "post",
+      parameters: params,
+      onSuccess: function (rslt) {
+          if (rslt.ok) //alert(rslt['messageBody']);
+          t.showBody(rslt['messageBody'])//t.searchMail(rslt, pageNum);     
+      },
+      onFailure: function () {
+      },
+    }, false);
+  },
+  
+  showBody: function (messageBody) {
+  	var t = Tabs.msg;
+  	var popMsg = null;
+  	t.popMsg = new CPopup('pbShowBarbs', 0, 0, 550, 300, true, function() {clearTimeout (1000);});
+  	t.popMsg.centerMe (mainPop.getMainDiv());  
+  	var m = '<DIV style="max-height:265px; height:265px; overflow-y:scroll">';  
+  	//alert(messageBody);     
+  	m+= messageBody + '</div>';
+  	t.popMsg.getMainDiv().innerHTML = m;
+  	t.popMsg.getTopDiv().innerHTML = '<TD><B>MESSAGES</td>';
+  	t.popMsg.show(true)	;
+   },
+   
+  
+  searchInMail: function(rslt,pageNum){
+	   var t = Tabs.msg;  
+	   var myarray = rslt['message'];
+	   var results=document.getElementById("ReportResults");
+	   
+	   for (k in myarray) {
+	      if (document.getElementById('searchForSelect').value == "Subject") var lookup = myarray[k]['subject'];
+	      else var lookup = myarray[k]['displayName'];
+	      var what = document.getElementById('searchString').value;
+	      if (lookup.search(what, "i") != -1){
+	        t.content += '<TR><TD><A><SPAN onclick="getmsg('+ myarray[k]['messageId'] +')">OPEN</span></a></td>'
+  	    	t.content +='<TD>'+ rslt['pageNo'] +'</td>';
+  	    	t.content +='<TD>'+myarray[k]['dateSent']+'</td>';
+  	    	t.content +='<TD>'+myarray[k]['displayName']+'</td>';
+  	    	t.content +='<TD>'+myarray[k]['subject']+'</td>';
+	   	  }	
+       }
+       results.innerHTML = t.content;
+  },
+  
+  
 
+  show : function (){
+  },
+
+  hide : function (){
+  },
+};
 
 
 /****************************  Wiki Tab   ******************************/
@@ -4647,35 +4918,34 @@ Tabs.Marches = {
   	t.marchDiv.innerHTML = m;
   	
   	document.getElementById('TEST').addEventListener('click', function(){
-		
-		var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-  			new AjaxRequest(unsafeWindow.g_ajaxpath + "/fb/e2/src/main_src.php?g=&y=0&n=nan001&l=nl_NL&messagebox=&standalone=0&res=1&iframe=1&lang=en&ts=1304248288.7067&s=250&appBar=" + unsafeWindow.g_ajaxsuffix, {
-  			    method: "POST",
-  			    parameters: params,
-  			    onSuccess: function (rslt) {
-  			        //rslt = eval("(" + message + ")");
-  			        var mainSrcHTMLCode = rslt.responseText;
-  			    	//var mainSrcHTMLCode; // get and set this by pulling in the main_src.php file via AJAX
-  			    	var myregexp = /var seed=\{.*?\};/;
-  			    	var match = myregexp.exec(mainSrcHTMLCode);
-  			    	
-  			    	if (match != null) {
-  			    	result = match[0];
-  			    	result = result.substr(9);
-  			    	//eval(result);
-	  			    result = new Array(result);
-	  			    unsafeWindow.seed = result;
-	  			    Seed = unsafeWindow.seed;
-	  			    logit(Seed);
-  				   	}
-  			    },
-  			    onFailure: function () {
-  			      if (notify != null)
-  			        notify(rslt.errorMsg);
-  			    },
-  			});
-	
-  	}, false);
+  			
+  			var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+  	  			new AjaxRequest(unsafeWindow.g_ajaxpath + "/fb/e2/src/main_src.php?g=M&y=0&n=&l=en_US&messagebox=&standalone=0&res=1&iframe=1&lang=en&ts=1304968591.1795&ref=bookmarks&count=1&appBar=" + unsafeWindow.g_ajaxsuffix, {
+  	  			    method: "POST",
+  	  			    parameters: params,
+  	  			    onSuccess: function (rslt) {
+  	  			        //rslt = eval("(" + message + ")");
+  	  			        var mainSrcHTMLCode = rslt.responseText;
+  	  			    	//var mainSrcHTMLCode; // get and set this by pulling in the main_src.php file via AJAX
+  	  			    	var myregexp = /var seed=\{.*?\};/;
+  	  			    	var match = myregexp.exec(mainSrcHTMLCode);
+  	  			    	
+  	  			    	if (match != null) {
+  							result = match[0];
+  							eval(result);
+  							unsafeWindow.update_seed(seed);
+  							//unsafeWindow.seed = seed;
+  							Seed = unsafeWindow.seed;
+  	  				   	}
+  	  			    },
+  	  			    onFailure: function () {
+  	  			      if (notify != null)
+  	  			        notify(rslt.errorMsg);
+  	  			    },
+  	  			});
+  		
+  	  	}, false);
+  	  		     
   		     
     t.displayTimer = setTimeout (t.showMarches, 500);  
     },
@@ -7079,19 +7349,6 @@ t.state = null;
   },
 };
 
-DoUnsafeWindow:function(func, execute_by_embed) {
-if(this.isChrome || execute_by_embed) {
-var scr=document.createElement('script');
-scr.innerHTML=func;
-document.body.appendChild(scr);
-} else {
-try {
-eval("unsafeWindow."+func);
-} catch (error) {
-this.Log("A javascript error has occurred when executing a function via DoUnsafeWindow. Error description: "+error.description);
-}
-}
-};
-
 ptStartup ();
+
 
