@@ -4,10 +4,10 @@
 // @include        http://*.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @require        http://tomchapin.me/auto-updater.php?id=103659
-// @version        20110503c
+// @version        20110503d
 // ==/UserScript==
 
-var Version = '20110503c';
+var Version = '20110503d';
 
 var Title = 'KOC Power Tools - Official KoC Scripters Edition';
 var DEBUG_BUTTON = true;
@@ -4251,7 +4251,7 @@ function getWallInfo (cityId, objOut){
 /********************************* Messages Tab *************************************/
 
 Tabs.msg = {
-  tabOrder : 110,
+  tabOrder : 37,
   tabLabel : 'Messages',
   cont:null,
   state : null,
@@ -4553,36 +4553,6 @@ Tabs.msg = {
   hide : function (){
   },
 };
-
-
-/****************************  Wiki Tab   ******************************/
-Tabs.Wiki = {
-  tabOrder : 120,                    // order to place tab in top bar
-  myDiv : null,
-  timer : null,
-  forumlink :  'http://koc.wikia.com/wiki/Kingdoms_of_Camelot_Wiki',
-
-  init : function (div){    // called once, upon script startup
-    var t = Tabs.Wiki;	
-	
-    t.myDiv = div;
-    div.innerHTML = '<iframe src="'+ t.forumlink +'" width="98%" height="98%" name="KOC Wiki" </iframe>';
-  },
-
-  hide : function (){         // called whenever the main window is hidden, or another tab is selected
-    var t = Tabs.Wiki;
-    mainPop.div.style.width = 750 + 'px';
-  },
-
-  show : function (){         // called whenever this tab is shown
-    var t = Tabs.wiki;   
-	mainPop.div.style.width = 1100 + 'px';	
-	//mainPop.div.style.overflowX = 'visible';
-	
-  },
-}
-
-
 
 /*************************************** MARCHES TAB ************************************************/
 
