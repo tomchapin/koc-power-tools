@@ -4,10 +4,10 @@
 // @include        http://*.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @require        http://tomchapin.me/auto-updater.php?id=103659
-// @version        20110503d
+// @version        20110527a
 // ==/UserScript==
 
-var Version = '20110503d';
+var Version = '20110527a';
 
 var Title = 'KOC Power Tools - Official KoC Scripters Edition';
 var DEBUG_BUTTON = true;
@@ -526,32 +526,32 @@ var ChatStuff = {
       
   chatDivContentHook : function (msg){
     var t = ChatStuff; 
-    var class = '';
+    var element_class = '';
     var m = /div class='info'>.*<\/div>/im.exec(msg);
     if (m == null)
       return msg;
     if (m[0].indexOf('whispers') >= 0) {
 	if (Options.chatwhisper)
-		class = 'ptChatWhisper';
-	else class = '';
+		element_class = 'ptChatWhisper';
+	else element_class = '';
     }
     else if (m[0].indexOf('to the alliance') >= 0){
 	if (Options.chatbold)
-		class = 'ptChatAlliance';
-	else class = '';
+		element_class = 'ptChatAlliance';
+	else element_class = '';
         } 
     else {
-	class = '';
+	element_class = '';
 	if (Options.chatbold)
-		class = 'ptChatGlobalBold';
+		element_class = 'ptChatGlobalBold';
 	if (Options.chatglobal)
-		 class = 'ptChatGlobal';
+		 element_class = 'ptChatGlobal';
 	if (Options.chatbold && Options.chatglobal)
-		class = 'ptChatGlobalAll';
+		element_class = 'ptChatGlobalAll';
         } 
 
 
-    msg = msg.replace ("class='content'", "class='content "+ class +"'");
+    msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
     
     
     if (msg.indexOf('claimAllianceChat')<0){
