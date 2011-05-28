@@ -1,5 +1,9 @@
 REVISION HISTORY:
 ----------------
 
+20110503d
+   *Removed Wiki tab.
+   *Moved "Messages" tab to the left of the "Options" tab.
+
 20110503c
    *Released updated version of 20110503c
