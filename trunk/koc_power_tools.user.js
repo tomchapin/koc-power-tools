@@ -1,13 +1,13 @@
 // ==UserScript==
-// @name           KOC Power Tools - Official KoC Scripters Edition
+// @name           KOC Power Tools
 // @namespace      mat
 // @include        http://*.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @require        http://tomchapin.me/auto-updater.php?id=103659
-// @version        20110503a
+// @version        20110503c
 // ==/UserScript==
 
-var Version = '20110503a';
+var Version = '20110503c';
 
 var Title = 'KOC Power Tools - Official KoC Scripters Edition';
 var DEBUG_BUTTON = true;
