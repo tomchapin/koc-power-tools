@@ -497,35 +497,34 @@ var ChatStuff = {
 // "Report No: 5867445"  --->  see unsafeWindow.modal_alliance_report_view()
       
   chatDivContentHook : function (msg){
-    var t = ChatStuff; 
-    var class = '';
-    var m = /div class='info'>.*<\/div>/im.exec(msg);
-    if (m == null)
-      return msg;
-    if (m[0].indexOf('whispers') >= 0) {
-	if (Options.chatwhisper)
-		class = 'ptChatWhisper';
-	else class = '';
-    }
-    else if (m[0].indexOf('to the alliance') >= 0){
-	if (Options.chatbold)
-		class = 'ptChatAlliance';
-	else class = '';
-        } 
-    else {
-	class = '';
-	if (Options.chatbold)
-		class = 'ptChatGlobalBold';
-	if (Options.chatglobal)
-		 class = 'ptChatGlobal';
-	if (Options.chatbold && Options.chatglobal)
-		class = 'ptChatGlobalAll';
-        } 
-
-
-    msg = msg.replace ("class='content'", "class='content "+ class +"'");
-    
-    
+      var t = ChatStuff; 
+      var element_class = '';
+      var m = /div class='info'>.*<\/div>/im.exec(msg);
+      if (m == null)
+        return msg;
+      if (m[0].indexOf('whispers') >= 0) {
+  	if (Options.chatwhisper)
+  		element_class = 'ptChatWhisper';
+  	else element_class = '';
+      }
+      else if (m[0].indexOf('to the alliance') >= 0){
+  	if (Options.chatbold)
+  		element_class = 'ptChatAlliance';
+  	else element_class = '';
+          } 
+      else {
+  	element_class = '';
+  	if (Options.chatbold)
+  		element_class = 'ptChatGlobalBold';
+  	if (Options.chatglobal)
+  		 element_class = 'ptChatGlobal';
+  	if (Options.chatbold && Options.chatglobal)
+  		element_class = 'ptChatGlobalAll';
+          } 
+  
+  
+      msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
+          
     if (msg.indexOf('claimAllianceChat')<0){
       msg = msg.replace (/([0-9]{1,3})\s*(,|-)\s*([0-9]{1,3})/img, '<A onclick=\"ptGotoMap($1,$3)\">$1$2$3</a>');
     }
@@ -4686,8 +4685,7 @@ Tabs.Alliance = {
   
   paintMembers: function(){
   var t = Tabs.Alliance; 
-  	logit (t.totalmembers +'/'+ (t.alliancemembers.length-1));	
-	  	if ( t.totalmembers == (t.alliancemembers.length-1)) { 
+	  	if ( t.totalmembers >= (t.alliancemembers.length-1)) { 
 	  		  if (document.getElementById('searchAlli').value == "name") {
 				  var sortmembers = t.alliancemembers.sort(function(a, b){
 				         var sortA=a.Name.toLowerCase(), sortB=b.Name.toLowerCase()
