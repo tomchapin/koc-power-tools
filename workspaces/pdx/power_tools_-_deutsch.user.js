@@ -3,7 +3,7 @@
 // @namespace      PDX
 // @description    KoC Power Tools - German Version by PDX
 // @homepage       http://koc.god-like.org
-// @version        0.5.5
+// @version        0.5.8
 // @include        *apps.facebook.com/kingdomsofcamelot*
 // @include        http://*.kingdomsofcamelot.com/*main_src.php*
 // @icon           http://koc.god-like.info/pdx.jpg
@@ -13,7 +13,7 @@
 // @require		   http://koc.god-like.info/update/auto-updater.php?id=98323
 // ==/UserScript==
 
-var Version = '0.5.5';
+var Version = '0.5.8';
 
 var Title = 'KoC Power Tools - Deutsch';
 var DEBUG_BUTTON = true;
@@ -110,11 +110,13 @@ var Options = {
   overviewAllowOverflow : false,
   curMarchTab : 'A',
   playersNoCities : false,
-  alertConfig  : {aChat:false, aPrefix:'!!! ACHTUNG = ANGRIFF !!!', scouting:false, wilds:false, minTroops:10000, spamLimit:10 },
   chatglobal : true,
+  chatallianz : true,
   chatwhisper : true,
   chatbold : false,
 };
+
+// alertConfig  : {aChat:false, aPrefix:'!!! ACHTUNG = ANGRIFF !!!', scouting:false, wilds:false, minTroops:10000, spamLimit:10 },
 
 var JSON;if(!JSON){JSON={};}(function(){"use strict";function f(n){return n<10?'0'+n:n;}if(typeof Date.prototype.toJSON!=='function'){Date.prototype.toJSON=function(key){return isFinite(this.valueOf())?this.getUTCFullYear()+'-'+f(this.getUTCMonth()+1)+'-'+f(this.getUTCDate())+'T'+f(this.getUTCHours())+':'+f(this.getUTCMinutes())+':'+f(this.getUTCSeconds())+'Z':null;};String.prototype.toJSON=Number.prototype.toJSON=Boolean.prototype.toJSON=function(key){return this.valueOf();};}var cx=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,escapable=/[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,gap,indent,meta={'\b':'\\b','\t':'\\t','\n':'\\n','\f':'\\f','\r':'\\r','"':'\\"','\\':'\\\\'},rep;function quote(string){escapable.lastIndex=0;return escapable.test(string)?'"'+string.replace(escapable,function(a){var c=meta[a];return typeof c==='string'?c:'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4);})+'"':'"'+string+'"';}function str(key,holder){var i,k,v,length,mind=gap,partial,value=holder[key];if(value&&typeof value==='object'&&typeof value.toJSON==='function'){value=value.toJSON(key);}if(typeof rep==='function'){value=rep.call(holder,key,value);}switch(typeof value){case'string':return quote(value);case'number':return isFinite(value)?String(value):'null';case'boolean':case'null':return String(value);case'object':if(!value){return'null';}gap+=indent;partial=[];if(Object.prototype.toString.apply(value)==='[object Array]'){length=value.length;for(i=0;i<length;i+=1){partial[i]=str(i,value)||'null';}v=partial.length===0?'[]':gap?'[\n'+gap+partial.join(',\n'+gap)+'\n'+mind+']':'['+partial.join(',')+']';gap=mind;return v;}if(rep&&typeof rep==='object'){length=rep.length;for(i=0;i<length;i+=1){k=rep[i];if(typeof k==='string'){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v);}}}}else{for(k in value){if(Object.hasOwnProperty.call(value,k)){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v);}}}}v=partial.length===0?'{}':gap?'{\n'+gap+partial.join(',\n'+gap)+'\n'+mind+'}':'{'+partial.join(',')+'}';gap=mind;return v;}}if(typeof JSON.stringify!=='function'){JSON.stringify=function(value,replacer,space){var i;gap='';indent='';if(typeof space==='number'){for(i=0;i<space;i+=1){indent+=' ';}}else if(typeof space==='string'){indent=space;}rep=replacer;if(replacer&&typeof replacer!=='function'&&(typeof replacer!=='object'||typeof replacer.length!=='number')){throw new Error('JSON.stringify');}return str('',{'':value});};}if(typeof JSON.parse!=='function'){JSON.parse=function(text,reviver){var j;function walk(holder,key){var k,v,value=holder[key];if(value&&typeof value==='object'){for(k in value){if(Object.hasOwnProperty.call(value,k)){v=walk(value,k);if(v!==undefined){value[k]=v;}else{delete value[k];}}}}return reviver.call(holder,key,value);}text=String(text);cx.lastIndex=0;if(cx.test(text)){text=text.replace(cx,function(a){return'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4);});}if(/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,'@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']').replace(/(?:^|:|,)(?:\s*\[)+/g,''))){j=eval('('+text+')');return typeof reviver==='function'?walk({'':j},''):j;}throw new SyntaxError('JSON.parse');};}}());
 var JSON2 = JSON;
@@ -169,18 +171,24 @@ function ptStartup (){
     table.ptPlayers tr td {background-color:none; padding-left:5px; padding-right:5px;}\
     .ptOddrow {background-color:#eee}\
     .ptstat {border:1px solid; border-color:#ffffff; font-weight:bold; padding-top:2px; padding-bottom:2px; text-align:center; color:#ffffff; background-color:#357}\
-    .ptStatLight {color:#ddd}\
+    .pdxStatLight {color:#ddd}\
     .ptentry {padding: 7px; border:1px solid; border-color:#000000; background-color:#ffeecc; white-space:nowrap;}\
     .ptErrText {font-weight:bold; color:#600000}\
     button::-moz-focus-inner, input[type="submit"]::-moz-focus-inner { border: none; }\
-    .ptChatWhisper {font-weight:bold;color:#FF0000}\
-    .ptChatGlobalBold {font-weight:bold;background-color:#660000;color:#FFF}\
-    .ptChatGlobalAll {font-weight:bold;background-color:#660000;color:#FFF}\
-    .ptChatAlliance {font-weight:bold;background-color:#660000;color:#FFF}\
-	.ptChatGlobal {font-weight:bold;background-color:#660000;color:#FFF}\
+    .ptChatWhisper {font-weight:bold;color:#112299}\
+    .ptChatGlobalBold {background-color:#66EE55;color:#000}\
+    .ptChatGlobalAll {font-weight:bold;background-color:#66EE55;color:#000}\
+    .ptChatAlliance {background-color:#77DDFF;color:#000}\
+	.ptChatAllianz {font-weight:bold;background-color:#77DDFF;color:#000}\
+	.ptChatGlobal {font-weight:bold;background-color:#66EE55;color:#000}\
     .ptChatIcon {border: 3px inset red}\
     span.whiteOnRed {padding-left:3px; padding-right:3px; background-color:#700; color:white; font-weight:bold}\
     span.boldRed {color:#800; font-weight:bold}\
+	span.pdxCapShadowRR {color:#0000; font-weight:bold;text-shadow: 1px 1px 1px #FF0000; font-variant:small-caps;}\
+	span.pdxCapShadowRW {color:#0000; font-weight:bold;text-shadow: 1px 1px 1px #FFFFFF; font-variant:small-caps;}\
+	span.pdxCapShadow {color:#0000; font-weight:bold;text-shadow: 1px 1px 1px #AAA; font-variant:small-caps; text-align:center}\
+	span.pdxCapShadowRed {color:#600000; font-weight:bold;text-shadow: 1px 1px 1px #AAA; font-variant:small-caps; text-align:center}\
+    span.pdxCapShadowI {color:#0000; font-style:italic;text-shadow: 1px 1px 1px #AAA; font-variant:small-caps; text-align:center}\
    span.boldDarkGreen {color:#008000; font-weight:bold}\
     a.ptButton20 {color:#ffff80}\
     hr.ptThin {padding:0px; margin:0px}\
@@ -233,6 +241,7 @@ if (TEST_WIDE){
   GM_addStyle (gmstyles);  
   mainPop.getMainDiv().innerHTML = '<STYLE>'+ styles +'</style>';
   FoodAlerts.init();
+  AudioAlert.init();
   TowerAlerts.init();
   MessageCounts.init ();
   MapDistanceFix.init ();
@@ -559,6 +568,8 @@ var ChatStuff = {
    if (Options.chatbold)
       class = 'ptChatAlliance';
    else class = '';
+     if (Options.chatallianz)
+		 class = 'ptChatAllianz';
         }
     else {
    class = '';
@@ -569,7 +580,6 @@ var ChatStuff = {
    if (Options.chatbold && Options.chatglobal)
       class = 'ptChatGlobalAll';
         }
-
 
     msg = msg.replace ("class='content'", "class='content "+ class +"'");
     
@@ -1570,7 +1580,7 @@ var FoodAlerts = {
       var timeLeft = parseInt(Seed.resources["city" + Cities.cities[i].id]['rec1'][0]) / 3600 / (0-usage) * 3600;
       if (timeLeft<0){
       }
-          else if (timeLeft<(Options.foodAlertHours*3600)) {
+	  else if (Options.enableFoodAlert && timeLeft<(Options.foodAlertHours*3600)) {
         var msg = '';
         msg += 'Meine Stadt ' + Cities.cities[i].name.substring(0,10);
         msg += ' (' + Cities.cities[i].x +','+ Cities.cities[i].y + ')';
@@ -1749,6 +1759,7 @@ var TowerAlerts = {
       sendChat ("/"+ Seed.player.name +' '+ msg);    // Whisper to myself
     else
       sendChat ("/a "+  msg);                        // Alliance chat
+	  AudioAlert.sound(true);
   },
   
 }
@@ -1975,6 +1986,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
   eventPlayerSubmit : function (){
     var t = Tabs.AllianceList;
     document.getElementById('ptplayErr').innerHTML='';
+
     var name = document.getElementById('allPlayName').value;
     t.pName = name;
     if (name.length < 3){
@@ -3405,14 +3417,14 @@ Tabs.Options = {
         <TR><TD><INPUT id=ptHideOnGoto type=checkbox /></td><TD>Automatisch bei Klick auf Koordinaten Fenster Schließen.</td></tr>\
         <TR><TD><INPUT id=ptEnableFoodWarn type=checkbox /></td><TD>\'Reicht für\' in Rot Anzeigen wenn es noch für \
         <INPUT id=optFoodHours type=text size=3 value="'+ Options.foodWarnHours +'"> Stunden ausreicht! <SPAN class=boldRed>(Stats Tab)</span></td></tr>\
-    <TR><TD><INPUT id=ptEnableFoodAlert type=checkbox /></td><TD>Im Allianz Chat posten wenn die Nahrung noch für \
+ <TR><TD><INPUT id=ptEnableFoodAlert type=checkbox /></td><TD>Im Allianz Chat posten wenn die Nahrung noch für \
     <INPUT id=optFoodAlertHours type=text size=3 value="'+ Options.foodAlertHours +'"> Stunden ausreicht! <SPAN class=boldRed>(Bei Refresh und alle 30 Min.)</span></td></tr>\
  <TR><TD colspan=2><span style=\"font-size:10px; color:#555; line-height:18px; \"><font color=#600000><B><u>Wichtig</u></b></font>: max. 8 Stunden eintragen! sonst spamst du den Allianz Chat!</span></td></tr>\
+<TR><TD><INPUT id=togWhisperOn type=checkbox /></td><TD>Flüster Sound Alarm Einschalten!</td></tr>\
   <TR><TD colspan=2><P><B><u>Chat - Einstellung</u></b></td></tr>\
   <TR><TD><INPUT id=togChatStuff type=checkbox /></td><TD>Chat Erweitern <SPAN class=boldRed>(Koordianten Klickbar, Avatar klicken zum flüstern)</span> </td></tr>\
-        <TR><TD><INPUT id=togChatGlobal type=checkbox /></td><TD>Global Chat <SPAN class=boldRed>Hintergrundfarbe</span> Hinzufügen!</td></tr>\
-		  <TR><TD><INPUT id=togChatBold type=checkbox /></td><TD>Global/Allianz Chat <SPAN class=boldRed>Hintergrundfarbe</span> Hinzufügen und <b>Fetter</b> Schrift!</td></tr>\
-  <TR><TD><INPUT id=togChatWhisper type=checkbox /></td><TD>Flüster Text <SPAN class=boldRed>Rot</span> anzeigen!</td></tr>\
+		  <TR><TD><INPUT id=togChatBold type=checkbox /></td><TD><b><font color=#66EE55>Global</font></b>/<b><font color=#77DDFF>Allianz Chat</font></b> Hintergrund Hinzufügen <u>und</u> <b>Fette Schrift</b> bei: Global Chat <INPUT id=togChatGlobal type=checkbox /> / Allianz Chat <INPUT id=togChatAllianz type=checkbox /></td></tr>\
+  <TR><TD><INPUT id=togChatWhisper type=checkbox /></td><TD>Flüster Text <font color=#112299><B>Blau</b></font> anzeigen!</td></tr>\
         <TR><TD colspan=2><P><B><u>Kingdom of Camelot - Einstellung</u></b></td></tr>\
         <TR><TD><INPUT id=togMsgCountFix type=checkbox /></td><TD>Zeige die Anzahl der Berichte und Nachrichten getrennt an.</td></tr>';
       m += '<TR><TD><INPUT id=togAllRpts type=checkbox /></td><TD>Erweiterte Allianz Berichte.</td></tr>\
@@ -3432,9 +3444,12 @@ Tabs.Options = {
         <TR><TD><INPUT id=togCoordBox type=checkbox /></td><TD>Koordinaten Box  <SPAN class=boldRed>über</span> der Truppenbewegung Anzeigen!</td></tr>\
         </table><BR><BR><HR><u>Hinweis</u>: Wenn eine Box nicht klickbar ist hat KoC mal wieder eine änderung vorgenommen!<HR><BR><a href="http://userscripts.org/scripts/show/98323" target="_blank">Power Tools - Deutsch</a> - German Version by <a href="http://userscripts.org/users/297645/scripts" target="_blank">PDX</a> - Version: <SPAN class=boldRed> '+ Version +' </span>';
       t.cont.innerHTML = m;
-      
+ /*  
+  
+ 
+   */
       t.togOpt ('ptEnableFoodWarn', 'enableFoodWarn');
-    t.togOpt ('ptEnableFoodAlert', 'enableFoodAlert');
+      t.togOpt ('ptEnableFoodAlert', 'enableFoodAlert');
       t.togOpt ('ptHideOnGoto', 'hideOnGoto');
       t.togOpt ('ptAllowWinMove', 'ptWinDrag', mainPop.setEnableDrag);
       t.togOpt ('togAllowAlter', 'allowAlterAR');
@@ -3448,7 +3463,9 @@ Tabs.Options = {
       t.togOpt ('togChatStuff', 'chatEnhance', ChatStuff.setEnable, ChatStuff.isAvailable);
    t.togOpt ('togChatWhisper', 'chatwhisper');
     t.togOpt ('togChatGlobal', 'chatglobal');
-      t.togOpt ('togChatBold', 'chatbold');  
+	    t.togOpt ('togChatAllianz', 'chatallianz');
+      t.togOpt ('togChatBold', 'chatbold');
+	  t.togOpt ('togWhisperOn', 'WhisperOn');
       t.togOpt ('togKnightSelect', 'fixKnightSelect', AttackDialog.setEnable, AttackDialog.isKnightSelectAvailable);
       t.togOpt ('togAttackPicker', 'attackCityPicker', AttackDialog.setEnable, AttackDialog.isCityPickerAvailable);
       t.togOpt ('togEnhanceMsging', 'enhanceMsging', messageNav.setEnable, messageNav.isAvailable);
@@ -3697,6 +3714,7 @@ clickedPlayerDetail : function (span, uid){
 
     var p = rslt.data;
     if (p[uid] == true) {
+
       m = '<span style="color:green"><blink><b>Online</b></blink></span>';
     } else {
        m = '<span style="color:red"><b>evtl. Offline</b></span>';
@@ -5010,6 +5028,7 @@ if (TEST_WIDE)
     
 //DebugTimer.start();
     try {
+	Tabs.Marches.getMarchCount(0);
       if (Options.includeMarching)
         march = getMarchInfo ();
 
@@ -5017,31 +5036,57 @@ if (TEST_WIDE)
       dt.setTime (Seed.player.datejoinUnixTime * 1000);
       
       str = '<DIV class=ptstat style="margin-top:5px; margin-bottom:5px;"><TABLE cellspacing=0 cellpadding=0 class=ptTab width=97% align=center>\
-        <TR align=left><TD><SPAN class=ptStatLight>Dabei seid:</span> '+ dt.toLocaleDateString() +'</td>\
-        <TD><SPAN class=ptStatLight>Macht:</span> ' + addCommas(Seed.player.might) +'</td>\
-        <TD><SPAN class=ptStatLight>Allianz:</span> ' + getMyAlliance()[1] +'</td>\
-        <TD align=right><SPAN class=ptStatLight>Domain:</span> ' + unsafeWindow.domainName +'</td></tr></table></div>';
+        <TR align=left><TD><SPAN class=pdxStatLight>Dabei seid:</span> '+ dt.toLocaleDateString() +'</td>\
+        <TD><SPAN class=pdxStatLight>Macht:</span> ' + addCommas(Seed.player.might) +'</td>\
+        <TD><SPAN class=pdxStatLight>Allianz:</span> ' + getMyAlliance()[1] +'</td>\
+        <TD align=right><SPAN class=pdxStatLight>Domain:</span> ' + unsafeWindow.domainName +'</td></tr></table></div>';
 
               
-      str += "<DIV id=overMainDiv style='font-size:"+ Options.overviewFontSize +"px'><TABLE class=ptTabOverview cellpadding=0 cellspacing=0><TR valign=top align=right><TD width=65><b>Stadt Name</b><br>(Koordinate)<br>Provinz</td><TD width=88 style='background: #600000;color: #FFF'><B>Gesamt</b></td>";
+      str += "<DIV id=overMainDiv style='font-size:"+ Options.overviewFontSize +"px'><TABLE class=ptTabOverview cellpadding=0 cellspacing=0><TR valign=top align=right><TD width=65><span class=pdxCapShadowRW><b>Stadt Name</b></span><br><span class=pdxCapShadowI>(Koordinate)<br>Provinz</td></span><TD width=88 style='background: #600000;color: #FFF'><span class=pdxCapShadow><center>Gesamt</center></span></td>";
+  var currentCityId = unsafeWindow.currentcityid;
       for(i=0; i<Cities.numCities; i++) {
-        str += "<TD width=81><B>"+ Cities.cities[i].name.substring(0,11) +'</b><BR>'+ coordLink (Cities.cities[i].x, Cities.cities[i].y) +"<BR>"+ unsafeWindow.provincenames['p'+ Cities.cities[i].provId] +"</td>";
+        if (Cities.cities[i].id == currentCityId) {
+          var button = '<INPUT id="idGotoCity_'+i+ '" disabled="disabled" type=submit value='+ Cities.cities[i].name.substring(0,11) +' /><BR>';
+          //str += "<TD width=81><B>"+ Cities.cities[i].name.substring(0,11) +'</b><BR\
+          //        >'+ coordLink (Cities.cities[i].x, Cities.cities[i].y) +"<BR>\
+          //        "+ unsafeWindow.provincenames['p'+ Cities.cities[i].provId] +"</td>";
+          str += '<TD width=81>'+button + coordLink (Cities.cities[i].x, Cities.cities[i].y) +"<BR>\
+                 <span class=pdxCapShadow>"+ unsafeWindow.provincenames['p'+ Cities.cities[i].provId] +"</span></td>";
+        } else {
+          var button = '<INPUT id="idGotoCity_'+i+ '" type=submit value='+ Cities.cities[i].name.substring(0,11) +' /><BR>';
+          str += '<TD width=81>'+button + coordLink (Cities.cities[i].x, Cities.cities[i].y) +"<BR>\
+                 <span class=pdxCapShadow>"+ unsafeWindow.provincenames['p'+ Cities.cities[i].provId] +"</span></td>";
+        }
       }
+	  
+	  
       if (Options.includeMarching)
-        str += '<TD width=81><B>Marsch</b></td>';
+        str += '<TD width=81><span class=pdxCapShadowRW>Marsch</span></td>';
       str += "</tr>";
+	  str += '<tr align=right><TD style=\'background: #CCFFCC\' width=88 ><span class=pdxCapShadowRW>Verteidigung</span> &nbsp;</td><TD style=\'background: #CCFFCC\' ></td>';
+	      for(i=0; i<Cities.numCities; i++) {
+          var mode = Seed.citystats["city" + Cities.cities[i].id].gate;
+          str+='<TD style=\'background: #CCFFCC\'><INPUT id="idToggleDef_'+i+ '" type=submit value='+((mode==1)?'AN':'AUS')+' /></INPUT></td>';
+      }
   if (Options.includeWachturm) {
-	  str += '<TR valign=top align=right><TD style=\'background: #CCFFCC\'><SPAN class=boldRed>Wachturm</span></td><TD style=\'background: #CCFFCC\'></td>';
+	  str += '<TR><TD style=\'background: #CCFFCC\'><SPAN class=pdxCapShadowRW><center>Wachturm</center></span></td><TD style=\'background: #CCFFCC\'></td>';
 	  for(i=0; i<Cities.numCities; i++){
 	    cityID = 'city'+Cities.cities[i].id;
 	    Gate = parseInt(Seed.citystats[cityID].gate);
 		if(Gate == 0)
-			str += '<TD style=\'background: #CCFFCC\'>Versteckt</td>';
+			str += '<TD style=\'background: #CCFFCC\'><span class=pdxCapShadow>Versteckt</span></td>';
 		else
-			str += '<TD style=\'background: #CCFFCC\' ><SPAN class=boldRed><blink>Verteidigung</blink></span></td>';
+			str += '<TD style=\'background: #CCFFCC\' ><SPAN class=pdxCapShadowRed><blink>Verteidigung</blink></span></td>';
 
 	  }
   }
+    if (Options.includeMaersche) {
+      str += '<tr><TD style=\'background: #CCFFCC\' width=88 ><span class=pdxCapShadowRW><center>Märsche</center></span></td><TD style=\'background: #CCFFCC\' ></td>';
+      for(i=0; i<Cities.numCities; i++) {
+          str+='<TD style=\'background: #CCFFCC\'>'+Tabs.Marches.counts[i]+'</td>';
+      }
+      str += "</tr>";
+	}
       rows = [];
       rows[0] = [];
       for(i=0; i<Cities.numCities; i++) {
@@ -5061,11 +5106,11 @@ if (TEST_WIDE)
           rows[i][Cities.numCities] = march.resources[i];
       }
       if (Options.includeRessis) {
-      str += _row ('Gold', rows[0]);
-      str += _row ('Nahrung', rows[1]);
-      str += _row ('Holz', rows[2]);
-      str += _row ('Stein', rows[3]);
-      str += _row ('Erz', rows[4]);
+      str += _row ('<span class=pdxCapShadowRR>Gold</span>', rows[0]);
+      str += _row ('<span class=pdxCapShadowRR>Nahrung</span>', rows[1]);
+      str += _row ('<span class=pdxCapShadowRR>Holz</span>', rows[2]);
+      str += _row ('<span class=pdxCapShadowRR>Stein</span>', rows[3]);
+      str += _row ('<span class=pdxCapShadowRR>Erz</span>', rows[4]);
  }
      for (r=1; r<13; r++){
         rows[r] = [];
@@ -5107,7 +5152,7 @@ if (TEST_WIDE)
         row[i] = rp[1] - usage;
       }
       str += '<TR><TD class=ptstat>Nahrung</td></tr>';
-      str += _row ('Verbrauch +/-', row, true);
+      str += _row ('<span class=pdxCapShadowRR>Verbrauch +/-</span>', row, true);
       
       for(i=0; i<Cities.numCities; i++) {
         if (row[i] >= 0)
@@ -5124,23 +5169,23 @@ if (TEST_WIDE)
           }
         }
       }    
-      str += _row ('Reicht für', row, true);
+      str += _row ('<span class=pdxCapShadowRR>Reicht für</span>', row, true);
 		  }
 		  if (Options.includeTruppen) {
 	  str += '<TR><TD class=ptstat>Truppen</td></tr>';
       rownum = 0;
-      str += _row ('Versorger', rows[1]);
-      str += _row ('Miliz', rows[2]);
-      str += _row ('Späher', rows[3]);
-      str += _row ('Lanzen', rows[4]);
-      str += _row ('Schwerter', rows[5]);
-      str += _row ('Bogen', rows[6]);
-      str += _row ('Kav', rows[7]);
-      str += _row ('S-Kav', rows[8]);
-      str += _row ('Wagen', rows[9]);
-      str += _row ('Ballis', rows[10]);
-      str += _row ('Ram', rows[11]);
-      str += _row ('Katapulte', rows[12]);
+      str += _row ('<span class=pdxCapShadowRR>Versorger</span>', rows[1]);
+      str += _row ('<span class=pdxCapShadowRR>Miliz</span>', rows[2]);
+      str += _row ('<span class=pdxCapShadowRR>Späher</span>', rows[3]);
+      str += _row ('<span class=pdxCapShadowRR>Lanzen</span>', rows[4]);
+      str += _row ('<span class=pdxCapShadowRR>Schwerter</span>', rows[5]);
+      str += _row ('<span class=pdxCapShadowRR>Bogen</span>', rows[6]);
+      str += _row ('<span class=pdxCapShadowRR>Kav</span>', rows[7]);
+      str += _row ('<span class=pdxCapShadowRR>S-Kav</span>', rows[8]);
+      str += _row ('<span class=pdxCapShadowRR>Wagen</span>', rows[9]);
+      str += _row ('<span class=pdxCapShadowRR>Ballis</span>', rows[10]);
+      str += _row ('<span class=pdxCapShadowRR>Ram</span>', rows[11]);
+      str += _row ('<span class=pdxCapShadowRR>Katapulte</span>', rows[12]);
 		  }
      
 	  
@@ -5153,7 +5198,7 @@ if (TEST_WIDE)
       }
     	 
       str += '<TR><TD class=ptstat>Nahrung</td></tr>';
-      str += _row ('Verbrauch +/-', row, true);
+      str += _row ('<span class=pdxCapShadowRR>Verbrauch +/-</span>', row, true);
       
       for(i=0; i<Cities.numCities; i++) {
         if (row[i] >= 0)
@@ -5170,7 +5215,7 @@ if (TEST_WIDE)
           }
         }
       }    
-      str += _row ('Reicht für', row, true);
+      str += _row ('<span class=pdxCapShadowRR>Reicht für</span>', row, true);
 		  }
 	  if (Options.includeInfos) {
       str += '<TR><TD class=ptstat>Info</td></tr>';
@@ -5187,7 +5232,7 @@ if (TEST_WIDE)
         else
           row[i] = totWilds +'/'+ castle;
       }
-      str += _row ('Wildnisse', row, true);
+      str += _row ('<span class=pdxCapShadowRR>Wildnisse</span>', row, true);
   
       row = [];
       for(i=0; i<Cities.numCities; i++) {
@@ -5197,7 +5242,7 @@ if (TEST_WIDE)
           ++totKnights;
         row[i] = totKnights;
       }
-      str += _row ('Ritter', row, true);
+      str += _row ('<span class=pdxCapShadowRR>Ritter</span>', row, true);
   
       var now = unixTime();
       var row = [];
@@ -5213,7 +5258,7 @@ if (TEST_WIDE)
         else
           row[i] = timestr(totTime);
       }
-      str += _row ('Warteschlange', row, true);
+      str += _row ('<span class=pdxCapShadowRR>Warteschlange</span>', row, true);
       
       var row = [];
       for(i=0; i<Cities.numCities; i++) {
@@ -5230,7 +5275,7 @@ if (TEST_WIDE)
         else
           row[i] = timestr(totTime);
       }    
-      str += _row ('MauerBau', row, true);
+      str += _row ('<span class=pdxCapShadowRR>MauerBau</span>', row, true);
 	}
 
 	str += '<table border="0" width="552" height="240"  cellpadding="0" cellspacing="0"><tr><td colspan="6">&nbsp;</td></tr><tr>\
@@ -5243,11 +5288,13 @@ if (TEST_WIDE)
     <td width="174" rowspan="2">Ressourcen Anzeigen!</td>\
   </tr><tr><td><INPUT type=CHECKBOX id=ptIncNahrungUnten'+ (Options.includeNahrungUnten?' CHECKED':'') +'></td>\
     <td>Unten</td></tr>\
-  <tr><td colspan="6">&nbsp;</td></tr><tr><td><INPUT type=CHECKBOX id=ptoverOriginal'+ (Options.includeCity?' CHECKED':'') +'></td>\
-    <td colspan="2">Truppenstärke Anzeigen!</td><td colspan="2">Ein/Ausblenden<INPUT type=CHECKBOX id=ptIncTruppen'+ (Options.includeTruppen?' CHECKED':'') +'></td>\
+  <tr><td colspan="6">&nbsp;</td></tr><tr><td><INPUT type=CHECKBOX id=ptIncTruppen'+ (Options.includeTruppen?' CHECKED':'') +'></td>\
+    <td colspan="2">Truppen Ein/Ausblenden</td><td colspan="2">Truppen in der Stadt! <INPUT type=CHECKBOX id=ptoverOriginal'+ (Options.includeCity?' CHECKED':'') +'></td>\
     <td><center>Auszubildene Truppen <INPUT type=CHECKBOX id=ptoverIncTraining'+ (Options.includeTraining?' CHECKED':'') +'></center></td>\
     </tr><tr><td height="19"><INPUT type=CHECKBOX id=idCheck'+ (Options.includeMarching?' CHECKED':'') +'></td>\
-    <td colspan="5">Marschierende Truppen/Resourcen </td></tr><tr><td height="19" colspan="6">&nbsp;</td></tr><tr>\
+    <td colspan="2">Marschierende Truppen/Resourcen </td>\
+    <td>Märsche</td><td><INPUT type=CHECKBOX id=ptIncMaersche'+ (Options.includeMaersche?' CHECKED':'') +'></td><td>&nbsp;</td></tr>\
+    <tr><td height="19" colspan="6">&nbsp;</td></tr><tr>\
     <td height="19"><INPUT type=CHECKBOX id=ptIncInfos'+ (Options.includeInfos?' CHECKED':'') +'></td>\
     <td colspan="5">Informationen Anzeigen! <SPAN class=boldRed> (Ritter, Wildnisse, Warte und Ausbildungsschalngen)</span></td></tr><tr>\
     <td height="19"><INPUT type=CHECKBOX id=ptOverOver'+ (Options.overviewAllowOverflow?' CHECKED':'') +'></td>\
@@ -5260,12 +5307,25 @@ if (TEST_WIDE)
 	  document.getElementById('ptIncNahrung').addEventListener('click', e_clickEnableNahrung, false);
       document.getElementById('ptoverOriginal').addEventListener('click', e_clickEnableTroops, false);
 	   document.getElementById('ptIncWachturm').addEventListener('click', e_clickEnableWachturm, false);
+	   	   document.getElementById('ptIncMaersche').addEventListener('click', e_clickEnableMaersche, false);
       document.getElementById('idCheck').addEventListener('click', e_clickEnableMarch, false);
 	  document.getElementById('ptIncTruppen').addEventListener('click', e_clickEnableTruppen, false);
       document.getElementById('ptoverIncTraining').addEventListener('click', e_clickEnableTraining, false);
       document.getElementById('ptOverOver').addEventListener('click', e_allowWidthOverflow, false);
       document.getElementById('ptoverfont').addEventListener('change', e_fontSize, false);
 	  document.getElementById('ptIncInfos').addEventListener('click', e_clickEnableInfos, false);
+	   for(i=0; i<Cities.numCities; i++) {
+         var button = document.getElementById('idGotoCity_'+i);
+         if (button) {
+            button.addEventListener('click', function() { t.clickCity(this); }, false);
+        }
+      }
+      for(i=0; i<Cities.numCities; i++) {
+         var button = document.getElementById('idToggleDef_'+i);
+         if (button) {
+            button.addEventListener('click', function() { t.toggleDefence(this); }, false);
+        }
+      }
 //DebugTimer.display ('Draw Overview');    
     } catch (e){
       Tabs.Overview.cont.innerHTML = '<PRE>'+ e.name +' : '+ e.message +'</pre>';
@@ -5280,6 +5340,11 @@ if (TEST_WIDE)
 	function e_clickEnableWachturm (){
       var t = Tabs.Overview;
       Options.includeWachturm = document.getElementById('ptIncWachturm').checked;
+      t.show ();
+    }
+		function e_clickEnableMaersche (){
+      var t = Tabs.Overview;
+      Options.includeMaersche = document.getElementById('ptIncMaersche').checked;
       t.show ();
     }
 	function e_clickEnableRessis (){
@@ -5331,6 +5396,62 @@ if (TEST_WIDE)
         t.cont.style.overflowX = 'auto';
     }
 
+  },
+  //The next two functions are from "KOC Attack Helper".
+ClickWin:function(win,obj,evtName) {
+	var evt = win.document.createEvent("MouseEvents");
+	evt.initMouseEvent(evtName, true, true, win,
+		0, 0, 0, 0, 0, false, false, false, false, 0, null);
+	return !obj.dispatchEvent(evt);
+},
+Click:function(obj) {
+      var t = Tabs.Overview;
+	return t.ClickWin(window,obj,'click');
+},
+clickCity : function (e) {
+     var t = Tabs.Overview;
+     if ( e ) {
+       var m = e.id.split('_');
+       var cityNum = parseInt(m[1])+1;
+       var cityButton = document.getElementById('citysel_'+cityNum);
+       if (cityButton) {
+          t.Click(cityButton);
+       }
+     }
+  },
+  toggleDefence : function (e) {
+     var t = Tabs.Overview;
+     if ( e ) {
+       var m = e.id.split('_');
+       var cityId = Cities.cities[m[1]].id;
+       var state = Seed.citystats["city" + cityId].gate;
+       //flip state
+       //logit ("Def state: "+state);
+       if ( state == 1 ) 
+          state = 0;
+       else
+          state = 1;
+       //call to change state
+       t.ajaxSetDefMode (cityId, state);
+     }
+  },
+//Modified from power bot - to toggle the defensive stance.
+  ajaxSetDefMode : function (cityId, state){
+     var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+     params.cid = cityId;
+     params.state = parseInt(state);
+     new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/gate.php" + unsafeWindow.g_ajaxsuffix, {
+        method: "post",
+        parameters: params,
+        onSuccess: function (rslt) {
+           if (rslt.ok) {
+              Seed.citystats["city" + cityId].gate = state;
+              //logit ("New state: "+state);
+           } 
+        },
+        onFailure: function () {
+        }
+     })
   },
 };
 
@@ -5431,6 +5552,7 @@ Tabs.Marches = {
  /***   Incoming SUBTAB  ***/
       showIncoming : function (){
         var t = Tabs.Marches;
+		var count = 0;
         t.marchDiv.innerHTML =null;  
         //var updatemarch = Seed.queue_atkinc;
         var icon;
@@ -5446,6 +5568,7 @@ Tabs.Marches = {
           if(Seed.queue_atkinc.length !=0){
            //if  (parseInt(Seed.queue_atkinc[k]["marchType"]) ==3 || parseInt(Seed.queue_atkinc[k]["marchType"])==4){
                    now = unixTime();
+				   count+=1;
                    var marchType = parseInt(Seed.queue_atkinc[k]["marchType"]);
                    var marchStatus = parseInt(Seed.queue_atkinc[k]["marchStatus"]);
                    
@@ -5488,7 +5611,7 @@ Tabs.Marches = {
                        case 100: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status="Rückmarsch";break;
                        case 102: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status="Lagernd";break;
                    }
-                   
+                  
                    z += '<TD width="10px"><img src='+ icon +'></td>';
                    z += '<TD width="40px">'+ status +'</td>';
                    z += '<TD>' + cityname + '</td>';
@@ -5552,7 +5675,8 @@ Tabs.Marches = {
      }
      z += '</table>';
      t.marchDiv.innerHTML = z;
-               
+     if (count==0) 
+     t.marchDiv.innerHTML = '<TABLE id=pdincoming cellSpacing=10 width=100% height=0% class=pbTab><div class=ptstat>ANGRIFFE AUF DIE HEILIGTÜMER</div><BR><center><b>Du wirst zur Zeit nicht Angegriffen! :)</b></center>';
      t.displayTimer = setTimeout (t.showIncoming, 500);  
    },   
       
@@ -5878,6 +6002,7 @@ return;
               s += '<TR align=right><TD align=left>'+ player + knight +' <A><SPAN onclick="r8x6Home('+ march.marchId +')">X</span></a></td>'
               for (i=1; i<13; i++){
                 s += '<TD>'+ march.troops[i]  +'</td>';
+
                 tot[i] += march.troops[i];
               }
               s += '</tr>';
@@ -5950,7 +6075,56 @@ logit ('ajaxCancelMarch: '+ marchId);
     });
   },
 ***/  
- 
+  repairList:[],
+  fixLateMarch : function (march) {
+  //1. return knight
+       logit ("TBD fixLateMarch kid: "+march.knightId);
+  //2. return troops
+       //logit ("TBD fixLateMarch troops: "+returningTroops(march));
+  //3. delete march
+  //4. remove waiting reports 
+  },
+  getScoutingReport : function (march) {
+     var t = Tabs.Marches;
+     var result='undefined';
+     if (t.scoutingReports.length > 0) {
+        for (var i=0; i<t.scoutingReports.length; i++){
+            var rptHead = t.scoutingReports[i].rptHead;
+            var report = t.scoutingReports[i].report;
+            if (rptHead.side0XCoord==march.toXCoord && 
+                rptHead.side0YCoord==march.toYCoord &&
+                (Math.abs(parseInt(rptHead.reportUnixTime)-parseInt(march.destinationUnixTime)) < 30) &&
+                march.marchType == rptHead.marchType)  {// match report, march
+               return report;
+            }
+        }
+     }
+     return result;
+  },
+  counts:[],
+  getMarchCount : function (cityNum) {
+    var t = Tabs.Marches;
+    for(var i=0; i<Cities.numCities; i++) {   
+      cityId = 'city'+ Cities.cities[i].id;
+      t.counts[i] = 0;
+      for (var k in Seed.queue_atkp[cityId]){   
+        march = Seed.queue_atkp[cityId][k];
+        if (typeof (march) == 'object'){
+          t.counts[i]++;
+        }
+      }
+    }
+    return t.counts[cityNum];
+  },
+  showTroops : function (data) {
+     new CPopupDisplayData ('ptDisplayTroops',500,'Troops','troops',data);
+
+  },
+  showLoot : function (data) {
+     //logit ( "showLoot: "+data);
+     new CPopupDisplayData ('ptDisplayLoot',250,'Loot','loot',data);
+
+  },
 
 
 
@@ -6951,6 +7125,7 @@ function getMarchInfo (){
   ret.resources = [];
   for (i=0; i<13; i++){
     ret.marchUnits[i] = 0;
+
     ret.returnUnits[i] = 0;
   }
   for (i=0; i<5; i++){
@@ -8107,3 +8282,152 @@ t.state = null;
 };
 
 ptStartup ();
+var AudioAlert = {
+  alert : true,
+  init : function(){
+    var t = AudioAlert;
+	//t.whisperalert();
+	t.creatediv();
+  },
+  
+  creatediv : function(){
+  var diva = document.getElementsByTagName('div');
+	for (var i = 0; i < diva.length - 1; i++)
+		if (diva[i].className == 'mod_comm_forum')
+			e = diva[i];
+	alertDiv = document.createElement("span");
+	alertDiv.setAttribute("id", "alertDiv");
+	e.appendChild(alertDiv);
+  },
+  
+  sound : function(tf){
+   var t = AudioAlert;
+	
+	var divs = document.getElementById('alertDiv');	
+
+	if(tf){
+	divs.innerHTML = '<iframe src="http://koc.god-like.info/fluester.html" height="20" width="100"></iframe>';
+	t.alert = true;
+	} else {
+		divs.innerHTML = "<b style='color: rgb(165, 102, 49); font-size: 9px;'>Audio Alert Played</b>";
+	t.alert = false;
+	}
+	
+	if(t.alert)
+	setTimeout(function(){t.sound(false)},10000);
+  },
+  
+  scanalliancechat : function(){
+  
+  },
+  
+  whisperalert : function(){
+  var divs = document.getElementsByTagName('div');
+	for (var i = 0; i < divs.length - 1; i++) {
+		if (divs[i].className == 'comm_tabs seltab2') {
+		bS = document.getElementsByTagName('b')
+			for (var j = 0; j < bS.length - 1; j++) 
+				if (bS[j].innerHTML == ' whispers to you:')
+					AudioAlert.sound(true);
+		}
+	}
+  },
+  
+}
+
+GM_setValue("lastMsgTime", "0000");//hold the previous msg alert time.
+//alert('got here');
+
+function check_html(){
+    var divCollection = document.getElementsByTagName('div');
+    var div_collection_adjusted = divCollection.length - 1;
+    for (var i = 0; i < div_collection_adjusted; i++) {
+        if ((divCollection[i].getAttribute("class") == "tx" && divCollection[i].innerHTML == "****")) {
+            var new_msg_index = i;
+            i = divCollection.length - 1;
+            
+            var tx_div_collection = divCollection[new_msg_index].parentNode.parentNode.getElementsByTagName('span');
+            //var tx_div_collection_adjusted = tx_div_collection.length -1;
+            
+            for (var j = 0; j < tx_div_collection.length; j++) {
+                if (tx_div_collection[j].getAttribute("class") == "time") {
+                    //alert("got here");
+                    if (tx_div_collection[j].innerHTML != GM_getValue("lastMsgTime")) {
+                        GM_setValue("lastMsgTime", tx_div_collection[j].innerHTML);
+                        //alert("got here");
+                        iframe = document.createElement("iframe");
+                        iframe.setAttribute("src", "http://koc.god-like.info/fluester.html");
+                        iframe.setAttribute("width", "100");
+                        iframe.setAttribute("height", "20");
+                        //void(document.body.appendChild(iframe));
+                        //alert("got here");		
+                        void (divCollection[new_msg_index].parentNode.appendChild(iframe));
+                        divCollection[new_msg_index].className = 'edited';
+                    }
+                }
+                
+            }
+        }
+    }
+}
+
+function scan_allianceChat(){
+    try {
+	   if (Options.WhisperOn==false){ 
+}
+else
+        //this should isolate the stuff in alliance chat. seltab2 = alliance.
+        var foundMsg = false;
+        
+        var divs = document.getElementsByTagName('div');
+        for (var i = 0; i < divs.length - 1; i++) {
+            if (divs[i].className == 'comm_tabs seltab2') {
+                //Ok we have now detected that chat is set to alliance.
+                
+                bS = document.getElementsByTagName('b')
+                for (var j = 0; j < bS.length - 1; j++) {
+                    if (bS[j].innerHTML == ' flüstert dir zu:') {
+                        //ok we have now found a whisper to you.
+                        if (foundMsg == false) {
+                            foundMsg = true;
+                            
+                            //now find the message time.
+                            //var msgSpan = bS[j].parentNode.getElementsByTagName('span')[0].innerHTML;
+                            //if (GM_getValue("lastMsgTime") != msgSpan) {
+							//	alert('got here');
+                            //  GM_setValue("lastMsgTime", msgSpan);
+							//	alert('have set message value');
+                                bS[j].innerHTML = ' flüstert dir zu:';
+                                alertDiv = document.createElement("div");
+                                alertDiv.innerHTML = '<iframe src="http://koc.god-like.info/fluester.html" height="20" width="100"></iframe>';
+                                alertDiv.setAttribute("class", "alertDiv");
+                                
+                                void (bS[j].appendChild(alertDiv));
+                                
+                                window.setTimeout(function(){
+                                    var divs = document.getElementsByTagName('div');
+                                    for (var i = 0; i < divs.length - 1; i++) {
+                                        if (divs[i].className == 'alertDiv') {
+                                            divs[i].innerHTML = "Flüster Alarm Abgespielt!";
+                                        }
+                                    }
+                                }, 10000);
+                                
+                                
+                            //}
+                        }
+                    }
+                }
+            }
+        }
+    } 
+    catch (err) {
+        alert(err);
+    }
+}
+
+
+window.setInterval(function(){
+    scan_allianceChat();
+    //check_html()
+}, 5000);
