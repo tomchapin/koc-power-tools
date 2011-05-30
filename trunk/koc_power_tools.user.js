@@ -3951,6 +3951,7 @@ Tabs.Overview = {
   tabOrder : 1,
   cont : null,
   displayTimer : null,
+  checkBox:null,
 
   Overview : function (){
   },
@@ -4015,6 +4016,7 @@ if (TEST_WIDE)
     try {
       if (Options.includeMarching)
         march = getMarchInfo ();
+		train = getTrainInfo ();
 
       dt = new Date ();
       dt.setTime (Seed.player.datejoinUnixTime * 1000);
@@ -4032,18 +4034,20 @@ if (TEST_WIDE)
       }
       if (Options.includeMarching)
         str += '<TD width=81><B>Marching</b></td>';
+	  if (Options.includeTrainingTotal)
+		str += '<TD width=81><B>Training</b></td>';
       str += "</tr>";
+	  
+	  str += '<TR valign=top align=right><TD></td><TD style=\'background: #ffc\'></td>';
+		for(i=0; i<Cities.numCities; i++){
+		  cityID = 'city'+Cities.cities[i].id;
+		  Gate = parseInt(Seed.citystats[cityID].gate);
+		if(Gate == 0)
+		  str += '<TD>Hiding</td>';
+		else
+		  str += '<TD><SPAN class=boldRed>Defending</span></td>';
+		}
   
-str += '<TR valign=top align=right><TD></td><TD style=\'background: #ffc\'></td>';
-    for(i=0; i<Cities.numCities; i++){
-      cityID = 'city'+Cities.cities[i].id;
-      Gate = parseInt(Seed.citystats[cityID].gate);
-    if(Gate == 0)
-      str += '<TD>Hiding</td>';
-    else
-      str += '<TD><SPAN class=boldRed><blink>Defending</blink></span></td>';
-    }
-
       rows = [];
       rows[0] = [];
       for(i=0; i<Cities.numCities; i++) {
@@ -4062,23 +4066,38 @@ str += '<TR valign=top align=right><TD></td><TD style=\'background: #ffc\'></td>
         for (var i=0; i<5; i++)
           rows[i][Cities.numCities] = march.resources[i];
       }
+	  if (Options.includeTrainingTotal){
+		for (var i=0; i<5; i++)
+          rows[i][Cities.numCities+1] = 0;
+	  }
       str += _row ('Gold', rows[0]);
       str += _row ('Food', rows[1]);
       str += _row ('Wood', rows[2]);
       str += _row ('Stone', rows[3]);
       str += _row ('Ore', rows[4]);
-      str += '<TR><TD colspan=10><BR></td></tr>';
-      for (r=1; r<13; r++){
+      str += '<TR><TD colspan=12><BR></td></tr>';
+	  for (r=1; r<13; r++){
         rows[r] = [];
-        for(i=0; i<Cities.numCities; i++) {
-          cityID = 'city'+ Cities.cities[i].id;
-          rows[r][i] = parseInt(Seed.units[cityID]['unt'+r]);
+		for(i=0; i<Cities.numCities; i++) {
+            rows[r][i] = 0;
         }
-      }
+	  }
+	  if (Options.includeCity){
+        for (r=1; r<13; r++){
+          for(i=0; i<Cities.numCities; i++) {
+            cityID = 'city'+ Cities.cities[i].id;
+            rows[r][i] = parseInt(Seed.units[cityID]['unt'+r]);
+          }
+        }
+	  }
       if (Options.includeMarching){
         for (var i=0; i<13; i++)
           rows[i][Cities.numCities] = march.marchUnits[i];
       }
+	  if (Options.includeTrainingTotal){
+		for (var i=0; i<13; i++)
+          rows[i][Cities.numCities+1] = train.trainUnts[i];
+	  }
       if (Options.includeTraining){
         var q = Seed.queue_unt;
         for(i=0; i<Cities.numCities; i++) {
@@ -4102,7 +4121,7 @@ str += '<TR valign=top align=right><TD></td><TD style=\'background: #ffc\'></td>
       str += _row ('Ballista', rows[10]);
       str += _row ('Ram', rows[11]);
       str += _row ('Catapult', rows[12]);
-      str += '<TR><TD colspan=10><BR></td></tr>';
+      str += '<TR><TD colspan=12><BR></td></tr>';
       
       row = [];
       for(i=0; i<Cities.numCities; i++) {
@@ -4139,6 +4158,7 @@ str += '<TR valign=top align=right><TD></td><TD style=\'background: #ffc\'></td>
           for (k in dat)
             ++totWilds;
         var castle = parseInt(Seed.buildings['city'+ Cities.cities[i].id].pos0[1]);
+		if(castle == 11) castle = 12;
         if (totWilds < castle)
           row[i] = '<SPAN class=boldRed><B>'+ totWilds +'/'+ castle +'</b></span>';
         else
@@ -4188,15 +4208,19 @@ str += '<TR valign=top align=right><TD></td><TD style=\'background: #ffc\'></td>
           row[i] = timestr(totTime);
       }    
       str += _row ('WallQue', row, true);
-      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><BR><INPUT type=CHECKBOX id=idCheck'+ (Options.includeMarching?' CHECKED':'') +'>Include Marching Troops/Resources</td></tr>';
-      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=ptoverIncTraining'+ (Options.includeTraining?' CHECKED':'') +'>Include troops in training</td></tr>';
+      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><BR><INPUT type=CHECKBOX id=ptoverOriginal'+ (Options.includeCity?' CHECKED':'') +'>Show Troops in City</td></tr>';
+      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=idCheck'+ (Options.includeMarching?' CHECKED':'') +'>Show Marching Troops/Resources</td></tr>';
+      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=ptoverIncTraining'+ (Options.includeTraining?' CHECKED':'') +'>Show troops training in city</td></tr>';
+      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=ptoverIncTrainingTotal'+ (Options.includeTrainingTotal?' CHECKED':'') +'>Show troops training totals</td></tr>';
       str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=ptOverOver'+ (Options.overviewAllowOverflow?' CHECKED':'') +'>Allow width overflow \
-         &nbsp; &nbsp; FONT SIZE: '+ htmlSelector ({9:9, 10:10, 11:11, 12:12}, Options.overviewFontSize, 'id=ptoverfont') +'</td></tr><BR>';
+         &nbsp; &nbsp; FONT SIZE: '+ htmlSelector ({9:9, 10:10, 11:11, 12:12}, Options.overviewFontSize, 'id=ptoverfont') +'</td></tr>';
       str += "</table></div>";
-      str+= 'Koc Power Tools Version:' + Version;
+	  str+= 'Koc Power Tools Version:' + Version;
       Tabs.Overview.cont.innerHTML = str;
+      document.getElementById('ptoverOriginal').addEventListener('click', e_clickEnableTroops, false);
       document.getElementById('idCheck').addEventListener('click', e_clickEnableMarch, false);
       document.getElementById('ptoverIncTraining').addEventListener('click', e_clickEnableTraining, false);
+      document.getElementById('ptoverIncTrainingTotal').addEventListener('click', e_clickEnableTrainingTotal, false);
       document.getElementById('ptOverOver').addEventListener('click', e_allowWidthOverflow, false);
       document.getElementById('ptoverfont').addEventListener('change', e_fontSize, false);
 //DebugTimer.display ('Draw Overview');    
@@ -4205,6 +4229,11 @@ str += '<TR valign=top align=right><TD></td><TD style=\'background: #ffc\'></td>
     }   
     t.displayTimer = setTimeout (t.show, 5000);
 
+    function e_clickEnableTroops (){
+      var t = Tabs.Overview;
+      Options.includeCity = document.getElementById('ptoverOriginal').checked;
+      t.show ();
+    }
     function e_clickEnableMarch (){
       var t = Tabs.Overview;
       Options.includeMarching = document.getElementById('idCheck').checked;
@@ -4213,6 +4242,11 @@ str += '<TR valign=top align=right><TD></td><TD style=\'background: #ffc\'></td>
     function e_clickEnableTraining (){
       var t = Tabs.Overview;
       Options.includeTraining = document.getElementById('ptoverIncTraining').checked;
+      t.show ();
+    }
+    function e_clickEnableTrainingTotal (){
+      var t = Tabs.Overview;
+      Options.includeTrainingTotal = document.getElementById('ptoverIncTrainingTotal').checked;
       t.show ();
     }
 
@@ -4646,97 +4680,112 @@ Tabs.Alliance = {
   alliancemembers:[],
   number:0,
   totalmembers:0,
+  totalpages:10,
+  pageNo:1,
+  searching:false,
   
   init : function (div){    
     var t = Tabs.Alliance;      
     t.myDiv = div;
-     t.myDiv.style.overflowY = 'scroll';
-     div.style.maxHeight = '500px';
+    t.myDiv.style.overflowY = 'scroll';
+	div.style.maxHeight = '720px';
      
-     unsafeWindow.getdetails = t.getMemberDetails;
+    unsafeWindow.getdetails = t.getMemberDetails;
     
     var m =  '<DIV class=ptstat>ALLIANCE OVERVIEW</div><TABLE align=center cellpadding=1 cellspacing=0></table>';
     
-    m +='<TABLE class=ptTab><TD>Sort by: <select id="searchAlli"><option value="name">Name</options>';
+    m += '<TABLE class=ptTab><TD>Sort by: <select id="searchAlli">'
+	m += '<option value="name">Name</options>';
     m += '<option value="might">Might</option>';
+    m += '<option value="rank">Rank</option>';
+    m += '<option value="dip">Days in position (dip)</option>';
     m += '<option value="login">Last Login</option>';
-    m += '<option value="dip">Days in position (dip)</option></select></td>';
-    m += '<TD><INPUT id=alList type=submit value="List"></td>';
+    m += '</select></td><TD><INPUT id=alList type=submit value="List"></td>';
     m += '<TD id=progress>(0/0)</td></table>';
-    
     m += '<TABLE id=alOverviewTab class=alTab><TR align="center"></tr></table>';
-    
-    
+     
     t.myDiv.innerHTML = m;
     
     document.getElementById('alList').addEventListener('click', function(){
-    t.number=0;
-    t.totalmembers=0;
-    t.alliancemembers=[];	
-    document.getElementById('alOverviewTab').innerHTML ="";
-    t.fetchAllianceMemberPage();
-    
-     t.paintMembers();
-		    
+		t.number=0;
+		t.totalmembers=0;
+		t.alliancemembers=[];	
+		document.getElementById('alOverviewTab').innerHTML = "Scanning...";
+		t.searching = true;
+		t.fetchAllianceMemberPage();
     }, false);
+	document.getElementById('searchAlli').addEventListener('change', function(){
+		if(!t.searching && t.alliancemembers.length>0)
+			t.paintMembers();
+	}, false);
       
-      window.addEventListener('unload', t.onUnload, false);
+    window.addEventListener('unload', t.onUnload, false);
   },
   
   paintMembers: function(){
-  var t = Tabs.Alliance; 
-	  	if ( t.totalmembers >= (t.alliancemembers.length-1)) { 
-	  		  if (document.getElementById('searchAlli').value == "name") {
-				  var sortmembers = t.alliancemembers.sort(function(a, b){
-				         var sortA=a.Name.toLowerCase(), sortB=b.Name.toLowerCase()
-				         if (sortA < sortB) 
-				          return -1
-				         if (sortA > sortB)
-				          return 1
-				         return 0 
-				        });
-			  }     
-			  if (document.getElementById('searchAlli').value == "might") {
-			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
-			  	         var sortA=parseInt(a.Might),sortB=parseInt(b.Might)
-			  	         if (sortA > sortB) 
-			  	          return -1
-			  	         if (sortA < sortB)
-			  	          return 1
-			  	         return 0 
-			  	        });
-			  }     
-			  if (document.getElementById('searchAlli').value == "login") {
-			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
-			  	         var sortA=a.LastLogin,sortB=b.LastLogin
-			  	         if (sortA < sortB) 
-			  	          return -1
-			  	         if (sortA > sortB)
-			  	          return 1
-			  	         return 0 
-			  	        });
-			  }     
-			  if (document.getElementById('searchAlli').value == "dip") {
-			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
-			  	         var sortA=a.dip,sortB=b.dip
-			  	         if (sortA < sortB) 
-			  	          return -1
-			  	         if (sortA > sortB)
-			  	          return 1
-			  	         return 0 
-			  	        });
-			  }     
-			   
-			  for (var y = (sortmembers.length-1); y >=0; y--) {
-			                      t._addTab(sortmembers[y].Name,sortmembers[y].Might,sortmembers[y].LastLogin,sortmembers[y].Position,sortmembers[y].dip,sortmembers[y].uid,sortmembers[y].fbuid);
-			                      t.myDiv.style.overflowY = 'scroll';
-			  }
-			 t._addTabHeader();
-		 } 
-		 else setTimeout(function(){t.paintMembers()},1000);
+  var t = Tabs.Alliance;
+  document.getElementById('alOverviewTab').innerHTML = "";
+	if ( t.totalmembers >= (t.alliancemembers.length-1)) {
+	  if (document.getElementById('searchAlli').value == "name") {
+	    var sortmembers = t.alliancemembers.sort(function(a, b){
+			 var sortA=a.Name.toLowerCase(), sortB=b.Name.toLowerCase()
+			 if (sortA < sortB) 
+			  return -1
+			 if (sortA > sortB)
+			  return 1
+			 return 0 
+			});
+	  }     
+	  if (document.getElementById('searchAlli').value == "might") {
+		var sortmembers = t.alliancemembers.sort(function(a, b){
+			 var sortA=parseInt(a.Might),sortB=parseInt(b.Might)
+			 if (sortA > sortB) 
+			  return -1
+			 if (sortA < sortB)
+			  return 1
+			 return 0 
+			});
+	  }     
+	  if (document.getElementById('searchAlli').value == "login") {
+		var sortmembers = t.alliancemembers.sort(function(a, b){
+			 var sortA=a.LastLogin,sortB=b.LastLogin
+			 if (sortA < sortB) 
+			  return -1
+			 if (sortA > sortB)
+			  return 1
+			 return 0 
+			});
+	  }       
+	  if (document.getElementById('searchAlli').value == "rank") {
+		var sortmembers = t.alliancemembers.sort(function(a, b){
+			 var sortA=a.Position,sortB=b.Position
+			 if (sortA < sortB) 
+			  return -1
+			 if (sortA > sortB)
+			  return 1
+			 return 0 
+			});
+	  }     
+	  if (document.getElementById('searchAlli').value == "dip") {
+		var sortmembers = t.alliancemembers.sort(function(a, b){
+			 var sortA=a.dip,sortB=b.dip
+			 if (sortA > sortB) 
+			  return -1
+			 if (sortA < sortB)
+			  return 1
+			 return 0 
+			});
+	  }     
+	   
+	  for (var y = (sortmembers.length-1); y >=0; y--) {
+		t._addTab(sortmembers[y].Name,sortmembers[y].Might,sortmembers[y].LastLogin,sortmembers[y].Position,sortmembers[y].dip,sortmembers[y].uid,sortmembers[y].fbuid);
+		t.myDiv.style.overflowY = 'scroll';
+	  }
+	  t._addTabHeader();
+	}
    },
   
-    _addTab: function(Name,Might,LastLogin,Position,dip,uid,fbuid){
+  _addTab: function(Name,Might,LastLogin,Position,dip,uid,fbuid){
              var t = Tabs.Alliance;
              var row = document.getElementById('alOverviewTab').insertRow(0);
              row.vAlign = 'top';
@@ -4752,23 +4801,22 @@ Tabs.Alliance = {
        		 row.insertCell(5).innerHTML = LastLogin;
        		 t.number++;
           }, 
-          
-    _addTabHeader: function() {
+
+  _addTabHeader: function() {
     var t = Tabs.Alliance;
         var row = document.getElementById('alOverviewTab').insertRow(0);
         row.vAlign = 'top';
-         row.insertCell(0).innerHTML = "Facebook";
+        row.insertCell(0).innerHTML = "Facebook";
         row.insertCell(1).innerHTML = "Name";
         row.insertCell(2).innerHTML = "Might";
         row.insertCell(3).innerHTML = "Rank";
         row.insertCell(4).innerHTML = "DIP.";
         row.insertCell(5).innerHTML = "LastLogin";
       },   
-          
-    fetchAllianceMemberPage : function () {
+
+  fetchAllianceMemberPage : function () {
     var t = Tabs.Alliance;
     var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-    
     params.pf = 0;
     
     new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetInfo.php" + unsafeWindow.g_ajaxsuffix, {
@@ -4776,38 +4824,49 @@ Tabs.Alliance = {
       parameters: params,
       onSuccess: function (rslt) {
           t.totalmembers = (rslt["allianceInfo"]["members"]);
+		  t.fetchAllianceMemberInfo();
       },
       onFailure: function (rslt) {;
         notify ({errorMsg:'AJAX error'});
       },
     });
     
-    for (var i=1;i<=10;i++) {
-          params.pageNo = i;
-          params.pf = 0;
-          new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetMembersInfo.php" + unsafeWindow.g_ajaxsuffix, {
-            method: "post",
-            parameters: params,
-            onSuccess: function (rslt) {
-                for (var k in rslt["memberInfo"]){
-                    t.alliancemembers.push ({
-                        Name: rslt["memberInfo"][k]["name"],
-                        Might: rslt["memberInfo"][k]["might"],
-                        Position : rslt["memberInfo"][k]["positionType"],
-                        dip : rslt["memberInfo"][k]["daysInPosition"],
-                        LastLogin : rslt["memberInfo"][k]["lastLogin"],
-                        uid : rslt["memberInfo"][k]["userId"],
-                        fbuid : rslt["memberInfo"][k]["fbuid"],	
-                    });
-                }
-                document.getElementById('progress').innerHTML	 = '(' + (t.alliancemembers.length-1) +'/'+ t.totalmembers +')';
-            },
-            onFailure: function (rslt) {;
-              notify ({errorMsg:'AJAX error'});
-            },
-            
+  },
+  
+  fetchAllianceMemberInfo : function (){
+	var t = Tabs.Alliance;
+	if(t.pageNo>t.totalpages){
+		t.searching = false;
+		t.paintMembers();
+		return;
+	}
+	var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+	params.pageNo = t.pageNo;
+	params.pf = 0;
+	new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetMembersInfo.php" + unsafeWindow.g_ajaxsuffix, {
+		method: "post",
+		parameters: params,
+		onSuccess: function (rslt) {
+			for (var k in rslt["memberInfo"]){
+				t.alliancemembers.push ({
+					Name: rslt["memberInfo"][k]["name"],
+					Might: rslt["memberInfo"][k]["might"],
+					Position : rslt["memberInfo"][k]["positionType"],
+					dip : parseInt(rslt["memberInfo"][k]["daysInPosition"]),
+					LastLogin : rslt["memberInfo"][k]["lastLogin"],
+					uid : rslt["memberInfo"][k]["userId"],
+					fbuid : rslt["memberInfo"][k]["fbuid"],	
+				});
+			}
+			t.totalpages = rslt.noOfPages;
+			t.pageNo++;
+			document.getElementById('progress').innerHTML	 = '(' + (t.alliancemembers.length) +'/'+ t.totalmembers +')';
+			t.fetchAllianceMemberInfo();
+		},
+		onFailure: function (rslt) {;
+		  notify ({errorMsg:'AJAX error'});
+		},
     });
-   }
   },
   
   hide : function (){         
@@ -4819,9 +4878,6 @@ Tabs.Alliance = {
         mainPop.div.style.width = 750 + 'px';
   },
 }
-
-
-
 
 /*************************************** MARCHES TAB ************************************************/
 
@@ -6461,6 +6517,26 @@ function getMarchInfo (){
 // TODO: Assume transport is complete ?
     }
   }
+  return ret;
+}
+
+function getTrainInfo (){
+  var ret = {};
+
+  ret.trainUnts = [];
+  for (i=0; i<13; i++){
+    ret.trainUnts[i] = 0;
+  }
+  
+  var q = Seed.queue_unt;
+  for(i=0; i<Cities.numCities; i++) {   // each city
+    cityID = 'city'+ Cities.cities[i].id;
+	q = Seed.queue_unt[cityID];
+	if (q && q.length>0){
+	  for (qi=0; qi<q.length; qi++)
+          ret.trainUnts[q[qi][0]] += parseInt(q[qi][1]);
+	  }
+    }
   return ret;
 }
 
