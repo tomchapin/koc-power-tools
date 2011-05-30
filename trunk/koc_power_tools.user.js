@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name           KOC Power Tools
+// @version        20110530a
 // @namespace      mat
 // @include        http://*.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110529a';
+var Version = '20110530a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -32,6 +33,7 @@ var provMapCoords = {imgWidth:710, imgHeight:708, mapWidth:670, mapHeight:670, l
 var Options = {
   includeMarching:true,
   includeTraining:false,
+  includeTrainingTotal:false,
   encRemaining : true,
   maxIdlePop   : false,
   srcSortBy    : 'level',
