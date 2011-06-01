@@ -3021,11 +3021,11 @@ var crestreq = { 3:{1101:4, 1102:2, 1103:1},
     t.cont.innerHTML = m +'</div>';
     if (DEBUG_BUTTON)
       document.getElementById('ptButDebug').addEventListener('click', function (){debugWin.doit()}, false);
-    new CdispCityPicker ('ptloc1', document.getElementById('ptloc1'), true, t.eventLocChanged, 0).bindToXYboxes(document.getElementById('calcX'), document.getElementById('calcY'));
-    new CdispCityPicker ('ptloc2', document.getElementById('ptloc2'), true, t.eventLocChanged, 0).bindToXYboxes(document.getElementById('calcX2'), document.getElementById('calcY2'));
-    t.eventLocChanged(Cities.cities[0], Cities.cities[0].x, Cities.cities[0].y);      
     for (var c=0; c<Cities.numCities; c++)      
       t.makeCityImg (c, document.getElementById('ptProvMap'));
+	new CdispCityPicker ('ptloc1', document.getElementById('ptloc1'), true, t.eventLocChanged, 0).bindToXYboxes(document.getElementById('calcX'), document.getElementById('calcY'));
+    new CdispCityPicker ('ptloc2', document.getElementById('ptloc2'), true, t.eventLocChanged, 0).bindToXYboxes(document.getElementById('calcX2'), document.getElementById('calcY2'));
+    t.eventLocChanged(Cities.cities[0], Cities.cities[0].x, Cities.cities[0].y);
   },
 
   hide : function (){
@@ -3058,7 +3058,34 @@ var crestreq = { 3:{1101:4, 1102:2, 1103:1},
     ce.innerHTML = (cityNum+1) +'';
   },
   
+  plotCityImg : function (cityNum, eMap, x, y){
+//logit ('makeCityImg: '+ cityNum);    
+    var t = Tabs.Info;
+    var xplot = parseInt((provMapCoords.mapWidth * x) / 750);
+    var yplot = parseInt((provMapCoords.mapHeight * y) / 750);
+	if(document.getElementById('plotmap_'+cityNum) == null){
+		var ce = document.createElement ('div');
+		ce.style.background = 'white';
+		ce.id = 'plotmap_'+cityNum;
+		ce.style.opacity = '1.0';
+		ce.style.position='relative';
+		ce.style.display='block';
+		ce.style.width='14px';
+		ce.style.height='16px';
+		ce.style.border='1px solid #fff';
+		ce.style.color = 'black';
+		ce.style.textAlign = 'center';
+	} else {
+		ce = document.getElementById('plotmap_'+cityNum);
+	}
+    ce.style.top = (yplot+provMapCoords.topMargin-((Cities.numCities+cityNum)*16)-8) +'px';      
+    ce.style.left = (xplot+provMapCoords.leftMargin-7) +'px';
+    eMap.appendChild(ce);
+    ce.innerHTML = (cityNum+1) +'';
+  },
+  
   eventLocChanged : function (city, x, y){
+    var t = Tabs.Info;
     var x1 = parseInt(document.getElementById('calcX').value);
     var x2 = parseInt(document.getElementById('calcX2').value);
     if (isNaN(x2))
@@ -3067,6 +3094,8 @@ var crestreq = { 3:{1101:4, 1102:2, 1103:1},
     var y2 = parseInt(document.getElementById('calcY2').value);
     var m = 'The distance from '+ x1 +','+ y1 +' to '+ x2 +','+ y2 +' is: &nbsp;<B>'+ distance (x1, y1, x2, y2).toFixed(2) +'</b>';
     document.getElementById('ptdistout').innerHTML = m;
+	t.plotCityImg(0, document.getElementById('ptProvMap'), x1, y1);
+	t.plotCityImg(1, document.getElementById('ptProvMap'), x2, y2);
   },
 }
 
