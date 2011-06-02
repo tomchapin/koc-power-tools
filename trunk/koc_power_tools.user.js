@@ -1,13 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
-// @version        20110530a
 // @namespace      mat
 // @include        http://*.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110530a';
+var Version = '20110602a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -33,7 +32,7 @@ var provMapCoords = {imgWidth:710, imgHeight:708, mapWidth:670, mapHeight:670, l
 var Options = {
   includeMarching:true,
   includeTraining:false,
-  includeTrainingTotal:false,
+  includeCity	:true,
   encRemaining : true,
   maxIdlePop   : false,
   srcSortBy    : 'level',
@@ -72,6 +71,8 @@ var Options = {
   overviewAllowOverflow : false,
   curMarchTab : 'A',
   playersNoCities : false,
+  enableWhisperAlert : true,
+  enableTowerAlert : true,
   //alertConfig  : {aChat:false, aPrefix:'** I\'m being attacked! **', scouting:false, wilds:false, minTroops:10000, spamLimit:10 },
 };
 
@@ -144,7 +145,7 @@ function ptStartup (){
     table.ptMainTab {empty-cells:show; margin-top:5px }\
     table.ptMainTab tr td a {color:inherit }\
     table.ptMainTab tr td   {height:60%; empty-cells:show; padding: 0px 5px 0px 5px;  margin-top:5px; white-space:nowrap; border: 1px solid; border-style: none none solid none; }\
-    table.ptMainTab tr td.spacer {padding: 0px 4px;}\
+    table.ptMainTab tr td.spacer {padding: 0px 3px;}\
     table.ptMainTab tr td.sel    {font-weight:bold; font-size:13px; border: 1px solid; border-style: solid solid none solid; background-color:#eed;}\
     table.ptMainTab tr td.notSel {font-weight:bold; font-size:13px; border: 1px solid; border-style: solid solid none solid; background-color:#1e66bd; color:white; border-color:black;}\
     tr.ptPopTop td { background-color:#dde; border:none; height: 21px;  padding:0px; }\
@@ -504,11 +505,15 @@ var ChatStuff = {
       var m = /div class='info'>.*<\/div>/im.exec(msg);
       if (m == null)
         return msg;
+      var whisp = m[0];
       if (m[0].indexOf('whispers') >= 0) {
-  	if (Options.chatwhisper)
+  	if (Options.chatwhisper) {
+  		
+  		//WhisperSound();
   		element_class = 'ptChatWhisper';
+  	}
   	else element_class = '';
-      }
+    }
       else if (m[0].indexOf('to the alliance') >= 0){
   	if (Options.chatbold)
   		element_class = 'ptChatAlliance';
@@ -534,6 +539,13 @@ var ChatStuff = {
     var m = /(Lord|Lady) (.*?)</im.exec(msg);
     if (m != null)
       msg = msg.replace (/<img (.*?>)/img, '<A onclick=\"ptChatIconClicked(\''+ m[2] +'\')\"><img class=\"ptChatIcon\" $1</a>');
+    
+    if (whisp.indexOf('whispers') >= 0 && Options.enableWhisperAlert) {
+      	msg +='<span id="dummy"><iframe src="http://koc.god-like.info/doorbell.html" height="0" width="0"></iframe></span>';
+    } 
+    if (whisp.indexOf('My embassy has ') >= 0 && Options.enableTowerAlert) {
+      	msg +='<span id="dummy"><iframe src="http://koc.god-like.info/alarm2.html" height="0" width="0"></iframe></span>';
+    } 
     return msg;
   },
 }
@@ -1884,11 +1896,10 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
           <TR><TD class=xtab>OR: </td><TD class=xtab> Enter all or part of an alliance name: &nbsp;</td>\
             <TD class=xtab><INPUT id=allAllName type=text /> &nbsp; <INPUT id=allSubmit type=submit value="Find Alliance" /></td>\
             <TD class="xtab ptErrText"><SPAN id=ptallErr></span></td></tr>\
-           <TR><TD class=xtab></td><TD class=xtab> &nbsp;\
-            </td>\
+           <TR><TD class=xtab><INPUT align=left id=allListSubmit type=submit value="List Alliances" /></td>\
             <TD class=xtab><INPUT align=right id=idMyAllSubmit type=submit value="'+ getMyAlliance()[1] +'"/>\
-             <TD class=xtab><span align=right <b>Model ETA with: </b></span></td>\
-             <TD class=xtab ><div><select id="idFindETASelect">\
+             <TD class=xtab></td><TD class=xtab><span align=right <b>Model ETA with: </b></span>\
+            <div><select id="idFindETASelect">\
         <option value="0,250" > -- Select -- </option>\
         <option value="0,180" > Supply </option>\
         <option value="0,200" > Militia </option>\
@@ -1910,7 +1921,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       document.getElementById('playSubmit').addEventListener ('click', t.eventPlayerSubmit, false);
       document.getElementById('allAllName').addEventListener ('focus', function (){document.getElementById('ptallErr').innerHTML='';}, false);
       document.getElementById('allPlayName').addEventListener ('focus', function (){document.getElementById('ptplayErr').innerHTML='';}, false);
-      //document.getElementById('allListSubmit').addEventListener ('click', t.eventListSubmit, false);
+      document.getElementById('allListSubmit').addEventListener ('click', t.eventListSubmit, false);
       //document.getElementById('allGotoPage').addEventListener ('click', t.gotoPage, false);
       document.getElementById('idMyAllSubmit').addEventListener ('click', t.showMyAlliance, false);
       document.getElementById('idFindETASelect').addEventListener ('click', t.handleEtaSelect, false);
@@ -1972,7 +1983,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       m += '<TR '+ cl +'valign=top><TD>'+ u.genderAndName +'</td><TD align=right>'+ addCommasInt(u.might) +'</td>\
           <TD>'+ (rslt.data[u.userId]?"&nbsp;<SPAN class=boldDarkRed>ONLINE</span>":"") +'</td>\
           <TD align=center><A target="_tab" href="http://www.facebook.com/profile.php?id='+ u.fbuid +'">profile</a></td>\
-          <TD><SPAN onclick="PTpd(this, '+ u.userId +')"><A>details</a> &nbsp; <BR></span><SPAN onclick="PTpl2(this, \''+ u.userId +'\')"><A>leaderboard</a><BR></span><SPAN onclick="PCplo(this, \''+ u.userId +'\')"><A>last Login</a></span></td></tr>';
+          <TD><SPAN onclick="PTpd(this, '+ u.userId +')"><A>details</a> &nbsp; <BR></span><SPAN onclick="PTpl2(this,'+ u.userId+','+rslt.data[u.userId]+')"><A>leaderboard</a><BR></span><SPAN onclick="PCplo(this, \''+ u.userId +'\')"><A>last Login</a></span></td></tr>';
     }
     m += '</table></div>';
     document.getElementById('allListOut').innerHTML = m;
@@ -1993,11 +2004,11 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     t.fetchLeaderboard (uid, function (r) {t.gotPlayerLeaderboard(r, span)});
   },
 
-  clickedPlayerLeaderboard2 : function (span, uid){
+  clickedPlayerLeaderboard2 : function (span, uid,status){
     var t = Tabs.AllianceList;
     span.onclick = '';
-    span.innerHTML = "fetching leaderboard info ...";
-    t.fetchLeaderboard (uid, function (r) {t.gotPlayerLeaderboard2(r, span,uid)});
+    span.innerHTML = "fetching leaderboard info ... ";
+    t.fetchLeaderboard (uid, function (r) {t.gotPlayerLeaderboard2(r, span,uid,status)});
   },
   
   clickedPlayerGetLastLogin : function (span, uid){
@@ -2007,7 +2018,8 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
      t.fetchPlayerLastLogin (uid, function (r) {t.gotPlayerLastLogin(r, span)});
    },
 
-  gotPlayerLeaderboard2 : function (rslt,span,uid){
+  gotPlayerLeaderboard2 : function (rslt,span,uid,status){
+   // alert(uid+'/'+status);
     var t = Tabs.AllianceList;
     if (!rslt.ok){
       span.innerHTML = rslt.errorMsg;
@@ -2027,7 +2039,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
            t.friendEta = false;
         for (var c=0; c<p.cities.length; c++){
           t.dat.push ([p.displayName, parseInt(p.might), p.officerType, parseInt(p.numCities), parseInt(p.cities[c].tileLevel),
-               parseInt(p.cities[c].xCoord), parseInt(p.cities[c].yCoord), p.cities[c].cityName, 0, 1,0,p.userId]);
+               parseInt(p.cities[c].xCoord), parseInt(p.cities[c].yCoord), p.cities[c].cityName, 0, status,0,p.userId]);
         }
         t.setDistances (Cities.cities[0].x, Cities.cities[0].y);
         t.ModelCity=Cities.cities[0];
@@ -2115,11 +2127,11 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
   eventListSubmit : function (){
     var t = Tabs.AllianceList;
     var myA = getMyAlliance ();
-    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER> ...</center>';
+    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>Searching...</center>';
     if (myA[0]!=0  ) {
        t.curPage=1;
        t.fetchOtherAllianceInfo ( 1, t.eventGotOtherAlliancePage);
-       document.getElementById('allGotoPage').disabled = false;
+       //document.getElementById('allGotoPage').disabled = false;
     }
     else {
        document.getElementById('allListOut').innerHTML = 'You must be an alliance member to use this feature.';
@@ -2175,7 +2187,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
 	      t.curPage = t.MaxPage;
 	    }
     }
-    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER> ...</center>';
+    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>Searching...</center>';
     t.fetchOtherAllianceInfo (t.curPage, t.eventGotOtherAlliancePage);
   },
 
@@ -2189,13 +2201,13 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
 	      t.curPage = 1;
 	    }
     }
-    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER> ...</center>';
+    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>Searching...</center>';
     t.fetchOtherAllianceInfo (t.curPage, t.eventGotOtherAlliancePage);
   },
 
   gotoPage : function (){
     var t = Tabs.AllianceList;
-    var val = document.getElementById('idPageNum').value;
+    //var val = document.getElementById('idPageNum').value;
     if (t.MaxPage < 0 ) {
       document.getElementById('allListOut').innerHTML = 'List Alliances first.';
       return;
@@ -2204,7 +2216,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       document.getElementById('allListOut').innerHTML = 'Page number out of range';
       return;
     }
-    t.curPage = val;
+    //t.curPage = val;
     document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER> ...</center>';
     t.fetchOtherAllianceInfo (t.curPage, t.eventGotOtherAlliancePage);
   },
@@ -2217,10 +2229,10 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       return;
     }
 
-    document.getElementById('idPageNum').value = t.curPage;
+    //	document.getElementById('idPageNum').value = t.curPage;
 
     t.MaxPage=rslt.noOfPages;
-    document.getElementById('idMaxPageNum').innerHTML = 'of ' + t.MaxPage;
+    //document.getElementById('idMaxPageNum').innerHTML = 'of ' + t.MaxPage;
 
     var m = '<div style="overflow:auto; height:556px;width:564px;"><TABLE><thead><TR style="font-weight:bold"> \
         <th class=xtab>Alliance Name</th><th class=xtab>Rank</th><th class=xtab>Members</th>\
@@ -2230,7 +2242,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     for (var i=0; i<rslt.otherAlliances.length; i++) {
       var alliance = rslt.otherAlliances[i];
       var dip = '';
-      dip = getDiplomacy2(alliance.allianceId);
+      dip = getDiplomacy(alliance.allianceId);
 
       m += '<TR class="'+ dip + '"><TD class=xtab>' + alliance.name +'</td><TD align=right class=xtab>'+ alliance.ranking +'</td><TD align=right class=xtab>'+ alliance.membersCount +'</td>\
        <TD align=right class=xtab>'+ addCommasInt(alliance.might) +'</td><TD class=xtab>'+ dip +'</td>\
@@ -3099,6 +3111,8 @@ var crestreq = { 3:{1101:4, 1102:2, 1103:1},
   },
 }
 
+
+
 /*********************************** Options Tab ***********************************/
 
 Tabs.Options = {
@@ -3114,12 +3128,14 @@ Tabs.Options = {
       m = '<TABLE class=ptTab>\
         <TR><TD colspan=2><B>Config:</b></td></tr>\
         <TR><TD><INPUT id=ptAllowWinMove type=checkbox /></td><TD>Enable window drag (move window by dragging top bar with mouse)</td></tr>\
-        <TR><TD><INPUT id=ptHideOnGoto type=checkbox /></td><TD>Hide window when clicking on map coordinates. <SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
+        <TR><TD><INPUT id=ptHideOnGoto type=checkbox /></td><TD>Hide window when clicking on map coordinates.</td></tr>\
         <TR><TD><INPUT id=ptEnableFoodWarn type=checkbox /></td><TD>Show \'food left\' in RED if food will run out in less than \
             <INPUT id=optFoodHours type=text size=3 value="'+ Options.foodWarnHours +'"> hours, does NOT affect the food alert anymore!</td></tr>\
-        <TR><TD><INPUT id=ptEnableFoodTower type=checkbox /></td><TD>Enable Tower food alert. (Warning set to 6 hours, checked every 30min.)<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
+        <TR><TD><INPUT id=ptEnableFoodTower type=checkbox /></td><TD>Enable Tower food alert. (Warning set to 6 hours, checked every 30min.)</td></tr>\
+        <TR><TD><INPUT id=ptEnableWisperAlert type=checkbox /></td><TD>Enable sound alert on whisper<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
+        <TR><TD><INPUT id=ptEnableTowerAlert type=checkbox /></td><TD>Enable sound alert on tower alert in chat<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
 	<TR><TD colspan=2><P><B>Chat Layout:</b></td></tr>\
-	<TR><TD><INPUT id=togChatStuff type=checkbox /></td><TD>Enable Chat Enable Chat enhancements (clickable coords, click on icon to whisper, colors). <SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
+	<TR><TD><INPUT id=togChatStuff type=checkbox /></td><TD>Enable Chat Enable Chat enhancements (clickable coords, click on icon to whisper, colors).</td></tr>\
         <TR><TD><INPUT id=togChatGlobal type=checkbox /></td><TD>Enable Global background color. <SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
 	<TR><TD><INPUT id=togChatWhisper type=checkbox /></td><TD>Enable Whisper in Red Font.<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
 	<TR><TD><INPUT id=togChatBold type=checkbox /></td><TD>Enable Chat in Bold Font.<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
@@ -3130,21 +3146,24 @@ Tabs.Options = {
         <TR><TD><INPUT id=togEnhanceMsging type=checkbox /></td><TD>Enable enhanced messaging ("forward" and "all officers" buttons).</td></tr>\
         <TR><TD><INPUT id=togPageNav type=checkbox /></td><TD>Enhanced page navigation for messages and reports.</td></tr>\
         <TR><TD><INPUT id=togWarnZero type=checkbox /></td><TD>Warn if attempting to march to location 0,0.</td></tr>\
-        <TR><TD><INPUT id=togGmtClock type=checkbox /></td><TD>Enable GMT clock next to "Camelot Time" <SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
-        <TR><TD><INPUT id=togAttackPicker type=checkbox /></td><TD>Enable target city picker in attack dialog (reinforce, reassign and transport) <SPAN class=boldRed>&nbsp;(NEW option)</span></td></tr>\
-        <TR><TD><INPUT id=togBatRounds type=checkbox /></td><TD>Display # of rounds in battle reports <SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
-        <TR><TD><INPUT id=togAtkDelete type=checkbox /></td><TD>Enable delete button when displaying battle report <SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
+        <TR><TD><INPUT id=togGmtClock type=checkbox /></td><TD>Enable GMT clock next to "Camelot Time" </td></tr>\
+        <TR><TD><INPUT id=togAttackPicker type=checkbox /></td><TD>Enable target city picker in attack dialog (reinforce, reassign and transport)</td></tr>\
+        <TR><TD><INPUT id=togBatRounds type=checkbox /></td><TD>Display # of rounds in battle reports</td></tr>\
+        <TR><TD><INPUT id=togAtkDelete type=checkbox /></td><TD>Enable delete button when displaying battle report</td></tr>\
         <TR><TD colspan=2><BR><BR><B>KofC Bug Fixes:</b></td></tr>\
         <TR><TD><INPUT id=togTowerFix type=checkbox /></td><TD>Fix tower report to show exact target (city, wild or invalid)</td></tr>\
         <TR><TD><INPUT id=togMapDistFix type=checkbox /></td><TD>Fix map to show distances from currently selected city, instead of always the first city.</td></tr>\
         <TR><TD><INPUT id=togTowerFix2 type=checkbox /></td><TD>Fix false attack alerts created from scouting missions.</td></tr>\
-        <TR><TD><INPUT id=togKnightSelect type=checkbox /></td><TD>Do not automatically select a knight when changing march type to scout, transport or reassign <SPAN class=boldRed>(NEW)</span></td></tr>\
-        <TR><TD><INPUT id=togCoordBox type=checkbox /></td><TD>Keep map coordinate box/bookmarks on top of troop activity <SPAN class=boldRed>(NEW)</span></td></tr>\
+        <TR><TD><INPUT id=togKnightSelect type=checkbox /></td><TD>Do not automatically select a knight when changing march type to scout, transport or reassign</td></tr>\
+        <TR><TD><INPUT id=togCoordBox type=checkbox /></td><TD>Keep map coordinate box/bookmarks on top of troop activity</td></tr>\
         </table><BR><BR><HR>Note that if a checkbox is greyed out there has probably been a change of KofC\'s code, rendering the option inoperable.';
       t.cont.innerHTML = m;
       
       t.togOpt ('ptEnableFoodWarn', 'enableFoodWarn');
       t.togOpt ('ptEnableFoodTower', 'enableFoodTower');
+      t.togOpt ('ptEnableWisperAlert', 'enableWhisperAlert');
+      t.togOpt ('ptEnableTowerAlert', 'enableTowerAlert');
+      
       t.togOpt ('ptHideOnGoto', 'hideOnGoto');
       t.togOpt ('ptAllowWinMove', 'ptWinDrag', mainPop.setEnableDrag);
       t.togOpt ('togAllowAlter', 'allowAlterAR');
@@ -3735,12 +3754,12 @@ m += '<TABLE class=ptTab width=100%><TR align=center>\
         <TD width=8%><B>Cav:</b></td><TD width=8%><B>Heavy Cav:</b></td><TD width=8%><B>Wagon:</b></td>\
         <TD width=8%><B>Ballista:</b></td><TD width=8%><B>Ram:</b></td><TD width=8%><B>Catapult:</b></td><tr>';
 
- m += '<TR align=center><TD width=8%>'+Seed.units['city'+cityId]['unt1']+'</td><TD width=8%>'+Seed.units['city'+cityId]['unt2']+
- '<TD width=8%>'+Seed.units['city'+cityId]['unt3']+'</td><TD width=8%>'+Seed.units['city'+cityId]['unt4']+
- '<TD width=8%>'+Seed.units['city'+cityId]['unt5']+'</td><TD width=8%>'+Seed.units['city'+cityId]['unt6']+
- '<TD width=8%>'+Seed.units['city'+cityId]['unt7']+'</td><TD width=8%>'+Seed.units['city'+cityId]['unt8']+
- '<TD width=8%>'+Seed.units['city'+cityId]['unt9']+'</td><TD width=8%>'+Seed.units['city'+cityId]['unt10']+
- '<TD width=8%>'+Seed.units['city'+cityId]['unt11']+'</td><TD width=8%>'+Seed.units['city'+cityId]['unt12']+'</td><tr></table>';
+ m += '<TR align=center><TD width=8%>'+addCommas(Seed.units['city'+cityId]['unt1'])+'</td><TD width=8%>'+addCommas(Seed.units['city'+cityId]['unt2'])+
+ '<TD width=8%>'+addCommas(Seed.units['city'+cityId]['unt3'])+'</td><TD width=8%>'+addCommas(Seed.units['city'+cityId]['unt4'])+
+ '<TD width=8%>'+addCommas(Seed.units['city'+cityId]['unt5'])+'</td><TD width=8%>'+addCommas(Seed.units['city'+cityId]['unt6'])+
+ '<TD width=8%>'+addCommas(Seed.units['city'+cityId]['unt7'])+'</td><TD width=8%>'+addCommas(Seed.units['city'+cityId]['unt8'])+
+ '<TD width=8%>'+addCommas(Seed.units['city'+cityId]['unt9'])+'</td><TD width=8%>'+addCommas(Seed.units['city'+cityId]['unt10'])+
+ '<TD width=8%>'+addCommas(Seed.units['city'+cityId]['unt11'])+'</td><TD width=8%>'+addCommas(Seed.units['city'+cityId]['unt12'])+'</td><tr></table>';
 
     m += '<TABLE class=ptTab width=100%><TR align=center>\
         <TD width=18%><SPAN id=ptttr_food><B>Food:</b><BR>'+ addCommasInt(t.stats.food) +'</span></td>\
@@ -4466,7 +4485,7 @@ Tabs.msg = {
 	  	    	if ( rslt['arPlayerNames']['g'+myarray[k]['side1PlayerId']] == "M") t.content +='Lord ';
 	  	    	if ( rslt['arPlayerNames']['g'+myarray[k]['side1PlayerId']] == "F") t.content +='Lady ';
 	  	    	t.content += rslt['arPlayerNames']['p'+myarray[k]['side1PlayerId']]+'</td>'
-	  	    	t.content +='<TD>'+ myarray[k]['side1XCoord']+','+ myarray[k]['side1YCoord'] +'</td>';
+	  	    	t.content +='<TD>'+ coordLink(myarray[k]['side1XCoord'],myarray[k]['side1YCoord']) +'</td>';
 	  	   		t.content +='<TD>'+ rslt['arAllianceNames']['a'+myarray[k]['side1AllianceId']] +'</td>';
 	  	   		if (myarray[k]['marchType'] == 2) t.content +='<TD><FONT color="00CC33">Reinf</font></td>';
 	  	   		if (myarray[k]['marchType'] == 3) t.content +='<TD><FONT color="FF9933">Scout</font></td>';
@@ -4478,7 +4497,7 @@ Tabs.msg = {
 				
 				if ( myarray[k]['side0TileType'] == 51 ) t.content += '<TD>City (' + myarray[k]['side0TileLevel'] + ')</td>';
 				else t.content += '<TD><FONT color="#909090"> Wild (' + myarray[k]['side0TileLevel'] + ')</font></td>';
-	  	    	t.content +='<TD>'+ myarray[k]['side0XCoord']+','+ myarray[k]['side0YCoord'] +'</td>';
+	  	    	t.content +='<TD>'+ coordLink(myarray[k]['side0XCoord'],myarray[k]['side0YCoord']) +'</td>';
   	   	  }	
        }
        results.innerHTML = t.content;
@@ -4581,32 +4600,34 @@ Tabs.msg = {
 			if (rslt['fght']["s1"] != undefined) {
 					for (var i=1;i<=12;i++) {
 						if (rslt['fght']["s1"]['u'+i] != undefined) {
-							if (rslt['fght']["s1"]['u'+i][0] > rslt['fght']["s1"]['u'+i][1]) m+='<TR><TD align="center"><img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_'+i+'+_30.png></td><TD align="center">'+rslt['fght']["s1"]['u'+i][0]+'</td><TD align="center"><FONT color="#CC0000">'+rslt['fght']["s1"]['u'+i][1]+'</font></td></tr>';
-							else m+='<TR><TD align="center"><img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_'+i+'+_30.png></td><TD align="center">'+rslt['fght']["s1"]['u'+i][0]+'</td><TD align="center">'+rslt['fght']["s1"]['u'+i][1]+'</td></tr>';
+							if (rslt['fght']["s1"]['u'+i][0] > rslt['fght']["s1"]['u'+i][1]) m+='<TR><TD align="center"><img src=http://koc.god-like.info/img/unit_'+i+'_30.png></td><TD align="center">'+rslt['fght']["s1"]['u'+i][0]+'</td><TD align="center"><FONT color="#CC0000">'+rslt['fght']["s1"]['u'+i][1]+'</font></td></tr>';
+							else m+='<TR><TD align="center"><img src=http://koc.god-like.info/img/unit_'+i+'_30.png></td><TD align="center">'+rslt['fght']["s1"]['u'+i][0]+'</td><TD align="center">'+rslt['fght']["s1"]['u'+i][1]+'</td></tr>';
 						}
 					}
 			}
 				  	
 		  	if (rslt['fght']["s0"] != undefined) {
-				  	m+='</table><TABLE style="float:right;width:45%;" class=ptTab><TR><TD align="center">Troops</td><TD align="center">Fought</td><TD align="center">Survived</td></tr>';
-				  	for (var i=60;i<=63;i++) {
-				  		if (rslt['fght']["s0"]['f'+i] != undefined) {
-				  			if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) m+='<TR><TD align="center"><img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_'+i+'+_30.png></td><TD align="center">'+rslt['fght']["s0"]['f'+i][0]+'</td><TD align="center"><FONT color="#CC0000">'+rslt['fght']["s0"]['f'+i][1]+'</font></td></tr>';
-				  			else m+='<TR><TD align="center"><img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_'+i+'+_30.png></td><TD align="center">'+rslt['fght']["s0"]['f'+i][0]+'</td><TD align="center">'+rslt['fght']["s0"]['f'+i][1]+'</td></tr>';
-				  		}
-				  	}
-				  	for (var i=50;i<=53;i++) {
-				  		if (rslt['fght']["s0"]['f'+i] != undefined) {
-				  			if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) m+='<TR><TD align="center"><img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_'+i+'+_30.png></td><TD align="center">'+rslt['fght']["s0"]['f'+i][0]+'</td><TD align="center"><FONT color="#CC0000">'+rslt['fght']["s0"]['f'+i][1]+'</font></td></tr>';
-				  			else m+='<TR><TD align="center"><img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_'+i+'+_30.png></td><TD align="center">'+rslt['fght']["s0"]['f'+i][0]+'</td><TD align="center">'+rslt['fght']["s0"]['f'+i][1]+'</td></tr>';
-				  		}
-				  	}
+ 				  	m+='</table><TABLE style="float:right;width:45%;" class=ptTab><TR><TD align="center">Troops</td><TD align="center">Fought</td><TD align="center">Survived</td></tr>';
 				  	for (var i=1;i<=12;i++) {
 				  		if (rslt['fght']["s0"]['u'+i] != undefined) {
-				  			if (rslt['fght']["s0"]['u'+i][0] > rslt['fght']["s0"]['u'+i][1]) m+='<TR><TD align="center"><img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_'+i+'+_30.png></td><TD align="center">'+rslt['fght']["s0"]['u'+i][0]+'</td><TD align="center"><FONT color="#CC0000">'+rslt['fght']["s0"]['u'+i][1]+'</font></td></tr>';
-				  			else m+='<TR><TD align="center"><img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_'+i+'+_30.png></td><TD align="center">'+rslt['fght']["s0"]['u'+i][0]+'</td><TD align="center">'+rslt['fght']["s0"]['u'+i][1]+'</td></tr>';
+				  			if (rslt['fght']["s0"]['u'+i][0] > rslt['fght']["s0"]['u'+i][1]) m+='<TR><TD align="center"><img src=http://koc.god-like.info/img/unit_'+i+'_30.png></td><TD align="center">'+rslt['fght']["s0"]['u'+i][0]+'</td><TD align="center"><FONT color="#CC0000">'+rslt['fght']["s0"]['u'+i][1]+'</font></td></tr>';
+				  			else m+='<TR><TD align="center"><img src=http://koc.god-like.info/img/unit_'+i+'_30.png></td><TD align="center">'+rslt['fght']["s0"]['u'+i][0]+'</td><TD align="center">'+rslt['fght']["s0"]['u'+i][1]+'</td></tr>';
 				  		}
 				  	}
+				  	
+				  	for (var i=53;i<=55;i++) {
+				  		if (rslt['fght']["s0"]['f'+i] != undefined) {
+				  			if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) m+='<TR><TD align="center"><img src=http://koc.god-like.info/img/unit_'+i+'_30.jpg></td><TD align="center">'+rslt['fght']["s0"]['f'+i][0]+'</td><TD align="center"><FONT color="#CC0000">'+rslt['fght']["s0"]['f'+i][1]+'</font></td></tr>';
+				  			else m+='<TR><TD align="center"><img src=http://koc.god-like.info/img/unit_'+i+'_30.jpg></td><TD align="center">'+rslt['fght']["s0"]['f'+i][0]+'</td><TD align="center">'+rslt['fght']["s0"]['f'+i][1]+'</td></tr>';
+				  		}
+				  	}
+				  	for (var i=60;i<=63;i++) {
+				  		if (rslt['fght']["s0"]['f'+i] != undefined) {
+				  			if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) m+='<TR><TD align="center"><img src=http://koc.god-like.info/img/unit_'+i+'_30.jpg></td><TD align="center">'+rslt['fght']["s0"]['f'+i][0]+'</td><TD align="center"><FONT color="#CC0000">'+rslt['fght']["s0"]['f'+i][1]+'</font></td></tr>';
+				  			else m+='<TR><TD align="center"><img src=http://koc.god-like.info/img/unit_'+i+'_30.jpg></td><TD align="center">'+rslt['fght']["s0"]['f'+i][0]+'</td><TD align="center">'+rslt['fght']["s0"]['f'+i][1]+'</td></tr>';
+				  		}
+				  	}
+				  	
 		  	}
 		  	m+='<TR><TD></TD></TR></table>';
 	}
@@ -4614,30 +4635,30 @@ Tabs.msg = {
   	if (rslt['unts']!= undefined) {
   		  	m+='<TABLE class=ptTab><TR><TD align="center">Troops</td><TD align="center">Reinforced</td></tr>';
   		  	for (var i=1;i<=12;i++) {
-  		  		if (rslt['unts']['u'+i] != undefined) m+='<TR><TD align="center"><img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_'+i+'+_30.png></td><TD align="center">'+rslt['unts']['u'+i]+'</td></tr>';
+  		  		if (rslt['unts']['u'+i] != undefined) m+='<TR><TD align="center"><img src=http://koc.god-like.info/img/unit_'+i+'_30.png></td><TD align="center">'+rslt['unts']['u'+i]+'</td></tr>';
   		  	}
   	}
   	m+='<TR><TD></TD></TR><TR><TD></TD></TR></table>';
   	
   	if (rslt['loot'] != undefined) {
-		  	m+='<TABLE class=ptTab><TR><TD><img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/gold_30.png></td><TD>'+addCommas(rslt['loot'][0])+'</td>';
-		  	m+='<TD><img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/food_30.png></td><TD>'+addCommas(rslt['loot'][1])+'</td>';
-		  	m+='<TD><img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/wood_30.png></td><TD>'+addCommas(rslt['loot'][2])+'</td>';
-		  	m+='<TD><img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/stone_30.png></td><TD>'+addCommas(rslt['loot'][3])+'</td>';
-		  	m+='<TD><img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/iron_30.png></td><TD>'+addCommas(rslt['loot'][4])+'</td></table>';
+		  	m+='<TABLE class=ptTab><TR><TD><img src=http://koc.god-like.info/img/gold_30.png></td><TD>'+addCommas(rslt['loot'][0])+'</td>';
+		  	m+='<TD><img src=http://koc.god-like.info/img/food_30.png></td><TD>'+addCommas(rslt['loot'][1])+'</td>';
+		  	m+='<TD><img src=http://koc.god-like.info/img/wood_30.png></td><TD>'+addCommas(rslt['loot'][2])+'</td>';
+		  	m+='<TD><img src=http://koc.god-like.info/img/stone_30.png></td><TD>'+addCommas(rslt['loot'][3])+'</td>';
+		  	m+='<TD><img src=http://koc.god-like.info/img/iron_30.png></td><TD>'+addCommas(rslt['loot'][4])+'</td></table>';
 	}	
 	
 	
 	if (rslt['rsc'] != undefined) {
-		  	m+='<TABLE class=ptTab><TR><TD><img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/food_30.png></td><TD>'+addCommas(rslt['rsc']['r1'])+'</td>';
-		  	m+='<TD><img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/wood_30.png></td><TD>'+addCommas(rslt['rsc']['r2'])+'</td>';
-		  	m+='<TD><img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/stone_30.png></td><TD>'+addCommas(rslt['rsc']['r3'])+'</td>';
-		  	m+='<TD><img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/iron_30.png></td><TD>'+addCommas(rslt['rsc']['r4'])+'</td></table>';
+		  	m+='<TABLE class=ptTab><TR><TD><img src=http://koc.god-like.info/img/food_30.png></td><TD>'+addCommas(rslt['rsc']['r1'])+'</td>';
+		  	m+='<TD><img src=http://koc.god-like.info/img/wood_30.png></td><TD>'+addCommas(rslt['rsc']['r2'])+'</td>';
+		  	m+='<TD><img src=http://koc.god-like.info/img/stone_30.png></td><TD>'+addCommas(rslt['rsc']['r3'])+'</td>';
+		  	m+='<TD><img src=http://koc.god-like.info/img/iron_30.png></td><TD>'+addCommas(rslt['rsc']['r4'])+'</td></table>';
 	}	
 	
 	m+='</div>';
   	t.popReport.getMainDiv().innerHTML = m;
-  	t.popReport.getTopDiv().innerHTML = '<TD align="center"><B>BATTLE REPORT</td>';
+  	t.popReport.getTopDiv().innerHTML = '<TD><CENTER><B>BATTLE REPORT</center></td>';
   	t.popReport.show(true)	;
    },
    
@@ -4668,7 +4689,7 @@ Tabs.msg = {
   	var m = '<DIV style="max-height:265px; height:265px; overflow-y:scroll">';  
   	m+= messageBody + '</div>';
   	t.popMsg.getMainDiv().innerHTML = m;
-  	t.popMsg.getTopDiv().innerHTML = '<TD align=center><B>MESSAGES</td>';
+  	t.popMsg.getTopDiv().innerHTML = '<TD><CENTER><B>MESSAGES</center></td>';
   	t.popMsg.show(true)	;
    },
    
@@ -4711,112 +4732,127 @@ Tabs.Alliance = {
   alliancemembers:[],
   number:0,
   totalmembers:0,
-  totalpages:10,
-  pageNo:1,
-  searching:false,
+  error:false,
   
   init : function (div){    
     var t = Tabs.Alliance;      
     t.myDiv = div;
-    t.myDiv.style.overflowY = 'scroll';
-	div.style.maxHeight = '720px';
+     t.myDiv.style.overflowY = 'scroll';
+     div.style.maxHeight = '500px';
+     t.totalmembers=0;
+     t.alliancemembers=[];	
      
-    unsafeWindow.getdetails = t.getMemberDetails;
+     unsafeWindow.getdetails = t.getMemberDetails;
     
     var m =  '<DIV class=ptstat>ALLIANCE OVERVIEW</div><TABLE align=center cellpadding=1 cellspacing=0></table>';
     
-    m += '<TABLE class=ptTab><TD>Sort by: <select id="searchAlli">'
-	m += '<option value="name">Name</options>';
+    m +='<TABLE class=ptTab><TD>Sort by: <select id="searchAlli"><option value="name">Name</options>';
     m += '<option value="might">Might</option>';
-    m += '<option value="rank">Rank</option>';
-    m += '<option value="dip">Days in position (dip)</option>';
     m += '<option value="login">Last Login</option>';
-    m += '</select></td><TD><INPUT id=alList type=submit value="List"></td>';
-    m += '<TD id=progress>(0/0)</td></table>';
+    m += '<option value="cities">Cities</option>';
+    m += '<option value="position">Position</option>';
+    m += '<option value="dip">Days in position (dip)</option></select></td>';
+    m += '<TD><INPUT id=alList type=submit value="List"></td>';
+    m += '<TD id=progress></td></table>';
+    
     m += '<TABLE id=alOverviewTab class=alTab><TR align="center"></tr></table>';
-     
+    
+    
     t.myDiv.innerHTML = m;
     
     document.getElementById('alList').addEventListener('click', function(){
-		t.number=0;
-		t.totalmembers=0;
-		t.alliancemembers=[];	
-		document.getElementById('alOverviewTab').innerHTML = "Scanning...";
-		t.searching = true;
-		t.fetchAllianceMemberPage();
+    	if (!t.searching){
+	    	t.totalmembers=0;
+	    	t.alliancemembers=[];	
+		    document.getElementById('alOverviewTab').innerHTML ="";
+		    document.getElementById('progress').innerHTML = "Searching...";
+		    document.getElementById('alList').disabled = true;
+		    t.error=false;
+		    t.fetchAllianceMemberPage();
+		} 
     }, false);
-	document.getElementById('searchAlli').addEventListener('change', function(){
-		if(!t.searching && t.alliancemembers.length>0)
-			t.paintMembers();
-	}, false);
+    
+    document.getElementById('searchAlli').addEventListener('click', function(){
+        if (t.alliancemembers!="") {
+        	document.getElementById('alOverviewTab').innerHTML ="";
+        	t.paintMembers(); 
+        }
+    }, false);
       
-    window.addEventListener('unload', t.onUnload, false);
+  window.addEventListener('unload', t.onUnload, false);
   },
   
+  
   paintMembers: function(){
-  var t = Tabs.Alliance;
-  document.getElementById('alOverviewTab').innerHTML = "";
-	if ( t.totalmembers >= (t.alliancemembers.length-1)) {
-	  if (document.getElementById('searchAlli').value == "name") {
-	    var sortmembers = t.alliancemembers.sort(function(a, b){
-			 var sortA=a.Name.toLowerCase(), sortB=b.Name.toLowerCase()
-			 if (sortA < sortB) 
-			  return -1
-			 if (sortA > sortB)
-			  return 1
-			 return 0 
-			});
-	  }     
-	  if (document.getElementById('searchAlli').value == "might") {
-		var sortmembers = t.alliancemembers.sort(function(a, b){
-			 var sortA=parseInt(a.Might),sortB=parseInt(b.Might)
-			 if (sortA > sortB) 
-			  return -1
-			 if (sortA < sortB)
-			  return 1
-			 return 0 
-			});
-	  }     
-	  if (document.getElementById('searchAlli').value == "login") {
-		var sortmembers = t.alliancemembers.sort(function(a, b){
-			 var sortA=a.LastLogin,sortB=b.LastLogin
-			 if (sortA < sortB) 
-			  return -1
-			 if (sortA > sortB)
-			  return 1
-			 return 0 
-			});
-	  }       
-	  if (document.getElementById('searchAlli').value == "rank") {
-		var sortmembers = t.alliancemembers.sort(function(a, b){
-			 var sortA=a.Position,sortB=b.Position
-			 if (sortA < sortB) 
-			  return -1
-			 if (sortA > sortB)
-			  return 1
-			 return 0 
-			});
-	  }     
-	  if (document.getElementById('searchAlli').value == "dip") {
-		var sortmembers = t.alliancemembers.sort(function(a, b){
-			 var sortA=a.dip,sortB=b.dip
-			 if (sortA > sortB) 
-			  return -1
-			 if (sortA < sortB)
-			  return 1
-			 return 0 
-			});
-	  }     
-	   
-	  for (var y = (sortmembers.length-1); y >=0; y--) {
-		t._addTab(sortmembers[y].Name,sortmembers[y].Might,sortmembers[y].LastLogin,sortmembers[y].Position,sortmembers[y].dip,sortmembers[y].uid,sortmembers[y].fbuid);
-		t.myDiv.style.overflowY = 'scroll';
-	  }
-	  t._addTabHeader();
-	}
+  var t = Tabs.Alliance; 
+	  		  if (document.getElementById('searchAlli').value == "name") {
+				  var sortmembers = t.alliancemembers.sort(function(a, b){
+				         var sortA=a.Name.toLowerCase(), sortB=b.Name.toLowerCase()
+				         if (sortA < sortB) 
+				          return -1
+				         if (sortA > sortB)
+				          return 1
+				         return 0 
+				        });
+			  }     
+			  if (document.getElementById('searchAlli').value == "might") {
+			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
+			  	         var sortA=parseInt(a.Might),sortB=parseInt(b.Might)
+			  	         if (sortA > sortB) 
+			  	          return -1
+			  	         if (sortA < sortB)
+			  	          return 1
+			  	         return 0 
+			  	        });
+			  }     
+			  if (document.getElementById('searchAlli').value == "login") {
+			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
+			  	         var sortA=a.LastLogin,sortB=b.LastLogin
+			  	         if (sortA < sortB) 
+			  	          return -1
+			  	         if (sortA > sortB)
+			  	          return 1
+			  	         return 0 
+			  	        });
+			  }     
+			  if (document.getElementById('searchAlli').value == "cities") {
+			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
+			  	         var sortA=a.Cities,sortB=b.Cities
+			  	         if (sortA < sortB) 
+			  	          return -1
+			  	         if (sortA > sortB)
+			  	          return 1
+			  	         return 0 
+			  	        });
+			  }     
+			  if (document.getElementById('searchAlli').value == "dip") {
+			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
+			  	         var sortA=a.dip,sortB=b.dip
+			  	         if (sortA < sortB) 
+			  	          return -1
+			  	         if (sortA > sortB)
+			  	          return 1
+			  	         return 0 
+			  	        });
+			  }     
+			  if (document.getElementById('searchAlli').value == "position") {
+			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
+			  	         var sortA=a.Position,sortB=b.Position
+			  	         if (sortA < sortB) 
+			  	          return -1
+			  	         if (sortA > sortB)
+			  	          return 1
+			  	         return 0 
+			  	        });
+			  }      
+			  for (var y = (sortmembers.length-1); y >=0; y--) {
+			                      t._addTab(sortmembers[y].Name,sortmembers[y].Might,sortmembers[y].LastLogin,sortmembers[y].Position,sortmembers[y].dip,sortmembers[y].uid,sortmembers[y].fbuid,sortmembers[y].Cities);
+			                      t.myDiv.style.overflowY = 'scroll';
+			  }
+			 t._addTabHeader();
    },
   
-  _addTab: function(Name,Might,LastLogin,Position,dip,uid,fbuid){
+    _addTab: function(Name,Might,LastLogin,Position,dip,uid,fbuid,Cities){
              var t = Tabs.Alliance;
              var row = document.getElementById('alOverviewTab').insertRow(0);
              row.vAlign = 'top';
@@ -4827,76 +4863,81 @@ Tabs.Alliance = {
        		 cell2.align = "right" ;
        		 cell2.vAlign = "top";
        		 cell2.innerHTML = addCommas(Might);
-       		 row.insertCell(3).innerHTML = officerId2String (Position);
-       		 row.insertCell(4).innerHTML = dip;
-       		 row.insertCell(5).innerHTML = LastLogin;
-       		 t.number++;
+       		 row.insertCell(3).innerHTML = Cities;
+       		 row.insertCell(4).innerHTML = officerId2String (Position);
+       		 row.insertCell(5).innerHTML = dip;
+       		 row.insertCell(6).innerHTML = LastLogin;
           }, 
-
-  _addTabHeader: function() {
+          
+    _addTabHeader: function() {
     var t = Tabs.Alliance;
         var row = document.getElementById('alOverviewTab').insertRow(0);
         row.vAlign = 'top';
-        row.insertCell(0).innerHTML = "Facebook";
+         row.insertCell(0).innerHTML = "Facebook";
         row.insertCell(1).innerHTML = "Name";
         row.insertCell(2).innerHTML = "Might";
-        row.insertCell(3).innerHTML = "Rank";
-        row.insertCell(4).innerHTML = "DIP.";
-        row.insertCell(5).innerHTML = "LastLogin";
+        row.insertCell(3).innerHTML = "Cities";
+        row.insertCell(4).innerHTML = "Position";
+        row.insertCell(5).innerHTML = "DIP";
+        row.insertCell(6).innerHTML = "LastLogin";
       },   
-
-  fetchAllianceMemberPage : function () {
+          
+    fetchAllianceMemberPage : function () {
     var t = Tabs.Alliance;
+    document.getElementById('alList').disabled = true;
     var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    
     params.pf = 0;
     
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetInfo.php" + unsafeWindow.g_ajaxsuffix, {
+    new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetInfo.php" + unsafeWindow.g_ajaxsuffix, {
       method: "post",
       parameters: params,
-      onSuccess: function (rslt) {
+      onSuccess: function (transport) {
+      	  var rslt = eval("(" + transport.responseText + ")");
           t.totalmembers = (rslt["allianceInfo"]["members"]);
-		  t.fetchAllianceMemberInfo();
+          for (var i=1;i<=10;i++) {
+                 params.pageNo = i;
+                 params.pf = 0;
+                 new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetMembersInfo.php" + unsafeWindow.g_ajaxsuffix, {
+                   method: "post",
+                   parameters: params,
+                   onSuccess: function (transport) {
+                    var info = eval("(" + transport.responseText + ")");
+                    if (info.ok) {  
+                       for (var k in info["memberInfo"]){
+                         if ( info["memberInfo"][k]["might"] != undefined && !t.error){  
+                           t.alliancemembers.push ({
+                               Name: info["memberInfo"][k]["name"],
+                               Might: info["memberInfo"][k]["might"],
+                               Cities: info["memberInfo"][k]["cities"],
+                               Position : info["memberInfo"][k]["positionType"],
+                               dip : info["memberInfo"][k]["daysInPosition"],
+                               LastLogin : info["memberInfo"][k]["lastLogin"],
+                               uid : info["memberInfo"][k]["userId"],
+                               fbuid : info["memberInfo"][k]["fbuid"],	
+                           });
+                          }
+                           document.getElementById('alOverviewTab').innerHTML ="";
+                           t.paintMembers();
+                   		}
+                       if (!t.error) document.getElementById('progress').innerHTML	 = '(' + (t.alliancemembers.length) +'/'+ t.totalmembers +')';
+                       if ( t.alliancemembers.length >= t.totalmembers) document.getElementById('alList').disabled = false;
+                    } else  if (info.error) {
+                    	document.getElementById('alList').disabled = false;
+                    	document.getElementById('progress').innerHTML = "ERROR!";
+                    	t.error=true;
+                   	}
+                   },
+                   onFailure: function (rslt) {;
+                     notify ({errorMsg:'AJAX error'});
+                   },
+                   
+           });
+          }
       },
       onFailure: function (rslt) {;
         notify ({errorMsg:'AJAX error'});
       },
-    });
-    
-  },
-  
-  fetchAllianceMemberInfo : function (){
-	var t = Tabs.Alliance;
-	if(t.pageNo>t.totalpages){
-		t.searching = false;
-		t.paintMembers();
-		return;
-	}
-	var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-	params.pageNo = t.pageNo;
-	params.pf = 0;
-	new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetMembersInfo.php" + unsafeWindow.g_ajaxsuffix, {
-		method: "post",
-		parameters: params,
-		onSuccess: function (rslt) {
-			for (var k in rslt["memberInfo"]){
-				t.alliancemembers.push ({
-					Name: rslt["memberInfo"][k]["name"],
-					Might: rslt["memberInfo"][k]["might"],
-					Position : rslt["memberInfo"][k]["positionType"],
-					dip : parseInt(rslt["memberInfo"][k]["daysInPosition"]),
-					LastLogin : rslt["memberInfo"][k]["lastLogin"],
-					uid : rslt["memberInfo"][k]["userId"],
-					fbuid : rslt["memberInfo"][k]["fbuid"],	
-				});
-			}
-			t.totalpages = rslt.noOfPages;
-			t.pageNo++;
-			document.getElementById('progress').innerHTML	 = '(' + (t.alliancemembers.length) +'/'+ t.totalmembers +')';
-			t.fetchAllianceMemberInfo();
-		},
-		onFailure: function (rslt) {;
-		  notify ({errorMsg:'AJAX error'});
-		},
     });
   },
   
@@ -4908,7 +4949,11 @@ Tabs.Alliance = {
   		var t = Tabs.Alliance;
         mainPop.div.style.width = 750 + 'px';
   },
-}
+};
+
+
+
+
 
 /*************************************** MARCHES TAB ************************************************/
 
@@ -5115,7 +5160,7 @@ Tabs.Marches = {
       var number = 0;
      
      var  m = '<TABLE id=pdmarches cellSpacing=10 width=100% height=0% class=pbTab>';
-     m += '<TD><INPUT id=TEST type=submit value="TEST"></td>';
+     //m += '<TD><INPUT id=TEST type=submit value="TEST"></td>';
           
      for (var c=0; c< Seed.cities.length;c++) {
      		cityname = Seed.cities[c][1];
@@ -5244,7 +5289,7 @@ Tabs.Marches = {
   	m += '</table>';
   	t.marchDiv.innerHTML = m;
   	
-  	document.getElementById('TEST').addEventListener('click', function(){
+  	/*document.getElementById('TEST').addEventListener('click', function(){
   			
   			var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
   	  			new AjaxRequest(unsafeWindow.g_ajaxpath + "/fb/e2/src/main_src.php?g=M&y=0&n=&l=en_US&messagebox=&standalone=0&res=1&iframe=1&lang=en&ts=1304968591.1795&ref=bookmarks&count=1&appBar=" + unsafeWindow.g_ajaxsuffix, {
@@ -5271,7 +5316,7 @@ Tabs.Marches = {
   	  			    },
   	  			});
   		
-  	  	}, false);
+  	  	}, false);*/
   	  		     
   		     
     t.displayTimer = setTimeout (t.showMarches, 500);  
@@ -5339,7 +5384,7 @@ Tabs.Marches = {
     	     parameters: params,
     	     onSuccess: function (transport) {
     	       var rslt = eval("("+transport.responseText+")");
-    	       alert(rslt.returnUnixTime);
+    	       //alert(rslt.returnUnixTime);
     	       var march = unsafeWindow.seed.queue_atkp["city" + params.cid]["m" + params.mid];
     	       march.marchStatus = 8;
     	       var marchtime = parseInt(march.returnUnixTime) - parseInt(march.destinationUnixTime);
@@ -6571,6 +6616,8 @@ function getTrainInfo (){
   return ret;
 }
 
+
+
 var fortNamesShort = {
   53: "Crossbows",
   55: "Trebuchet",
@@ -7697,5 +7744,86 @@ t.state = null;
     }
   },
 };
+
+
+
+
+
+function WhisperSound (){
+	//alert('enter');
+	document.all.sound.src = 'http://www.mediavue.net/phplive/sounds/doorbell.wav';
+	//test = '<embed src="http://www.mediavue.net/phplive/sounds/doorbell.wav" autostart=false loop=false>';
+	
+	//var player = new CmatSimpleSound(SWF_PLAYER_URL, null, {height:0, width:0}, t.e_swfLoaded, 'debug=n'); 
+	//player.play(1,0);
+}
+
+
+
+function CmatSimpleSound (playerUrl, container, attrs, onLoad, flashVars) {
+  var self = this;
+  this.player = null;
+  this.volume = 100;
+  this.isLoaded = false;
+  this.onSwfLoaded = null;
+  
+  var div = document.createElement ('div');
+  this.onSwfLoaded = onLoad;
+  if (navigator.appName.toLowerCase().indexOf('microsoft')+1) {
+    div.innerHTML = '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0"><param name="movie" value="'+playerUrl+'"><param name="quality" value="high"></object>';
+    this.player = div.getElementsByTagName('object')[0];
+  } else {
+    div.innerHTML = '<embed src="'+playerUrl+'"  bgcolor="#eeeeee" allowfullscreen=false FlashVars="'+ flashVars +'" quality="high" allowscriptaccess="always" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" ></embed>';
+    this.player = div.getElementsByTagName('embed')[0].wrappedJSObject;
+  }
+  if (container)
+    container.appendChild (div);
+  else 
+    document.body.appendChild (div);
+  for (k in attrs)
+    this.player.setAttribute(k, attrs[k]); 
+       
+  this.setVolume = function (chanNum, vol){
+    if (!self.isLoaded)
+      return;
+    self.player.jsSetVolume (chanNum, vol);
+    volume = vol; 
+  }
+  
+  this.load = function (chanNum, url, bStream, bAutoplay, bUsePolicyFile){   // loop ?
+    self.player.jsLoad (chanNum, url, bStream, bAutoplay, bUsePolicyFile);
+  }
+  
+  this.play = function (chanNum, position){
+    self.player.jsPlay (chanNum, position);
+  }
+    
+  this.stop = function (chanNum){
+    self.player.jsStop (chanNum);
+  }
+    
+  this.getStatus = function (chanNum){           // returns null if sound channel is 'empty'
+    return self.player.jsGetStatus (chanNum);
+  }
+  
+  this.debugFunc = function (msg){  // overload to use
+  }
+      
+  this.swfDebug = function (msg){    // called by plugin
+    self.debugFunc('SWF: '+ msg);
+  }
+  this.swfLoaded = function (){    // called by plugin when ready to go!
+    self.isLoaded = true;
+    self.debugFunc ('playerIsReady'); 
+    if (self.onSwfLoaded)
+      self.onSwfLoaded();
+  }
+  this.swfPlayComplete = function (chanNum){    // called by plugin when a sound finishes playing (overload to be notified)
+  }
+  this.swfLoadComplete = function (chanNum, isError){    // called by plugin when a sound finishes loading  (overload to be notified)
+  }
+}
+
+
 
 ptStartup ();
