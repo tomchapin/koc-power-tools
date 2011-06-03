@@ -1,17 +1,15 @@
-<wiki:toc max_depth="2" />
+* [Home Home]
+  
+ * [Tabs Tabs]
+  * [HowToOverview Overview]
+  * [HowToMarches Marches]
+  * [HowToTrain Train]
+  * [HowtoInfo Info]
+  * [HowToPlayers Players]
+  * [HowToKnights Search]
+  * [HowToWilds Gifts]
+  * [HowToOptions Options]
+  * [HowToMessages Messages]
+  * [HowToAlliance Alliance]
 
-#sidebar TableOfContents
-
- * [Home Home]  
-  * [Tabs Tabs]
-    * [HowToOverview Overview]
-    * [HowToMarches Marches]
-    * [HowToTrain Train]
-    * [HowtoInfo Info]
-    * [HowToPlayers Players]
-    * [HowToKnights Search]
-    * [HowToWilds Gifts]
-    * [HowToOptions Options]
-    * [HowToMessages Messages]
-    * [HowToAlliance Alliance]
-  * [FAQ Frequently Asked Questions]
+ * [FAQ Frequently Asked Questions]
