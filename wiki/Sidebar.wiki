@@ -1,4 +1,6 @@
-  * [Home Home]  
+#sidebar TableOfContents
+
+ * [Home Home]  
   * [Tabs Tabs]
     * [HowToOverview Overview]
     * [HowToMarches Marches]
