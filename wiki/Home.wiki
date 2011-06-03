@@ -4,8 +4,6 @@ Home page of Power Tools wiki, with portions html in addition to WikiSyntax
 
 = http://koc-power-bot.googlecode.com/files/houselogo.png KOC Power Tools =
 
-#summary Currently wiki is being updated, more information to be added soon.
-
 The KOC Power Tools is a 3rd Party script add-on for the multi-player social networking game <a href="http://www.kabam.com/games/kingdoms-of-camelot">Kingdoms of Camelot</a> developed by <a href="http://www.kabam.com/">Kabam</a>. The KOC Power Tools is not developed by Kabam nor is it supported by Kabam. It is created by a group of individuals who refer to themselves as the "KoC Scripters" and is designed to enhance the player's enjoyment of the game Kingdoms of Camelot and improve functionality of many game features. The script is run with the <a href="https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/">Greasemonkey</a> extension which must be added to your browser or it may also be used with the <a href="https://addons.mozilla.org/en-us/firefox/addon/scriptish//">Scriptish</a> add-on. Currently the browsers that support these extensions are <a href="http://www.mozilla.com/en-US/firefox/new/">FireFox</a> and <a href="http://www.cometbird.com/">Cometbird</a>. 
 
 The KOC Power Tools is designed to be used in conjunction with <a href="http://userscripts.org/scripts/show/101052">KOC Power Bot</a>, so you must load both scripts onto your browser for them to work effectively.
@@ -15,5 +13,3 @@ There are two available downloads of the KOC Power Tools. The official release i
 http://koc-power-bot.googlecode.com/files/0107_dl.png<a href="http://koc-power-tools.googlecode.com/svn/trunk/koc_power_tools.user.js">Download SVN</a>
 
 <em>*Tip - If you want a reminder of critical updates for your Power Tools, stick with the Official Release. </em>
-
-== Getting Started ==
