@@ -6,7 +6,7 @@
 // @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110602a';
+var Version = '20110605a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -4968,14 +4968,13 @@ Tabs.Marches = {
     var t = Tabs.Marches;
     unsafeWindow.pr56Recall = t.butRecall;
     unsafeWindow.r8x6Home = t.butSendHome;
-    unsafeWindow.undefend = t.butundefend;
     unsafeWindow.cancelMarch = t.butcancelmarch;
     
     t.cont = div;
     t.cont.innerHTML = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubA type=submit value=Incoming></td>\
           <TD><INPUT class=pbSubtab ID=ptmrchSubM type=submit value=Marches></td>\
           <TD><INPUT class=pbSubtab ID=ptmrchSubR type=submit value=Reinforcements></td></tr></table><HR class=ptThin>\
-      <DIV id=ptMarchOutput style="margin-top:10px; background-color:white; height:500px; max-width:740px; overflow:scroll;"></div>';
+      <DIV id=ptMarchOutput style="margin-top:10px; background-color:white; height:680px; width:100%; overflow:scroll;"></div>';
     t.marchDiv = document.getElementById('ptMarchOutput');
     document.getElementById('ptmrchSubA').addEventListener('click', e_butSubtab, false);
     document.getElementById('ptmrchSubR').addEventListener('click', e_butSubtab, false);
@@ -5005,7 +5004,6 @@ Tabs.Marches = {
   hide : function (){
     var t = Tabs.Marches;
     clearTimeout (t.displayTimer);
-    mainPop.div.style.height = 750 + 'px';
   },
   
   show : function (){
@@ -5017,135 +5015,102 @@ Tabs.Marches = {
       t.showMarches();
     else
       t.showIncoming();
-   mainPop.div.style.height = 500 + 'px';
   },
- 
   
   /***   Incoming SUBTAB  ***/
       showIncoming : function (){
         var t = Tabs.Marches;
-        t.marchDiv.innerHTML =null;	
-        //var updatemarch = Seed.queue_atkinc;
-        var icon;
-        var status;
-        var FROM;
-        var cityname;
-        var FROMmight;
-        //var z = '<TD><INPUT id=TEST type=submit value="TEST"></td>';
-        //z += '<TD><INPUT id=TEST2 type=submit value="TEST2"></td>';
-         var z = '<TABLE id=pdincoming cellSpacing=10 width=100% height=0% class=pbTab>';
+        t.marchDiv.innerHTML = null;	
+
+        var z = '<TABLE id=pdincoming cellSpacing=10 width=100% height=0% class=pbTab>';
        
-       for (k in Seed.queue_atkinc) {
+        for (k in Seed.queue_atkinc) {
           if(Seed.queue_atkinc.length !=0){
-       		//if  (parseInt(Seed.queue_atkinc[k]["marchType"]) ==3 || parseInt(Seed.queue_atkinc[k]["marchType"])==4){
-                   now = unixTime();
-               		var marchType = parseInt(Seed.queue_atkinc[k]["marchType"]);
-               		var marchStatus = parseInt(Seed.queue_atkinc[k]["marchStatus"]);
-               		
-               		for (var i=0; i<Seed.cities.length;i++) {
-        	       			if (Seed.cities[i][0] == Seed.queue_atkinc[k]["toCityId"]) cityname = Seed.cities[i][1];
-               		}   
-               				
-               		if (Seed.queue_atkinc[k]["destinationUnixTime"] < (now) || marchStatus == 8) marchstatus = "returning";
-               		else marchstatus = "going";	
-               		
-               		if (marchStatus == 2) destinationUnixTime = now - Seed.queue_atkinc[k]["arrivalTime"]; //- now;
-               		if (marchStatus == 1) destinationUnixTime = Seed.queue_atkinc[k]["arrivalTime"] - now;
-               		else  destinationUnixTime = Seed.queue_atkinc[k]["arrivalTime"] - now;
-               		marchtime = timestr(destinationUnixTime, true)
-               			       					
-               		if (marchType != 3 && marchType !=4){
-               			for (players in Seed.players){
-               				if (('u'+Seed.queue_atkinc[k]["fromPlayerId"]) == players){ FROM = Seed.players[players]["n"];}
-               			}
-               		}
-               		else {
-               		for (players in Seed.players){
-               				if (marchType == 3 || marchType == 4){ 
-                        if (('u'+Seed.queue_atkinc[k]["pid"]) == players){ 
-                              FROM = Seed.players[players]["n"];
-                              FROMmight = Seed.players[players]["m"];
-                        }
-                      }
-               			}
-               		}
-               		
-               		if (marchType == 2 && marchStatus == 2) marchType = 102;
-               		
-               		switch (marchType) {
-               		    case 1: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status="Transport";break;
-               		    case 2: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status="Reinforce";break;
-               		    case 3: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/scouting.jpg";status="Scout";break;
-               		    case 4: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status="Attack";break;
-               		    case 5: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status="Reassign";break;
-               		    case 100: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status="Returning";break;
-               		    case 102: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status="Encamped";break;
-               		} 
-               		
-               		z += '<TD width="10px"><img src='+ icon +'></td>';
-               		z += '<TD width="40px">'+ status +'</td>';
-               		z += '<TD>' + cityname + '</td>';
-               		z += '<TD>'+ marchtime +'</td>';
-               		z +='<TD>From:' + FROM + '</td>';
-               		z +='<TD>Might:' + addCommas(FROMmight) + '</td>';
-               		if (Seed.queue_atkinc[k]["knt"] != undefined) z +='<TD>Knight:'+ Seed.queue_atkinc[k]["knt"]["cbt"]+'</td>';
-               		 //alert(Seed.queue_atkinc.toSource());
-                   //if (Seed.queue_atkinc[k]["knightId"] !=0) z +='<TD>Knight:' + Seed.queue_atkinc[k]["knightCombat"] + '</td>';
-               		
-               	if (Seed.queue_atkinc[k]["gold"] > 0) z += '<TD>Gold:'+ addCommas(Seed.queue_atkinc[k]["gold"]) +'</td>';
-               	if (Seed.queue_atkinc[k]["resource1"] > 0) z += '<TD>Food: '+ addCommas(Seed.queue_atkinc[k]["resource1"]) +'</td>';
-        		 	  if (Seed.queue_atkinc[k]["resource2"] > 0) z += '<TD>Wood: '+ addCommas(Seed.queue_atkinc[k]["resource2"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["resource3"] > 0) z += '<TD>Stone: '+ addCommas(Seed.queue_atkinc[k]["resource3"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["resource4"] > 0) z += '<TD>Ore: '+ addCommas(Seed.queue_atkinc[k]["resource4"]) +'</td>';
+				var now = unixTime();
+				var icon, status, FROM, cityname, FROMmight, marchdir, marchtime;
+				var marchType = parseInt(Seed.queue_atkinc[k]["marchType"]);
+				var marchStatus = parseInt(Seed.queue_atkinc[k]["marchStatus"]);
+				
+				for (var i=0; i<Seed.cities.length;i++) {
+					if (Seed.cities[i][0] == Seed.queue_atkinc[k]["toCityId"]) cityname = Seed.cities[i][1];
+				}   
+			
+				if (Seed.queue_atkinc[k]["destinationUnixTime"] < now || marchStatus == 8)
+					marchdir = "returning";
+				else
+					marchdir = "going";	
+				
+				var destinationUnixTime = Seed.queue_atkinc[k]["arrivalTime"] - now;
+				if(destinationUnixTime > 0)
+					marchtime = timestr(destinationUnixTime, true)
+				else
+					marchtime = 'Arrived';
+				
+				if (marchType != 3 && marchType !=4){
+					var player = Seed.players['u'+Seed.queue_atkinc[k]["fromPlayerId"]]
+					FROM = player.n;
+					FROMmight = player.m;
+				}
+				else {
+					for (players in Seed.players){
+						if (marchType == 3 || marchType == 4){ 
+							if (('u'+Seed.queue_atkinc[k]["pid"]) == players){ 
+							  FROM = Seed.players[players]["n"];
+							  FROMmight = Seed.players[players]["m"];
+							}
+						}
+					}
+				}
+				
+				if (marchType == 2 && marchStatus == 2) marchType = 102;
+				
+				switch (marchType) {
+					case 1: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status="Transport";break;
+					case 2: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status="Reinforce";break;
+					case 3: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/scouting.jpg";status="Scout";break;
+					case 4: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status="Attack";break;
+					case 9: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status="Attack";break;
+					case 5: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status="Reassign";break;
+					case 100: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status="Returning";break;
+					case 102: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status="Encamped";break;
+				} 
+				
+				if(status == 'Encamped')
+					z += '<TD width="10px"><A onclick="r8x6Home('+ Seed.queue_atkinc[k].marchId +')"><img src='+ icon +'></a></td>';
+				else
+					z += '<TD width="10px"><img src='+ icon +'></td>';
+				z += '<TD width="40px">'+ status +'</td>';
+				z += '<TD>' + cityname + '</td>';
+				z += '<TD>'+ marchtime +'</td>';
+				z +='<TD>From:' + FROM + '</td>';
+				z +='<TD>Might:' + addCommas(FROMmight) + '</td>';
+				if (Seed.queue_atkinc[k]["knt"] != undefined) z +='<TD>Knight:'+ Seed.queue_atkinc[k]["knt"]["cbt"]+'</td>';
+				
+				if (Seed.queue_atkinc[k]["gold"] > 0) z += '<TD>Gold:'+ addCommas(Seed.queue_atkinc[k]["gold"]) +'</td>';
+				if (Seed.queue_atkinc[k]["resource1"] > 0) z += '<TD>Food: '+ addCommas(Seed.queue_atkinc[k]["resource1"]) +'</td>';
+				if (Seed.queue_atkinc[k]["resource2"] > 0) z += '<TD>Wood: '+ addCommas(Seed.queue_atkinc[k]["resource2"]) +'</td>';
+				if (Seed.queue_atkinc[k]["resource3"] > 0) z += '<TD>Stone: '+ addCommas(Seed.queue_atkinc[k]["resource3"]) +'</td>';
+				if (Seed.queue_atkinc[k]["resource4"] > 0) z += '<TD>Ore: '+ addCommas(Seed.queue_atkinc[k]["resource4"]) +'</td>';
         		    
-        		    if (Seed.queue_atkinc[k]["unit0Count"] > 0 && marchstatus == "going") z += '<TD???'+ addCommas(Seed.queue_atkinc[k]["unit0Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit0Return"] > 0 && marchstatus == "returning") z += '<TD>???: '+ addCommas(Seed.queue_atkinc[k]["unit0Return"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit1Count"] > 0 && marchstatus == "going") z += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkinc[k]["unit1Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit1Return"] > 0 && marchstatus == "returning") z += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkinc[k]["unit1Return"]) +'</td>';
-        		    
-        		    if (Seed.queue_atkinc[k]["unit2Count"] > 0 && marchstatus == "going") z += '<TD>Militiaman: '+ addCommas(Seed.queue_atkinc[k]["unit2Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit2Return"] > 0 && marchstatus == "returning") z += '<TD>Militiaman: '+ addCommas(Seed.queue_atkinc[k]["unit2Return"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit3Count"] > 0 && marchstatus =="going") z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unit3Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit3Return"] > 0 && marchstatus == "returning") z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unit3Return"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit4Count"] > 0 && marchstatus =="going") z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unit4Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit4Return"] > 0 && marchstatus == "returning") z += '<TD>Pikeman: '+ addCommas(Seed.queue_atkinc[k]["unit4Return"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit5Count"] > 0 && marchstatus =="going") z += '<TD>Pikeman: '+ addCommas(Seed.queue_atkinc[k]["unit5Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit5Return"] > 0 && marchstatus == "returning") z += '<TD>Swordsman: '+ addCommas(Seed.queue_atkinc[k]["unit5Return"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit6Count"] > 0 && marchstatus =="going") z += '<TD>Archer: '+ addCommas(Seed.queue_atkinc[k]["unit6Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit6Return"] > 0 && marchstatus == "returning") z += '<TD>Archer: '+ addCommas(Seed.queue_atkinc[k]["unit6Return"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit7Count"] > 0 && marchstatus =="going") z += '<TD>Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unit7Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit7Return"] > 0 && marchstatus == "returning") z += '<TD>Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unit7Return"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit8Count"] > 0 && marchstatus =="going") z += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unit8Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit8Return"] > 0 && marchstatus == "returning") z += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unit8Return"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit9Count"] > 0 && marchstatus =="going") z += '<TD>Supply Wagons: '+ addCommas(Seed.queue_atkinc[k]["unit9Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit9Return"] > 0 && marchstatus == "returning") z += '<TD>Supply Wagons: '+ addCommas(Seed.queue_atkinc[k]["unit9Return"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit10Count"] > 0 && marchstatus =="going") z += '<TD>Ballista: '+ addCommas(Seed.queue_atkinc[k]["unit10Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit10Return"] > 0 && marchstatus == "returning") z += '<TD>Ballista: '+ addCommas(Seed.queue_atkinc[k]["unit10Return"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit11Count"] > 0 && marchstatus =="going") z += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkinc[k]["unit11Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit11Return"] > 0 && marchstatus == "returning") z += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkinc[k]["unit11Return"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit12Count"] > 0 && marchstatus =="going") z += '<TD>Catapult: '+ addCommas(Seed.queue_atkinc[k]["unit12Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit12Return"] > 0 && marchstatus == "returning") z += '<TD>Catapult: '+ addCommas(Seed.queue_atkinc[k]["unit12Return"]) +'</td>';
-        		    
-        		    if (marchType == 3 && Seed.queue_atkinc[k]["unts"]["u3"] > 0) z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u3"]) +'</td>';
-        		    if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u1"] > 0) z += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u1"]) +'</td>';
-               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u2"] > 0) z += '<TD>Militiaman: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u2"]) +'</td>';
-               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u3"] > 0) z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u3"]) +'</td>';
-               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u4"] > 0) z += '<TD>Pikeman: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u4"]) +'</td>';
-               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u5"] > 0) z += '<TD>Swordsman: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u5"]) +'</td>';
-               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u6"] > 0) z += '<TD>Archer: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u6"]) +'</td>';
-               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u7"] > 0) z += '<TD>Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u7"]) +'</td>';
-               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u8"] > 0) z += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u8"]) +'</td>';
-               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u9"] > 0) z += '<TD>Supply Wagons: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u9"]) +'</td>';
-               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u10"] > 0) z += '<TD>Ballista: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u10"]) +'</td>';
-               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u11"] > 0) z += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u11"]) +'</td>';
-               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u12"] > 0) z += '<TD>Catapult: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u12"]) +'</td>';
-               		z += '</tr>';
-              } 
-        // } 
-     }
+				for(i=1; i<13; i++){
+					if(Seed.queue_atkinc[k]["unit"+i+"Count"] > 0 && marchdir == "going") z += '<TD>'+ unsafeWindow.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkinc[k]["unit"+i+"Count"]) +'</td>';
+					if(Seed.queue_atkinc[k]["unit"+i+"Return"] > 0 && marchdir == "returning") z += '<TD>'+ unsafeWindow.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkinc[k]["unit"+i+"Return"]) +'</td>';
+				}
+        		
+				if (marchType == 3)
+					if (Seed.queue_atkinc[k]["unts"]["u3"] > 0) z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u3"]) +'</td>';
+				if (marchType == 4){
+					for(ui=1; i<13; i++){
+						if (Seed.queue_atkinc[k]["unts"]["u"+ui] > 0) z += '<TD>'+ unsafeWindow.unitcost['unt'+ui][0] +': '+ addCommas(Seed.queue_atkinc[k]["unts"]["u"+ui]) +'</td>';
+					}
+				}
+				
+				z += '</tr>';
+          } 
+		}
      z += '</table>';
      t.marchDiv.innerHTML = z;
-     	 	     
+    
      t.displayTimer = setTimeout (t.showIncoming, 500);  
    },   
       
@@ -5155,59 +5120,76 @@ Tabs.Marches = {
       var t = Tabs.Marches;
       t.marchDiv.innerHTML =null;	
       var updatemarch = Seed.queue_atkp;
-      var icon;
-      var status;
-      var number = 0;
      
      var  m = '<TABLE id=pdmarches cellSpacing=10 width=100% height=0% class=pbTab>';
-     //m += '<TD><INPUT id=TEST type=submit value="TEST"></td>';
+     m += '<TR><TD colspan=4><INPUT id=TEST type=submit value="Get Seed"></td></tr>';
           
      for (var c=0; c< Seed.cities.length;c++) {
      		cityname = Seed.cities[c][1];
-     		cityID = 'city' + Seed.cities[c][0];
-     		var cityTo;    
+     		cityID = 'city' + Seed.cities[c][0];    
     		number=0;	
     		
-    		if (Seed.queue_atkp[cityID].length !=0) m+= '<TR><TD colspan=4 style=\'background: #99CCFF;\' align=center><B>' + cityname +': </b></td></tr>';
+    		if (Seed.queue_atkp[cityID].length !=0) m+= '<TR><TD colspan=5 style=\'background: #99CCFF;\' align=center><B>' + cityname +': </b></td></tr>';
   		    for (k in Seed.queue_atkp[cityID]){
-  				 if (Seed.queue_atkp[cityID].length !=0) {
+  				if (Seed.queue_atkp[cityID].length !=0) {
   				    var marchID = new String(k);
   				    marchID = marchID.substr(1);
   				    var marchType = parseInt(Seed.queue_atkp[cityID][k]["marchType"]);
   				    var marchStatus = parseInt(Seed.queue_atkp[cityID][k]["marchStatus"]);
-  				    now = unixTime();
+  				    var now = unixTime();
   				    number++;
-  				    cityTo=null; 
-  				    var knight=null;
+					var icon, status, type, cityTo, knight, marchtime;
   				    
   				    for (var i=0; i<Seed.cities.length;i++) {
-  				    		if (Seed.cities[i][2] == Seed.queue_atkp[cityID][k]["toXCoord"] && Seed.cities[i][3] == Seed.queue_atkp[cityID][k]["toYCoord"]) cityTo = Seed.cities[i][1];
-  				    		
+						if (Seed.cities[i][2] == Seed.queue_atkp[cityID][k]["toCityId"]) cityTo = Seed.cities[i][1];
   				    }
   				    
-  				    destinationUnixTime = Seed.queue_atkp[cityID][k]["destinationUnixTime"] - now;
-  				    returnUnixTime = Seed.queue_atkp[cityID][k]["returnUnixTime"] - now;
-  				    encampedUnixTime = now - Seed.queue_atkp[cityID][k]["destinationUnixTime"];
-  				    if (Seed.queue_atkp[cityID][k]["destinationUnixTime"] > now) marchtime = timestr(destinationUnixTime, true);
-  				    else  marchtime = timestr(returnUnixTime, true);
+  				    var destinationUnixTime = Seed.queue_atkp[cityID][k]["destinationUnixTime"] - now;
+  				    var returnUnixTime = Seed.queue_atkp[cityID][k]["returnUnixTime"] - now;
+  				    var encampedUnixTime = now - Seed.queue_atkp[cityID][k]["destinationUnixTime"];
+					var restingUnixTime = now - Seed.queue_atkp[cityID][k]["returnUnixTime"];
+					
+  				    if (Seed.queue_atkp[cityID][k]["destinationUnixTime"] > now)
+						marchtime = timestr(destinationUnixTime, true);
+  				    else
+						marchtime = timestr(returnUnixTime, true);
   				    
-  				    if (Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) && marchType == 2) marchtime = timestr(encampedUnixTime, true);
+  				    if (Seed.queue_atkp[cityID][k]["destinationUnixTime"] < now && marchType == 2)
+						marchtime = timestr(encampedUnixTime, true);
+					if (Seed.queue_atkp[cityID][k]["returnUnixTime"] < now && marchType == 9)
+						marchtime = timestr(restingUnixTime, true);
   				  
-  				    if (Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) || marchStatus == 8) marchstatus = "returning";
-  				    else marchstatus = "going";
+  				    if (Seed.queue_atkp[cityID][k]["destinationUnixTime"] < now || marchStatus == 8)
+						type = "returning";
+  				    else
+						type = "going";
   				   
-  				    if (marchstatus =="returning" && marchType == 2 && Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) && marchStatus != 2) marchtime = timestr(returnUnixTime, true);
-  				    if (marchstatus =="returning" && marchType == 4 && Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) && marchStatus == 2) marchtime = timestr(returnUnixTime, true);
-  				    if (marchStatus == 2 && Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) && marchType !=2) marchtime = timestr(returnUnixTime, true);
-  				    if (marchStatus == 8 && Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now)) marchtime = timestr(returnUnixTime, true);
-  				    if (parseInt(Seed.queue_atkp[cityID][k]["marchType"]) == 4 && marchStatus == 2) marchtime = timestr(destinationUnixTime, true);;
+					if(Seed.queue_atkp[cityID][k]["destinationUnixTime"] < now){
+						if (marchStatus == 8)
+							marchtime = timestr(returnUnixTime, true);
+						if (type =="returning" && marchType == 2 && marchStatus != 2)
+							marchtime = timestr(returnUnixTime, true);
+						if (type =="returning" && marchType == 4 && marchStatus == 2)
+							marchtime = timestr(returnUnixTime, true);
+						if (marchStatus == 2 && marchType !=2)
+							marchtime = timestr(returnUnixTime, true);
+					}
+  				    if (parseInt(Seed.queue_atkp[cityID][k]["marchType"]) == 4 && marchStatus == 2)
+						marchtime = timestr(destinationUnixTime, true);;
   				    
-  				    
-  				    if (marchstatus =="returning" && marchType != 2) marchType = 100;
-  				    if (marchstatus =="returning" && marchType == 2 && marchStatus == 2) marchType = 102;
-  				    
-  				    if (marchstatus =="returning" && marchType == 2 && Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) && marchStatus != 2) marchType = 100;
-  				    
+					
+					if (type =="returning" && marchType != 2)
+						marchType = 8;
+  				    if (type =="returning" && marchType == 2 && marchStatus == 2)
+						marchType = 102;
+  				    if (type =="returning" && marchType == 2 && marchStatus != 2)
+						marchType = 8;
+  				    if (marchStatus == 3)
+							marchType = 103;
+					if (marchStatus == 4)
+							marchType = 104;
+					
+					
   				    if (parseInt(Seed.queue_atkp[cityID][k]["marchType"]) == 4 && marchStatus == 2) {
   						marchType = 102;
   						marchtime = timestr(encampedUnixTime, true)
@@ -5219,8 +5201,11 @@ Tabs.Marches = {
   					    case 3: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/scouting.jpg";status="Scout";break;
   					    case 4: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status="Attack";break;
   					    case 5: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status="Reassign";break;
-  					    case 100: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status="Returning";break;
+  					    case 8: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status="Returning";break;
+  					    case 9: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status="Raiding";break;
   					    case 102: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status="Encamped";break;
+						case 103: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/autoAttack/raid_stopped_desat.png";status="Stopped";break;
+						case 104: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/autoAttack/raid_resting.png";status="Resting";break;
   				    } 
   				      				    
   				    if (Seed.queue_atkp[cityID][k]["knightId"] !=0){
@@ -5228,18 +5213,25 @@ Tabs.Marches = {
   				    			if (i == ("knt" + Seed.queue_atkp[cityID][k]["knightId"]) ) knight = Seed.knights[cityID][i]["combat"];
   				    	}
   				    } else knight = null;
-  				      				    
-  				    if (status=="Encamped") m += '<TR><TD width="5px"><A><SPAN onclick="undefend('+ marchID +')">X</span></a></td>'
-  				    else m += '<TR><TD width="5px"><A><SPAN onclick="cancelMarch('+ marchID +')">X</span></a></td>'
-  				    m += '<TD>'+ number +'</td>';
-  				    m += '<TD width="10px"><img src='+ icon +'></td>';
+  				    
+  				    m += '<TR><TD>'+ number +'</td>';
+  				   if (status=="Encamped" && !t.isMyself(Seed.queue_atkp[cityID][k].fromPlayerId))
+						m += '<TD><A onclick="r8x6Home('+ marchID +')"><img src='+ icon +'></a></td>';
+  				    else if(status=='Encamped' && t.isMyself(Seed.queue_atkp[cityID][k].fromPlayerId))
+						m += '<TD><A onclick="pr56Recall('+ marchID +')"><img src='+ icon +'></a></td>';
+					else if(status=='Returning' || status=="Stopped" || status=="Resting")
+						m += '<TD><img src='+ icon +'></td>';
+					else
+						m += '<TD><A onclick="cancelMarch('+ marchID +')"><img src='+ icon +'></a></td>';
   				    m += '<TD width="40px">'+ status +'</td>';
   				    m += '<TD>'+ marchtime +'</td>';
   				    
-  				    if (cityTo == null) m += '<TD style="padding-right:10px;">'+ Seed.queue_atkp[cityID][k]["toXCoord"] + ',' + Seed.queue_atkp[cityID][k]["toYCoord"] + '</td>';
-  				    else m += '<TD style="padding-right:10px;">'+ cityTo +'</td>';
+  				    if (cityTo == null)
+						m += '<TD style="padding-right:10px;">'+ Seed.queue_atkp[cityID][k]["toXCoord"] + ',' + Seed.queue_atkp[cityID][k]["toYCoord"] + '</td>';
+  				    else
+						m += '<TD style="padding-right:10px;">'+ cityTo +'</td>';
   				    
-  				    if (knight != null)  m += '<TD>Knight:'+ knight +'</td>';
+  				    if (knight != null)  m += '<TD>K:'+ knight +'</td>';
   				    
   				    if (Seed.queue_atkp[cityID][k]["toTileType"] == 11) m+='<TD>Lake Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
   				    else if (Seed.queue_atkp[cityID][k]["toTileType"] == 20) m+='<TD>Grassland Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
@@ -5254,73 +5246,57 @@ Tabs.Marches = {
   				    if (Seed.queue_atkp[cityID][k]["resource3"] > 0) m += '<TD>Stone: '+ addCommas(Seed.queue_atkp[cityID][k]["resource3"]) +'</td>';
   				    if (Seed.queue_atkp[cityID][k]["resource4"] > 0) m += '<TD>Ore: '+ addCommas(Seed.queue_atkp[cityID][k]["resource4"]) +'</td>';
   				    
-  				    if (Seed.queue_atkp[cityID][k]["unit0Count"] > 0 && marchstatus == "going") m += '<TD???'+ addCommas(Seed.queue_atkp[cityID][k]["unit0Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit0Return"] > 0 && marchstatus == "returning") m += '<TD>???: '+ addCommas(Seed.queue_atkp[cityID][k]["unit0Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit1Count"] > 0 && marchstatus == "going") m += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkp[cityID][k]["unit1Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit1Return"] > 0 && marchstatus == "returning") m += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkp[cityID][k]["unit1Return"]) +'</td>';
-  				    
-  				    if (Seed.queue_atkp[cityID][k]["unit2Count"] > 0 && marchstatus == "going") m += '<TD>Militiaman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit2Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit2Return"] > 0 && marchstatus == "returning") m += '<TD>Militiaman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit2Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit3Count"] > 0 && marchstatus =="going") m += '<TD>Scouts: '+ addCommas(Seed.queue_atkp[cityID][k]["unit3Count"])+'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit3Return"] > 0 && marchstatus == "returning") m += '<TD>Scouts: '+ addCommas(Seed.queue_atkp[cityID][k]["unit3Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit4Count"] > 0 && marchstatus =="going") m += '<TD>Pikeman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit4Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit4Return"] > 0 && marchstatus == "returning") m += '<TD>Pikeman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit4Return"])+'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit5Count"] > 0 && marchstatus =="going") m += '<TD>Swordsman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit5Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit5Return"] > 0 && marchstatus == "returning") m += '<TD>Swordsman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit5Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit6Count"] > 0 && marchstatus =="going") m += '<TD>Archer: '+ addCommas(Seed.queue_atkp[cityID][k]["unit6Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit6Return"] > 0 && marchstatus == "returning") m += '<TD>Archer: '+ addCommas(Seed.queue_atkp[cityID][k]["unit6Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit7Count"] > 0 && marchstatus =="going") m += '<TD>Cavalry: '+ addCommas(Seed.queue_atkp[cityID][k]["unit7Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit7Return"] > 0 && marchstatus == "returning") m += '<TD>Cavalry: '+ addCommas(Seed.queue_atkp[cityID][k]["unit7Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit8Count"] > 0 && marchstatus =="going") m += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkp[cityID][k]["unit8Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit8Return"] > 0 && marchstatus == "returning") m += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkp[cityID][k]["unit8Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit9Count"] > 0 && marchstatus =="going") m += '<TD>Supply Wagons: '+ addCommas(Seed.queue_atkp[cityID][k]["unit9Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit9Return"] > 0 && marchstatus == "returning") m += '<TD>Supply Wagons: '+ addCommas(Seed.queue_atkp[cityID][k]["unit9Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit10Count"] > 0 && marchstatus =="going") m += '<TD>Ballista: '+ addCommas(Seed.queue_atkp[cityID][k]["unit10Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit10Return"] > 0 && marchstatus == "returning") m += '<TD>Ballista: '+ addCommas(Seed.queue_atkp[cityID][k]["unit10Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit11Count"] > 0 && marchstatus =="going") m += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkp[cityID][k]["unit11Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit11Return"] > 0 && marchstatus == "returning") m += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkp[cityID][k]["unit11Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit12Count"] > 0 && marchstatus =="going") m += '<TD>Catapult: '+ addCommas(Seed.queue_atkp[cityID][k]["unit12Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit12Return"] > 0 && marchstatus == "returning") m += '<TD>Catapult	: '+ addCommas(Seed.queue_atkp[cityID][k]["unit12Return"]) +'</td></tr>';
-   			  }
+  				    for(i=1; i<13; i++){
+						if(Seed.queue_atkp[cityID][k]["unit"+i+"Count"] > 0 && type == "going") m += '<TD>'+ unsafeWindow.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkp[cityID][k]["unit"+i+"Count"]) +'</td>';
+						if(Seed.queue_atkp[cityID][k]["unit"+i+"Return"] > 0 && type == "returning") m += '<TD>'+ unsafeWindow.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkp[cityID][k]["unit"+i+"Return"]) +'</td>';
+					}
+					m += '</tr>';
+				}
   		    }
-  	
-  		   
   	}
   	m += '</table>';
   	t.marchDiv.innerHTML = m;
   	
-  	/*document.getElementById('TEST').addEventListener('click', function(){
-  			
-  			var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-  	  			new AjaxRequest(unsafeWindow.g_ajaxpath + "/fb/e2/src/main_src.php?g=M&y=0&n=&l=en_US&messagebox=&standalone=0&res=1&iframe=1&lang=en&ts=1304968591.1795&ref=bookmarks&count=1&appBar=" + unsafeWindow.g_ajaxsuffix, {
-  	  			    method: "POST",
-  	  			    parameters: params,
-  	  			    onSuccess: function (rslt) {
-  	  			        //rslt = eval("(" + message + ")");
-  	  			        var mainSrcHTMLCode = rslt.responseText;
-  	  			    	//var mainSrcHTMLCode; // get and set this by pulling in the main_src.php file via AJAX
-  	  			    	var myregexp = /var seed=\{.*?\};/;
-  	  			    	var match = myregexp.exec(mainSrcHTMLCode);
-  	  			    	
-  	  			    	if (match != null) {
-  							result = match[0];
-  							eval(result);
-  							unsafeWindow.update_seed(seed);
-  							//unsafeWindow.seed = seed;
-  							Seed = unsafeWindow.seed;
-  	  				   	}
-  	  			    },
-  	  			    onFailure: function () {
-  	  			      if (notify != null)
-  	  			        notify(rslt.errorMsg);
-  	  			    },
-  	  			});
-  		
-  	  	}, false);*/
-  	  		     
+  	document.getElementById('TEST').addEventListener('click', function(){
+		var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+  			new AjaxRequest(unsafeWindow.g_ajaxpath + "/fb/e2/src/main_src.php?g=&y=0&n=nan001&l=nl_NL&messagebox=&standalone=0&res=1&iframe=1&lang=en&ts=1304248288.7067&s=250&appBar=" + unsafeWindow.g_ajaxsuffix, {
+  			    method: "POST",
+  			    parameters: params,
+  			    onSuccess: function (rslt) {
+  			        //rslt = eval("(" + message + ")");
+  			        var mainSrcHTMLCode = rslt.responseText;
+  			    	//var mainSrcHTMLCode; // get and set this by pulling in the main_src.php file via AJAX
+  			    	var myregexp = /var seed=\{.*?\};/;
+  			    	var match = myregexp.exec(mainSrcHTMLCode);
+  			    	
+  			    	if (match != null) {
+  			    	result = match[0];
+  			    	result = result.substr(4);
+  			    	var seed = eval(result);
+	  			    WinLog.write ("seed @ "+ unixTime()  +" ("+ now +")\n\n"+ inspect (seed, 8, 1));
+	  			    unsafeWindow.document.seed = result;
+  			    	}
+  			    },
+  			    onFailure: function () {
+  			      if (notify != null)
+  			        notify(rslt.errorMsg);
+  			    },
+  			});
+	
+  	}, false);
   		     
     t.displayTimer = setTimeout (t.showMarches, 500);  
     },
+	
+	isMyself: function(userID){
+		if(!Seed.players["u"+userID])
+			return false;
+		if(Seed.players["u"+userID].n == Seed.player.name)
+			return true;
+		else
+			return false;
+		return false;
+	},
     
     butcancelmarch: function(marchID){
     	 var t = Tabs.Marches;
@@ -5360,51 +5336,7 @@ Tabs.Marches = {
     	 	     },
     	 	 });
     	 	 
-    	 },
-    
-    butundefend: function(marchID){
-    	 var t = Tabs.Marches;
-    	 var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-    	 params.mid = marchID;
-    	 for (var c=0; c<Cities.numCities; c++){
-    	   var que = Seed.queue_atkp['city'+ Cities.cities[c].id];
-    	   if (matTypeof(que)=='array')
-    	     continue;
-    	   for (k in que){
-    	     if (k == 'm'+marchID){
-    	       params.cid = Cities.cities[c].id;
-    	       break;
-    	     }
-    	   }    
-    	 }    
-    	 
-    	 
-    	 new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/undefend.php" + unsafeWindow.g_ajaxsuffix, {
-    	     method: "post",
-    	     parameters: params,
-    	     onSuccess: function (transport) {
-    	       var rslt = eval("("+transport.responseText+")");
-    	       //alert(rslt.returnUnixTime);
-    	       var march = unsafeWindow.seed.queue_atkp["city" + params.cid]["m" + params.mid];
-    	       march.marchStatus = 8;
-    	       var marchtime = parseInt(march.returnUnixTime) - parseInt(march.destinationUnixTime);
-    	       //var marchtime = parseInt(march.destinationUnixTime) - parseInt(march.returnUnixTime);
-    	       var ut = unixTime();
-    	       if (unsafeWindow.seed.playerEffects.returnExpire > unixtime())
-    	         marchtime *= 0.5
-    	       march.returnUnixTime = ut; //=+ ( parseInt(march.marchUnixTime) - parseInt(march.destinationUnixTime));
-    	       march.destinationUnixTime = ut;
-    	       march.marchUnixTime = ut - marchtime;
-    	       if (notify != null)
-    	         notify(rslt.errorMsg);
-    	     },
-    	     onFailure: function () {
-    	       if (notify != null)
-    	         notify(rslt.errorMsg);
-    	     },
-    	 });
-    },
-    
+    	 },    
       
   /***  REINFORCEMENTS SUBTAB  ***/
   showReinforcements : function (){
@@ -5538,7 +5470,7 @@ return;
 
   butSendHome : function (marchId){
     var t = Tabs.Marches;
-    alert(marchId);
+    //alert("Sent Home march#"+marchId);
     logit ("SEND HOME: "+ marchId); 
     t.ajaxSendHome (marchId, function(r){t.show(); logit("AJAX RESULT: "+ r)}); 
   },
@@ -5690,7 +5622,7 @@ function kickout_allies(mid, cid, fromUid, fromCid, upkeep) {
           march.marchStatus = 8;
           var marchtime = parseInt(march.returnUnixTime) - parseInt(march.destinationUnixTime);
           var ut = unixTime();
-          if (unsafeWindow.seed.playerEffects.returnExpire > unixtime())
+          if (unsafeWindow.seed.playerEffects.returnExpire > unixTime())
             marchtime *= 0.5
           march.returnUnixTime = ut + marchtime;
           march.destinationUnixTime = ut;
