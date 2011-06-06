@@ -30,9 +30,10 @@ var provMapCoords = {imgWidth:710, imgHeight:708, mapWidth:670, mapHeight:670, l
 
     
 var Options = {
+  includeCity	: true,
   includeMarching:true,
   includeTraining:false,
-  includeCity	:true,
+  includeTrainingTotal:false,
   encRemaining : true,
   maxIdlePop   : false,
   srcSortBy    : 'level',
@@ -59,9 +60,6 @@ var Options = {
   currentTab : false,
   gmtClock : true,
   chatEnhance : true,
-  chatglobal : true,
-  chatwhisper : true,
-  chatbold : false,
   fixKnightSelect : true,
   attackCityPicker : true,
   mapCoordsTop : true,
@@ -113,6 +111,8 @@ function ptStartup (){
   ';
   
   var styles = '.xtab {padding-right: 5px; border:none; background:none; white-space:nowrap;}\
+    .pthostile td { background:#FF4040; }.ptfriendly td{background:lightblue; }.ptally td{background:royalblue; }\
+    .ptneutral td { background:#C8C8C8; }.ptunaligned td { background:gold; }\
     .xtabBR {padding-right: 5px; border:none; background:none;}\
     div.ptDiv {background-color:#f0f0f0;}\
     table.ptTab tr td {border:none; background:none; white-space:nowrap;}\
@@ -2748,30 +2748,30 @@ Tabs.Test = {
   init : function (div){
     var t = Tabs.Test;
     t.cont = div;
-  var citySelect = '   <SELECT id=fakeCity>';
-      for (var c=0; c<Cities.numCities; c++) {
-        aCity = Cities.cities[c].name + ' ('+Cities.cities[c].x + ','+ Cities.cities[c].y+')';
-           citySelect += '<option value=\''+c+'\'>'+aCity+'</option>';
-      }
-      citySelect += '</select>';
+	var citySelect = '   <SELECT id=fakeCity>';
+	    for (var c=0; c<Cities.numCities; c++) {
+		 	 aCity = Cities.cities[c].name + ' ('+Cities.cities[c].x + ','+ Cities.cities[c].y+')';
+	         citySelect += '<option value=\''+c+'\'>'+aCity+'</option>';
+	    }
+	    citySelect += '</select>';
     var m = '<TABLE><TR><TD align=right>Scout: </td><TD><INPUT type=checkbox id=fakeIsScout></td></tr>\
         <TR><TD align=right>Wild: </td><TD><INPUT type=checkbox id=fakeIsWild></td></tr>\
         <TR><TD align=right>False Report: </td><TD><INPUT type=checkbox disabled id=fakeFalse></td></tr>\
         <TR><TD align=right>Seconds: </td><TD><INPUT type=text size=4 value=300 id=fakeSeconds></td></tr>\
         <TR><TD align=right># of Supply: </td><TD><INPUT type=text size=6 value=0 id=faketroop0></td></tr>\
-    <TR><TD align=right># of Militia: </td><TD><INPUT type=text size=6 value=0 id=faketroop1></td></tr>\
-    <TR><TD align=right># of Scouts: </td><TD><INPUT type=text size=6 value=0 id=faketroop2></td></tr>\
-      <TR><TD align=right># of Pikes: </td><TD><INPUT type=text size=6 value=0 id=faketroop3></td></tr>\
-      <TR><TD align=right># of Swords: </td><TD><INPUT type=text size=6 value=0 id=faketroop4></td></tr>\
-      <TR><TD align=right># of Archers: </td><TD><INPUT type=text size=6 value=0 id=faketroop5></td></tr>\
-      <TR><TD align=right># of Calvary: </td><TD><INPUT type=text size=6 value=0 id=faketroop6></td></tr>\
-      <TR><TD align=right># of Heavy Cav: </td><TD><INPUT type=text size=6 value=0 id=faketroop7></td></tr>\
-      <TR><TD align=right># of Wagons: </td><TD><INPUT type=text size=6 value=0 id=faketroop8></td></tr>\
-      <TR><TD align=right># of Ballistas: </td><TD><INPUT type=text size=6 value=0 id=faketroop9></td></tr>\
-      <TR><TD align=right># of Battering Ram: </td><TD><INPUT type=text size=6 value=0 id=faketroop10></td></tr>\
-      <TR><TD align=right># of Catapults: </td><TD><INPUT type=text size=6 value=0 id=faketroop11></td></tr>\
-      <TR><TD align=right>Fake name to use: </td><TD><INPUT type=text size=13 value=oftheNOOBS id=fakeName></td></tr>\
-      <TR><TD align=right>Target city: </td><TD>'+citySelect+'</td></tr>\
+		<TR><TD align=right># of Militia: </td><TD><INPUT type=text size=6 value=0 id=faketroop1></td></tr>\
+		<TR><TD align=right># of Scouts: </td><TD><INPUT type=text size=6 value=0 id=faketroop2></td></tr>\
+		  <TR><TD align=right># of Pikes: </td><TD><INPUT type=text size=6 value=0 id=faketroop3></td></tr>\
+		  <TR><TD align=right># of Swords: </td><TD><INPUT type=text size=6 value=0 id=faketroop4></td></tr>\
+		  <TR><TD align=right># of Archers: </td><TD><INPUT type=text size=6 value=0 id=faketroop5></td></tr>\
+		  <TR><TD align=right># of Calvary: </td><TD><INPUT type=text size=6 value=0 id=faketroop6></td></tr>\
+		  <TR><TD align=right># of Heavy Cav: </td><TD><INPUT type=text size=6 value=0 id=faketroop7></td></tr>\
+		  <TR><TD align=right># of Wagons: </td><TD><INPUT type=text size=6 value=0 id=faketroop8></td></tr>\
+		  <TR><TD align=right># of Ballistas: </td><TD><INPUT type=text size=6 value=0 id=faketroop9></td></tr>\
+		  <TR><TD align=right># of Battering Ram: </td><TD><INPUT type=text size=6 value=0 id=faketroop10></td></tr>\
+		  <TR><TD align=right># of Catapults: </td><TD><INPUT type=text size=6 value=0 id=faketroop11></td></tr>\
+		  <TR><TD align=right>Fake name to use: </td><TD><INPUT type=text size=13 value=oftheNOOBS id=fakeName></td></tr>\
+		  <TR><TD align=right>Target city: </td><TD>'+citySelect+'</td></tr>\
         <TR><TD colspan=2 align=center><INPUT id=testSendMarch type=submit value="Fake Attack" \></td></tr></table>\
         <INPUT id=ptReloadKOC type=submit value="Reload KOC" \>\
         <BR><DIV id=testDiv style="background-color:#fffff0; maxwidth:675; max-height:430px; height:430px; overflow-y:auto;"></div>';
@@ -2834,34 +2834,10 @@ Tabs.Test = {
     march.arrivalTime = unixTime() + secs;
     march.departureTime = unixTime() - 10;
      march.unts = {}
-  for(i=0; i<12; i++){
-    if(troops[i] > 0)
-    march.unts["u"+(i+1)] = addCommas(troops[i]);
-  }
-  // if(numScout != 0)
-    // march.unts.u3 = addCommas(numScout)
-  // if(numMilitia != 0)
-    // march.unts.u2 = addCommas(numMilitia)
-  // if(numSupply != 0)
-  // march.unts.u1 = addCommas(numSupply)
-  // if(numPike != 0)
-  // march.unts.u4 = addCommas(numPike)
-  // if(numSword != 0)
-  // march.unts.u5 = addCommas(numSword)
-  // if(numArcher != 0)
-  // march.unts.u6 = addCommas(numArcher)
-  // if(numCav != 0)
-  // march.unts.u7 = addCommas(numCav)
-  // if(numHeavy != 0)
-  // march.unts.u8 = addCommas(numHeavy)
-  // if(numWagon != 0)
-  // march.unts.u9 = addCommas(numWagon)
-  // if(numBallista != 0)
-  // march.unts.u10 = addCommas(numBallista)
-  // if(numRam != 0)
-  // march.unts.u11 = addCommas(numRam)
-  // if(numCat != 0)
-  // march.unts.u12 = addCommas(numCat)
+	for(i=0; i<12; i++){
+	  if(troops[i] > 0)
+		march.unts["u"+(i+1)] = addCommas(troops[i]);
+	}
     march.pid = 1234567;
     march.score = 9;
     march.mid = marchId.substr(1);
@@ -2883,28 +2859,15 @@ Tabs.Test = {
     var isScout = document.getElementById('fakeIsScout').checked;
     var isWild = document.getElementById('fakeIsWild').checked;
     var isFalse = document.getElementById('fakeFalse').checked;
-  var troops = [];
-  for(i=0; i<12; i++)
-    troops[i] = parseInt(document.getElementById('faketroop'+i).value);
+	var troops = [];
+	for(i=0; i<12; i++)
+		troops[i] = parseInt(document.getElementById('faketroop'+i).value);
     var secs = parseInt(document.getElementById('fakeSeconds').value);
-    // var mil = parseInt(document.getElementById('fakeMilitia').value);
-  // var numSupply = parseInt(document.getElementById('fakeSupply').value);
-  // var numPike = parseInt(document.getElementById('fakePike').value);
-  // var numSword = parseInt(document.getElementById('fakeSword').value);
-  // var numArcher = parseInt(document.getElementById('fakeArcher').value);
-  // var numCav = parseInt(document.getElementById('fakeCav').value);
-  // var numHeavy = parseInt(document.getElementById('fakeHeavy').value);
-  // var numWagon = parseInt(document.getElementById('fakeWagon').value);
-  // var numBallista = parseInt(document.getElementById('fakeBallista').value);
-  // var numRam = parseInt(document.getElementById('fakeRam').value);
-  // var numCat = parseInt(document.getElementById('fakeCat').value);
-  // var numScout = parseInt(document.getElementById('fakeScout').value);
-  var name = document.getElementById('fakeName').value;
-  var city = document.getElementById('fakeCity').value;
+	var name = document.getElementById('fakeName').value;
+	var city = document.getElementById('fakeCity').value;
     t.createFakeAttack (city, isScout, isWild, isFalse, secs, troops ,name);
   },
 }
-
 
 /*********************************** Info tab ***********************************/
 
@@ -3112,7 +3075,6 @@ var crestreq = { 3:{1101:4, 1102:2, 1103:1},
 }
 
 
-
 /*********************************** Options Tab ***********************************/
 
 Tabs.Options = {
@@ -3298,7 +3260,6 @@ if (DEBUG_TRACE) logit (" 2 Map.request  Map = "+ inspect (Map, 2, 1, 2));
     });
   },
 };
-
 
 
 /*************************************** Train Tab ***********************************************/
@@ -3527,8 +3488,7 @@ if (t.limitingFactor){
 }    
     t.updateTopTroops();
   },
-
-    
+  
   clickTroopDo : function (){
     var t = Tabs.Train;
     var cityId = t.selectedCity.id;
@@ -3578,7 +3538,7 @@ if (t.limitingFactor){
     if (slots<1)
       t.TDspMaxPS.innerHTML = 0;
     else
-      t.TDspMaxPS.innerHTML = parseInt(t.stats.MaxDefTrain / slots);
+      t.TDspMaxPS.innerHTML = parseIntNan(t.stats.MaxDefTrain / slots);
 
     t.TDspSpace.innerHTML = 'Wall level: <B>'+ t.stats.wallLevel +'</b><BR>Wall space: '+ (t.stats.wallSpaceUsed+t.stats.wallSpaceQueued)  +'/<B>'+ t.stats.wallSpace +'</b><BR>\
         Field space: '+ (t.stats.fieldSpaceUsed+t.stats.fieldSpaceQueued) +'/<B>'+ t.stats.fieldSpace +'</b>';
@@ -3603,7 +3563,7 @@ if (t.limitingFactor){
       max = t.stats.ore / uc[4];
     if ( (t.stats.idlePop / uc[6]) < max)
       max = t.stats.idlePop / uc[6];
-    t.stats.MaxDefTrain = parseInt (max);
+    t.stats.MaxDefTrain = parseIntNan (max);
     if (t.stats.MaxDefTrain < 0)
       t.stats.MaxDefTrain = 0;
     if (matTypeof(uc[8]) == 'object'){
@@ -4001,7 +3961,6 @@ Tabs.Overview = {
   tabOrder : 1,
   cont : null,
   displayTimer : null,
-  checkBox:null,
 
   Overview : function (){
   },
@@ -4345,7 +4304,6 @@ function getWallInfo (cityId, objOut){
 }    
 
 /********************************* Messages Tab *************************************/
-
 Tabs.msg = {
   tabOrder : 110,
   tabLabel : 'Messages',
@@ -4627,7 +4585,6 @@ Tabs.msg = {
 				  			else m+='<TR><TD align="center"><img src=http://koc.god-like.info/img/unit_'+i+'_30.jpg></td><TD align="center">'+rslt['fght']["s0"]['f'+i][0]+'</td><TD align="center">'+rslt['fght']["s0"]['f'+i][1]+'</td></tr>';
 				  		}
 				  	}
-				  	
 		  	}
 		  	m+='<TR><TD></TD></TR></table>';
 	}
@@ -4716,8 +4673,6 @@ Tabs.msg = {
        t.searchMail(rslt, pageNum); 
   },
   
-  
-
   show : function (){
   },
 
@@ -4732,127 +4687,126 @@ Tabs.Alliance = {
   alliancemembers:[],
   number:0,
   totalmembers:0,
-  error:false,
+  totalpages:10,
+  pageNo:1,
+  searching:false,
   
   init : function (div){    
     var t = Tabs.Alliance;      
     t.myDiv = div;
-     t.myDiv.style.overflowY = 'scroll';
-     div.style.maxHeight = '500px';
-     t.totalmembers=0;
-     t.alliancemembers=[];	
+    t.myDiv.style.overflowY = 'scroll';
+	div.style.maxHeight = '720px';
      
-     unsafeWindow.getdetails = t.getMemberDetails;
+    unsafeWindow.getdetails = t.getMemberDetails;
     
     var m =  '<DIV class=ptstat>ALLIANCE OVERVIEW</div><TABLE align=center cellpadding=1 cellspacing=0></table>';
     
-    m +='<TABLE class=ptTab><TD>Sort by: <select id="searchAlli"><option value="name">Name</options>';
+    m += '<TABLE class=ptTab><TD>Sort by: <select id="searchAlli">'
+	m += '<option value="name">Name</options>';
     m += '<option value="might">Might</option>';
-    m += '<option value="login">Last Login</option>';
+    m += '<option value="rank">Rank</option>';
     m += '<option value="cities">Cities</option>';
-    m += '<option value="position">Position</option>';
-    m += '<option value="dip">Days in position (dip)</option></select></td>';
-    m += '<TD><INPUT id=alList type=submit value="List"></td>';
+    m += '<option value="dip">Days in position (dip)</option>';
+    m += '<option value="login">Last Login</option>';
+    m += '</select></td><TD><INPUT id=alList type=submit value="List"></td>';
     m += '<TD id=progress></td></table>';
-    
     m += '<TABLE id=alOverviewTab class=alTab><TR align="center"></tr></table>';
-    
-    
+     
     t.myDiv.innerHTML = m;
     
     document.getElementById('alList').addEventListener('click', function(){
-    	if (!t.searching){
-	    	t.totalmembers=0;
-	    	t.alliancemembers=[];	
-		    document.getElementById('alOverviewTab').innerHTML ="";
-		    document.getElementById('progress').innerHTML = "Searching...";
-		    document.getElementById('alList').disabled = true;
-		    t.error=false;
-		    t.fetchAllianceMemberPage();
-		} 
+		if(!t.searching){
+			t.number=0;
+			t.totalmembers=0;
+			t.alliancemembers=[];
+			document.getElementById('alOverviewTab').innerHTML = "Searching...";
+			document.getElementById('alList').disabled = true;	
+			t.searching = true;
+			t.fetchAllianceMemberPage();
+		}
     }, false);
-    
-    document.getElementById('searchAlli').addEventListener('click', function(){
-        if (t.alliancemembers!="") {
-        	document.getElementById('alOverviewTab').innerHTML ="";
-        	t.paintMembers(); 
-        }
-    }, false);
+	document.getElementById('searchAlli').addEventListener('change', function(){
+		if(!t.searching && t.alliancemembers.length>0)
+			t.paintMembers();
+	}, false);
       
-  window.addEventListener('unload', t.onUnload, false);
+    window.addEventListener('unload', t.onUnload, false);
   },
   
-  
   paintMembers: function(){
-  var t = Tabs.Alliance; 
-	  		  if (document.getElementById('searchAlli').value == "name") {
-				  var sortmembers = t.alliancemembers.sort(function(a, b){
-				         var sortA=a.Name.toLowerCase(), sortB=b.Name.toLowerCase()
-				         if (sortA < sortB) 
-				          return -1
-				         if (sortA > sortB)
-				          return 1
-				         return 0 
-				        });
-			  }     
-			  if (document.getElementById('searchAlli').value == "might") {
-			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
-			  	         var sortA=parseInt(a.Might),sortB=parseInt(b.Might)
-			  	         if (sortA > sortB) 
-			  	          return -1
-			  	         if (sortA < sortB)
-			  	          return 1
-			  	         return 0 
-			  	        });
-			  }     
-			  if (document.getElementById('searchAlli').value == "login") {
-			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
-			  	         var sortA=a.LastLogin,sortB=b.LastLogin
-			  	         if (sortA < sortB) 
-			  	          return -1
-			  	         if (sortA > sortB)
-			  	          return 1
-			  	         return 0 
-			  	        });
-			  }     
-			  if (document.getElementById('searchAlli').value == "cities") {
-			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
-			  	         var sortA=a.Cities,sortB=b.Cities
-			  	         if (sortA < sortB) 
-			  	          return -1
-			  	         if (sortA > sortB)
-			  	          return 1
-			  	         return 0 
-			  	        });
-			  }     
-			  if (document.getElementById('searchAlli').value == "dip") {
-			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
-			  	         var sortA=a.dip,sortB=b.dip
-			  	         if (sortA < sortB) 
-			  	          return -1
-			  	         if (sortA > sortB)
-			  	          return 1
-			  	         return 0 
-			  	        });
-			  }     
-			  if (document.getElementById('searchAlli').value == "position") {
-			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
-			  	         var sortA=a.Position,sortB=b.Position
-			  	         if (sortA < sortB) 
-			  	          return -1
-			  	         if (sortA > sortB)
-			  	          return 1
-			  	         return 0 
-			  	        });
-			  }      
-			  for (var y = (sortmembers.length-1); y >=0; y--) {
-			                      t._addTab(sortmembers[y].Name,sortmembers[y].Might,sortmembers[y].LastLogin,sortmembers[y].Position,sortmembers[y].dip,sortmembers[y].uid,sortmembers[y].fbuid,sortmembers[y].Cities);
-			                      t.myDiv.style.overflowY = 'scroll';
-			  }
-			 t._addTabHeader();
+  var t = Tabs.Alliance;
+  document.getElementById('alOverviewTab').innerHTML = "";
+	if ( t.totalmembers >= (t.alliancemembers.length-1)) {
+	  if (document.getElementById('searchAlli').value == "name") {
+	    var sortmembers = t.alliancemembers.sort(function(a, b){
+			 var sortA=a.Name.toLowerCase(), sortB=b.Name.toLowerCase()
+			 if (sortA < sortB) 
+			  return -1
+			 if (sortA > sortB)
+			  return 1
+			 return 0 
+			});
+	  }     
+	  if (document.getElementById('searchAlli').value == "might") {
+		var sortmembers = t.alliancemembers.sort(function(a, b){
+			 var sortA=parseInt(a.Might),sortB=parseInt(b.Might)
+			 if (sortA > sortB) 
+			  return -1
+			 if (sortA < sortB)
+			  return 1
+			 return 0 
+			});
+	  }     
+	  if (document.getElementById('searchAlli').value == "login") {
+		var sortmembers = t.alliancemembers.sort(function(a, b){
+			 var sortA=a.LastLogin,sortB=b.LastLogin
+			 if (sortA < sortB) 
+			  return -1
+			 if (sortA > sortB)
+			  return 1
+			 return 0 
+			});
+	  }
+	  if (document.getElementById('searchAlli').value == "cities") {
+		var sortmembers = t.alliancemembers.sort(function(a, b){
+			 var sortA=a.Cities,sortB=b.Cities
+			 if (sortA < sortB) 
+			  return -1
+			 if (sortA > sortB)
+			  return 1
+			 return 0 
+			});
+		}    	  
+	  if (document.getElementById('searchAlli').value == "rank") {
+		var sortmembers = t.alliancemembers.sort(function(a, b){
+			 var sortA=a.Position,sortB=b.Position
+			 if (sortA < sortB) 
+			  return -1
+			 if (sortA > sortB)
+			  return 1
+			 return 0 
+			});
+	  }     
+	  if (document.getElementById('searchAlli').value == "dip") {
+		var sortmembers = t.alliancemembers.sort(function(a, b){
+			 var sortA=a.dip,sortB=b.dip
+			 if (sortA > sortB) 
+			  return -1
+			 if (sortA < sortB)
+			  return 1
+			 return 0 
+			});
+	  }     
+	   
+	  for (var y = (sortmembers.length-1); y >=0; y--) {
+		t._addTab(sortmembers[y].Name,sortmembers[y].Might,sortmembers[y].LastLogin,sortmembers[y].Position,sortmembers[y].dip,sortmembers[y].uid,sortmembers[y].fbuid,sortmembers[y].Cities);
+		t.myDiv.style.overflowY = 'scroll';
+	  }
+	  t._addTabHeader();
+	}
    },
   
-    _addTab: function(Name,Might,LastLogin,Position,dip,uid,fbuid,Cities){
+  _addTab: function(Name,Might,LastLogin,Position,dip,uid,fbuid,Cities){
              var t = Tabs.Alliance;
              var row = document.getElementById('alOverviewTab').insertRow(0);
              row.vAlign = 'top';
@@ -4863,97 +4817,90 @@ Tabs.Alliance = {
        		 cell2.align = "right" ;
        		 cell2.vAlign = "top";
        		 cell2.innerHTML = addCommas(Might);
-       		 row.insertCell(3).innerHTML = Cities;
-       		 row.insertCell(4).innerHTML = officerId2String (Position);
-       		 row.insertCell(5).innerHTML = dip;
-       		 row.insertCell(6).innerHTML = LastLogin;
+			 row.insertCell(3).innerHTML = Cities;
+       		 row.insertCell(3).innerHTML = officerId2String (Position);
+       		 row.insertCell(4).innerHTML = dip;
+       		 row.insertCell(5).innerHTML = LastLogin;
+       		 t.number++;
           }, 
-          
-    _addTabHeader: function() {
+
+  _addTabHeader: function() {
     var t = Tabs.Alliance;
         var row = document.getElementById('alOverviewTab').insertRow(0);
         row.vAlign = 'top';
-         row.insertCell(0).innerHTML = "Facebook";
+        row.insertCell(0).innerHTML = "Facebook";
         row.insertCell(1).innerHTML = "Name";
         row.insertCell(2).innerHTML = "Might";
         row.insertCell(3).innerHTML = "Cities";
-        row.insertCell(4).innerHTML = "Position";
-        row.insertCell(5).innerHTML = "DIP";
-        row.insertCell(6).innerHTML = "LastLogin";
+        row.insertCell(3).innerHTML = "Rank";
+        row.insertCell(4).innerHTML = "DIP.";
+        row.insertCell(5).innerHTML = "LastLogin";
       },   
-          
-    fetchAllianceMemberPage : function () {
+
+  fetchAllianceMemberPage : function () {
     var t = Tabs.Alliance;
-    document.getElementById('alList').disabled = true;
     var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-    
     params.pf = 0;
     
-    new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetInfo.php" + unsafeWindow.g_ajaxsuffix, {
+    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetInfo.php" + unsafeWindow.g_ajaxsuffix, {
       method: "post",
       parameters: params,
-      onSuccess: function (transport) {
-      	  var rslt = eval("(" + transport.responseText + ")");
+      onSuccess: function (rslt) {
           t.totalmembers = (rslt["allianceInfo"]["members"]);
-          for (var i=1;i<=10;i++) {
-                 params.pageNo = i;
-                 params.pf = 0;
-                 new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetMembersInfo.php" + unsafeWindow.g_ajaxsuffix, {
-                   method: "post",
-                   parameters: params,
-                   onSuccess: function (transport) {
-                    var info = eval("(" + transport.responseText + ")");
-                    if (info.ok) {  
-                       for (var k in info["memberInfo"]){
-                         if ( info["memberInfo"][k]["might"] != undefined && !t.error){  
-                           t.alliancemembers.push ({
-                               Name: info["memberInfo"][k]["name"],
-                               Might: info["memberInfo"][k]["might"],
-                               Cities: info["memberInfo"][k]["cities"],
-                               Position : info["memberInfo"][k]["positionType"],
-                               dip : info["memberInfo"][k]["daysInPosition"],
-                               LastLogin : info["memberInfo"][k]["lastLogin"],
-                               uid : info["memberInfo"][k]["userId"],
-                               fbuid : info["memberInfo"][k]["fbuid"],	
-                           });
-                          }
-                           document.getElementById('alOverviewTab').innerHTML ="";
-                           t.paintMembers();
-                   		}
-                       if (!t.error) document.getElementById('progress').innerHTML	 = '(' + (t.alliancemembers.length) +'/'+ t.totalmembers +')';
-                       if ( t.alliancemembers.length >= t.totalmembers) document.getElementById('alList').disabled = false;
-                    } else  if (info.error) {
-                    	document.getElementById('alList').disabled = false;
-                    	document.getElementById('progress').innerHTML = "ERROR!";
-                    	t.error=true;
-                   	}
-                   },
-                   onFailure: function (rslt) {;
-                     notify ({errorMsg:'AJAX error'});
-                   },
-                   
-           });
-          }
+		  t.fetchAllianceMemberInfo();
       },
       onFailure: function (rslt) {;
         notify ({errorMsg:'AJAX error'});
       },
     });
+    
   },
   
-  hide : function (){         
-    mainPop.div.style.width = 750 + 'px';
+  fetchAllianceMemberInfo : function (){
+	var t = Tabs.Alliance;
+	if(t.pageNo>t.totalpages){
+		t.searching = false;
+		document.getElementById('alList').disabled = false;
+		t.paintMembers();
+		return;
+	}
+	var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+	params.pageNo = t.pageNo;
+	params.pf = 0;
+	new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetMembersInfo.php" + unsafeWindow.g_ajaxsuffix, {
+		method: "post",
+		parameters: params,
+		onSuccess: function (rslt) {
+			for (var k in rslt["memberInfo"]){
+				t.alliancemembers.push ({
+					Name: rslt["memberInfo"][k]["name"],
+					Might: rslt["memberInfo"][k]["might"],
+					Cities: rslt["memberInfo"][k]["cities"],
+					Position : rslt["memberInfo"][k]["positionType"],
+					dip : parseInt(rslt["memberInfo"][k]["daysInPosition"]),
+					LastLogin : rslt["memberInfo"][k]["lastLogin"],
+					uid : rslt["memberInfo"][k]["userId"],
+					fbuid : rslt["memberInfo"][k]["fbuid"],	
+				});
+			}
+			t.paintMembers();
+			t.totalpages = rslt.noOfPages;
+			t.pageNo++;
+			document.getElementById('progress').innerHTML	 = '(' + (t.alliancemembers.length) +'/'+ t.totalmembers +')';
+			t.fetchAllianceMemberInfo();
+		},
+		onFailure: function (rslt) {;
+		  notify ({errorMsg:'AJAX error'});
+		},
+    });
+  },
+  
+  hide : function (){
   },
 
-  show : function (){         
-  		var t = Tabs.Alliance;
-        mainPop.div.style.width = 750 + 'px';
+  show : function (){
   },
-};
-
-
-
-
+}
 
 /*************************************** MARCHES TAB ************************************************/
 
@@ -6230,6 +6177,12 @@ function CdispCityPicker (id, span, dispName, notify, selbut){
         eY.value = that.city.y;
       }
       function eventChange (){
+			var xValue=that.coordBoxX.value.trim();
+			var xI=/^\s*([0-9]+)[\s,]+([0-9]+)/.exec(xValue); 		
+			if(xI) {
+				that.coordBoxX.value=xI[1]
+				that.coordBoxY.value=xI[2]
+			}
         var x = parseInt(that.coordBoxX.value, 10);
         var y = parseInt(that.coordBoxY.value, 10);
         if (isNaN(x) || x<0 || x>750){
@@ -6250,7 +6203,7 @@ function CdispCityPicker (id, span, dispName, notify, selbut){
     this.coordBoxY = eY;
     var bh = new CboxHandler(this);
     eX.size=2;
-    eX.maxLength=3;
+    eX.maxLength=10;
     eY.size=2;
     eY.maxLength=3;
     eX.addEventListener('change', bh.eventChange, false);
@@ -6287,7 +6240,7 @@ function CdialogCancelContinue (msg, canNotify, contNotify, centerElement){
     pop.centerMe(centerElement);
   else
     pop.centerMe(document.body);
-  pop.getTopDiv().innerHTML = '<CENTER>KOC Power Bot</center>';
+  pop.getTopDiv().innerHTML = '<CENTER>KOC Power Tools</center>';
   pop.getMainDiv().innerHTML = '<TABLE class=ptTab align=center style="height: 100%"><TR align=center height=90%><TD>'+ msg +'</td></tr>\
       <TR align=center><TD><INPUT id=ptcccancel type=submit value="CANCEL" \> &nbsp; &nbsp; <INPUT id=ptcccontin type=submit value="CONTINUE" \></td></tr></table>';
   document.getElementById('ptcccancel').addEventListener ('click', function (){pop.show(false); if (canNotify) canNotify();}, false);
@@ -6476,6 +6429,8 @@ function getDiplomacy (aid) {
     return 'friendly';
   if (Seed.allianceDiplomacies.hostile && Seed.allianceDiplomacies.hostile['a'+aid] != null)
     return 'hostile';
+  if (aid == Seed.allianceDiplomacies.allianceId)
+    return 'ally';
   return 'neutral';
 };
 
@@ -6547,8 +6502,6 @@ function getTrainInfo (){
     }
   return ret;
 }
-
-
 
 var fortNamesShort = {
   53: "Crossbows",
@@ -7407,7 +7360,6 @@ String.prototype.capitalize = function(){
   return this.charAt(0).toUpperCase() + this.substring(1).toLowerCase();
 }
 
-
 function objectName (o){
   var s = o.toString();
   return s.substr(7,s.length-8);
@@ -7616,26 +7568,27 @@ isOpening : false,
     if (!t.win || t.win.closed){
 t.isOpening = true;  
 // Firefox bug??? It appears as if a new thread is started on open, withOUT reusing same window
-      t.win = window.open('', 'uwtrace', 'top=30,left=0,width=900,height=700,scrollbars=no,location=no,menubar=no,directories=no,status=no');
+      //t.win = window.open('', 'uwtrace', 'top=30,left=0,width=900,height=700,scrollbars=no,location=no,menubar=no,directories=no,status=no');
+	  t.win = new CPopup('ptwinlog', 0, 0, 500, 800, true, function(){t.win.destroy(); t.win=null; t.win.closed=true;});
+	  t.win.show(true);
 t.isOpening = false; 
 t.state = null; 
     }
     
     if (t.state == null){
-      t.win.document.body.innerHTML = '<STYLE>pre{margin:0px} hr{margin:3px; height:1px; border:0px; color:#cee; background-color:#cee}</style>\
+      t.win.getMainDiv().innerHTML = '<STYLE>pre{margin:0px} hr{margin:3px; height:1px; border:0px; color:#cee; background-color:#cee}</style>\
         <BODY style="margin:0px; padding:0px; border:none">\
         <DIV id=winlogtop style="background-color:#d0d0d0; margin:0px; padding:0px; border:1px solid">\
         <INPUT id=wlClear type=submit value="Clear"> &nbsp; <INPUT id=wlRev type=submit value="Bottom"></div>\
-        <DIV id=wlOut style="overflow-y:auto; height:100%; max-height:100%"></div></body>';
-      t.win.document.getElementById('wlClear').addEventListener('click', eventButClear, false);
-      t.win.document.getElementById('wlRev').addEventListener('click', eventButReverse, false);
-      t.eOut =  t.win.document.getElementById('wlOut');
+        <DIV id=wlOut style="overflow-y:auto; overflow-x:auto; height:750px; max-height:800px; width:600px"></div></body>';
+      document.getElementById('wlClear').addEventListener('click', eventButClear, false);
+      document.getElementById('wlRev').addEventListener('click', eventButReverse, false);
+      t.eOut =  document.getElementById('wlOut');
       t.lastE = null;
       t.state = 1;
     }
   },
 
-  
   writeText : function (msg){
     WinLog.write (msg.htmlEntities()); 
   },
