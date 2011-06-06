@@ -6,7 +6,7 @@
 // @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110605a';
+var Version = '20110605b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -60,6 +60,9 @@ var Options = {
   currentTab : false,
   gmtClock : true,
   chatEnhance : true,
+  chatglobal : true,
+  chatwhisper : true,
+  chatbold : false,
   fixKnightSelect : true,
   attackCityPicker : true,
   mapCoordsTop : true,
@@ -111,8 +114,6 @@ function ptStartup (){
   ';
   
   var styles = '.xtab {padding-right: 5px; border:none; background:none; white-space:nowrap;}\
-    .pthostile td { background:#FF4040; }.ptfriendly td{background:lightblue; }.ptally td{background:royalblue; }\
-    .ptneutral td { background:#C8C8C8; }.ptunaligned td { background:gold; }\
     .xtabBR {padding-right: 5px; border:none; background:none;}\
     div.ptDiv {background-color:#f0f0f0;}\
     table.ptTab tr td {border:none; background:none; white-space:nowrap;}\
@@ -3096,12 +3097,12 @@ Tabs.Options = {
         <TR><TD><INPUT id=ptEnableFoodTower type=checkbox /></td><TD>Enable Tower food alert. (Warning set to 6 hours, checked every 30min.)</td></tr>\
         <TR><TD><INPUT id=ptEnableWisperAlert type=checkbox /></td><TD>Enable sound alert on whisper<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
         <TR><TD><INPUT id=ptEnableTowerAlert type=checkbox /></td><TD>Enable sound alert on tower alert in chat<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
-	<TR><TD colspan=2><P><B>Chat Layout:</b></td></tr>\
+	<TR><TD colspan=2><B>Chat Layout:</b></td></tr>\
 	<TR><TD><INPUT id=togChatStuff type=checkbox /></td><TD>Enable Chat Enable Chat enhancements (clickable coords, click on icon to whisper, colors).</td></tr>\
         <TR><TD><INPUT id=togChatGlobal type=checkbox /></td><TD>Enable Global background color. <SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
 	<TR><TD><INPUT id=togChatWhisper type=checkbox /></td><TD>Enable Whisper in Red Font.<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
 	<TR><TD><INPUT id=togChatBold type=checkbox /></td><TD>Enable Chat in Bold Font.<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
-	<TR><TD colspan=2><P><B>KofC Features:</b></td></tr>\
+	<TR><TD colspan=2><B>KofC Features:</b></td></tr>\
         <TR><TD><INPUT id=togMsgCountFix type=checkbox /></td><TD>Show number of new messages separately from number of reports on Messages icon.</td></tr>';
       m += '<TR><TD><INPUT id=togAllRpts type=checkbox /></td><TD>Enable enhanced Alliance Reports.</td></tr>\
         <TR><TD><INPUT id=togAllowAlter type=checkbox /></td><TD>Allow other scripts to change format of Alliance Reports.</td></tr>\
