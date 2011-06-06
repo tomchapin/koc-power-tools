@@ -6,7 +6,7 @@
 // @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110602a';
+var Version = '20110605b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -16,7 +16,7 @@ var DEBUG_TRACE_AJAX = false;
 var MAP_DELAY = 1500;
 var DISABLE_POST_KNIGHT_SKILLS = false;
 var DISABLE_POST_DEFENSES = false;
-var ENABLE_TEST_TAB = true;
+var ENABLE_TEST_TAB = false;
 var SEND_ALERT_AS_WHISPER = false;
 var TEST_WIDE = false;
 var TEST_WIDE_CITIES = 7;
@@ -30,9 +30,10 @@ var provMapCoords = {imgWidth:710, imgHeight:708, mapWidth:670, mapHeight:670, l
 
     
 var Options = {
+  includeCity	: true,
   includeMarching:true,
   includeTraining:false,
-  includeCity	:true,
+  includeTrainingTotal:false,
   encRemaining : true,
   maxIdlePop   : false,
   srcSortBy    : 'level',
@@ -139,6 +140,8 @@ function ptStartup (){
     span.whiteOnRed {padding-left:3px; padding-right:3px; background-color:#700; color:white; font-weight:bold}\
     span.boldRed {color:#800; font-weight:bold}\
     span.boldDarkRed {color:#600; font-weight:bold}\
+    span.oohfancy {color:#0000; font-weight:bold;text-shadow: 1px 1px 1px #AAA; font-variant:small-caps; text-align:center}\
+    span.oohfancyi {color:#0000; font-style:italic;text-shadow: 1px 1px 1px #AAA; font-variant:small-caps; text-align:center}\
     a.ptButton20 {color:#ffff80}\
     hr.ptThin {padding:0px; margin:0px}\
     input.pbSubtab {cursor:pointer; width:10em; margin-right:15px;}\
@@ -515,8 +518,6 @@ var ChatStuff = {
   	}
   	else element_class = '';
     }
-    else if (m[0].indexOf('Incoming Troops') >= 0)
-      element_class = 'ptChatAttack';
       else if (m[0].indexOf('to the alliance') >= 0){
   	if (Options.chatbold)
   		element_class = 'ptChatAlliance';
@@ -531,6 +532,8 @@ var ChatStuff = {
   	if (Options.chatbold && Options.chatglobal)
   		element_class = 'ptChatGlobalAll';
           } 
+    if (m[0].indexOf('Incoming Troops') >= 0)
+      element_class = 'ptChatAttack';
   
   
       msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
@@ -2751,30 +2754,30 @@ Tabs.Test = {
   init : function (div){
     var t = Tabs.Test;
     t.cont = div;
-  var citySelect = '   <SELECT id=fakeCity>';
-      for (var c=0; c<Cities.numCities; c++) {
-        aCity = Cities.cities[c].name + ' ('+Cities.cities[c].x + ','+ Cities.cities[c].y+')';
-           citySelect += '<option value=\''+c+'\'>'+aCity+'</option>';
-      }
-      citySelect += '</select>';
+	var citySelect = '   <SELECT id=fakeCity>';
+	    for (var c=0; c<Cities.numCities; c++) {
+		 	 aCity = Cities.cities[c].name + ' ('+Cities.cities[c].x + ','+ Cities.cities[c].y+')';
+	         citySelect += '<option value=\''+c+'\'>'+aCity+'</option>';
+	    }
+	    citySelect += '</select>';
     var m = '<TABLE><TR><TD align=right>Scout: </td><TD><INPUT type=checkbox id=fakeIsScout></td></tr>\
         <TR><TD align=right>Wild: </td><TD><INPUT type=checkbox id=fakeIsWild></td></tr>\
         <TR><TD align=right>False Report: </td><TD><INPUT type=checkbox disabled id=fakeFalse></td></tr>\
         <TR><TD align=right>Seconds: </td><TD><INPUT type=text size=4 value=300 id=fakeSeconds></td></tr>\
         <TR><TD align=right># of Supply: </td><TD><INPUT type=text size=6 value=0 id=faketroop0></td></tr>\
-    <TR><TD align=right># of Militia: </td><TD><INPUT type=text size=6 value=0 id=faketroop1></td></tr>\
-    <TR><TD align=right># of Scouts: </td><TD><INPUT type=text size=6 value=0 id=faketroop2></td></tr>\
-      <TR><TD align=right># of Pikes: </td><TD><INPUT type=text size=6 value=0 id=faketroop3></td></tr>\
-      <TR><TD align=right># of Swords: </td><TD><INPUT type=text size=6 value=0 id=faketroop4></td></tr>\
-      <TR><TD align=right># of Archers: </td><TD><INPUT type=text size=6 value=0 id=faketroop5></td></tr>\
-      <TR><TD align=right># of Calvary: </td><TD><INPUT type=text size=6 value=0 id=faketroop6></td></tr>\
-      <TR><TD align=right># of Heavy Cav: </td><TD><INPUT type=text size=6 value=0 id=faketroop7></td></tr>\
-      <TR><TD align=right># of Wagons: </td><TD><INPUT type=text size=6 value=0 id=faketroop8></td></tr>\
-      <TR><TD align=right># of Ballistas: </td><TD><INPUT type=text size=6 value=0 id=faketroop9></td></tr>\
-      <TR><TD align=right># of Battering Ram: </td><TD><INPUT type=text size=6 value=0 id=faketroop10></td></tr>\
-      <TR><TD align=right># of Catapults: </td><TD><INPUT type=text size=6 value=0 id=faketroop11></td></tr>\
-      <TR><TD align=right>Fake name to use: </td><TD><INPUT type=text size=13 value=oftheNOOBS id=fakeName></td></tr>\
-      <TR><TD align=right>Target city: </td><TD>'+citySelect+'</td></tr>\
+		<TR><TD align=right># of Militia: </td><TD><INPUT type=text size=6 value=0 id=faketroop1></td></tr>\
+		<TR><TD align=right># of Scouts: </td><TD><INPUT type=text size=6 value=0 id=faketroop2></td></tr>\
+		  <TR><TD align=right># of Pikes: </td><TD><INPUT type=text size=6 value=0 id=faketroop3></td></tr>\
+		  <TR><TD align=right># of Swords: </td><TD><INPUT type=text size=6 value=0 id=faketroop4></td></tr>\
+		  <TR><TD align=right># of Archers: </td><TD><INPUT type=text size=6 value=0 id=faketroop5></td></tr>\
+		  <TR><TD align=right># of Calvary: </td><TD><INPUT type=text size=6 value=0 id=faketroop6></td></tr>\
+		  <TR><TD align=right># of Heavy Cav: </td><TD><INPUT type=text size=6 value=0 id=faketroop7></td></tr>\
+		  <TR><TD align=right># of Wagons: </td><TD><INPUT type=text size=6 value=0 id=faketroop8></td></tr>\
+		  <TR><TD align=right># of Ballistas: </td><TD><INPUT type=text size=6 value=0 id=faketroop9></td></tr>\
+		  <TR><TD align=right># of Battering Ram: </td><TD><INPUT type=text size=6 value=0 id=faketroop10></td></tr>\
+		  <TR><TD align=right># of Catapults: </td><TD><INPUT type=text size=6 value=0 id=faketroop11></td></tr>\
+		  <TR><TD align=right>Fake name to use: </td><TD><INPUT type=text size=13 value=oftheNOOBS id=fakeName></td></tr>\
+		  <TR><TD align=right>Target city: </td><TD>'+citySelect+'</td></tr>\
         <TR><TD colspan=2 align=center><INPUT id=testSendMarch type=submit value="Fake Attack" \></td></tr></table>\
         <INPUT id=ptReloadKOC type=submit value="Reload KOC" \>\
         <BR><DIV id=testDiv style="background-color:#fffff0; maxwidth:675; max-height:430px; height:430px; overflow-y:auto;"></div>';
@@ -2837,34 +2840,10 @@ Tabs.Test = {
     march.arrivalTime = unixTime() + secs;
     march.departureTime = unixTime() - 10;
      march.unts = {}
-  for(i=0; i<12; i++){
-    if(troops[i] > 0)
-    march.unts["u"+(i+1)] = addCommas(troops[i]);
-  }
-  // if(numScout != 0)
-    // march.unts.u3 = addCommas(numScout)
-  // if(numMilitia != 0)
-    // march.unts.u2 = addCommas(numMilitia)
-  // if(numSupply != 0)
-  // march.unts.u1 = addCommas(numSupply)
-  // if(numPike != 0)
-  // march.unts.u4 = addCommas(numPike)
-  // if(numSword != 0)
-  // march.unts.u5 = addCommas(numSword)
-  // if(numArcher != 0)
-  // march.unts.u6 = addCommas(numArcher)
-  // if(numCav != 0)
-  // march.unts.u7 = addCommas(numCav)
-  // if(numHeavy != 0)
-  // march.unts.u8 = addCommas(numHeavy)
-  // if(numWagon != 0)
-  // march.unts.u9 = addCommas(numWagon)
-  // if(numBallista != 0)
-  // march.unts.u10 = addCommas(numBallista)
-  // if(numRam != 0)
-  // march.unts.u11 = addCommas(numRam)
-  // if(numCat != 0)
-  // march.unts.u12 = addCommas(numCat)
+	for(i=0; i<12; i++){
+	  if(troops[i] > 0)
+		march.unts["u"+(i+1)] = addCommas(troops[i]);
+	}
     march.pid = 1234567;
     march.score = 9;
     march.mid = marchId.substr(1);
@@ -2886,28 +2865,15 @@ Tabs.Test = {
     var isScout = document.getElementById('fakeIsScout').checked;
     var isWild = document.getElementById('fakeIsWild').checked;
     var isFalse = document.getElementById('fakeFalse').checked;
-  var troops = [];
-  for(i=0; i<12; i++)
-    troops[i] = parseInt(document.getElementById('faketroop'+i).value);
+	var troops = [];
+	for(i=0; i<12; i++)
+		troops[i] = parseInt(document.getElementById('faketroop'+i).value);
     var secs = parseInt(document.getElementById('fakeSeconds').value);
-    // var mil = parseInt(document.getElementById('fakeMilitia').value);
-  // var numSupply = parseInt(document.getElementById('fakeSupply').value);
-  // var numPike = parseInt(document.getElementById('fakePike').value);
-  // var numSword = parseInt(document.getElementById('fakeSword').value);
-  // var numArcher = parseInt(document.getElementById('fakeArcher').value);
-  // var numCav = parseInt(document.getElementById('fakeCav').value);
-  // var numHeavy = parseInt(document.getElementById('fakeHeavy').value);
-  // var numWagon = parseInt(document.getElementById('fakeWagon').value);
-  // var numBallista = parseInt(document.getElementById('fakeBallista').value);
-  // var numRam = parseInt(document.getElementById('fakeRam').value);
-  // var numCat = parseInt(document.getElementById('fakeCat').value);
-  // var numScout = parseInt(document.getElementById('fakeScout').value);
-  var name = document.getElementById('fakeName').value;
-  var city = document.getElementById('fakeCity').value;
+	var name = document.getElementById('fakeName').value;
+	var city = document.getElementById('fakeCity').value;
     t.createFakeAttack (city, isScout, isWild, isFalse, secs, troops ,name);
   },
 }
-
 
 /*********************************** Info tab ***********************************/
 
@@ -3115,7 +3081,6 @@ var crestreq = { 3:{1101:4, 1102:2, 1103:1},
 }
 
 
-
 /*********************************** Options Tab ***********************************/
 
 Tabs.Options = {
@@ -3137,12 +3102,12 @@ Tabs.Options = {
         <TR><TD><INPUT id=ptEnableFoodTower type=checkbox /></td><TD>Enable Tower food alert. (Warning set to 6 hours, checked every 30min.)</td></tr>\
         <TR><TD><INPUT id=ptEnableWisperAlert type=checkbox /></td><TD>Enable sound alert on whisper<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
         <TR><TD><INPUT id=ptEnableTowerAlert type=checkbox /></td><TD>Enable sound alert on tower alert in chat<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
-	<TR><TD colspan=2><P><B>Chat Layout:</b></td></tr>\
+	<TR><TD colspan=2><B>Chat Layout:</b></td></tr>\
 	<TR><TD><INPUT id=togChatStuff type=checkbox /></td><TD>Enable Chat Enable Chat enhancements (clickable coords, click on icon to whisper, colors).</td></tr>\
         <TR><TD><INPUT id=togChatGlobal type=checkbox /></td><TD>Enable Global background color. <SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
 	<TR><TD><INPUT id=togChatWhisper type=checkbox /></td><TD>Enable Whisper in Red Font.<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
 	<TR><TD><INPUT id=togChatBold type=checkbox /></td><TD>Enable Chat in Bold Font.<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
-	<TR><TD colspan=2><P><B>KofC Features:</b></td></tr>\
+	<TR><TD colspan=2><B>KofC Features:</b></td></tr>\
         <TR><TD><INPUT id=togMsgCountFix type=checkbox /></td><TD>Show number of new messages separately from number of reports on Messages icon.</td></tr>';
       m += '<TR><TD><INPUT id=togAllRpts type=checkbox /></td><TD>Enable enhanced Alliance Reports.</td></tr>\
         <TR><TD><INPUT id=togAllowAlter type=checkbox /></td><TD>Allow other scripts to change format of Alliance Reports.</td></tr>\
@@ -3301,7 +3266,6 @@ if (DEBUG_TRACE) logit (" 2 Map.request  Map = "+ inspect (Map, 2, 1, 2));
     });
   },
 };
-
 
 
 /*************************************** Train Tab ***********************************************/
@@ -3530,8 +3494,7 @@ if (t.limitingFactor){
 }    
     t.updateTopTroops();
   },
-
-    
+  
   clickTroopDo : function (){
     var t = Tabs.Train;
     var cityId = t.selectedCity.id;
@@ -3581,7 +3544,7 @@ if (t.limitingFactor){
     if (slots<1)
       t.TDspMaxPS.innerHTML = 0;
     else
-      t.TDspMaxPS.innerHTML = parseInt(t.stats.MaxDefTrain / slots);
+      t.TDspMaxPS.innerHTML = parseIntNan(t.stats.MaxDefTrain / slots);
 
     t.TDspSpace.innerHTML = 'Wall level: <B>'+ t.stats.wallLevel +'</b><BR>Wall space: '+ (t.stats.wallSpaceUsed+t.stats.wallSpaceQueued)  +'/<B>'+ t.stats.wallSpace +'</b><BR>\
         Field space: '+ (t.stats.fieldSpaceUsed+t.stats.fieldSpaceQueued) +'/<B>'+ t.stats.fieldSpace +'</b>';
@@ -3606,7 +3569,7 @@ if (t.limitingFactor){
       max = t.stats.ore / uc[4];
     if ( (t.stats.idlePop / uc[6]) < max)
       max = t.stats.idlePop / uc[6];
-    t.stats.MaxDefTrain = parseInt (max);
+    t.stats.MaxDefTrain = parseIntNan (max);
     if (t.stats.MaxDefTrain < 0)
       t.stats.MaxDefTrain = 0;
     if (matTypeof(uc[8]) == 'object'){
@@ -4004,7 +3967,6 @@ Tabs.Overview = {
   tabOrder : 1,
   cont : null,
   displayTimer : null,
-  checkBox:null,
 
   Overview : function (){
   },
@@ -4075,30 +4037,30 @@ if (TEST_WIDE)
       dt.setTime (Seed.player.datejoinUnixTime * 1000);
       
       str = '<DIV class=ptstat style="margin-top:5px; margin-bottom:5px;"><TABLE cellspacing=0 cellpadding=0 class=ptTab width=97% align=center>\
-        <TR align=left><TD><SPAN class=ptStatLight>Joined on:</span> '+ dt.toLocaleDateString() +'</td>\
-        <TD><SPAN class=ptStatLight>Might:</span> ' + addCommas(Seed.player.might) +'</td>\
-        <TD><SPAN class=ptStatLight>Alliance:</span> ' + getMyAlliance()[1] +'</td>\
-        <TD align=right><SPAN class=ptStatLight>Domain:</span> ' + unsafeWindow.domainName +'</td></tr></table></div>';
+        <TR align=left><TD><SPAN class=oohfancy>Joined on:</span> '+ dt.toLocaleDateString() +'</td>\
+        <TD><SPAN class=oohfancy>Might:</span> ' + addCommas(Seed.player.might) +'</td>\
+        <TD><SPAN class=oohfancy>Alliance:</span> ' + getMyAlliance()[1] +'</td>\
+        <TD align=right><SPAN class=oohfancy>Domain:</span> ' + unsafeWindow.domainName +'</td></tr></table></div>';
 
               
-      str += "<DIV id=overMainDiv style='font-size:"+ Options.overviewFontSize +"px'><TABLE class=ptTabOverview cellpadding=0 cellspacing=0><TR valign=top align=right><TD width=65></td><TD width=88 style='background: #ffc'><B>TOTAL</b></td>";
+      str += "<DIV id=overMainDiv style='font-size:"+ Options.overviewFontSize +"px'><TABLE class=ptTabOverview cellpadding=0 cellspacing=0><TR  align=center><TD width=65 align=center></td><TD width=88 style='background: #ffc; font-size:150%' align=center><SPAN class=oohfancy>Totals</SPAN></td>";
       for(i=0; i<Cities.numCities; i++) {
-        str += "<TD width=81><B>"+ Cities.cities[i].name.substring(0,11) +'</b><BR>'+ coordLink (Cities.cities[i].x, Cities.cities[i].y) +"<BR>"+ unsafeWindow.provincenames['p'+ Cities.cities[i].provId] +"</td>";
+        str += "<TD width=81><SPAN class=oohfancy>"+ Cities.cities[i].name.substring(0,11) +'</SPAN><BR>'+ coordLink (Cities.cities[i].x, Cities.cities[i].y) +"<BR>"+ unsafeWindow.provincenames['p'+ Cities.cities[i].provId] +"</td>";
       }
       if (Options.includeMarching)
-        str += '<TD width=81><B>Marching</b></td>';
+        str += '<TD width=81 align=center><SPAN class=oohfancy>Marching</SPAN></td>';
 	  if (Options.includeTrainingTotal)
-		str += '<TD width=81><B>Training</b></td>';
+        str += '<TD width=81 align=center><SPAN class=oohfancy>Training</SPAN></td>';
       str += "</tr>";
 	  
-	  str += '<TR valign=top align=right><TD></td><TD style=\'background: #ffc\'></td>';
+      str += '<TR valign=top align=center><TD align=center><SPAN class=oohfancy>Status</SPAN></td><TD style=\'background:none\'></td>';
 		for(i=0; i<Cities.numCities; i++){
 		  cityID = 'city'+Cities.cities[i].id;
 		  Gate = parseInt(Seed.citystats[cityID].gate);
 		if(Gate == 0)
-		  str += '<TD>Hiding</td>';
+			str += '<TD align=center><div style=color:green;font-style:italic;font-variant:small-caps;text-shadow: 1px 1px 1px #000;>Sanctuary</div></td>';
 		else
-		  str += '<TD><SPAN class=boldRed>Defending</span></td>';
+			str += '<TD align=center><div style=color:red;font-weight:bold;font-variant:small-caps;text-shadow: 1px 1px 1px #000;>Defending</div></td>';
 		}
   
       rows = [];
@@ -4123,11 +4085,11 @@ if (TEST_WIDE)
 		for (var i=0; i<5; i++)
           rows[i][Cities.numCities+1] = 0;
 	  }
-      str += _row ('Gold', rows[0]);
-      str += _row ('Food', rows[1]);
-      str += _row ('Wood', rows[2]);
-      str += _row ('Stone', rows[3]);
-      str += _row ('Ore', rows[4]);
+      str += _row ('<SPAN class=oohfancy>Gold</SPAN>', rows[0]);
+      str += _row ('<SPAN class=oohfancy>Food</SPAN>', rows[1]);
+      str += _row ('<SPAN class=oohfancy>Wood</SPAN>', rows[2]);
+      str += _row ('<SPAN class=oohfancy>Stone</SPAN>', rows[3]);
+      str += _row ('<SPAN class=oohfancy>Ore</SPAN>', rows[4]);
       str += '<TR><TD colspan=12><BR></td></tr>';
 	  for (r=1; r<13; r++){
         rows[r] = [];
@@ -4162,18 +4124,18 @@ if (TEST_WIDE)
         }
       }
       rownum = 0;
-      str += _row ('SupTrp', rows[1]);
-      str += _row ('Militia', rows[2]);
-      str += _row ('Scout', rows[3]);
-      str += _row ('Pike', rows[4]);
-      str += _row ('Sword', rows[5]);
-      str += _row ('Archer', rows[6]);
-      str += _row ('Cavalry', rows[7]);
-      str += _row ('Heavy', rows[8]);
-      str += _row ('Wagon', rows[9]);
-      str += _row ('Ballista', rows[10]);
-      str += _row ('Ram', rows[11]);
-      str += _row ('Catapult', rows[12]);
+      str += _row ('<SPAN class=oohfancy>SupTrp</SPAN>', rows[1]);      
+      str += _row ('<SPAN class=oohfancy>Militia</SPAN>', rows[2]);
+      str += _row ('<SPAN class=oohfancy>Scout</SPAN>', rows[3]);
+      str += _row ('<SPAN class=oohfancy>Pike</SPAN>', rows[4]);
+      str += _row ('<SPAN class=oohfancy>Sword</SPAN>', rows[5]);
+      str += _row ('<SPAN class=oohfancy>Archer</SPAN>', rows[6]);
+      str += _row ('<SPAN class=oohfancy>Cavalry</SPAN>', rows[7]);
+      str += _row ('<SPAN class=oohfancy>H-Cav</SPAN>', rows[8]);
+      str += _row ('<SPAN class=oohfancy>Wagon</SPAN>', rows[9]);
+      str += _row ('<SPAN class=oohfancy>Ballista</SPAN>', rows[10]);
+      str += _row ('<SPAN class=oohfancy>Ram</SPAN>', rows[11]);
+      str += _row ('<SPAN class=oohfancy>Catapult</SPAN>', rows[12]);
       str += '<TR><TD colspan=12><BR></td></tr>';
       
       row = [];
@@ -4183,7 +4145,7 @@ if (TEST_WIDE)
         row[i] = rp[1] - usage;
       }
      
-      str += _row ('Food +/-', row, true);
+      str += _row ('<SPAN class=oohfancy>Food +/-</SPAN>', row, true);
       
       for(i=0; i<Cities.numCities; i++) {
         if (row[i] >= 0)
@@ -4200,7 +4162,7 @@ if (TEST_WIDE)
           }
         }
       }    
-      str += _row ('Food left', row, true);
+      str += _row ('<SPAN class=oohfancy>Food left</SPAN>', row, true);
       str += '<TR><TD><BR></td></tr>';
       
       row = [];
@@ -4217,7 +4179,7 @@ if (TEST_WIDE)
         else
           row[i] = totWilds +'/'+ castle;
       }
-      str += _row ('#Wilds', row, true);
+      str += _row ('<SPAN class=oohfancy>#Wilds</SPAN', row, true);
   
       row = [];
       for(i=0; i<Cities.numCities; i++) {
@@ -4227,7 +4189,7 @@ if (TEST_WIDE)
           ++totKnights;
         row[i] = totKnights;
       }
-      str += _row ('#Knights', row, true);
+      str += _row ('<SPAN class=oohfancy>#Knights</SPAN>', row, true);
   
       var now = unixTime();
       var row = [];
@@ -4243,7 +4205,7 @@ if (TEST_WIDE)
         else
           row[i] = timestr(totTime);
       }
-      str += _row ('TroopQ', row, true);
+      str += _row ('<SPAN class=oohfancy>TroopQ</SPAN>', row, true);
       
       var row = [];
       for(i=0; i<Cities.numCities; i++) {
@@ -4260,7 +4222,7 @@ if (TEST_WIDE)
         else
           row[i] = timestr(totTime);
       }    
-      str += _row ('WallQue', row, true);
+      str += _row ('<SPAN class=oohfancy>WallQue</SPAN>', row, true);
       str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><BR><INPUT type=CHECKBOX id=ptoverOriginal'+ (Options.includeCity?' CHECKED':'') +'>Show Troops in City</td></tr>';
       str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=idCheck'+ (Options.includeMarching?' CHECKED':'') +'>Show Marching Troops/Resources</td></tr>';
       str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=ptoverIncTraining'+ (Options.includeTraining?' CHECKED':'') +'>Show troops training in city</td></tr>';
@@ -4348,7 +4310,6 @@ function getWallInfo (cityId, objOut){
 }    
 
 /********************************* Messages Tab *************************************/
-
 Tabs.msg = {
   tabOrder : 110,
   tabLabel : 'Messages',
@@ -4630,7 +4591,6 @@ Tabs.msg = {
 				  			else m+='<TR><TD align="center"><img src=http://koc.god-like.info/img/unit_'+i+'_30.jpg></td><TD align="center">'+rslt['fght']["s0"]['f'+i][0]+'</td><TD align="center">'+rslt['fght']["s0"]['f'+i][1]+'</td></tr>';
 				  		}
 				  	}
-				  	
 		  	}
 		  	m+='<TR><TD></TD></TR></table>';
 	}
@@ -4719,8 +4679,6 @@ Tabs.msg = {
        t.searchMail(rslt, pageNum); 
   },
   
-  
-
   show : function (){
   },
 
@@ -4735,127 +4693,126 @@ Tabs.Alliance = {
   alliancemembers:[],
   number:0,
   totalmembers:0,
-  error:false,
+  totalpages:10,
+  pageNo:1,
+  searching:false,
   
   init : function (div){    
     var t = Tabs.Alliance;      
     t.myDiv = div;
-     t.myDiv.style.overflowY = 'scroll';
-     div.style.maxHeight = '500px';
-     t.totalmembers=0;
-     t.alliancemembers=[];	
+    t.myDiv.style.overflowY = 'scroll';
+	div.style.maxHeight = '720px';
      
-     unsafeWindow.getdetails = t.getMemberDetails;
+    unsafeWindow.getdetails = t.getMemberDetails;
     
     var m =  '<DIV class=ptstat>ALLIANCE OVERVIEW</div><TABLE align=center cellpadding=1 cellspacing=0></table>';
     
-    m +='<TABLE class=ptTab><TD>Sort by: <select id="searchAlli"><option value="name">Name</options>';
+    m += '<TABLE class=ptTab><TD>Sort by: <select id="searchAlli">'
+	m += '<option value="name">Name</options>';
     m += '<option value="might">Might</option>';
-    m += '<option value="login">Last Login</option>';
+    m += '<option value="rank">Rank</option>';
     m += '<option value="cities">Cities</option>';
-    m += '<option value="position">Position</option>';
-    m += '<option value="dip">Days in position (dip)</option></select></td>';
-    m += '<TD><INPUT id=alList type=submit value="List"></td>';
+    m += '<option value="dip">Days in position (dip)</option>';
+    m += '<option value="login">Last Login</option>';
+    m += '</select></td><TD><INPUT id=alList type=submit value="List"></td>';
     m += '<TD id=progress></td></table>';
-    
     m += '<TABLE id=alOverviewTab class=alTab><TR align="center"></tr></table>';
-    
-    
+     
     t.myDiv.innerHTML = m;
     
     document.getElementById('alList').addEventListener('click', function(){
-    	if (!t.searching){
-	    	t.totalmembers=0;
-	    	t.alliancemembers=[];	
-		    document.getElementById('alOverviewTab').innerHTML ="";
-		    document.getElementById('progress').innerHTML = "Searching...";
-		    document.getElementById('alList').disabled = true;
-		    t.error=false;
-		    t.fetchAllianceMemberPage();
-		} 
+		if(!t.searching){
+			t.number=0;
+			t.totalmembers=0;
+			t.alliancemembers=[];
+			document.getElementById('alOverviewTab').innerHTML = "Searching...";
+			document.getElementById('alList').disabled = true;	
+			t.searching = true;
+			t.fetchAllianceMemberPage();
+		}
     }, false);
-    
-    document.getElementById('searchAlli').addEventListener('click', function(){
-        if (t.alliancemembers!="") {
-        	document.getElementById('alOverviewTab').innerHTML ="";
-        	t.paintMembers(); 
-        }
-    }, false);
+	document.getElementById('searchAlli').addEventListener('change', function(){
+		if(!t.searching && t.alliancemembers.length>0)
+			t.paintMembers();
+	}, false);
       
-  window.addEventListener('unload', t.onUnload, false);
+    window.addEventListener('unload', t.onUnload, false);
   },
   
-  
   paintMembers: function(){
-  var t = Tabs.Alliance; 
-	  		  if (document.getElementById('searchAlli').value == "name") {
-				  var sortmembers = t.alliancemembers.sort(function(a, b){
-				         var sortA=a.Name.toLowerCase(), sortB=b.Name.toLowerCase()
-				         if (sortA < sortB) 
-				          return -1
-				         if (sortA > sortB)
-				          return 1
-				         return 0 
-				        });
-			  }     
-			  if (document.getElementById('searchAlli').value == "might") {
-			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
-			  	         var sortA=parseInt(a.Might),sortB=parseInt(b.Might)
-			  	         if (sortA > sortB) 
-			  	          return -1
-			  	         if (sortA < sortB)
-			  	          return 1
-			  	         return 0 
-			  	        });
-			  }     
-			  if (document.getElementById('searchAlli').value == "login") {
-			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
-			  	         var sortA=a.LastLogin,sortB=b.LastLogin
-			  	         if (sortA < sortB) 
-			  	          return -1
-			  	         if (sortA > sortB)
-			  	          return 1
-			  	         return 0 
-			  	        });
-			  }     
-			  if (document.getElementById('searchAlli').value == "cities") {
-			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
-			  	         var sortA=a.Cities,sortB=b.Cities
-			  	         if (sortA < sortB) 
-			  	          return -1
-			  	         if (sortA > sortB)
-			  	          return 1
-			  	         return 0 
-			  	        });
-			  }     
-			  if (document.getElementById('searchAlli').value == "dip") {
-			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
-			  	         var sortA=a.dip,sortB=b.dip
-			  	         if (sortA < sortB) 
-			  	          return -1
-			  	         if (sortA > sortB)
-			  	          return 1
-			  	         return 0 
-			  	        });
-			  }     
-			  if (document.getElementById('searchAlli').value == "position") {
-			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
-			  	         var sortA=a.Position,sortB=b.Position
-			  	         if (sortA < sortB) 
-			  	          return -1
-			  	         if (sortA > sortB)
-			  	          return 1
-			  	         return 0 
-			  	        });
-			  }      
-			  for (var y = (sortmembers.length-1); y >=0; y--) {
-			                      t._addTab(sortmembers[y].Name,sortmembers[y].Might,sortmembers[y].LastLogin,sortmembers[y].Position,sortmembers[y].dip,sortmembers[y].uid,sortmembers[y].fbuid,sortmembers[y].Cities);
-			                      t.myDiv.style.overflowY = 'scroll';
-			  }
-			 t._addTabHeader();
+  var t = Tabs.Alliance;
+  document.getElementById('alOverviewTab').innerHTML = "";
+	if ( t.totalmembers >= (t.alliancemembers.length-1)) {
+	  if (document.getElementById('searchAlli').value == "name") {
+	    var sortmembers = t.alliancemembers.sort(function(a, b){
+			 var sortA=a.Name.toLowerCase(), sortB=b.Name.toLowerCase()
+			 if (sortA < sortB) 
+			  return -1
+			 if (sortA > sortB)
+			  return 1
+			 return 0 
+			});
+	  }     
+	  if (document.getElementById('searchAlli').value == "might") {
+		var sortmembers = t.alliancemembers.sort(function(a, b){
+			 var sortA=parseInt(a.Might),sortB=parseInt(b.Might)
+			 if (sortA > sortB) 
+			  return -1
+			 if (sortA < sortB)
+			  return 1
+			 return 0 
+			});
+	  }     
+	  if (document.getElementById('searchAlli').value == "login") {
+		var sortmembers = t.alliancemembers.sort(function(a, b){
+			 var sortA=a.LastLogin,sortB=b.LastLogin
+			 if (sortA < sortB) 
+			  return -1
+			 if (sortA > sortB)
+			  return 1
+			 return 0 
+			});
+	  }
+	  if (document.getElementById('searchAlli').value == "cities") {
+		var sortmembers = t.alliancemembers.sort(function(a, b){
+			 var sortA=a.Cities,sortB=b.Cities
+			 if (sortA < sortB) 
+			  return -1
+			 if (sortA > sortB)
+			  return 1
+			 return 0 
+			});
+		}    	  
+	  if (document.getElementById('searchAlli').value == "rank") {
+		var sortmembers = t.alliancemembers.sort(function(a, b){
+			 var sortA=a.Position,sortB=b.Position
+			 if (sortA < sortB) 
+			  return -1
+			 if (sortA > sortB)
+			  return 1
+			 return 0 
+			});
+	  }     
+	  if (document.getElementById('searchAlli').value == "dip") {
+		var sortmembers = t.alliancemembers.sort(function(a, b){
+			 var sortA=a.dip,sortB=b.dip
+			 if (sortA > sortB) 
+			  return -1
+			 if (sortA < sortB)
+			  return 1
+			 return 0 
+			});
+	  }     
+	   
+	  for (var y = (sortmembers.length-1); y >=0; y--) {
+		t._addTab(sortmembers[y].Name,sortmembers[y].Might,sortmembers[y].LastLogin,sortmembers[y].Position,sortmembers[y].dip,sortmembers[y].uid,sortmembers[y].fbuid,sortmembers[y].Cities);
+		t.myDiv.style.overflowY = 'scroll';
+	  }
+	  t._addTabHeader();
+	}
    },
   
-    _addTab: function(Name,Might,LastLogin,Position,dip,uid,fbuid,Cities){
+  _addTab: function(Name,Might,LastLogin,Position,dip,uid,fbuid,Cities){
              var t = Tabs.Alliance;
              var row = document.getElementById('alOverviewTab').insertRow(0);
              row.vAlign = 'top';
@@ -4866,97 +4823,90 @@ Tabs.Alliance = {
        		 cell2.align = "right" ;
        		 cell2.vAlign = "top";
        		 cell2.innerHTML = addCommas(Might);
-       		 row.insertCell(3).innerHTML = Cities;
-       		 row.insertCell(4).innerHTML = officerId2String (Position);
-       		 row.insertCell(5).innerHTML = dip;
-       		 row.insertCell(6).innerHTML = LastLogin;
+			 row.insertCell(3).innerHTML = Cities;
+       		 row.insertCell(3).innerHTML = officerId2String (Position);
+       		 row.insertCell(4).innerHTML = dip;
+       		 row.insertCell(5).innerHTML = LastLogin;
+       		 t.number++;
           }, 
-          
-    _addTabHeader: function() {
+
+  _addTabHeader: function() {
     var t = Tabs.Alliance;
         var row = document.getElementById('alOverviewTab').insertRow(0);
         row.vAlign = 'top';
-         row.insertCell(0).innerHTML = "Facebook";
+        row.insertCell(0).innerHTML = "Facebook";
         row.insertCell(1).innerHTML = "Name";
         row.insertCell(2).innerHTML = "Might";
         row.insertCell(3).innerHTML = "Cities";
-        row.insertCell(4).innerHTML = "Position";
-        row.insertCell(5).innerHTML = "DIP";
-        row.insertCell(6).innerHTML = "LastLogin";
+        row.insertCell(3).innerHTML = "Rank";
+        row.insertCell(4).innerHTML = "DIP.";
+        row.insertCell(5).innerHTML = "LastLogin";
       },   
-          
-    fetchAllianceMemberPage : function () {
+
+  fetchAllianceMemberPage : function () {
     var t = Tabs.Alliance;
-    document.getElementById('alList').disabled = true;
     var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-    
     params.pf = 0;
     
-    new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetInfo.php" + unsafeWindow.g_ajaxsuffix, {
+    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetInfo.php" + unsafeWindow.g_ajaxsuffix, {
       method: "post",
       parameters: params,
-      onSuccess: function (transport) {
-      	  var rslt = eval("(" + transport.responseText + ")");
+      onSuccess: function (rslt) {
           t.totalmembers = (rslt["allianceInfo"]["members"]);
-          for (var i=1;i<=10;i++) {
-                 params.pageNo = i;
-                 params.pf = 0;
-                 new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetMembersInfo.php" + unsafeWindow.g_ajaxsuffix, {
-                   method: "post",
-                   parameters: params,
-                   onSuccess: function (transport) {
-                    var info = eval("(" + transport.responseText + ")");
-                    if (info.ok) {  
-                       for (var k in info["memberInfo"]){
-                         if ( info["memberInfo"][k]["might"] != undefined && !t.error){  
-                           t.alliancemembers.push ({
-                               Name: info["memberInfo"][k]["name"],
-                               Might: info["memberInfo"][k]["might"],
-                               Cities: info["memberInfo"][k]["cities"],
-                               Position : info["memberInfo"][k]["positionType"],
-                               dip : info["memberInfo"][k]["daysInPosition"],
-                               LastLogin : info["memberInfo"][k]["lastLogin"],
-                               uid : info["memberInfo"][k]["userId"],
-                               fbuid : info["memberInfo"][k]["fbuid"],	
-                           });
-                          }
-                           document.getElementById('alOverviewTab').innerHTML ="";
-                           t.paintMembers();
-                   		}
-                       if (!t.error) document.getElementById('progress').innerHTML	 = '(' + (t.alliancemembers.length) +'/'+ t.totalmembers +')';
-                       if ( t.alliancemembers.length >= t.totalmembers) document.getElementById('alList').disabled = false;
-                    } else  if (info.error) {
-                    	document.getElementById('alList').disabled = false;
-                    	document.getElementById('progress').innerHTML = "ERROR!";
-                    	t.error=true;
-                   	}
-                   },
-                   onFailure: function (rslt) {;
-                     notify ({errorMsg:'AJAX error'});
-                   },
-                   
-           });
-          }
+		  t.fetchAllianceMemberInfo();
       },
       onFailure: function (rslt) {;
         notify ({errorMsg:'AJAX error'});
       },
     });
+    
   },
   
-  hide : function (){         
-    mainPop.div.style.width = 750 + 'px';
+  fetchAllianceMemberInfo : function (){
+	var t = Tabs.Alliance;
+	if(t.pageNo>t.totalpages){
+		t.searching = false;
+		document.getElementById('alList').disabled = false;
+		t.paintMembers();
+		return;
+	}
+	var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+	params.pageNo = t.pageNo;
+	params.pf = 0;
+	new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetMembersInfo.php" + unsafeWindow.g_ajaxsuffix, {
+		method: "post",
+		parameters: params,
+		onSuccess: function (rslt) {
+			for (var k in rslt["memberInfo"]){
+				t.alliancemembers.push ({
+					Name: rslt["memberInfo"][k]["name"],
+					Might: rslt["memberInfo"][k]["might"],
+					Cities: rslt["memberInfo"][k]["cities"],
+					Position : rslt["memberInfo"][k]["positionType"],
+					dip : parseInt(rslt["memberInfo"][k]["daysInPosition"]),
+					LastLogin : rslt["memberInfo"][k]["lastLogin"],
+					uid : rslt["memberInfo"][k]["userId"],
+					fbuid : rslt["memberInfo"][k]["fbuid"],	
+				});
+			}
+			t.paintMembers();
+			t.totalpages = rslt.noOfPages;
+			t.pageNo++;
+			document.getElementById('progress').innerHTML	 = '(' + (t.alliancemembers.length) +'/'+ t.totalmembers +')';
+			t.fetchAllianceMemberInfo();
+		},
+		onFailure: function (rslt) {;
+		  notify ({errorMsg:'AJAX error'});
+		},
+    });
+  },
+  
+  hide : function (){
   },
 
-  show : function (){         
-  		var t = Tabs.Alliance;
-        mainPop.div.style.width = 750 + 'px';
+  show : function (){
   },
-};
-
-
-
-
+}
 
 /*************************************** MARCHES TAB ************************************************/
 
@@ -4971,14 +4921,13 @@ Tabs.Marches = {
     var t = Tabs.Marches;
     unsafeWindow.pr56Recall = t.butRecall;
     unsafeWindow.r8x6Home = t.butSendHome;
-    unsafeWindow.undefend = t.butundefend;
     unsafeWindow.cancelMarch = t.butcancelmarch;
     
     t.cont = div;
     t.cont.innerHTML = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubA type=submit value=Incoming></td>\
           <TD><INPUT class=pbSubtab ID=ptmrchSubM type=submit value=Marches></td>\
           <TD><INPUT class=pbSubtab ID=ptmrchSubR type=submit value=Reinforcements></td></tr></table><HR class=ptThin>\
-      <DIV id=ptMarchOutput style="margin-top:10px; background-color:white; height:500px; max-width:740px; overflow:scroll;"></div>';
+      <DIV id=ptMarchOutput style="margin-top:10px; background-color:white; height:680px; width:100%; overflow:scroll;"></div>';
     t.marchDiv = document.getElementById('ptMarchOutput');
     document.getElementById('ptmrchSubA').addEventListener('click', e_butSubtab, false);
     document.getElementById('ptmrchSubR').addEventListener('click', e_butSubtab, false);
@@ -5008,7 +4957,6 @@ Tabs.Marches = {
   hide : function (){
     var t = Tabs.Marches;
     clearTimeout (t.displayTimer);
-    mainPop.div.style.height = 750 + 'px';
   },
   
   show : function (){
@@ -5020,135 +4968,102 @@ Tabs.Marches = {
       t.showMarches();
     else
       t.showIncoming();
-   mainPop.div.style.height = 500 + 'px';
   },
- 
   
   /***   Incoming SUBTAB  ***/
       showIncoming : function (){
         var t = Tabs.Marches;
-        t.marchDiv.innerHTML =null;	
-        //var updatemarch = Seed.queue_atkinc;
-        var icon;
-        var status;
-        var FROM;
-        var cityname;
-        var FROMmight;
-        //var z = '<TD><INPUT id=TEST type=submit value="TEST"></td>';
-        //z += '<TD><INPUT id=TEST2 type=submit value="TEST2"></td>';
-         var z = '<TABLE id=pdincoming cellSpacing=10 width=100% height=0% class=pbTab>';
+        t.marchDiv.innerHTML = null;	
+
+        var z = '<TABLE id=pdincoming cellSpacing=10 width=100% height=0% class=pbTab>';
        
-       for (k in Seed.queue_atkinc) {
+        for (k in Seed.queue_atkinc) {
           if(Seed.queue_atkinc.length !=0){
-       		//if  (parseInt(Seed.queue_atkinc[k]["marchType"]) ==3 || parseInt(Seed.queue_atkinc[k]["marchType"])==4){
-                   now = unixTime();
-               		var marchType = parseInt(Seed.queue_atkinc[k]["marchType"]);
-               		var marchStatus = parseInt(Seed.queue_atkinc[k]["marchStatus"]);
-               		
-               		for (var i=0; i<Seed.cities.length;i++) {
-        	       			if (Seed.cities[i][0] == Seed.queue_atkinc[k]["toCityId"]) cityname = Seed.cities[i][1];
-               		}   
-               				
-               		if (Seed.queue_atkinc[k]["destinationUnixTime"] < (now) || marchStatus == 8) marchstatus = "returning";
-               		else marchstatus = "going";	
-               		
-               		if (marchStatus == 2) destinationUnixTime = now - Seed.queue_atkinc[k]["arrivalTime"]; //- now;
-               		if (marchStatus == 1) destinationUnixTime = Seed.queue_atkinc[k]["arrivalTime"] - now;
-               		else  destinationUnixTime = Seed.queue_atkinc[k]["arrivalTime"] - now;
-               		marchtime = timestr(destinationUnixTime, true)
-               			       					
-               		if (marchType != 3 && marchType !=4){
-               			for (players in Seed.players){
-               				if (('u'+Seed.queue_atkinc[k]["fromPlayerId"]) == players){ FROM = Seed.players[players]["n"];}
-               			}
-               		}
-               		else {
-               		for (players in Seed.players){
-               				if (marchType == 3 || marchType == 4){ 
-                        if (('u'+Seed.queue_atkinc[k]["pid"]) == players){ 
-                              FROM = Seed.players[players]["n"];
-                              FROMmight = Seed.players[players]["m"];
-                        }
-                      }
-               			}
-               		}
-               		
-               		if (marchType == 2 && marchStatus == 2) marchType = 102;
-               		
-               		switch (marchType) {
-               		    case 1: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status="Transport";break;
-               		    case 2: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status="Reinforce";break;
-               		    case 3: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/scouting.jpg";status="Scout";break;
-               		    case 4: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status="Attack";break;
-               		    case 5: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status="Reassign";break;
-               		    case 100: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status="Returning";break;
-               		    case 102: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status="Encamped";break;
-               		} 
-               		
-               		z += '<TD width="10px"><img src='+ icon +'></td>';
-               		z += '<TD width="40px">'+ status +'</td>';
-               		z += '<TD>' + cityname + '</td>';
-               		z += '<TD>'+ marchtime +'</td>';
-               		z +='<TD>From:' + FROM + '</td>';
-               		z +='<TD>Might:' + addCommas(FROMmight) + '</td>';
-               		if (Seed.queue_atkinc[k]["knt"] != undefined) z +='<TD>Knight:'+ Seed.queue_atkinc[k]["knt"]["cbt"]+'</td>';
-               		 //alert(Seed.queue_atkinc.toSource());
-                   //if (Seed.queue_atkinc[k]["knightId"] !=0) z +='<TD>Knight:' + Seed.queue_atkinc[k]["knightCombat"] + '</td>';
-               		
-               	if (Seed.queue_atkinc[k]["gold"] > 0) z += '<TD>Gold:'+ addCommas(Seed.queue_atkinc[k]["gold"]) +'</td>';
-               	if (Seed.queue_atkinc[k]["resource1"] > 0) z += '<TD>Food: '+ addCommas(Seed.queue_atkinc[k]["resource1"]) +'</td>';
-        		 	  if (Seed.queue_atkinc[k]["resource2"] > 0) z += '<TD>Wood: '+ addCommas(Seed.queue_atkinc[k]["resource2"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["resource3"] > 0) z += '<TD>Stone: '+ addCommas(Seed.queue_atkinc[k]["resource3"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["resource4"] > 0) z += '<TD>Ore: '+ addCommas(Seed.queue_atkinc[k]["resource4"]) +'</td>';
+				var now = unixTime();
+				var icon, status, FROM, cityname, FROMmight, marchdir, marchtime;
+				var marchType = parseInt(Seed.queue_atkinc[k]["marchType"]);
+				var marchStatus = parseInt(Seed.queue_atkinc[k]["marchStatus"]);
+				
+				for (var i=0; i<Seed.cities.length;i++) {
+					if (Seed.cities[i][0] == Seed.queue_atkinc[k]["toCityId"]) cityname = Seed.cities[i][1];
+				}   
+			
+				if (Seed.queue_atkinc[k]["destinationUnixTime"] < now || marchStatus == 8)
+					marchdir = "returning";
+				else
+					marchdir = "going";	
+				
+				var destinationUnixTime = Seed.queue_atkinc[k]["arrivalTime"] - now;
+				if(destinationUnixTime > 0)
+					marchtime = timestr(destinationUnixTime, true)
+				else
+					marchtime = 'Arrived';
+				
+				if (marchType != 3 && marchType !=4){
+					var player = Seed.players['u'+Seed.queue_atkinc[k]["fromPlayerId"]]
+					FROM = player.n;
+					FROMmight = player.m;
+				}
+				else {
+					for (players in Seed.players){
+						if (marchType == 3 || marchType == 4){ 
+							if (('u'+Seed.queue_atkinc[k]["pid"]) == players){ 
+							  FROM = Seed.players[players]["n"];
+							  FROMmight = Seed.players[players]["m"];
+							}
+						}
+					}
+				}
+				
+				if (marchType == 2 && marchStatus == 2) marchType = 102;
+				
+				switch (marchType) {
+					case 1: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status="Transport";break;
+					case 2: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status="Reinforce";break;
+					case 3: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/scouting.jpg";status="Scout";break;
+					case 4: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status="Attack";break;
+					case 9: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status="Attack";break;
+					case 5: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status="Reassign";break;
+					case 100: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status="Returning";break;
+					case 102: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status="Encamped";break;
+				} 
+				
+				if(status == 'Encamped')
+					z += '<TD width="10px"><A onclick="r8x6Home('+ Seed.queue_atkinc[k].marchId +')"><img src='+ icon +'></a></td>';
+				else
+					z += '<TD width="10px"><img src='+ icon +'></td>';
+				z += '<TD width="40px">'+ status +'</td>';
+				z += '<TD>' + cityname + '</td>';
+				z += '<TD>'+ marchtime +'</td>';
+				z +='<TD>From:' + FROM + '</td>';
+				z +='<TD>Might:' + addCommas(FROMmight) + '</td>';
+				if (Seed.queue_atkinc[k]["knt"] != undefined) z +='<TD>Knight:'+ Seed.queue_atkinc[k]["knt"]["cbt"]+'</td>';
+				
+				if (Seed.queue_atkinc[k]["gold"] > 0) z += '<TD>Gold:'+ addCommas(Seed.queue_atkinc[k]["gold"]) +'</td>';
+				if (Seed.queue_atkinc[k]["resource1"] > 0) z += '<TD>Food: '+ addCommas(Seed.queue_atkinc[k]["resource1"]) +'</td>';
+				if (Seed.queue_atkinc[k]["resource2"] > 0) z += '<TD>Wood: '+ addCommas(Seed.queue_atkinc[k]["resource2"]) +'</td>';
+				if (Seed.queue_atkinc[k]["resource3"] > 0) z += '<TD>Stone: '+ addCommas(Seed.queue_atkinc[k]["resource3"]) +'</td>';
+				if (Seed.queue_atkinc[k]["resource4"] > 0) z += '<TD>Ore: '+ addCommas(Seed.queue_atkinc[k]["resource4"]) +'</td>';
         		    
-        		    if (Seed.queue_atkinc[k]["unit0Count"] > 0 && marchstatus == "going") z += '<TD???'+ addCommas(Seed.queue_atkinc[k]["unit0Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit0Return"] > 0 && marchstatus == "returning") z += '<TD>???: '+ addCommas(Seed.queue_atkinc[k]["unit0Return"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit1Count"] > 0 && marchstatus == "going") z += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkinc[k]["unit1Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit1Return"] > 0 && marchstatus == "returning") z += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkinc[k]["unit1Return"]) +'</td>';
-        		    
-        		    if (Seed.queue_atkinc[k]["unit2Count"] > 0 && marchstatus == "going") z += '<TD>Militiaman: '+ addCommas(Seed.queue_atkinc[k]["unit2Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit2Return"] > 0 && marchstatus == "returning") z += '<TD>Militiaman: '+ addCommas(Seed.queue_atkinc[k]["unit2Return"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit3Count"] > 0 && marchstatus =="going") z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unit3Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit3Return"] > 0 && marchstatus == "returning") z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unit3Return"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit4Count"] > 0 && marchstatus =="going") z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unit4Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit4Return"] > 0 && marchstatus == "returning") z += '<TD>Pikeman: '+ addCommas(Seed.queue_atkinc[k]["unit4Return"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit5Count"] > 0 && marchstatus =="going") z += '<TD>Pikeman: '+ addCommas(Seed.queue_atkinc[k]["unit5Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit5Return"] > 0 && marchstatus == "returning") z += '<TD>Swordsman: '+ addCommas(Seed.queue_atkinc[k]["unit5Return"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit6Count"] > 0 && marchstatus =="going") z += '<TD>Archer: '+ addCommas(Seed.queue_atkinc[k]["unit6Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit6Return"] > 0 && marchstatus == "returning") z += '<TD>Archer: '+ addCommas(Seed.queue_atkinc[k]["unit6Return"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit7Count"] > 0 && marchstatus =="going") z += '<TD>Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unit7Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit7Return"] > 0 && marchstatus == "returning") z += '<TD>Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unit7Return"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit8Count"] > 0 && marchstatus =="going") z += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unit8Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit8Return"] > 0 && marchstatus == "returning") z += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unit8Return"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit9Count"] > 0 && marchstatus =="going") z += '<TD>Supply Wagons: '+ addCommas(Seed.queue_atkinc[k]["unit9Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit9Return"] > 0 && marchstatus == "returning") z += '<TD>Supply Wagons: '+ addCommas(Seed.queue_atkinc[k]["unit9Return"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit10Count"] > 0 && marchstatus =="going") z += '<TD>Ballista: '+ addCommas(Seed.queue_atkinc[k]["unit10Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit10Return"] > 0 && marchstatus == "returning") z += '<TD>Ballista: '+ addCommas(Seed.queue_atkinc[k]["unit10Return"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit11Count"] > 0 && marchstatus =="going") z += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkinc[k]["unit11Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit11Return"] > 0 && marchstatus == "returning") z += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkinc[k]["unit11Return"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit12Count"] > 0 && marchstatus =="going") z += '<TD>Catapult: '+ addCommas(Seed.queue_atkinc[k]["unit12Count"]) +'</td>';
-        		    if (Seed.queue_atkinc[k]["unit12Return"] > 0 && marchstatus == "returning") z += '<TD>Catapult: '+ addCommas(Seed.queue_atkinc[k]["unit12Return"]) +'</td>';
-        		    
-        		    if (marchType == 3 && Seed.queue_atkinc[k]["unts"]["u3"] > 0) z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u3"]) +'</td>';
-        		    if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u1"] > 0) z += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u1"]) +'</td>';
-               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u2"] > 0) z += '<TD>Militiaman: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u2"]) +'</td>';
-               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u3"] > 0) z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u3"]) +'</td>';
-               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u4"] > 0) z += '<TD>Pikeman: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u4"]) +'</td>';
-               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u5"] > 0) z += '<TD>Swordsman: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u5"]) +'</td>';
-               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u6"] > 0) z += '<TD>Archer: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u6"]) +'</td>';
-               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u7"] > 0) z += '<TD>Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u7"]) +'</td>';
-               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u8"] > 0) z += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u8"]) +'</td>';
-               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u9"] > 0) z += '<TD>Supply Wagons: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u9"]) +'</td>';
-               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u10"] > 0) z += '<TD>Ballista: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u10"]) +'</td>';
-               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u11"] > 0) z += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u11"]) +'</td>';
-               		if (marchType == 4 && Seed.queue_atkinc[k]["unts"]["u12"] > 0) z += '<TD>Catapult: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u12"]) +'</td>';
-               		z += '</tr>';
-              } 
-        // } 
-     }
+				for(i=1; i<13; i++){
+					if(Seed.queue_atkinc[k]["unit"+i+"Count"] > 0 && marchdir == "going") z += '<TD>'+ unsafeWindow.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkinc[k]["unit"+i+"Count"]) +'</td>';
+					if(Seed.queue_atkinc[k]["unit"+i+"Return"] > 0 && marchdir == "returning") z += '<TD>'+ unsafeWindow.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkinc[k]["unit"+i+"Return"]) +'</td>';
+				}
+        		
+				if (marchType == 3)
+					if (Seed.queue_atkinc[k]["unts"]["u3"] > 0) z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u3"]) +'</td>';
+				if (marchType == 4){
+					for(ui=1; i<13; i++){
+						if (Seed.queue_atkinc[k]["unts"]["u"+ui] > 0) z += '<TD>'+ unsafeWindow.unitcost['unt'+ui][0] +': '+ addCommas(Seed.queue_atkinc[k]["unts"]["u"+ui]) +'</td>';
+					}
+				}
+				
+				z += '</tr>';
+          } 
+		}
      z += '</table>';
      t.marchDiv.innerHTML = z;
-     	 	     
+    
      t.displayTimer = setTimeout (t.showIncoming, 500);  
    },   
       
@@ -5158,59 +5073,76 @@ Tabs.Marches = {
       var t = Tabs.Marches;
       t.marchDiv.innerHTML =null;	
       var updatemarch = Seed.queue_atkp;
-      var icon;
-      var status;
-      var number = 0;
      
      var  m = '<TABLE id=pdmarches cellSpacing=10 width=100% height=0% class=pbTab>';
-     //m += '<TD><INPUT id=TEST type=submit value="TEST"></td>';
+     m += '<TR><TD colspan=4><INPUT id=TEST type=submit value="Get Seed"></td></tr>';
           
      for (var c=0; c< Seed.cities.length;c++) {
      		cityname = Seed.cities[c][1];
-     		cityID = 'city' + Seed.cities[c][0];
-     		var cityTo;    
+     		cityID = 'city' + Seed.cities[c][0];    
     		number=0;	
     		
-    		if (Seed.queue_atkp[cityID].length !=0) m+= '<TR><TD colspan=4 style=\'background: #99CCFF;\' align=center><B>' + cityname +': </b></td></tr>';
+    		if (Seed.queue_atkp[cityID].length !=0) m+= '<TR><TD colspan=5 style=\'background: #99CCFF;\' align=center><B>' + cityname +': </b></td></tr>';
   		    for (k in Seed.queue_atkp[cityID]){
-  				 if (Seed.queue_atkp[cityID].length !=0) {
+  				if (Seed.queue_atkp[cityID].length !=0) {
   				    var marchID = new String(k);
   				    marchID = marchID.substr(1);
   				    var marchType = parseInt(Seed.queue_atkp[cityID][k]["marchType"]);
   				    var marchStatus = parseInt(Seed.queue_atkp[cityID][k]["marchStatus"]);
-  				    now = unixTime();
+  				    var now = unixTime();
   				    number++;
-  				    cityTo=null; 
-  				    var knight=null;
+					var icon, status, type, cityTo, knight, marchtime;
   				    
   				    for (var i=0; i<Seed.cities.length;i++) {
-  				    		if (Seed.cities[i][2] == Seed.queue_atkp[cityID][k]["toXCoord"] && Seed.cities[i][3] == Seed.queue_atkp[cityID][k]["toYCoord"]) cityTo = Seed.cities[i][1];
-  				    		
+						if (Seed.cities[i][2] == Seed.queue_atkp[cityID][k]["toCityId"]) cityTo = Seed.cities[i][1];
   				    }
   				    
-  				    destinationUnixTime = Seed.queue_atkp[cityID][k]["destinationUnixTime"] - now;
-  				    returnUnixTime = Seed.queue_atkp[cityID][k]["returnUnixTime"] - now;
-  				    encampedUnixTime = now - Seed.queue_atkp[cityID][k]["destinationUnixTime"];
-  				    if (Seed.queue_atkp[cityID][k]["destinationUnixTime"] > now) marchtime = timestr(destinationUnixTime, true);
-  				    else  marchtime = timestr(returnUnixTime, true);
+  				    var destinationUnixTime = Seed.queue_atkp[cityID][k]["destinationUnixTime"] - now;
+  				    var returnUnixTime = Seed.queue_atkp[cityID][k]["returnUnixTime"] - now;
+  				    var encampedUnixTime = now - Seed.queue_atkp[cityID][k]["destinationUnixTime"];
+					var restingUnixTime = now - Seed.queue_atkp[cityID][k]["returnUnixTime"];
+					
+  				    if (Seed.queue_atkp[cityID][k]["destinationUnixTime"] > now)
+						marchtime = timestr(destinationUnixTime, true);
+  				    else
+						marchtime = timestr(returnUnixTime, true);
   				    
-  				    if (Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) && marchType == 2) marchtime = timestr(encampedUnixTime, true);
+  				    if (Seed.queue_atkp[cityID][k]["destinationUnixTime"] < now && marchType == 2)
+						marchtime = timestr(encampedUnixTime, true);
+					if (Seed.queue_atkp[cityID][k]["returnUnixTime"] < now && marchType == 9)
+						marchtime = timestr(restingUnixTime, true);
   				  
-  				    if (Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) || marchStatus == 8) marchstatus = "returning";
-  				    else marchstatus = "going";
+  				    if (Seed.queue_atkp[cityID][k]["destinationUnixTime"] < now || marchStatus == 8)
+						type = "returning";
+  				    else
+						type = "going";
   				   
-  				    if (marchstatus =="returning" && marchType == 2 && Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) && marchStatus != 2) marchtime = timestr(returnUnixTime, true);
-  				    if (marchstatus =="returning" && marchType == 4 && Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) && marchStatus == 2) marchtime = timestr(returnUnixTime, true);
-  				    if (marchStatus == 2 && Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) && marchType !=2) marchtime = timestr(returnUnixTime, true);
-  				    if (marchStatus == 8 && Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now)) marchtime = timestr(returnUnixTime, true);
-  				    if (parseInt(Seed.queue_atkp[cityID][k]["marchType"]) == 4 && marchStatus == 2) marchtime = timestr(destinationUnixTime, true);;
+					if(Seed.queue_atkp[cityID][k]["destinationUnixTime"] < now){
+						if (marchStatus == 8)
+							marchtime = timestr(returnUnixTime, true);
+						if (type =="returning" && marchType == 2 && marchStatus != 2)
+							marchtime = timestr(returnUnixTime, true);
+						if (type =="returning" && marchType == 4 && marchStatus == 2)
+							marchtime = timestr(returnUnixTime, true);
+						if (marchStatus == 2 && marchType !=2)
+							marchtime = timestr(returnUnixTime, true);
+					}
+  				    if (parseInt(Seed.queue_atkp[cityID][k]["marchType"]) == 4 && marchStatus == 2)
+						marchtime = timestr(destinationUnixTime, true);;
   				    
-  				    
-  				    if (marchstatus =="returning" && marchType != 2) marchType = 100;
-  				    if (marchstatus =="returning" && marchType == 2 && marchStatus == 2) marchType = 102;
-  				    
-  				    if (marchstatus =="returning" && marchType == 2 && Seed.queue_atkp[cityID][k]["destinationUnixTime"] < (now) && marchStatus != 2) marchType = 100;
-  				    
+					
+					if (type =="returning" && marchType != 2)
+						marchType = 8;
+  				    if (type =="returning" && marchType == 2 && marchStatus == 2)
+						marchType = 102;
+  				    if (type =="returning" && marchType == 2 && marchStatus != 2)
+						marchType = 8;
+  				    if (marchStatus == 3)
+							marchType = 103;
+					if (marchStatus == 4)
+							marchType = 104;
+					
+					
   				    if (parseInt(Seed.queue_atkp[cityID][k]["marchType"]) == 4 && marchStatus == 2) {
   						marchType = 102;
   						marchtime = timestr(encampedUnixTime, true)
@@ -5222,8 +5154,11 @@ Tabs.Marches = {
   					    case 3: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/scouting.jpg";status="Scout";break;
   					    case 4: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status="Attack";break;
   					    case 5: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status="Reassign";break;
-  					    case 100: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status="Returning";break;
+  					    case 8: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status="Returning";break;
+  					    case 9: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status="Raiding";break;
   					    case 102: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status="Encamped";break;
+						case 103: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/autoAttack/raid_stopped_desat.png";status="Stopped";break;
+						case 104: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/autoAttack/raid_resting.png";status="Resting";break;
   				    } 
   				      				    
   				    if (Seed.queue_atkp[cityID][k]["knightId"] !=0){
@@ -5231,18 +5166,25 @@ Tabs.Marches = {
   				    			if (i == ("knt" + Seed.queue_atkp[cityID][k]["knightId"]) ) knight = Seed.knights[cityID][i]["combat"];
   				    	}
   				    } else knight = null;
-  				      				    
-  				    if (status=="Encamped") m += '<TR><TD width="5px"><A><SPAN onclick="undefend('+ marchID +')">X</span></a></td>'
-  				    else m += '<TR><TD width="5px"><A><SPAN onclick="cancelMarch('+ marchID +')">X</span></a></td>'
-  				    m += '<TD>'+ number +'</td>';
-  				    m += '<TD width="10px"><img src='+ icon +'></td>';
+  				    
+  				    m += '<TR><TD>'+ number +'</td>';
+  				   if (status=="Encamped" && !t.isMyself(Seed.queue_atkp[cityID][k].fromPlayerId))
+						m += '<TD><A onclick="r8x6Home('+ marchID +')"><img src='+ icon +'></a></td>';
+  				    else if(status=='Encamped' && t.isMyself(Seed.queue_atkp[cityID][k].fromPlayerId))
+						m += '<TD><A onclick="pr56Recall('+ marchID +')"><img src='+ icon +'></a></td>';
+					else if(status=='Returning' || status=="Stopped" || status=="Resting")
+						m += '<TD><img src='+ icon +'></td>';
+					else
+						m += '<TD><A onclick="cancelMarch('+ marchID +')"><img src='+ icon +'></a></td>';
   				    m += '<TD width="40px">'+ status +'</td>';
   				    m += '<TD>'+ marchtime +'</td>';
   				    
-  				    if (cityTo == null) m += '<TD style="padding-right:10px;">'+ Seed.queue_atkp[cityID][k]["toXCoord"] + ',' + Seed.queue_atkp[cityID][k]["toYCoord"] + '</td>';
-  				    else m += '<TD style="padding-right:10px;">'+ cityTo +'</td>';
+  				    if (cityTo == null)
+						m += '<TD style="padding-right:10px;">'+ Seed.queue_atkp[cityID][k]["toXCoord"] + ',' + Seed.queue_atkp[cityID][k]["toYCoord"] + '</td>';
+  				    else
+						m += '<TD style="padding-right:10px;">'+ cityTo +'</td>';
   				    
-  				    if (knight != null)  m += '<TD>Knight:'+ knight +'</td>';
+  				    if (knight != null)  m += '<TD>K:'+ knight +'</td>';
   				    
   				    if (Seed.queue_atkp[cityID][k]["toTileType"] == 11) m+='<TD>Lake Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
   				    else if (Seed.queue_atkp[cityID][k]["toTileType"] == 20) m+='<TD>Grassland Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
@@ -5257,73 +5199,57 @@ Tabs.Marches = {
   				    if (Seed.queue_atkp[cityID][k]["resource3"] > 0) m += '<TD>Stone: '+ addCommas(Seed.queue_atkp[cityID][k]["resource3"]) +'</td>';
   				    if (Seed.queue_atkp[cityID][k]["resource4"] > 0) m += '<TD>Ore: '+ addCommas(Seed.queue_atkp[cityID][k]["resource4"]) +'</td>';
   				    
-  				    if (Seed.queue_atkp[cityID][k]["unit0Count"] > 0 && marchstatus == "going") m += '<TD???'+ addCommas(Seed.queue_atkp[cityID][k]["unit0Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit0Return"] > 0 && marchstatus == "returning") m += '<TD>???: '+ addCommas(Seed.queue_atkp[cityID][k]["unit0Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit1Count"] > 0 && marchstatus == "going") m += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkp[cityID][k]["unit1Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit1Return"] > 0 && marchstatus == "returning") m += '<TD>Supply Troops: '+ addCommas(Seed.queue_atkp[cityID][k]["unit1Return"]) +'</td>';
-  				    
-  				    if (Seed.queue_atkp[cityID][k]["unit2Count"] > 0 && marchstatus == "going") m += '<TD>Militiaman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit2Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit2Return"] > 0 && marchstatus == "returning") m += '<TD>Militiaman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit2Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit3Count"] > 0 && marchstatus =="going") m += '<TD>Scouts: '+ addCommas(Seed.queue_atkp[cityID][k]["unit3Count"])+'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit3Return"] > 0 && marchstatus == "returning") m += '<TD>Scouts: '+ addCommas(Seed.queue_atkp[cityID][k]["unit3Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit4Count"] > 0 && marchstatus =="going") m += '<TD>Pikeman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit4Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit4Return"] > 0 && marchstatus == "returning") m += '<TD>Pikeman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit4Return"])+'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit5Count"] > 0 && marchstatus =="going") m += '<TD>Swordsman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit5Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit5Return"] > 0 && marchstatus == "returning") m += '<TD>Swordsman: '+ addCommas(Seed.queue_atkp[cityID][k]["unit5Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit6Count"] > 0 && marchstatus =="going") m += '<TD>Archer: '+ addCommas(Seed.queue_atkp[cityID][k]["unit6Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit6Return"] > 0 && marchstatus == "returning") m += '<TD>Archer: '+ addCommas(Seed.queue_atkp[cityID][k]["unit6Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit7Count"] > 0 && marchstatus =="going") m += '<TD>Cavalry: '+ addCommas(Seed.queue_atkp[cityID][k]["unit7Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit7Return"] > 0 && marchstatus == "returning") m += '<TD>Cavalry: '+ addCommas(Seed.queue_atkp[cityID][k]["unit7Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit8Count"] > 0 && marchstatus =="going") m += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkp[cityID][k]["unit8Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit8Return"] > 0 && marchstatus == "returning") m += '<TD>Heavy Cavalry: '+ addCommas(Seed.queue_atkp[cityID][k]["unit8Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit9Count"] > 0 && marchstatus =="going") m += '<TD>Supply Wagons: '+ addCommas(Seed.queue_atkp[cityID][k]["unit9Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit9Return"] > 0 && marchstatus == "returning") m += '<TD>Supply Wagons: '+ addCommas(Seed.queue_atkp[cityID][k]["unit9Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit10Count"] > 0 && marchstatus =="going") m += '<TD>Ballista: '+ addCommas(Seed.queue_atkp[cityID][k]["unit10Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit10Return"] > 0 && marchstatus == "returning") m += '<TD>Ballista: '+ addCommas(Seed.queue_atkp[cityID][k]["unit10Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit11Count"] > 0 && marchstatus =="going") m += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkp[cityID][k]["unit11Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit11Return"] > 0 && marchstatus == "returning") m += '<TD>Battering Ram: '+ addCommas(Seed.queue_atkp[cityID][k]["unit11Return"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit12Count"] > 0 && marchstatus =="going") m += '<TD>Catapult: '+ addCommas(Seed.queue_atkp[cityID][k]["unit12Count"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["unit12Return"] > 0 && marchstatus == "returning") m += '<TD>Catapult	: '+ addCommas(Seed.queue_atkp[cityID][k]["unit12Return"]) +'</td></tr>';
-   			  }
+  				    for(i=1; i<13; i++){
+						if(Seed.queue_atkp[cityID][k]["unit"+i+"Count"] > 0 && type == "going") m += '<TD>'+ unsafeWindow.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkp[cityID][k]["unit"+i+"Count"]) +'</td>';
+						if(Seed.queue_atkp[cityID][k]["unit"+i+"Return"] > 0 && type == "returning") m += '<TD>'+ unsafeWindow.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkp[cityID][k]["unit"+i+"Return"]) +'</td>';
+					}
+					m += '</tr>';
+				}
   		    }
-  	
-  		   
   	}
   	m += '</table>';
   	t.marchDiv.innerHTML = m;
   	
-  	/*document.getElementById('TEST').addEventListener('click', function(){
-  			
-  			var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-  	  			new AjaxRequest(unsafeWindow.g_ajaxpath + "/fb/e2/src/main_src.php?g=M&y=0&n=&l=en_US&messagebox=&standalone=0&res=1&iframe=1&lang=en&ts=1304968591.1795&ref=bookmarks&count=1&appBar=" + unsafeWindow.g_ajaxsuffix, {
-  	  			    method: "POST",
-  	  			    parameters: params,
-  	  			    onSuccess: function (rslt) {
-  	  			        //rslt = eval("(" + message + ")");
-  	  			        var mainSrcHTMLCode = rslt.responseText;
-  	  			    	//var mainSrcHTMLCode; // get and set this by pulling in the main_src.php file via AJAX
-  	  			    	var myregexp = /var seed=\{.*?\};/;
-  	  			    	var match = myregexp.exec(mainSrcHTMLCode);
-  	  			    	
-  	  			    	if (match != null) {
-  							result = match[0];
-  							eval(result);
-  							unsafeWindow.update_seed(seed);
-  							//unsafeWindow.seed = seed;
-  							Seed = unsafeWindow.seed;
-  	  				   	}
-  	  			    },
-  	  			    onFailure: function () {
-  	  			      if (notify != null)
-  	  			        notify(rslt.errorMsg);
-  	  			    },
-  	  			});
-  		
-  	  	}, false);*/
-  	  		     
+  	document.getElementById('TEST').addEventListener('click', function(){
+		var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+  			new AjaxRequest(unsafeWindow.g_ajaxpath + "/fb/e2/src/main_src.php?g=&y=0&n=nan001&l=nl_NL&messagebox=&standalone=0&res=1&iframe=1&lang=en&ts=1304248288.7067&s=250&appBar=" + unsafeWindow.g_ajaxsuffix, {
+  			    method: "POST",
+  			    parameters: params,
+  			    onSuccess: function (rslt) {
+  			        //rslt = eval("(" + message + ")");
+  			        var mainSrcHTMLCode = rslt.responseText;
+  			    	//var mainSrcHTMLCode; // get and set this by pulling in the main_src.php file via AJAX
+  			    	var myregexp = /var seed=\{.*?\};/;
+  			    	var match = myregexp.exec(mainSrcHTMLCode);
+  			    	
+  			    	if (match != null) {
+  			    	result = match[0];
+  			    	result = result.substr(4);
+  			    	var seed = eval(result);
+	  			    WinLog.write ("seed @ "+ unixTime()  +" ("+ now +")\n\n"+ inspect (seed, 8, 1));
+	  			    unsafeWindow.document.seed = result;
+  			    	}
+  			    },
+  			    onFailure: function () {
+  			      if (notify != null)
+  			        notify(rslt.errorMsg);
+  			    },
+  			});
+	
+  	}, false);
   		     
     t.displayTimer = setTimeout (t.showMarches, 500);  
     },
+	
+	isMyself: function(userID){
+		if(!Seed.players["u"+userID])
+			return false;
+		if(Seed.players["u"+userID].n == Seed.player.name)
+			return true;
+		else
+			return false;
+		return false;
+	},
     
     butcancelmarch: function(marchID){
     	 var t = Tabs.Marches;
@@ -5363,51 +5289,7 @@ Tabs.Marches = {
     	 	     },
     	 	 });
     	 	 
-    	 },
-    
-    butundefend: function(marchID){
-    	 var t = Tabs.Marches;
-    	 var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-    	 params.mid = marchID;
-    	 for (var c=0; c<Cities.numCities; c++){
-    	   var que = Seed.queue_atkp['city'+ Cities.cities[c].id];
-    	   if (matTypeof(que)=='array')
-    	     continue;
-    	   for (k in que){
-    	     if (k == 'm'+marchID){
-    	       params.cid = Cities.cities[c].id;
-    	       break;
-    	     }
-    	   }    
-    	 }    
-    	 
-    	 
-    	 new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/undefend.php" + unsafeWindow.g_ajaxsuffix, {
-    	     method: "post",
-    	     parameters: params,
-    	     onSuccess: function (transport) {
-    	       var rslt = eval("("+transport.responseText+")");
-    	       //alert(rslt.returnUnixTime);
-    	       var march = unsafeWindow.seed.queue_atkp["city" + params.cid]["m" + params.mid];
-    	       march.marchStatus = 8;
-    	       var marchtime = parseInt(march.returnUnixTime) - parseInt(march.destinationUnixTime);
-    	       //var marchtime = parseInt(march.destinationUnixTime) - parseInt(march.returnUnixTime);
-    	       var ut = unixTime();
-    	       if (unsafeWindow.seed.playerEffects.returnExpire > unixtime())
-    	         marchtime *= 0.5
-    	       march.returnUnixTime = ut; //=+ ( parseInt(march.marchUnixTime) - parseInt(march.destinationUnixTime));
-    	       march.destinationUnixTime = ut;
-    	       march.marchUnixTime = ut - marchtime;
-    	       if (notify != null)
-    	         notify(rslt.errorMsg);
-    	     },
-    	     onFailure: function () {
-    	       if (notify != null)
-    	         notify(rslt.errorMsg);
-    	     },
-    	 });
-    },
-    
+    	 },    
       
   /***  REINFORCEMENTS SUBTAB  ***/
   showReinforcements : function (){
@@ -5541,7 +5423,7 @@ return;
 
   butSendHome : function (marchId){
     var t = Tabs.Marches;
-    alert(marchId);
+    //alert("Sent Home march#"+marchId);
     logit ("SEND HOME: "+ marchId); 
     t.ajaxSendHome (marchId, function(r){t.show(); logit("AJAX RESULT: "+ r)}); 
   },
@@ -5693,7 +5575,7 @@ function kickout_allies(mid, cid, fromUid, fromCid, upkeep) {
           march.marchStatus = 8;
           var marchtime = parseInt(march.returnUnixTime) - parseInt(march.destinationUnixTime);
           var ut = unixTime();
-          if (unsafeWindow.seed.playerEffects.returnExpire > unixtime())
+          if (unsafeWindow.seed.playerEffects.returnExpire > unixTime())
             marchtime *= 0.5
           march.returnUnixTime = ut + marchtime;
           march.destinationUnixTime = ut;
@@ -6301,6 +6183,12 @@ function CdispCityPicker (id, span, dispName, notify, selbut){
         eY.value = that.city.y;
       }
       function eventChange (){
+			var xValue=that.coordBoxX.value.trim();
+			var xI=/^\s*([0-9]+)[\s,]+([0-9]+)/.exec(xValue); 		
+			if(xI) {
+				that.coordBoxX.value=xI[1]
+				that.coordBoxY.value=xI[2]
+			}
         var x = parseInt(that.coordBoxX.value, 10);
         var y = parseInt(that.coordBoxY.value, 10);
         if (isNaN(x) || x<0 || x>750){
@@ -6321,7 +6209,7 @@ function CdispCityPicker (id, span, dispName, notify, selbut){
     this.coordBoxY = eY;
     var bh = new CboxHandler(this);
     eX.size=2;
-    eX.maxLength=3;
+    eX.maxLength=10;
     eY.size=2;
     eY.maxLength=3;
     eX.addEventListener('change', bh.eventChange, false);
@@ -6358,7 +6246,7 @@ function CdialogCancelContinue (msg, canNotify, contNotify, centerElement){
     pop.centerMe(centerElement);
   else
     pop.centerMe(document.body);
-  pop.getTopDiv().innerHTML = '<CENTER>KOC Power Bot</center>';
+  pop.getTopDiv().innerHTML = '<CENTER>KOC Power Tools</center>';
   pop.getMainDiv().innerHTML = '<TABLE class=ptTab align=center style="height: 100%"><TR align=center height=90%><TD>'+ msg +'</td></tr>\
       <TR align=center><TD><INPUT id=ptcccancel type=submit value="CANCEL" \> &nbsp; &nbsp; <INPUT id=ptcccontin type=submit value="CONTINUE" \></td></tr></table>';
   document.getElementById('ptcccancel').addEventListener ('click', function (){pop.show(false); if (canNotify) canNotify();}, false);
@@ -6547,6 +6435,8 @@ function getDiplomacy (aid) {
     return 'friendly';
   if (Seed.allianceDiplomacies.hostile && Seed.allianceDiplomacies.hostile['a'+aid] != null)
     return 'hostile';
+  if (aid == Seed.allianceDiplomacies.allianceId)
+    return 'ally';
   return 'neutral';
 };
 
@@ -6618,8 +6508,6 @@ function getTrainInfo (){
     }
   return ret;
 }
-
-
 
 var fortNamesShort = {
   53: "Crossbows",
@@ -7478,7 +7366,6 @@ String.prototype.capitalize = function(){
   return this.charAt(0).toUpperCase() + this.substring(1).toLowerCase();
 }
 
-
 function objectName (o){
   var s = o.toString();
   return s.substr(7,s.length-8);
@@ -7687,26 +7574,27 @@ isOpening : false,
     if (!t.win || t.win.closed){
 t.isOpening = true;  
 // Firefox bug??? It appears as if a new thread is started on open, withOUT reusing same window
-      t.win = window.open('', 'uwtrace', 'top=30,left=0,width=900,height=700,scrollbars=no,location=no,menubar=no,directories=no,status=no');
+      //t.win = window.open('', 'uwtrace', 'top=30,left=0,width=900,height=700,scrollbars=no,location=no,menubar=no,directories=no,status=no');
+	  t.win = new CPopup('ptwinlog', 0, 0, 500, 800, true, function(){t.win.destroy(); t.win=null; t.win.closed=true;});
+	  t.win.show(true);
 t.isOpening = false; 
 t.state = null; 
     }
     
     if (t.state == null){
-      t.win.document.body.innerHTML = '<STYLE>pre{margin:0px} hr{margin:3px; height:1px; border:0px; color:#cee; background-color:#cee}</style>\
+      t.win.getMainDiv().innerHTML = '<STYLE>pre{margin:0px} hr{margin:3px; height:1px; border:0px; color:#cee; background-color:#cee}</style>\
         <BODY style="margin:0px; padding:0px; border:none">\
         <DIV id=winlogtop style="background-color:#d0d0d0; margin:0px; padding:0px; border:1px solid">\
         <INPUT id=wlClear type=submit value="Clear"> &nbsp; <INPUT id=wlRev type=submit value="Bottom"></div>\
-        <DIV id=wlOut style="overflow-y:auto; height:100%; max-height:100%"></div></body>';
-      t.win.document.getElementById('wlClear').addEventListener('click', eventButClear, false);
-      t.win.document.getElementById('wlRev').addEventListener('click', eventButReverse, false);
-      t.eOut =  t.win.document.getElementById('wlOut');
+        <DIV id=wlOut style="overflow-y:auto; overflow-x:auto; height:750px; max-height:800px; width:600px"></div></body>';
+      document.getElementById('wlClear').addEventListener('click', eventButClear, false);
+      document.getElementById('wlRev').addEventListener('click', eventButReverse, false);
+      t.eOut =  document.getElementById('wlOut');
       t.lastE = null;
       t.state = 1;
     }
   },
 
-  
   writeText : function (msg){
     WinLog.write (msg.htmlEntities()); 
   },
