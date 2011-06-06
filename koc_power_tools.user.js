@@ -130,6 +130,7 @@ function ptStartup (){
     .ptentry {padding: 7px; border:1px solid; border-color:#000000; background-color:#ffeecc; white-space:nowrap;}\
     .ptErrText {font-weight:bold; color:#600000}\
     button::-moz-focus-inner, input[type="submit"]::-moz-focus-inner { border: none; }\
+    .ptChatAttack {color: #000; font-weight:bold; background-color: #FF4D4D; }\
     .ptChatWhisper {font-weight:bold;color:#FF0000}\
     .ptChatAlliance {font-weight:bold}\
     .ptChatGlobal {background-color: #CCCCFF}\
@@ -529,6 +530,8 @@ var ChatStuff = {
   	if (Options.chatbold && Options.chatglobal)
   		element_class = 'ptChatGlobalAll';
           } 
+    if (m[0].indexOf('Incoming Troops') >= 0)
+      element_class = 'ptChatAttack';
   
   
       msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
