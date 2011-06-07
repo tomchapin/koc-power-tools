@@ -6,7 +6,7 @@
 // @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110605b';
+var Version = '20110607a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -63,6 +63,7 @@ var Options = {
   chatglobal : true,
   chatwhisper : true,
   chatbold : false,
+  chatAttack : true,
   fixKnightSelect : true,
   attackCityPicker : true,
   mapCoordsTop : true,
@@ -501,58 +502,61 @@ var ChatStuff = {
   
 // "Report No: 5867445"  --->  see unsafeWindow.modal_alliance_report_view()
       
-  chatDivContentHook : function (msg){
-      var t = ChatStuff; 
-      var element_class = '';
-      var m = /div class='info'>.*<\/div>/im.exec(msg);
-      if (m == null)
-        return msg;
-      var whisp = m[0];
-      if (m[0].indexOf('whispers') >= 0) {
-  	if (Options.chatwhisper) {
-  		
-  		//WhisperSound();
-  		element_class = 'ptChatWhisper';
-  	}
-  	else element_class = '';
-    }
-      else if (m[0].indexOf('to the alliance') >= 0){
-  	if (Options.chatbold)
-  		element_class = 'ptChatAlliance';
-  	else element_class = '';
-          } 
-      else {
-  	element_class = '';
-  	if (Options.chatbold)
-  		element_class = 'ptChatGlobalBold';
-  	if (Options.chatglobal)
-  		 element_class = 'ptChatGlobal';
-  	if (Options.chatbold && Options.chatglobal)
-  		element_class = 'ptChatGlobalAll';
-          } 
-    if (m[0].indexOf('Incoming Troops') >= 0)
-      element_class = 'ptChatAttack';
-  
-  
-      msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
-          
-    if (msg.indexOf('claimAllianceChat')<0){
-      msg = msg.replace (/([0-9]{1,3})\s*(,|-)\s*([0-9]{1,3})/img, '<A onclick=\"ptGotoMap($1,$3)\">$1$2$3</a>');
-    }
-      
-    var m = /(Lord|Lady) (.*?)</im.exec(msg);
-    if (m != null)
-      msg = msg.replace (/<img (.*?>)/img, '<A onclick=\"ptChatIconClicked(\''+ m[2] +'\')\"><img class=\"ptChatIcon\" $1</a>');
-    
-    if (whisp.indexOf('whispers') >= 0 && Options.enableWhisperAlert) {
-      	msg +='<span id="dummy"><iframe src="http://koc.god-like.info/doorbell.html" height="0" width="0"></iframe></span>';
-    } 
-    if (whisp.indexOf('My embassy has ') >= 0 && Options.enableTowerAlert) {
-      	msg +='<span id="dummy"><iframe src="http://koc.god-like.info/alarm2.html" height="0" width="0"></iframe></span>';
-    } 
-    return msg;
-  },
-}
+ chatDivContentHook : function (msg){
+       var t = ChatStuff; 
+       var element_class = '';
+       var m = /div class='info'>.*<\/div>/im.exec(msg);
+       if (m == null)
+         return msg;
+       var whisp = m[0];
+       if (m[0].indexOf('whispers') >= 0) {
+   	if (Options.chatwhisper) {
+   		if (whisp.indexOf('says to the alliance') <0) element_class = 'ptChatWhisper';
+   	}
+   	else element_class = '';
+     }
+       else if (m[0].indexOf('to the alliance') >= 0){
+   	if (Options.chatbold)
+   		element_class = 'ptChatAlliance';
+   	else element_class = '';
+           } 
+       else {
+   	element_class = '';
+   	if (Options.chatbold)
+   		element_class = 'ptChatGlobalBold';
+   	if (Options.chatglobal){
+   		 element_class = 'ptChatGlobal';
+   		 }
+   	if (Options.chatbold && Options.chatglobal)
+   		element_class = 'ptChatGlobalAll';
+           } 
+   	if (m[0].indexOf('My embassy has') >= 0 && Options.chatAttack)
+     	element_class = 'ptChatAttack';
+    if (m[0].indexOf('My wilderness at') >= 0 && Options.chatAttack)
+       	element_class = 'ptChatAttack';
+
+       msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
+           
+     if (msg.indexOf('claimAllianceChat')<0){
+       msg = msg.replace (/([0-9]{1,3})\s*(,|-)\s*([0-9]{1,3})/img, '<A onclick=\"ptGotoMap($1,$3)\">$1$2$3</a>');
+     }
+       
+     var m = /(Lord|Lady) (.*?)</im.exec(msg);
+     if (m != null)
+       msg = msg.replace (/<img (.*?>)/img, '<A onclick=\"ptChatIconClicked(\''+ m[2] +'\')\"><img class=\"ptChatIcon\" $1</a>');
+     
+     if (whisp.indexOf('whispers to you') >= 0 && Options.enableWhisperAlert) {
+     	if (whisp.indexOf('says to the alliance') < 0) msg +='<span id="dummy"><iframe src="http://koc.god-like.info/doorbell.html" height="0" width="0"></iframe></span>';
+     } 
+     if (whisp.indexOf('My embassy has') >= 0 && Options.enableTowerAlert) {
+       	msg +='<span id="dummy"><iframe src="http://koc.god-like.info/alarm2.html" height="0" width="0"></iframe></span>';
+     } 
+     if (whisp.indexOf('My wilderness at') >= 0 && Options.enableTowerAlert) {
+       	msg +='<span id="dummy"><iframe src="http://koc.god-like.info/alarm2.html" height="0" width="0"></iframe></span>';
+     }
+     return msg;
+   },
+ }
 
 // useless :( ......
 /***/
@@ -3102,9 +3106,10 @@ Tabs.Options = {
         <TR><TD><INPUT id=ptEnableTowerAlert type=checkbox /></td><TD>Enable sound alert on tower alert in chat<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
 	<TR><TD colspan=2><B>Chat Layout:</b></td></tr>\
 	<TR><TD><INPUT id=togChatStuff type=checkbox /></td><TD>Enable Chat Enable Chat enhancements (clickable coords, click on icon to whisper, colors).</td></tr>\
-        <TR><TD><INPUT id=togChatGlobal type=checkbox /></td><TD>Enable Global background color. <SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
-	<TR><TD><INPUT id=togChatWhisper type=checkbox /></td><TD>Enable Whisper in Red Font.<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
-	<TR><TD><INPUT id=togChatBold type=checkbox /></td><TD>Enable Chat in Bold Font.<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
+        <TR><TD><INPUT id=togChatGlobal type=checkbox /></td><TD>Enable Global background color.</td></tr>\
+	<TR><TD><INPUT id=togChatWhisper type=checkbox /></td><TD>Enable Whisper in Red Font.</td></tr>\
+	<TR><TD><INPUT id=togChatBold type=checkbox /></td><TD>Enable Chat in Bold Font.</td></tr>\
+	<TR><TD><INPUT id=togChatAttack type=checkbox /></td><TD>Enable Red background on tower alert.<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
 	<TR><TD colspan=2><B>KofC Features:</b></td></tr>\
         <TR><TD><INPUT id=togMsgCountFix type=checkbox /></td><TD>Show number of new messages separately from number of reports on Messages icon.</td></tr>';
       m += '<TR><TD><INPUT id=togAllRpts type=checkbox /></td><TD>Enable enhanced Alliance Reports.</td></tr>\
@@ -3143,7 +3148,8 @@ Tabs.Options = {
       t.togOpt ('togChatStuff', 'chatEnhance', ChatStuff.setEnable, ChatStuff.isAvailable);
       t.togOpt ('togChatGlobal', 'chatglobal');
       t.togOpt ('togChatWhisper', 'chatwhisper');	
-      t.togOpt ('togChatBold', 'chatbold');		
+      t.togOpt ('togChatBold', 'chatbold');
+      t.togOpt ('togChatAttack', 'chatAttack');
       t.togOpt ('togKnightSelect', 'fixKnightSelect', AttackDialog.setEnable, AttackDialog.isKnightSelectAvailable);
       t.togOpt ('togAttackPicker', 'attackCityPicker', AttackDialog.setEnable, AttackDialog.isCityPickerAvailable);
       t.togOpt ('togEnhanceMsging', 'enhanceMsging', messageNav.setEnable, messageNav.isAvailable);
@@ -3280,8 +3286,10 @@ Tabs.Train = {
   init : function (div){
     var t = Tabs.Train;
     t.cont = div;
+    unsafeWindow.cancelTrain = t.butcancelTrain;
+    unsafeWindow.cancelFort = t.butcancelFort;
     s = "<DIV id=trainTopSelect>\
-      <DIV class=ptstat>Train troops and build wall/field defenses</div><DIV style='height:5px'></div><DIV class=ptentry>\
+      <DIV class=ptstat id=trainheader>Train troops and build wall/field defenses</div><DIV style='height:5px'></div><DIV class=ptentry>\
       <DIV style='text-align:center; margin-bottom:5px;'>Select City: &nbsp; <span id=ptspeedcity></span></div>\
       <TABLE class=ptTab width=100%><TR valign=top><TD width=50%>\
       <TABLE align=center><TR><TD align=right>Troop Type: </td><TD colspan=2>\
@@ -3492,7 +3500,8 @@ if (t.limitingFactor){
 }    
     t.updateTopTroops();
   },
-  
+
+    
   clickTroopDo : function (){
     var t = Tabs.Train;
     var cityId = t.selectedCity.id;
@@ -3542,7 +3551,7 @@ if (t.limitingFactor){
     if (slots<1)
       t.TDspMaxPS.innerHTML = 0;
     else
-      t.TDspMaxPS.innerHTML = parseIntNan(t.stats.MaxDefTrain / slots);
+      t.TDspMaxPS.innerHTML = parseInt(t.stats.MaxDefTrain / slots);
 
     t.TDspSpace.innerHTML = 'Wall level: <B>'+ t.stats.wallLevel +'</b><BR>Wall space: '+ (t.stats.wallSpaceUsed+t.stats.wallSpaceQueued)  +'/<B>'+ t.stats.wallSpace +'</b><BR>\
         Field space: '+ (t.stats.fieldSpaceUsed+t.stats.fieldSpaceQueued) +'/<B>'+ t.stats.fieldSpace +'</b>';
@@ -3567,7 +3576,7 @@ if (t.limitingFactor){
       max = t.stats.ore / uc[4];
     if ( (t.stats.idlePop / uc[6]) < max)
       max = t.stats.idlePop / uc[6];
-    t.stats.MaxDefTrain = parseIntNan (max);
+    t.stats.MaxDefTrain = parseInt (max);
     if (t.stats.MaxDefTrain < 0)
       t.stats.MaxDefTrain = 0;
     if (matTypeof(uc[8]) == 'object'){
@@ -3764,7 +3773,9 @@ m += '<TABLE class=ptTab width=100%><TR align=center>\
             actual = end - lastEnd;
           if (actual < 0)
             actual = 0;
-          m += '<TR align=right><TD>'+ q[i][1] +' </td><TD align=left> '+ unsafeWindow.unitcost['unt'+q[i][0]][0];
+          q[i][6] = cityId;
+          m += '<TR align=right><TD width="5px"><A><DIV onclick="cancelTrain('+ q[i][0]+','+q[i][1]+','+q[i][2]+','+q[i][3]+','+q[i][5]+','+q[i][6]+','+i +')">X</div></a></td>';
+          m += '<TD>'+ q[i][1] +' </td><TD align=left> '+ unsafeWindow.unitcost['unt'+q[i][0]][0];
           if (first)
             m += '</td><TD> &nbsp; '+  timestr(end-start, true) +'</td><TD> (<SPAN id=ptttfq>'+ timestr(actual, true) +'</span>)';
           else
@@ -3819,7 +3830,9 @@ m += '<TABLE class=ptTab width=100%><TR align=center>\
             actual = end - lastEnd;
           if (actual < 0)
             actual = 0;
-          m += '<TR align=right><TD>'+ q[i][1] +' </td><TD align=left> '+ fortNamesShort[q[i][0]];
+		  q[i][7]=cityId;
+          m += '<TR align=right><TD width="5px"><A><DIV onclick="cancelFort('+ q[i][0]+','+q[i][1]+','+q[i][2]+','+q[i][3]+','+q[i][5]+','+q[i][6]+','+q[i][7] +','+ i +')">X</div></a></td>'
+          m += '<TD>'+ q[i][1] +' </td><TD align=left> '+ fortNamesShort[q[i][0]];
           if (first)
             m += '</td><TD> &nbsp; '+  timestr(end-start, true) +'</td><TD> (<SPAN id=pttdfq>'+ timestr(actual, true) +'</span>)';
           else
@@ -3836,12 +3849,94 @@ m += '<TABLE class=ptTab width=100%><TR align=center>\
       m += ', '+ unsafeWindow.timestr(totTime);
     document.getElementById ('statDTtot').innerHTML = m;
   },
-
+  
+  
   dispTrainStatus : function (msg){
     var t = Tabs.Train;
     t.divTrainStatus.innerHTML = msg + t.divTrainStatus.innerHTML;
   },
 
+  butcancelTrain : function (typetrn, numtrptrn, trnTmp, trnETA, trnNeeded, cityId, trainingId){
+    var t = Tabs.Train;
+    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    
+    params.pf =0;
+    params.requestType = "CANCEL_TRAINING";
+    params.cityId = cityId;
+    params.typetrn = typetrn;
+    params.numtrptrn =  numtrptrn;
+    params.trnETA = trnETA;
+    params.trnTmp = trnTmp;
+    params.trnNeeded = trnNeeded;
+    
+    new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/cancelTraining.php" + unsafeWindow.g_ajaxsuffix, {
+        method: "post",
+        parameters: params,
+        onSuccess: function (message) {
+        var rslt=eval("("+message.responseText+")");
+        if (rslt.ok) {
+					var k=0;
+					for(var j=0;j<Seed.queue_unt["city"+cityId].length;j++){
+						if(j>trainingId){
+							Seed.queue_unt["city"+cityId][j][2]=parseInt(rslt.dateTraining[k]["start"]);
+							Seed.queue_unt["city"+cityId][j][3]=parseInt(rslt.dateTraining[k]["end"]);
+							k++;
+						}
+					}
+			
+			Seed.queue_unt["city"+cityId].splice(trainingId,1);
+			for(var i=1;i<5;i++){
+				var totalReturn=parseInt(unsafeWindow.unitcost["unt"+typetrn][i])*parseInt(numtrptrn)*3600/2;
+				Seed.resources["city"+cityId]["rec"+i][0]=parseInt(Seed.resources["city"+cityId]["rec"+i][0])+totalReturn;
+			}
+        } 
+        },
+        onFailure: function () {
+        },
+    });
+  },
+  
+ 
+ butcancelFort : function (typefrt, numtrpfrt, frtTmp, frtETA, frtNeeded, frtid, cityId, queueId){
+   var t = Tabs.Train;
+   var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+   
+   params.pf =0;
+   params.requestType = "CANCEL_FORTIFICATIONS";
+   params.cityId = cityId;
+   params.typefrt = typefrt;
+   params.numtrpfrt =  numtrpfrt;
+   params.frtETA = frtETA;
+   params.frtTmp = frtTmp;
+   params.frtNeeded = frtNeeded;
+   params.frtid = frtid;
+   
+   new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/cancelFortifications.php" + unsafeWindow.g_ajaxsuffix, {
+       method: "post",
+       parameters: params,
+       onSuccess: function (message) {
+       var rslt=eval("("+message.responseText+")");
+       if (rslt.ok) {
+ 			var k=0;
+ 			for(var j=0;j<Seed.queue_fort["city"+cityId].length;j++){
+ 				if(j>queueId){
+ 					Seed.queue_fort["city"+cityId][j][2]=parseInt(rslt.dateFortifications[k]["start"]);
+ 					Seed.queue_fort["city"+cityId][j][3]=parseInt(rslt.dateFortifications[k]["end"]);
+ 					k++;
+ 				}
+ 			}
+			unsafeWindow.update_seed(rslt.updateSeed);
+ 			Seed.queue_fort["city"+cityId].splice(queueId,1);
+ 			for(var i=1;i<5;i++){
+ 				Seed.resources["city"+cityId]["rec"+i][0]=parseInt(Seed.resources["city"+cityId]["rec"+i][0])+totalReturn;
+ 			}
+ 		}
+       },
+       onFailure: function () {
+       },
+   });
+ },
+ 
   
   stopTraining : function (msg){
     var t = Tabs.Train;
@@ -4691,126 +4786,131 @@ Tabs.Alliance = {
   alliancemembers:[],
   number:0,
   totalmembers:0,
-  totalpages:10,
-  pageNo:1,
-  searching:false,
+  error:false,
   
   init : function (div){    
     var t = Tabs.Alliance;      
     t.myDiv = div;
-    t.myDiv.style.overflowY = 'scroll';
-	div.style.maxHeight = '720px';
+     t.myDiv.style.overflowY = 'scroll';
+     div.style.maxHeight = '500px';
+     t.totalmembers=0;
+     t.alliancemembers=[];	
      
-    unsafeWindow.getdetails = t.getMemberDetails;
+     unsafeWindow.getdetails = t.getMemberDetails;
     
-    var m =  '<DIV class=ptstat>ALLIANCE OVERVIEW</div><TABLE align=center cellpadding=1 cellspacing=0></table>';
+    var m =  '<DIV class=ptstat>ALLIANCE FUNCTIONS</div><TABLE align=center cellpadding=1 cellspacing=0></table>';
     
-    m += '<TABLE class=ptTab><TD>Sort by: <select id="searchAlli">'
-	m += '<option value="name">Name</options>';
+    m +='<TABLE class=ptTab><TD width=200px>List Alliance Members</td><TD>Sort by: <select id="searchAlli"><option value="name">Name</options>';
     m += '<option value="might">Might</option>';
-    m += '<option value="rank">Rank</option>';
-    m += '<option value="cities">Cities</option>';
-    m += '<option value="dip">Days in position (dip)</option>';
     m += '<option value="login">Last Login</option>';
-    m += '</select></td><TD><INPUT id=alList type=submit value="List"></td>';
-    m += '<TD id=progress></td></table>';
+    m += '<option value="cities">Cities</option>';
+    m += '<option value="position">Position</option>';
+    m += '<option value="dip">Days in position (dip)</option></select></td>';
+    m += '<TD><INPUT id=alList type=submit value="List"></td>';
+    m += '<TD id=progress></td>';
+    m += '<TR><TD width=200px>Show alliance diplomaties</td><TD><INPUT id=aldiplo type=submit value="List diplomaties"></td></tr></table>';
+    
+    m+='<DIV class=ptstat>OVERVIEW</div><TABLE align=center cellpadding=1 cellspacing=0></table>';
     m += '<TABLE id=alOverviewTab class=alTab><TR align="center"></tr></table>';
-     
+    
+    
     t.myDiv.innerHTML = m;
     
     document.getElementById('alList').addEventListener('click', function(){
-		if(!t.searching){
-			t.number=0;
-			t.totalmembers=0;
-			t.alliancemembers=[];
-			document.getElementById('alOverviewTab').innerHTML = "Searching...";
-			document.getElementById('alList').disabled = true;	
-			t.searching = true;
-			t.fetchAllianceMemberPage();
-		}
+    	if (!t.searching){
+	    	t.totalmembers=0;
+	    	t.alliancemembers=[];	
+		    document.getElementById('alOverviewTab').innerHTML ="";
+		    document.getElementById('progress').innerHTML ="";
+		    document.getElementById('progress').innerHTML = "Searching...";
+		    document.getElementById('alList').disabled = true;
+		    t.error=false;
+		    t.fetchAllianceMemberPage();
+		} 
     }, false);
-	document.getElementById('searchAlli').addEventListener('change', function(){
-		if(!t.searching && t.alliancemembers.length>0)
-			t.paintMembers();
-	}, false);
-      
-    window.addEventListener('unload', t.onUnload, false);
+    
+    document.getElementById('searchAlli').addEventListener('click', function(){
+        if (t.alliancemembers!="") {
+        	document.getElementById('alOverviewTab').innerHTML ="";
+        	t.paintMembers(); 
+        }
+    }, false);
+    document.getElementById('aldiplo').addEventListener('click', function(){t.paintDiplomacy();}, false);  
+    
+  window.addEventListener('unload', t.onUnload, false);
   },
   
+  
   paintMembers: function(){
-  var t = Tabs.Alliance;
-  document.getElementById('alOverviewTab').innerHTML = "";
-	if ( t.totalmembers >= (t.alliancemembers.length-1)) {
-	  if (document.getElementById('searchAlli').value == "name") {
-	    var sortmembers = t.alliancemembers.sort(function(a, b){
-			 var sortA=a.Name.toLowerCase(), sortB=b.Name.toLowerCase()
-			 if (sortA < sortB) 
-			  return -1
-			 if (sortA > sortB)
-			  return 1
-			 return 0 
-			});
-	  }     
-	  if (document.getElementById('searchAlli').value == "might") {
-		var sortmembers = t.alliancemembers.sort(function(a, b){
-			 var sortA=parseInt(a.Might),sortB=parseInt(b.Might)
-			 if (sortA > sortB) 
-			  return -1
-			 if (sortA < sortB)
-			  return 1
-			 return 0 
-			});
-	  }     
-	  if (document.getElementById('searchAlli').value == "login") {
-		var sortmembers = t.alliancemembers.sort(function(a, b){
-			 var sortA=a.LastLogin,sortB=b.LastLogin
-			 if (sortA < sortB) 
-			  return -1
-			 if (sortA > sortB)
-			  return 1
-			 return 0 
-			});
-	  }
-	  if (document.getElementById('searchAlli').value == "cities") {
-		var sortmembers = t.alliancemembers.sort(function(a, b){
-			 var sortA=a.Cities,sortB=b.Cities
-			 if (sortA < sortB) 
-			  return -1
-			 if (sortA > sortB)
-			  return 1
-			 return 0 
-			});
-		}    	  
-	  if (document.getElementById('searchAlli').value == "rank") {
-		var sortmembers = t.alliancemembers.sort(function(a, b){
-			 var sortA=a.Position,sortB=b.Position
-			 if (sortA < sortB) 
-			  return -1
-			 if (sortA > sortB)
-			  return 1
-			 return 0 
-			});
-	  }     
-	  if (document.getElementById('searchAlli').value == "dip") {
-		var sortmembers = t.alliancemembers.sort(function(a, b){
-			 var sortA=a.dip,sortB=b.dip
-			 if (sortA > sortB) 
-			  return -1
-			 if (sortA < sortB)
-			  return 1
-			 return 0 
-			});
-	  }     
-	   
-	  for (var y = (sortmembers.length-1); y >=0; y--) {
-		t._addTab(sortmembers[y].Name,sortmembers[y].Might,sortmembers[y].LastLogin,sortmembers[y].Position,sortmembers[y].dip,sortmembers[y].uid,sortmembers[y].fbuid,sortmembers[y].Cities);
-		t.myDiv.style.overflowY = 'scroll';
-	  }
-	  t._addTabHeader();
-	}
+  var t = Tabs.Alliance; 
+	  		  if (document.getElementById('searchAlli').value == "name") {
+				  var sortmembers = t.alliancemembers.sort(function(a, b){
+				         var sortA=a.Name.toLowerCase(), sortB=b.Name.toLowerCase()
+				         if (sortA < sortB) 
+				          return -1
+				         if (sortA > sortB)
+				          return 1
+				         return 0 
+				        });
+			  }     
+			  if (document.getElementById('searchAlli').value == "might") {
+			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
+			  	         var sortA=parseInt(a.Might),sortB=parseInt(b.Might)
+			  	         if (sortA > sortB) 
+			  	          return -1
+			  	         if (sortA < sortB)
+			  	          return 1
+			  	         return 0 
+			  	        });
+			  }     
+			  if (document.getElementById('searchAlli').value == "login") {
+			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
+			  	         var sortA=a.LastLogin,sortB=b.LastLogin
+			  	         if (sortA < sortB) 
+			  	          return -1
+			  	         if (sortA > sortB)
+			  	          return 1
+			  	         return 0 
+			  	        });
+			  }     
+			  if (document.getElementById('searchAlli').value == "cities") {
+			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
+			  	         var sortA=a.Cities,sortB=b.Cities
+			  	         if (sortA < sortB) 
+			  	          return -1
+			  	         if (sortA > sortB)
+			  	          return 1
+			  	         return 0 
+			  	        });
+			  }     
+			  if (document.getElementById('searchAlli').value == "dip") {
+			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
+			  	         var sortA=a.dip,sortB=b.dip
+			  	         if (sortA < sortB) 
+			  	          return -1
+			  	         if (sortA > sortB)
+			  	          return 1
+			  	         return 0 
+			  	        });
+			  }     
+			  if (document.getElementById('searchAlli').value == "position") {
+			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
+			  	         var sortA=a.Position,sortB=b.Position
+			  	         if (sortA < sortB) 
+			  	          return -1
+			  	         if (sortA > sortB)
+			  	          return 1
+			  	         return 0 
+			  	        });
+			  }      
+			  for (var y = (sortmembers.length-1); y >=0; y--) {
+			                      t._addTab(sortmembers[y].Name,sortmembers[y].Might,sortmembers[y].LastLogin,sortmembers[y].Position,sortmembers[y].dip,sortmembers[y].uid,sortmembers[y].fbuid,sortmembers[y].Cities);
+			                      t.myDiv.style.overflowY = 'scroll';
+			  }
+			 t._addTabHeader();
    },
   
-  _addTab: function(Name,Might,LastLogin,Position,dip,uid,fbuid,Cities){
+    _addTab: function(Name,Might,LastLogin,Position,dip,uid,fbuid,Cities){
              var t = Tabs.Alliance;
              var row = document.getElementById('alOverviewTab').insertRow(0);
              row.vAlign = 'top';
@@ -4821,90 +4921,125 @@ Tabs.Alliance = {
        		 cell2.align = "right" ;
        		 cell2.vAlign = "top";
        		 cell2.innerHTML = addCommas(Might);
-			 row.insertCell(3).innerHTML = Cities;
-       		 row.insertCell(3).innerHTML = officerId2String (Position);
-       		 row.insertCell(4).innerHTML = dip;
-       		 row.insertCell(5).innerHTML = LastLogin;
-       		 t.number++;
+       		 row.insertCell(3).innerHTML = Cities;
+       		 row.insertCell(4).innerHTML = officerId2String (Position);
+       		 row.insertCell(5).innerHTML = dip;
+       		 row.insertCell(6).innerHTML = LastLogin;
           }, 
-
-  _addTabHeader: function() {
+          
+    _addTabHeader: function() {
     var t = Tabs.Alliance;
         var row = document.getElementById('alOverviewTab').insertRow(0);
         row.vAlign = 'top';
-        row.insertCell(0).innerHTML = "Facebook";
+         row.insertCell(0).innerHTML = "Facebook";
         row.insertCell(1).innerHTML = "Name";
         row.insertCell(2).innerHTML = "Might";
         row.insertCell(3).innerHTML = "Cities";
-        row.insertCell(3).innerHTML = "Rank";
-        row.insertCell(4).innerHTML = "DIP.";
-        row.insertCell(5).innerHTML = "LastLogin";
+        row.insertCell(4).innerHTML = "Position";
+        row.insertCell(5).innerHTML = "DIP";
+        row.insertCell(6).innerHTML = "LastLogin";
       },   
-
-  fetchAllianceMemberPage : function () {
+    
+    
+    paintDiplomacy : function () {
+    	document.getElementById('alOverviewTab').innerHTML ="";
+    	document.getElementById('progress').innerHTML ="";
+    	var m= '<TR><TD colspan=4 style=\'background: #33CC66;\' align=center><B>Friendly: </b></td></tr>';
+    	if (Seed.allianceDiplomacies['friendly'] == null) m+='<TR><TD>No Friendlies found...</td>';
+    	else m += '<TABLE class=xtab><TR><TD>Alliance Name</td><TD>Members</td></tr>';
+    	for (k in Seed.allianceDiplomacies['friendly']){
+				m+='<TR><TD>'+Seed.allianceDiplomacies['friendly'][k]['allianceName']+'</td>';
+				m+='<TD align=center>'+Seed.allianceDiplomacies['friendly'][k]['membersCount']+'</td>';
+    	}
+    	m+='<TR></tr></table>';
+    	m+= '<TR><TD colspan=4 style=\'background: #CC0033;\' align=center><B>Hostile: </b></td></tr>';
+    	if (Seed.allianceDiplomacies['hostile'] == null) m+='<TR><TD>No Hostiles found...</td>';
+    	else m += '<TABLE class=xtab><TR><TD>Alliance Name</td><TD>Members</td></tr>';
+    	for (k in Seed.allianceDiplomacies["hostile"]){
+    		m+='<TR><TD>'+Seed.allianceDiplomacies["hostile"][k]['allianceName']+'</td>';
+    		m+='<TD align=center>'+Seed.allianceDiplomacies["hostile"][k]['membersCount']+'</td>';
+    	}
+    	m+='<TR></tr></table>';
+    	m+= '<TR><TD colspan=4 style=\'background: #FF6633;\' align=center><B>Friendly towards us: </b></td></tr>';
+    	if (Seed.allianceDiplomacies['friendlyToYou'] == null) m+='<TR><TD>No Friendlies towards us found...</td>';
+    	else m += '<TABLE class=xtab><TR><TD>Alliance Name</td><TD>Members</td></tr>';
+    	for (k in Seed.allianceDiplomacies["friendlyToYou"]){
+    		m+='<TR><TD>'+Seed.allianceDiplomacies["friendlyToYou"][k]['allianceName']+'</td>';
+    		m+='<TD align=center>'+Seed.allianceDiplomacies["friendlyToYou"][k]['membersCount']+'</td>';
+    	}
+    	m+='<TR></tr></table>';
+    	document.getElementById('alOverviewTab').innerHTML = m;
+    },
+    
+        
+    fetchAllianceMemberPage : function () {
     var t = Tabs.Alliance;
+    document.getElementById('alList').disabled = true;
     var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    
     params.pf = 0;
     
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetInfo.php" + unsafeWindow.g_ajaxsuffix, {
+    new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetInfo.php" + unsafeWindow.g_ajaxsuffix, {
       method: "post",
       parameters: params,
-      onSuccess: function (rslt) {
+      onSuccess: function (transport) {
+      	  var rslt = eval("(" + transport.responseText + ")");
           t.totalmembers = (rslt["allianceInfo"]["members"]);
-		  t.fetchAllianceMemberInfo();
+          for (var i=1;i<=10;i++) {
+                 params.pageNo = i;
+                 params.pf = 0;
+                 new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetMembersInfo.php" + unsafeWindow.g_ajaxsuffix, {
+                   method: "post",
+                   parameters: params,
+                   onSuccess: function (transport) {
+                    var info = eval("(" + transport.responseText + ")");
+                    if (info.ok) {  
+                       for (var k in info["memberInfo"]){
+                         if ( info["memberInfo"][k]["might"] != undefined && !t.error){  
+                           t.alliancemembers.push ({
+                               Name: info["memberInfo"][k]["name"],
+                               Might: info["memberInfo"][k]["might"],
+                               Cities: info["memberInfo"][k]["cities"],
+                               Position : info["memberInfo"][k]["positionType"],
+                               dip : info["memberInfo"][k]["daysInPosition"],
+                               LastLogin : info["memberInfo"][k]["lastLogin"],
+                               uid : info["memberInfo"][k]["userId"],
+                               fbuid : info["memberInfo"][k]["fbuid"],	
+                           });
+                          }
+                           document.getElementById('alOverviewTab').innerHTML ="";
+                           t.paintMembers();
+                   		}
+                       if (!t.error) document.getElementById('progress').innerHTML	 = '(' + (t.alliancemembers.length) +'/'+ t.totalmembers +')';
+                       if ( t.alliancemembers.length >= t.totalmembers) document.getElementById('alList').disabled = false;
+                    } else  if (info.error) {
+                    	document.getElementById('alList').disabled = false;
+                    	document.getElementById('progress').innerHTML = "ERROR!";
+                    	t.error=true;
+                   	}
+                   },
+                   onFailure: function (rslt) {;
+                     notify ({errorMsg:'AJAX error'});
+                   },
+                   
+           });
+          }
       },
       onFailure: function (rslt) {;
         notify ({errorMsg:'AJAX error'});
       },
     });
-    
   },
   
-  fetchAllianceMemberInfo : function (){
-	var t = Tabs.Alliance;
-	if(t.pageNo>t.totalpages){
-		t.searching = false;
-		document.getElementById('alList').disabled = false;
-		t.paintMembers();
-		return;
-	}
-	var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-	params.pageNo = t.pageNo;
-	params.pf = 0;
-	new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetMembersInfo.php" + unsafeWindow.g_ajaxsuffix, {
-		method: "post",
-		parameters: params,
-		onSuccess: function (rslt) {
-			for (var k in rslt["memberInfo"]){
-				t.alliancemembers.push ({
-					Name: rslt["memberInfo"][k]["name"],
-					Might: rslt["memberInfo"][k]["might"],
-					Cities: rslt["memberInfo"][k]["cities"],
-					Position : rslt["memberInfo"][k]["positionType"],
-					dip : parseInt(rslt["memberInfo"][k]["daysInPosition"]),
-					LastLogin : rslt["memberInfo"][k]["lastLogin"],
-					uid : rslt["memberInfo"][k]["userId"],
-					fbuid : rslt["memberInfo"][k]["fbuid"],	
-				});
-			}
-			t.paintMembers();
-			t.totalpages = rslt.noOfPages;
-			t.pageNo++;
-			document.getElementById('progress').innerHTML	 = '(' + (t.alliancemembers.length) +'/'+ t.totalmembers +')';
-			t.fetchAllianceMemberInfo();
-		},
-		onFailure: function (rslt) {;
-		  notify ({errorMsg:'AJAX error'});
-		},
-    });
-  },
-  
-  hide : function (){
+  hide : function (){         
+    mainPop.div.style.width = 750 + 'px';
   },
 
-  show : function (){
+  show : function (){         
+  		var t = Tabs.Alliance;
+        mainPop.div.style.width = 750 + 'px';
   },
-}
+};
 
 /*************************************** MARCHES TAB ************************************************/
 
@@ -4914,7 +5049,8 @@ Tabs.Marches = {
   displayTimer:null,
   curTabBut : null,
   curTabName : null,
-	
+  widescreen:true,
+  	
   init : function (div){
     var t = Tabs.Marches;
     unsafeWindow.pr56Recall = t.butRecall;
@@ -4925,7 +5061,8 @@ Tabs.Marches = {
     t.cont.innerHTML = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubA type=submit value=Incoming></td>\
           <TD><INPUT class=pbSubtab ID=ptmrchSubM type=submit value=Marches></td>\
           <TD><INPUT class=pbSubtab ID=ptmrchSubR type=submit value=Reinforcements></td></tr></table><HR class=ptThin>\
-      <DIV id=ptMarchOutput style="margin-top:10px; background-color:white; height:680px; width:100%; overflow:scroll;"></div>';
+      <DIV id=ptMarchOutput style="margin-top:10px; background-color:white; height:680px; overflow:scroll;"></div>';
+            
     t.marchDiv = document.getElementById('ptMarchOutput');
     document.getElementById('ptmrchSubA').addEventListener('click', e_butSubtab, false);
     document.getElementById('ptmrchSubR').addEventListener('click', e_butSubtab, false);
@@ -5072,9 +5209,11 @@ Tabs.Marches = {
       t.marchDiv.innerHTML =null;	
       var updatemarch = Seed.queue_atkp;
      
-     var  m = '<TABLE id=pdmarches cellSpacing=10 width=100% height=0% class=pbTab>';
-     m += '<TR><TD colspan=4><INPUT id=TEST type=submit value="Get Seed"></td></tr>';
-          
+     var  m = '<TABLE id=pdmarches cellSpacing=10 width=200px height=0% class=pbTab>';
+     if (t.widescreen) m += '<TR><TD><INPUT id=Wide type=checkbox checked=true>Widescreen</td>';
+     else  m += '<TR><TD><INPUT id=Wide type=checkbox unchecked=true>Widescreen</td>';
+     m += '<TD colspan=4><INPUT id=TEST type=submit value="Get Seed"></td></tr>';
+     m+='</table><TABLE id=pdmarches cellSpacing=10 width=100% height=0% class=pbTab>';
      for (var c=0; c< Seed.cities.length;c++) {
      		cityname = Seed.cities[c][1];
      		cityID = 'city' + Seed.cities[c][0];    
@@ -5088,12 +5227,17 @@ Tabs.Marches = {
   				    var marchType = parseInt(Seed.queue_atkp[cityID][k]["marchType"]);
   				    var marchStatus = parseInt(Seed.queue_atkp[cityID][k]["marchStatus"]);
   				    var now = unixTime();
+  				    cityTo = null;
   				    number++;
 					var icon, status, type, cityTo, knight, marchtime;
   				    
   				    for (var i=0; i<Seed.cities.length;i++) {
-						if (Seed.cities[i][2] == Seed.queue_atkp[cityID][k]["toCityId"]) cityTo = Seed.cities[i][1];
+  				    		if (Seed.cities[i][2] == Seed.queue_atkp[cityID][k]["toXCoord"] && Seed.cities[i][3] == Seed.queue_atkp[cityID][k]["toYCoord"]) cityTo = Seed.cities[i][1];
   				    }
+  				    
+  				    //for (var i=0; i<Seed.cities.length;i++) {
+					//	if (Seed.cities[i][2] == Seed.queue_atkp[cityID][k]["toCityId"]) cityTo = Seed.cities[i][1];
+  				    //}
   				    
   				    var destinationUnixTime = Seed.queue_atkp[cityID][k]["destinationUnixTime"] - now;
   				    var returnUnixTime = Seed.queue_atkp[cityID][k]["returnUnixTime"] - now;
@@ -5178,7 +5322,7 @@ Tabs.Marches = {
   				    m += '<TD>'+ marchtime +'</td>';
   				    
   				    if (cityTo == null)
-						m += '<TD style="padding-right:10px;">'+ Seed.queue_atkp[cityID][k]["toXCoord"] + ',' + Seed.queue_atkp[cityID][k]["toYCoord"] + '</td>';
+						m += '<TD style="padding-right:10px;">'+ coordLink(Seed.queue_atkp[cityID][k]["toXCoord"],Seed.queue_atkp[cityID][k]["toYCoord"]) + '</td>';
   				    else
 						m += '<TD style="padding-right:10px;">'+ cityTo +'</td>';
   				    
@@ -5208,6 +5352,14 @@ Tabs.Marches = {
   	m += '</table>';
   	t.marchDiv.innerHTML = m;
   	
+  	if (t.widescreen==false) document.getElementById('ptMarchOutput').style.maxWidth = '740px';
+  	else document.getElementById('ptMarchOutput').style.maxWidth = '1100px';
+  	
+  	document.getElementById('Wide').addEventListener('click', function(){
+  		t.widescreen=document.getElementById('Wide').checked;	
+  	}, false);
+  	
+  	
   	document.getElementById('TEST').addEventListener('click', function(){
 		var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
   			new AjaxRequest(unsafeWindow.g_ajaxpath + "/fb/e2/src/main_src.php?g=&y=0&n=nan001&l=nl_NL&messagebox=&standalone=0&res=1&iframe=1&lang=en&ts=1304248288.7067&s=250&appBar=" + unsafeWindow.g_ajaxsuffix, {
@@ -5226,6 +5378,7 @@ Tabs.Marches = {
   			    	var seed = eval(result);
 	  			    WinLog.write ("seed @ "+ unixTime()  +" ("+ now +")\n\n"+ inspect (seed, 8, 1));
 	  			    unsafeWindow.document.seed = result;
+	  			    unsafeWindow.update_seed(result);
   			    	}
   			    },
   			    onFailure: function () {
@@ -5265,7 +5418,7 @@ Tabs.Marches = {
     	 	   }    
     	 	 }    
     	 	 
-    	 	 new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/cancelMarch.php" + unsafeWindow.g_ajaxsuffix, {
+    	 	 new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/cancelMarch.php" + unsafeWindow.g_ajaxsuffix, {
     	 	     method: "post",
     	 	     parameters: params,
     	 	     onSuccess: function (rslt) {
@@ -5288,6 +5441,8 @@ Tabs.Marches = {
     	 	 });
     	 	 
     	 },    
+    	 
+    	     
       
   /***  REINFORCEMENTS SUBTAB  ***/
   showReinforcements : function (){
