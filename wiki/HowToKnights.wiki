@@ -1,5 +1,23 @@
 #summary Currently wiki is being updated, more information soon.
 
+<h1>Knights Tab</h1>
+This Tab helps you manage your knights quickly and effectively without having to go to your Knight’s Hall.
+
+Click Tools, Click Knights
+When this window opens you will see several columns.
+
+•	Role – The title, Forman, Marshal, Alchemists, Steward is shown here. Knights not designated will not have a title next to them
+
+•	Name
+
+•	Pol Com Int Res – the number under these abbreviations is the knights skill points in the corresponding field.  The highlighted field is the suggested field you assign the points to.
+
+•	--- Unassigned --- Shows the sill points that need to be assigned, click on the “Pol Com Int Res” abbreviation to assign skill points to the corresponding field.
+
+•	Salary – how much you pay these guys to hunt barbs for you, the higher the skill points the more you pay.
+
+•	Level - for every ten levels your knight, 1 fountain of youth is needed to redistribute the skill points.
+
 ----
 
 <wiki:comment>
