@@ -40,27 +40,29 @@ To change the coordinates for the Distance and Eta sections, above the player in
 
 In the colored section “Model ETA with:” selects different troop types you can calculate out how long till you can reach that city.  This does not calculate research and relief station values. 
 
-Searching an Alliance
+<h4>Searching an Alliance</h4>
 Similar to searching a Player however you will be shown All players of an alliance with the following columns
-•	Player
-•	Might
-•	Cities
-•	Rank
-•	Online
-•	City Name
-•	Lvl
-•	Coords
-•	Distance
-•	Eta
-•	Last Login
+
+ <li>Player</li>
+ <li>Might</li>
+ <li>Cities</li>
+ <li>Rank</li>
+ <li>Online</li>
+ <li>City Name</li>
+ <li>Lvl</li>
+ <li>Coords</li>
+ <li>Distance</li>
+ <li>Eta</li>
+ <li>Last Login</li>
+
 
 This may seem repetitious, however it shows there is more than one way to find information out about a player.
 
-List alliances
+<h4>List alliances</h4>
 Clicking the “List alliances” button will show you all the alliances in their ranking.  The alliances are color coordinated for diplomacy.  
 
 Clicking the “view members” button will show the leader board list of all members, 
 NOTE this information may be up to 24 hours old
 
-Your Alliance Name Button
+<h4>Your Alliance Name Button</h4>
 This will show all the members in your alliance in the above listed columns
