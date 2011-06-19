@@ -1,4 +1,8 @@
-#summary Currently wiki is being updated, more information to be added soon.
+#summary personal preference
+
+Click TOOLS, Click Options
+
+These options help make Game play easier.  Many of these options are personal preference and some are repeats from BOT.  It is strongly recommended you go through each option and decide if you want the feature.  
 
 ----
 
