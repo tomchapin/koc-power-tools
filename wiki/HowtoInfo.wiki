@@ -1,4 +1,25 @@
-#summary Currently wiki is being updated, more information to be added soon.
+#summary View information on Troop/unit info, Crest info, Distance calculator and and Map
+
+Info Tab
+
+Click TOOLS, Click Info
+
+<h4>Unit Information</h4>
+The first thing you see is a grid containing troops.  The Grid shows stats for all types of troops and defenses.  You do not necessarily have all these troops in your cities.  This is FYI only.
+
+<h4>Crest Information</h4>
+Each Column is a required crest
+Each Row is the Deed number available.
+The number before the crest name is the required crest
+The number in the parentheses is the amount you have.
+
+<h4>Distance Calculator</h4>
+Useful to determine your distance from your cities to your other cities, or any coordinate.
+Type coordinates into the coordinates fields for both the “First Location” and the “Second Location”
+Note the distance is calculated automatically.
+
+<h4>Map</h4>
+The map shows the domain in its entirety with the locations of your cities plotted.
 
 ----
 
