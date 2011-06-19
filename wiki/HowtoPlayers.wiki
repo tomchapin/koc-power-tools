@@ -1,1 +1,61 @@
-#summary Currently wiki is being updated, more information soon.
+#summary Allows you to search KOC player information and alliance information.  All info is taken from the Leader board and could be up to 24 hours old.
+
+<h2>Players Tab</h2>
+
+
+Click TOOLS, Click Players
+<h4>Searching a Player</h4>
+Type the name of a person’s KOC name in the “Enter all or part of a player name:” Field
+•	You need to enter at least three characters of the individuals KOC name.
+
+Click “Find Player”
+
+Four Columns appear
+•	Name – KOC name
+•	Might – shows the individuals might points
+•	Online – shows online status
+•	Facebook –  by clicking the profile button you are directed to the person’s face book profile
+•	Lookup
+1)	Details – shows the current updated alliance, number of cities, and what providence the cities are in
+2)	Leader board – shows the following information at last leader board update
+a.	Player – KOC name
+b.	Might – Player might
+c.	Cities – number of total cities
+d.	Rank – leadership or member in alliance
+e.	Online – online/offline status
+f.	City Name 
+g.	Lvl – Level of city
+h.	Coords – coordinates of city
+i.	Distance – distance from your selected city or selected coordinates
+j.	Eta – average time of arrival from the coordinates selected 
+k.	Last Login – last time the player logged in or refreshed the page.
+3)	Last Log in – last time the player logged in or refreshed the page.
+
+To change the coordinates for the Distance and Eta sections, above the player information after clicking the “Leader board” option, click your city you wish to measure from.  
+
+In the colored section “Model ETA with:” selects different troop types you can calculate out how long till you can reach that city.  This does not calculate research and relief station values. 
+
+Searching an Alliance
+Similar to searching a Player however you will be shown All players of an alliance with the following columns
+•	Player
+•	Might
+•	Cities
+•	Rank
+•	Online
+•	City Name
+•	Lvl
+•	Coords
+•	Distance
+•	Eta
+•	Last Login
+
+This may seem repetitious, however it shows there is more than one way to find information out about a player.
+
+List alliances
+Clicking the “List alliances” button will show you all the alliances in their ranking.  The alliances are color coordinated for diplomacy.  
+
+Clicking the “view members” button will show the leader board list of all members, 
+NOTE this information may be up to 24 hours old
+
+Your Alliance Name Button
+This will show all the members in your alliance in the above listed columns
