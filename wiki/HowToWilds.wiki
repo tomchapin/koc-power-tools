@@ -1,4 +1,26 @@
-#summary Currently wiki is being updated, more information soon.
+#summary Manage your wild defenses and monitor the amount of wilds with one click
+
+<h1>Wilds</h1>
+Click TOOLS, Click Wilds
+
+Once you click you are shown several columns containing information about all your wilds.  This section is an easy way to manage ALL your wilds’ defenses!
+•Wild Type
+
+•Coords
+
+•Traps – how many traps you have
+
+•Mercenaries – Novice, Intermediate, Veteran
+
+•-----Change Defences-----
+
+ o	Click the word “Max” next to the empty field under this heading, 
+
+ o	Click the Down arrow next to the word “None” and select the type of troop you want
+
+ o	Click “Set defenses” At the bottom of the cities wilds.
+
+ o	Repeat per city you have
 
 ----
 
