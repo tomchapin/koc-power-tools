@@ -17,7 +17,7 @@ Four Columns appear
 <li type="disc">Might – shows the individuals might points </li>
 <li type="disc">Online – shows online status </li>
 <li type="disc">Facebook –  by clicking the profile button you are directed to the person’s face book profile </li>
-<li type="disc">Lookup 1</li>
+<li type="disc">Lookup</li>
  # 	Details – shows the current updated alliance, number of cities, and what providence the cities are in
  # 	Leader board – shows the following information at last leader board update
 <ol type="a">
