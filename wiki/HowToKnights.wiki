@@ -1,7 +1,7 @@
-#summary Currently wiki is being updated, more information soon.
+#summary This Tab helps you manage your knights quickly and effectively without having to go to your Knight’s Hall.
 
 <h1>Knights Tab</h1>
-This Tab helps you manage your knights quickly and effectively without having to go to your Knight’s Hall.
+
 
 Click Tools, Click Knights
 When this window opens you will see several columns.
