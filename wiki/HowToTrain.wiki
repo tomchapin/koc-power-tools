@@ -1,6 +1,4 @@
-
-
-This is a way to set up and manage your training ques quickly and efficiently 
+#summary This is a way to set up and manage your training ques quickly and efficiently
 
 Train Troops
 
