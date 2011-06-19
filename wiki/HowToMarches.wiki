@@ -1,6 +1,6 @@
 #summary Allows you to view marching affecting you quickly.
 
-This feature is also available in BOT however the format of viewing is different.
+<h3> This feature is also available in BOT however the format of viewing is different. </h3>
 
 Click TOOLS, Click Marches
 
