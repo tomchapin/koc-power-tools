@@ -7,11 +7,11 @@ Notice your cities are listed in columns and your resources and troops in rows. 
 
 Scroll down to the bottom. 
 
-•	The check mark boxes at the bottom do different things for viewing the overview.
-•	Show Troops in City – this feature if uncheck-marked will hide all troops in the overview.
-•	Show Marching Troops/Resources – Allows you to see all troops NOT in your cities
-•	Show troops training in city – will add to the totals in the overview so you can see what your totals will be after your training completes.
-•	Show troops training totals – adds a column to view the totals in training.
+#•	The check mark boxes at the bottom do different things for viewing the overview.
+#•	Show Troops in City – this feature if uncheck-marked will hide all troops in the overview.
+#•	Show Marching Troops/Resources – Allows you to see all troops NOT in your cities
+#•	Show troops training in city – will add to the totals in the overview so you can see what your totals will be after your training completes.
+#•	Show troops training totals – adds a column to view the totals in training.
 
 
 ----
