@@ -1,4 +1,15 @@
-#summary Currently wiki is being updated, more information to be added soon.
+#summary This tab shows you info about your alliance, the alliance rankings, and diplomacy.
+
+
+Click TOOLS, click Alliance tab
+
+List alliance members
+Sort by: pick an option you wish to view your alliance member from
+
+•	Name
+
+•	Might 
+
 
 ----
 
