@@ -1,5 +1,4 @@
-#summary Currently wiki is being updated, more information to be added soon.
-Train
+
 
 This is a way to set up and manage your training ques quickly and efficiently 
 
