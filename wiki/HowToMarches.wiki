@@ -4,9 +4,9 @@
 
 Click TOOLS, Click Marches
 
-<h1>Incomming</h4> – views all incoming attack on your cities.
+<h1>Incomming </h4> – views all incoming attack on your cities.
 
-<h1>Out Going</h4> – views all outgoing attacks from your cities
+<h1>Out Going </h4> – views all outgoing attacks from your cities
 
 •	The Get Seed button should be ignored unless you are VERY computer savvy.  
 
