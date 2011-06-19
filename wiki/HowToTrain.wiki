@@ -1,4 +1,41 @@
 #summary Currently wiki is being updated, more information to be added soon.
+Train
+
+This is a way to set up and manage your training ques quickly and efficiently 
+
+Train Troops
+
+Click TOOLS, Click Train
+Select the city you wish to train from
+Select the troop type you wish to train
+Select the number of training slots you wish to fill.
+Select the mount of troops you wish to train
+Click “Train Troops”
+
+Train Defenses
+
+Click TOOLS, Click Train
+Select the city you wish to train from
+Select the troop defense type  you wish to train
+Select the number of training slots you wish to fill.
+Select the mount of troops you wish to train
+Click “Build Defenses”
+
+Viewing the page
+
+Scroll Down
+
+Under your KOC name you will see troop types; these are troop types that are currently in the selected city.  This helps you decide what you want to train.
+
+Below the troops in the city, the resources in your city are visible.  The limiting troop training factor is highlighted in red.
+
+Further down the screen you see your training que.  
+
+Deleting some or all of your que. 
+
+On the training troops que list, you will find an “x” next to each qued up troop. 
+Click the “x”
+Note the troop is deleted. You are not asked if you are sure you want to delete the train.
 
 ----
 
