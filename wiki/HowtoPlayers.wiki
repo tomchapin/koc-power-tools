@@ -13,16 +13,11 @@ Type the name of a person’s KOC name in the “Enter all or part of a player n
 Click “Find Player”
 
 Four Columns appear
-
-•	Name – KOC name
-
-•	Might – shows the individuals might points
-
-•	Online – shows online status
-
-•	Facebook –  by clicking the profile button you are directed to the person’s face book profile
-
-•	Lookup
+<li type="disc">Name – KOC name 1</li>
+<li type="disc">Might – shows the individuals might points 1</li>
+<li type="disc">Online – shows online status 1</li>
+<li type="disc">Facebook –  by clicking the profile button you are directed to the person’s face book profile 1</li>
+<li type="disc">Lookup 1</li>
  # 	Details – shows the current updated alliance, number of cities, and what providence the cities are in
  # 	Leader board – shows the following information at last leader board update
   # 	Player – KOC name
