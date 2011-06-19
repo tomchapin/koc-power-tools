@@ -1,4 +1,28 @@
-#summary Currently wiki is being updated, more information to be added soon.
+#summary query your messages and incoming alliance reports quickly
+
+<h4>Messages</h4>
+Click TOOLS, Click Messages
+This option allows you to query messages stored in your inbox or out box
+
+Select “Inbox” or “outbox” in the “Search in:” field.
+Select the amount of pages you wish to search in the “Pages” field.
+“Search in:” allows you to query the name of the receiver or you can search by date
+In the “Search For:” field type key word of the subject or name of the receiver.
+Click Start search
+
+Note if you leave the “Search for blank all recent messages will come up.
+Note all messages containing the specified requirements are pulled up below.
+
+Click “Open” next to the message you wish to find.
+
+<h4>Reports</h4>
+This option is very handy when scanning for incoming attacks.
+Click TOOLS click Messages
+Click Reports and select the amount of pages you wish to search.
+
+Note you cannot use the keywords in this section.
+
+Note all reports shown are INCOMMING and Reinforcing troop movement.  If you don’t have any reports show then there are no incoming attacks/scouts/reinforcements on the specified pages.
 
 ----
 
