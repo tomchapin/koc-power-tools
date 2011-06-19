@@ -1,6 +1,6 @@
 #summary View information on Troop/unit info, Crest info, Distance calculator and and Map
 
-Info Tab
+<h2>Info Tab</h2>
 
 Click TOOLS, Click Info
 
