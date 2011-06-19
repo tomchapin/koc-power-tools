@@ -4,6 +4,7 @@
 Click TOOLS, Click Wilds
 
 Once you click you are shown several columns containing information about all your wilds.  This section is an easy way to manage ALL your wilds’ defenses!
+
 •Wild Type
 
 •Coords
