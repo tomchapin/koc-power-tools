@@ -20,7 +20,7 @@ Four Columns appear
 <li type="disc">Lookup 1</li>
  # 	Details – shows the current updated alliance, number of cities, and what providence the cities are in
  # 	Leader board – shows the following information at last leader board update
- 3 Player – KOC name
+3 Player – KOC name
 b.	Might – Player might
 c.	Cities – number of total cities
 d.	Rank – leadership or member in alliance
