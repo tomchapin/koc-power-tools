@@ -1,18 +1,18 @@
 #summary Allows you to view marching affecting you quickly.
 
-<h3> This feature is also available in BOT however the format of viewing is different. </h3>
+ This feature is also available in BOT however the format of viewing is different.
 
 Click TOOLS, Click Marches
 
-Incomming – views all incoming attack on your cities.
+<h1> Incomming <h1> – views all incoming attack on your cities.
 
-Out Going – views all outgoing attacks from your cities
+<h1> Out Going <h1> – views all outgoing attacks from your cities
 
 •	The Get Seed button should be ignored unless you are VERY computer savvy.  
 
 •	Widescreen is optional.
 
-Reinforcements – Showing troops encamped at each of your embassies.
+<h1> Reinforcements <h1> – Showing troops encamped at each of your embassies.
 
 
 ----
