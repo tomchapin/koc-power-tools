@@ -20,6 +20,7 @@ var ENABLE_TEST_TAB = false;
 var SEND_ALERT_AS_WHISPER = false;
 var TEST_WIDE = false;
 var TEST_WIDE_CITIES = 7;
+var History=[];
 
 var URL_CASTLE_BUT = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAXCAMAAAGkBsQ5AAABa1BMVEX%2F%2F8X%2F98X%2F973%2F97X%2F77X%2F7633773%2F76X377X3763%2F5q3%2F5qX%2F5pz35q335qX%2F3pz%2F3pT33pz%2F1pT%2F1oz%2F1oT31pT31oz%2FzoT%2Fznv3zoT%2FxXv%2FxXP%2FxWv3xXv3xXP%2FvWv%2FvWP3vWv3vWP%2FtWP%2FtVr%2FtVLmvWv3tWP3tVr3tVL%2FrVL%2FrUrmtWP3rVL3rUrvrVL%2FpUrvrUr%2FpULmrVrmrVL3pUr3pULmpUL3nDrepULWpVLWpUrmnDrFpUK1pVrOnDqcnFKcnEqMnEp7lHN7lGtzlGNrlGtjjEpajFpShFJSe2NChEJKe1o6hDohjDFCc1oZjDEhhDEQjDEAlDEpezoZhDEhezoQhDEAjDEpczoZezoIhDEhc0IhczoAhDEZczoIezEhazoAezEhY0IAczEAcykIazEhWkIAazEAaykIYzEhUkIAYzEAWjEAUjEAUikASjEASikAQjEAQikAOjEAOikAMTEAMSkAKSlOGAcLAAAACXBIWXMAAAsSAAALEgHS3X78AAABVklEQVQYGQXBPW4TYRiF0ee%2B3x2DRSxRIFJTGIkVUFDQIbEDlkE5%2B8kWWEKKIBSB5AohXBGUSAaCIdgz3x%2FnaARztjS3RSPodPkmfuzReLbOh1fm72a4h3kxyWgE8NXPz8%2F%2FhC%2FzRXLM3cmeqvGDl7Mfa9ztT9pvp3%2FDOpjOr7Yft9PXjPHxE%2Bl6p4SJqSq5RsL4EAtZaUAjAABoBADAt%2Fty8ovVnhQ%2Bfx%2BbDTfXQ9Bz5H7IdWGV9k588NJWrQiXjMkdly6Fo9beRap29F4QJBxTE%2Bo9bF7XuUpJsp8BAGjcATSgADOQWRsfLu8WT0%2B33wcePknfJj%2B6j3Hb17m5HQsr1%2Fm4aGBEbtp8uXPWzcSBlhYYXKunObLoOyU1jFH02oVRZNFJQ2CCko26MIrC3MAEpRdcSVkYFYzBuaAuQFFAgzFBK0GVZhYoaUYYVm8b0IAGNDr8B8ZXpEbZNGQ6AAAAAElFTkSuQmCC";
 var URL_CASTLE_BUT_SEL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAXAgMAAAHuttyYAAAACVBMVEX%2F%2F%2F8AOjEAKSnbo5E5AAAACXBIWXMAAAsSAAALEgHS3X78AAAAW0lEQVQI12NYwdAAhCsYOICwQQGEpiYwrGpgCHRgcIChUAeGqaERDBMZJRgmMCDwqlUrgHgBQ2hoAIMjiwAYOzBgxyA1ILVTQ4GggWEKK4MIK4JiYGAgiYKYAgBFlyWR9CCfyAAAAABJRU5ErkJggg%3D%3D";
@@ -1746,7 +1747,7 @@ function parseIntZero (n){
 function officerId2String (oid){
   if (oid==null)
     return '';
-  else if (oid==3)
+  else if (oid==3) 	
     return 'Officer';
   else if (oid==2)
     return 'Vice Chance';
@@ -2432,6 +2433,11 @@ return 0;
 
     t.reDisp();
     new CdispCityPicker ('plyrdcp', document.getElementById ('dmcoords'), true, t.eventCoords, 0).bindToXYboxes(document.getElementById('plyrX'), document.getElementById('plyrY'));
+    
+    document.getElementById('dmcoords').addEventListener ('click', function(){ 
+    	//alert(t.eventCoords);
+    	//t.clickCity(CdispCityPicker);
+    },false);	
     document.getElementById('idFindETASelect').disabled = false;
   },
   
@@ -2489,6 +2495,7 @@ return 0;
     if (distFrom)
         distFrom.innerHTML = m;
     t.ModelCity=city;
+    t.JumpCity(city.name);
     t.setDistances(x,y);
     t.setEta();
     t.reDisp();
@@ -2741,6 +2748,25 @@ ajax/getOnline.php:
    }
     return ret;
   },
+  
+   JumpCity:function(city) {
+   		var t = Tabs.AllianceList;
+   		for (i=0;i<Seed.cities.length;i++) {
+   			if (Seed.cities[i][1]==city) var cityNum=i;
+   		}
+   		cityNum++;
+   		var obj = document.getElementById('citysel_'+cityNum);
+	   	return t.ClickWin(window,obj,'click');
+   },
+   
+   ClickWin:function(win,obj,evtName) {
+   	var evt = win.document.createEvent("MouseEvents");
+   	evt.initMouseEvent(evtName, true, true, win,
+   		0, 0, 0, 0, 0, false, false, false, false, 0, null);
+   	return !obj.dispatchEvent(evt);
+   },
+   
+   
 };
 
 
@@ -5377,8 +5403,9 @@ Tabs.Marches = {
   			    	result = result.substr(4);
   			    	var seed = eval(result);
 	  			    WinLog.write ("seed @ "+ unixTime()  +" ("+ now +")\n\n"+ inspect (seed, 8, 1));
-	  			    unsafeWindow.document.seed = result;
-	  			    unsafeWindow.update_seed(result);
+	  			    unsafeWindow.document.seed = seed;
+	  			    Seed = seed;
+	  			    unsafeWindow.seed = seed;
   			    	}
   			    },
   			    onFailure: function () {
