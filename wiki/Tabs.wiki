@@ -1,4 +1,16 @@
-#summary Currently wiki is being updated, more information soon.
+#summary of Tabs.
+
+=KoC Power Tools - Tabs=
+
+When opening the Power Tools, tabs for the different sections will be found at the top of the pop-up window. The available tabs will change as features are added or removed from the script. Selecting a tab will bring you to the desired feature of Power Tools.
+
+http://koc-power-tools.googlecode.com/files/tools_tabs.jpg
+
+==Trouble Shooting==
+
+If your Power Tools window has popped up over the Tools tab in the game, you may also close the window by clicking the "X" at the top right of the window.
+
+If the "X" to close the Power Tools window extends off of the available screen space, or any other section of the Power Tools tabs are unavailable, go to the options tab and enable dragging of the window.
 
 ----
 
