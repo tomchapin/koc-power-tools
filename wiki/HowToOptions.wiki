@@ -51,6 +51,7 @@ _Places a red background behind tower alerts posted by the Power Bot into chat._
 
 *KofC Features:*
   * Show number of new messages separately from number of reports on Messages icon.
+_Separate messages from march reports over the KoC messages icon, so that you can easily see if you have received a new message from another player._
 
   * Enable enhanced Alliance Reports.
 _Create clickable links and other features that enhance using alliance reports._
