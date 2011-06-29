@@ -1,8 +1,97 @@
-#summary personal preference
+#summary Setting personal preferences
+
+=KoC Power Tools - Options=
+
+==Getting Started==
 
 Click TOOLS, Click Options
 
-These options help make Game play easier.  Many of these options are personal preference and some are repeats from BOT.  It is strongly recommended you go through each option and decide if you want the feature.  
+These options help make Game play easier.  Many of these options are personal preference and some are repeats from BOT.  It is strongly recommended you go through each option and decide if you want the feature.
+
+Note that if a checkbox is greyed out there has probably been a change of KofC's code, rendering the option inoperable.
+
+==Explanations of Each Option== 
+
+*Config*
+  * Enable window drag (move window by dragging top bar with mouse)
+_Allows you to move the Power Tools window from its static position. Recommended that you have wide screen enabled in the bot so that you do not accidentally drag your window into a position that you can not access._
+
+  * Hide window when clicking on map coordinates.
+_Your Power Tools window will automatically close when clicking any coords found or used from another Power Tools feature._
+
+  * Show 'food left' in RED if food will run out in less than [24] hours, does NOT affect the food alert anymore!
+_The time when your 'food left' in Overview feature shows red. The default is 24 hours and that time may be changed to personal preference_
+
+  * Enable Tower food alert. (Warning set to 6 hours, checked every 30min.)
+_When enabled, if food left for a city goes below the set time, the Power Bot will begin to spam alliance chat every 30 minutes to notify the alliance that food is needed_
+
+<em>*Tip - This is a very useful feature, but it can also be a very annoying one to your alliance when abused. Care should be taken that you are not auto-transporting food out of your cities with the Power Bot in a way that will set off this alert non-stop.</em>
+
+  * Enable sound alert on whisper (NEW)
+_Causes an audio doorbell alert each time someone whispers to you._
+
+  * Enable sound alert on tower alert in chat (NEW)
+_Causes an audio horn alert each time another player's Power Bot tower alert is posted in alliance chat._
+
+*Chat Layout:*
+  * Enable Chat Enable Chat enhancements (clickable coords, click on icon to whisper, colors).
+_Several features rolled into this enhancement. Coords in chat become clickable to automatically bring them up in the map. Clicking on another player's avatar will place "@LordName" for that player in the chat box to allow for easy whispering. Whispers in yellow background and coord text in color._
+
+  * Enable Global background color.
+_Causes global chat to appear with a muted highlighting color to easily separate alliance posts from global posts when in the global chat tab. Also useful to remind you that you are in the global chat tab._
+
+  * Enable Whisper in Red Font.
+_Highlights Whispers_
+
+  * Enable Chat in Bold Font.
+_Useful for making chat easier to read, but takes up more space._
+
+  * Enable Red background on tower alert. (NEW)
+_Places a red background behind tower alerts posted by the Power Bot into chat._
+
+*KofC Features:*
+  * Show number of new messages separately from number of reports on Messages icon.
+
+  * Enable enhanced Alliance Reports.
+_Create clickable links and other features that enhance using alliance reports._
+
+  * Allow other scripts to change format of Alliance Reports.
+_Enable further modification of reports, most notably by the KoC Power Bot._
+
+  * Enable enhanced messaging ("forward" and "all officers" buttons).
+_Time saving feature to allow faster and easier communication with other players._
+
+  * Enhanced page navigation for messages and reports.
+_Allow fast navigation of messages and reports by entering the page number into the box instead of starting from first page and scrolling through each page individually after a message is read or deleted._
+
+  * Warn if attempting to march to location 0,0.
+_Causes a pop-up window to appear anytime the KoC default coords of 0,0 are about to be used for a march._
+
+  * Enable GMT clock next to "Camelot Time"
+_Use <a href="http://wwp.greenwichmeantime.com/">Greenwich Mean Time</a> for easier coordination of times between all alliance members._
+
+  * Enable target city picker in attack dialog (reinforce, reassign and transport)
+_Will auto input coords by clicking a city icon._
+
+  * Display # of rounds in battle reports
+_Show total rounds of troops volleying against each other before the final battle result._
+
+  * Enable delete button when displaying battle report
+_Allow a report to be deleted as you view it and brings you back to the list of reports in messages._
+
+
+*KofC Bug Fixes:*
+  * Fix tower report to show exact target (city, wild or invalid)
+_Useful to know that a wild is being attacked rather than your city._
+
+  * Fix map to show distances from currently selected city, instead of always the first city.
+_Allows you to view the correct distance on the map._
+
+  * Do not automatically select a knight when changing march type to scout, transport or reassign
+_Prevent knights from being sent out of the city accidentally when they are not needed for a particular type of march._
+
+  * Keep map coordinate box/bookmarks on top of troop activity
+_Stops troop activity box of marching troops from covering your bookmarks and coord box if you are trying to view and navigate the map._
 
 ----
 
