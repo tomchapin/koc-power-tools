@@ -18,6 +18,13 @@ http://koc-power-bot.googlecode.com/files/0107_dl.png<a href="http://koc-power-t
 Add pictures and more details here
 </wiki:comment>
 
+==Getting Started==
+
+When you load your Kingdoms of Camelot game with a script enabling extension turned on in your browser and the KOC Power Tools script installed, you will see a tab in the upper left hand corner of the game. Clicking this tab will open your Power Tools and clicking it once more will close your Power Tools. The Power Tools will open up in a window on top of your Kingdoms of Camelot game. 
+http://koc-power-tools.googlecode.com/files/Tools_home.jpg
+
+<em>*Tip - Set the options in your Power Tools first. </em>
+
 == Trouble Shooting ==
 
 Sometimes an update to the extension that enables Java Script on your browser will break the scripts you have loaded until they too are updated. If your script is broken after an update, revert to the previous version of the extension.
