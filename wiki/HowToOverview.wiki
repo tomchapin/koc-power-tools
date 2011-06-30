@@ -1,4 +1,8 @@
-#summary This section gives you an accurate real-time look at all troops and resources you have in one viewing pain.
+#summary This section gives you an accurate real-time look at all troops and resources you have in one viewing window.
+
+=KoC Power Tools - Overview=
+
+==Getting Started==
 
 Click Tools
 Click Overview.
@@ -13,6 +17,16 @@ Scroll down to the bottom.
  # Show troops training in city – will add to the totals in the overview so you can see what your totals will be after your training completes.
  # Show troops training totals – adds a column to view the totals in training.
 
+==Additional Features==
+ # Clickable links of city coords to take you directly to that city on the map, see in a glance which cities are set to defend or hiding.
+ # Food situation in a glance, mark the time in options to see food with less than a certain amount of time remaining in red. (Default is 24 hours.)
+ # Misc. overview shows wilds per city and those under maximum in red, knights per city, time remaining in troop queues with those under an hour in red, wall queue times with those that are not at maximum defense capacity and less than an hour remaining to build in red.
+
+http://koc-power-tools.googlecode.com/files/tools-overview.jpg
+
+==Trouble Shooting==
+
+If you are unable to view your entire overview, click allow width overflow in the bottom left area of the window and try adjusting the font size.
 
 ----
 
@@ -20,4 +34,4 @@ Scroll down to the bottom.
 Following block is for the quick navigation links on the Bottom of the page.
 </wiki:comment>
 
-<p align="center"><a href="http://code.google.com/p/koc-power-tools/wiki/Tabs">Tabs</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToOverview">Overview</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToMarches">Marches</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToTrain">Train</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowtoInfo">Info</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToPlayers">Players</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToKnights">Knights</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToWilds">Wilds</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToOptions">Options</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToMessages">Messages</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToAlliance">Alliance</a>
+<p align="center"><a href="http://code.google.com/p/koc-power-tools/wiki/Tabs">Tabs</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToOverview">Overview</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToBuilds">Builds</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToMarches">Marches</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToTrain">Train</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowtoInfo">Info</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToPlayers">Players</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToKnights">Knights</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToWilds">Wilds</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToOptions">Options</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToMessages">Messages</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToAlliance">Alliance</a>
