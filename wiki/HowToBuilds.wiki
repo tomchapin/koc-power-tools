@@ -1,0 +1,20 @@
+#summary An overview of build levels in a glance.
+
+= KoC Power Tools - Builds =
+
+== Getting Started ==
+
+Click Tools, Click Builds
+
+You will see a table with cities and clickable coords across the top columns. Wall defenses, buildings, fields, and guardians are listed in rows for each city. A table for research levels is listed down on the bottom.
+
+A check box to show missing requirements for items is located in the upper left of the window.
+
+----
+
+<wiki:comment>
+Following block is for the quick navigation links on the Bottom of the page.
+</wiki:comment>
+
+<p align="center"><a href="http://code.google.com/p/koc-power-tools/wiki/Tabs">Tabs</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToOverview">Overview</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToBuilds">Builds</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToMarches">Marches</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToTrain">Train</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowtoInfo">Info</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToPlayers">Players</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToKnights">Knights</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToWilds">Wilds</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToOptions">Options</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToMessages">Messages</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToAlliance">Alliance</a>
+
