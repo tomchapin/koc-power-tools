@@ -2,6 +2,7 @@
   
  * [Tabs Tabs]
   * [HowToOverview Overview]
+  * [HowToBuilds Builds]
   * [HowToMarches Marches]
   * [HowToTrain Train]
   * [HowtoInfo Info]
