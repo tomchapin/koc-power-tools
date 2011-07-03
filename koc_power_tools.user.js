@@ -6,7 +6,7 @@
 // @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110607a';
+var Version = '20110703a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -149,7 +149,7 @@ function ptStartup (){
     table.ptMainTab {empty-cells:show; margin-top:5px }\
     table.ptMainTab tr td a {color:inherit }\
     table.ptMainTab tr td   {height:60%; empty-cells:show; padding: 0px 5px 0px 5px;  margin-top:5px; white-space:nowrap; border: 1px solid; border-style: none none solid none; }\
-    table.ptMainTab tr td.spacer {padding: 0px 3px;}\
+    table.ptMainTab tr td.spacer {padding: 0px 1.5px;}\
     table.ptMainTab tr td.sel    {font-weight:bold; font-size:13px; border: 1px solid; border-style: solid solid none solid; background-color:#eed;}\
     table.ptMainTab tr td.notSel {font-weight:bold; font-size:13px; border: 1px solid; border-style: solid solid none solid; background-color:#1e66bd; color:white; border-color:black;}\
     tr.ptPopTop td { background-color:#dde; border:none; height: 21px;  padding:0px; }\
@@ -2749,7 +2749,7 @@ ajax/getOnline.php:
     return ret;
   },
   
-   JumpCity:function(city) {
+     JumpCity:function(city) {
    		var t = Tabs.AllianceList;
    		for (i=0;i<Seed.cities.length;i++) {
    			if (Seed.cities[i][1]==city) var cityNum=i;
@@ -3314,6 +3314,7 @@ Tabs.Train = {
     t.cont = div;
     unsafeWindow.cancelTrain = t.butcancelTrain;
     unsafeWindow.cancelFort = t.butcancelFort;
+    
     s = "<DIV id=trainTopSelect>\
       <DIV class=ptstat id=trainheader>Train troops and build wall/field defenses</div><DIV style='height:5px'></div><DIV class=ptentry>\
       <DIV style='text-align:center; margin-bottom:5px;'>Select City: &nbsp; <span id=ptspeedcity></span></div>\
@@ -3455,7 +3456,25 @@ Tabs.Train = {
     t.displayCityStats ();
     t.changeTroopSelect();
     t.changeDefSelect();
+    t.JumpCity(city.name);
   },
+  
+  JumpCity:function(city) {
+     		var t = Tabs.AllianceList;
+     		for (i=0;i<Seed.cities.length;i++) {
+     			if (Seed.cities[i][1]==city) var cityNum=i;
+     		}
+     		cityNum++;
+     		var obj = document.getElementById('citysel_'+cityNum);
+  	   	return t.ClickWin(window,obj,'click');
+     },
+  
+  ClickWin:function(win,obj,evtName) {
+     	var evt = win.document.createEvent("MouseEvents");
+     	evt.initMouseEvent(evtName, true, true, win,
+     		0, 0, 0, 0, 0, false, false, false, false, 0, null);
+     	return !obj.dispatchEvent(evt);
+     },
   
   clickCheckIdlePop : function (){
     var t = Tabs.Train;
@@ -3922,7 +3941,6 @@ m += '<TABLE class=ptTab width=100%><TR align=center>\
     });
   },
   
- 
  butcancelFort : function (typefrt, numtrpfrt, frtTmp, frtETA, frtNeeded, frtid, cityId, queueId){
    var t = Tabs.Train;
    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
@@ -4258,13 +4276,15 @@ if (TEST_WIDE)
       str += '<TR><TD colspan=12><BR></td></tr>';
       
       row = [];
+      row[0-1] = 0;
       for(i=0; i<Cities.numCities; i++) {
         var rp = getResourceProduction (Cities.cities[i].id);
         var usage = parseInt(Seed.resources["city" + Cities.cities[i].id]['rec1'][3]);
         row[i] = rp[1] - usage;
+        row[0-1] = parseInt(row[0]) + parseInt(rp[1] - usage);
       }
      
-      str += _row ('Food +/-', row, true);
+      str += _row ('Food +/-', row);
       
       for(i=0; i<Cities.numCities; i++) {
         if (row[i] >= 0)
@@ -4277,10 +4297,11 @@ if (TEST_WIDE)
             if (Options.enableFoodWarn && timeLeft<(Options.foodWarnHours*3600))
               row[i] = '<SPAN class=whiteOnRed>'+ timestrShort(timeLeft) +'</span>';
             else
-              row[i] = timestrShort(timeLeft);
+              row[i] = timestrShort(timeLeft);              
           }
         }
-      }    
+      }
+      
       str += _row ('Food left', row, true);
       str += '<TR><TD><BR></td></tr>';
       
@@ -4428,11 +4449,448 @@ function getWallInfo (cityId, objOut){
   }
 }    
 
+
+/********************************* BUILDS TAB *************************************/
+Tabs.Builds = {
+  tabOrder : 2,
+  tabLabel : 'Builds',
+  showReq : false,
+  	
+  init : function (div){
+    var t = Tabs.Builds;
+    t.cont=div;
+	},
+	
+	paint : function ()	{
+	var t = Tabs.Builds;
+	var wall=0;
+	var blacksmith=0;
+	var fletching=0;
+	var geometry = 0;
+	var metalalloys = 0;
+	var logging = 0;
+	var poisonededge = 0;
+	
+	var buildings = {0:'Castle',
+				  1:'Farm',
+				  2:'Sawmill',
+				  3:'Quarry',
+				  4:'Mine',
+				  5:'Cottage',
+				  6:'Tavern',
+				  7:'Knights Hall',
+				  8:'Embassy',
+				  9:'Storehouse',
+				  10:'Market',
+				  11:'Alchemy Lab',
+				  12:'Rally Point',
+				  13:'Barracks',
+				  14:'Watch Tower',
+				  15:'Blacksmith',
+				  16:'Workshop',
+				  17:'Stable',
+				  18:'Relief Station',
+				  19:'Wall'};
+	var Research = {1:'Fertilizer',
+				  2:'Logging',
+				  3:'Stoneworking',
+				  4:'Mining',
+				  5:'Geometry',
+				  6:'Eagle Eyes',
+				  8:'Poisoned Edge',
+				  9:'Metal Alloys',
+				  10:'Featherweight Powder',
+				  11:'Magical Mapping',
+				  12:'Alloy Horseshoes',
+				  13:'Fletching',
+				  14:'Shrinking Powder',
+				  15:'Healing Potions',
+				  16:"Giant's Strength"};
+	var WallSpace = {1:1000,
+				  2:3000,
+				  3:6000,
+				  4:10000,
+				  5:15000,
+				  6:21000,
+				  7:28000,
+				  8:36000,
+				  9:45000,
+				  10:55000,
+				  11:66000};
+	var FieldSpace = {1:13,
+				  2:16,
+				  3:19,
+				  4:22,
+				  5:25,
+				  6:28,
+				  7:31,
+				  8:34,
+				  9:37,
+				  10:40,
+				  11:40};
+				  		   
+	fertilizer = Seed.tech['tch1'];
+	logging = Seed.tech['tch2'];
+	stoneworking = Seed.tech['tch3'];
+	mining = Seed.tech['tch4'];
+	geometry = Seed.tech['tch5'];
+	eagleeyes = Seed.tech['tch6'];
+	poisonededge = Seed.tech['tch8'];
+	metalalloys = Seed.tech['tch9'];
+	featherweightpowder = Seed.tech['tch10'];
+	magicalmapping = Seed.tech['tch11'];
+	alloyhorseshoes = Seed.tech['tch12'];
+	fletching = Seed.tech['tch13'];
+	shrinkingpowder = Seed.tech['tch14'];
+	healingpotions = Seed.tech['tch15'];
+	giantsstrength = Seed.tech['tch16'];			  		       
+    
+    var m = '<DIV class=ptstat>Building and Research overview</div>';
+    m += "<DIV id=BuildsDiv style='font-size:12px'><TABLE class=ptBuilds border=1px cellpadding=5 cellspacing=0><TR valign=top align=right>";
+    m += "<TD align=left width=85><INPUT id=showReq type=checkbox " + (t.showReq?'CHECKED ':'') +">Show missing req.</td>";
+    for(i=0; i<Cities.numCities; i++) {
+      m += "<TD width=79><B>"+ Cities.cities[i].name.substring(0,11) +"</b><BR>"+ coordLink(Cities.cities[i].x, Cities.cities[i].y) +"<BR></td>";
+    }
+    m+='<TR valign=top align=right><TD width=85>Building</td>';	
+    for(i=0; i<Seed.cities.length; i++) {
+    	city = 'city'+Seed.cities[i][0];
+    	m+='<TD width=79>';
+    	if (Seed.queue_con[city][0] != undefined) {
+    		m+=buildings[Seed.queue_con[city][0][0]];
+    		m+=' ('+Seed.queue_con[city][0][1]+')';
+    		m+='<br>'+ timestr((Seed.queue_con[city][0][4] - unixTime()),true);
+    	}
+    	m+='</td>';	
+    }
+    m+='</tr>';
+    m+='<TR valign=top align=right><TD width=85>Researching</td>';	
+    for(i=0; i<Seed.cities.length; i++) {
+    	city = 'city'+Seed.cities[i][0];
+    	m+='<TD width=79>';
+    	if (Seed.queue_tch[city][0] != undefined) {
+    		m+=Research[Seed.queue_tch[city][0][0]];
+    		m+=' ('+Seed.queue_tch[city][0][1]+')';
+    		m+='<br>'+ timestr((Seed.queue_tch[city][0][3] - unixTime()),true);
+    	}
+    	m+='</td>';		
+    }
+    m+='</tr></table><BR><TABLE class=ptBuilds border=1px cellpadding=5 cellspacing=0>';
+    m+='<TR valign=top align=right><TD width=85>CrossBows</td>';
+    for (i=0;i<Seed.cities.length;i++){
+    	city = 'city'+Seed.cities[i][0];
+    	for (y in Seed.buildings[city]) {
+    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
+    		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
+    	}
+    	max = WallSpace[wall]/2/2 - parseInt(Seed.fortifications[city]["fort53"]) - parseInt(Seed.fortifications[city]["fort55"]);
+    	m+= '<TD width=79>' + Seed.fortifications[city]["fort53"];
+    	if (wall >=6 && blacksmith >=6 && fletching >=5 && max > 0) m+= '<br>Left: ' + max +'</td>';
+    	else if (t.showReq){
+   			if (wall < 6) m+= '<br><FONT COLOR= "CC0000">Wall: ' + wall + '(6)</font>';
+   			if (blacksmith < 6) m+= '<br><FONT COLOR= "CC0000">BlackS.: ' + blacksmith + '(6)</font>';
+   			if (fletching < 5) m+= '<br><FONT COLOR= "CC0000">Fletch.: ' + fletching + '(5)</font>';
+   			m+='</td>';
+   		} 		
+    }
+    m+='</tr><TR valign=top align=right><TD width=85>Trebuchet</td>';
+    for (i=0;i<Seed.cities.length;i++){
+    	city = 'city'+Seed.cities[i][0];
+    	for (y in Seed.buildings[city]) {
+    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
+    		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
+    	}
+    	max = WallSpace[wall]/2/4 - parseInt(Seed.fortifications[city]["fort53"]) - parseInt(Seed.fortifications[city]["fort55"]);
+    	m+=  '<TD width=79>' +Seed.fortifications[city]["fort55"];
+    	if (wall >=8 && blacksmith >=8 && fletching >=7 && geometry>=7 && max > 0) m+= '<br>Left: ' + max+'</td>';
+    	else if (t.showReq){
+    			if (wall < 8) m+= '<br><FONT COLOR= "CC0000">Wall: ' + wall + '(8)</font>';
+    			if (blacksmith < 8) m+= '<br><FONT COLOR= "CC0000">BlackS.: ' + blacksmith + '(8)</font>';
+    			if (fletching < 7) m+= '<br><FONT COLOR= "CC0000">Fletch.: ' + fletching + '(7)</font>';
+    			if (geometry < 7) m+= '<br><FONT COLOR= "CC0000">Geomet.: ' + geometry + '(7)</font>';
+    			m+='</td>';
+    	} 	
+    }
+    m+='<TR valign=top align=right><TD width=85>Wall defences</td>';
+    for (i=0;i<Seed.cities.length;i++){
+    	city = 'city'+Seed.cities[i][0];
+    	for (y in Seed.buildings[city]) {
+    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
+    	}
+    	build = (parseInt(Seed.fortifications[city]["fort53"])*2)+ (parseInt(Seed.fortifications[city]["fort55"])*4);
+    	max = WallSpace[wall]/2;
+    	if (build < max) m+='<TD width=79><FONT COLOR= "CC0000">';
+    	else m+='<TD width=79><FONT COLOR= "669900">';
+    	m+= build+'</font>';
+    	m+= '/' + max +'</td>';
+    }
+    m+='</tr><TR valign=top align=right><TD width=85>Traps</td>';
+    for (i=0;i<Seed.cities.length;i++){
+    	city = 'city'+Seed.cities[i][0];
+    	for (y in Seed.buildings[city]) {
+    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
+    		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
+    	}
+    	max = WallSpace[wall]/2/4 - (parseInt(Seed.fortifications[city]["fort60"])*4) - (parseInt(Seed.fortifications[city]["fort61"])*1) - (parseInt(Seed.fortifications[city]["fort62"])*3);
+    	m+=  '<TD width=79>'+Seed.fortifications[city]["fort60"];
+    	if (wall >=4 && blacksmith >=4 && poisonededge>=4 && max>0) m+= '<br>Left: ' + max+'</td>';
+    	else if (t.showReq){
+    			if (wall < 4) m+= '<br><FONT COLOR= "CC0000">Wall: ' + wall + '(4)</font>';
+    			if (blacksmith < 4) m+= '<br><FONT COLOR= "CC0000">BlackS.: ' + blacksmith + '(4)</font>';
+    			if (poisonededge < 4) m+= '<br><FONT COLOR= "CC0000">Poison.: ' + poisonededge + '(4)</font>';
+    			m+='</td>';
+    	} 	
+    }
+    m+='</tr><TR valign=top align=right><TD width=85>Caltrops</td>';
+    for (i=0;i<Seed.cities.length;i++){
+    	city = 'city'+Seed.cities[i][0];
+    	for (y in Seed.buildings[city]) {
+    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
+    		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
+    	}
+    	max = WallSpace[wall]/2/1 - (parseInt(Seed.fortifications[city]["fort60"])*4) - (parseInt(Seed.fortifications[city]["fort61"])*1) - (parseInt(Seed.fortifications[city]["fort62"])*3);
+    	m+= '<TD width=79>'+Seed.fortifications[city]["fort61"];
+    	if (wall >=1 && metalalloys >=1 && max>0) m+= '<br>Left: ' + max+'</td>';
+    	else if (t.showReq){
+    			if (wall < 1) m+= '<br><FONT COLOR= "CC0000">Wall: ' + wall + '(1)</font>';
+    			if (metalalloys < 1) m+= '<br><FONT COLOR= "CC0000">Metal.: ' + metalalloys + '(1)</font>';
+    			m+='</td>';
+    	} 	
+    }
+    m+='</tr><TR valign=top align=right><TD>Spiked Barrier</td>';
+    for (i=0;i<Seed.cities.length;i++){
+    	city = 'city'+Seed.cities[i][0];
+    	for (y in Seed.buildings[city]) {
+    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
+    		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
+    	}
+    	max = (WallSpace[wall]/2/3).toFixed(0) - (parseInt(Seed.fortifications[city]["fort60"])*4) - (parseInt(Seed.fortifications[city]["fort61"])*1) - (parseInt(Seed.fortifications[city]["fort62"])*3);
+    	m+=  '<TD width=79>'+Seed.fortifications[city]["fort62"];
+    	if (wall >=2 && blacksmith>=2 && logging>=2 && max>0) m+= '<br>Left: ' + max+'</td>';
+    	else if (t.showReq){
+    			if (wall < 2) m+= '<br><FONT COLOR= "CC0000">Wall: ' + wall + '(2)</font>';
+    			if (blacksmith < 2) m+= '<br><FONT COLOR= "CC0000">BlackS.: ' + blacksmith + '(2)</font>';
+    			if (logging < 2) m+= '<br><FONT COLOR= "CC0000">Logg.: ' + logging + '(2)</font>';
+    			m+='</td>';
+    	} 	
+    }
+    m+='<TR valign=top align=right><TD width=85>Field defences</td>';
+    for (i=0;i<Seed.cities.length;i++){
+    	city = 'city'+Seed.cities[i][0];
+    	for (y in Seed.buildings[city]) {
+    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
+    	}
+    	build = (parseInt(Seed.fortifications[city]["fort60"])*4)+ (parseInt(Seed.fortifications[city]["fort61"])*1) + (parseInt(Seed.fortifications[city]["fort62"])*3);
+    	max = WallSpace[wall]/2;
+    	if (build < max) m+='<TD width=79><FONT COLOR= "CC0000">';
+    	else m+='<TD width=79><FONT COLOR= "669900">';
+    	m+= build+'</font>';
+    	m+= '/' + max +'</td>';
+    }
+    m+='</tr></table><BR><TABLE class=ptBuilds border=1px cellpadding=5 cellspacing=0>';
+    
+    m+='<TR valign=top align=right><TD width=85>City space</td>';
+    
+    for(i=0; i<Seed.cities.length; i++) {
+    	var count=0;
+    	city = 'city'+Seed.cities[i][0];
+    	for (y in Seed.buildings[city]) {
+    		if (Seed.buildings[city][y][0] >=5 && Seed.buildings[city][y][0] <19) count++;
+    	}
+    	if (count == 31) m+='<TD width=79><FONT COLOR= "669900">';
+    	else m+='<TD width=79><FONT COLOR= "CC0000">';
+    	m+= count + '</font> (31)</td>';
+    }
+    m+='</tr>';
+    m+='<TR valign=top align=right><TD width=85>Field space</td>';
+    
+    for(i=0; i<Seed.cities.length; i++) {
+    	var count=0;
+    	var castle=0;
+    	city = 'city'+Seed.cities[i][0];
+    	for (y in Seed.buildings[city]) {
+    		if (Seed.buildings[city][y][0] == 0) castle = Seed.buildings[city][y][1];
+    		if (Seed.buildings[city][y][0] >=1 && Seed.buildings[city][y][0] <=4) count++;
+    	}
+    	if (count == FieldSpace[castle]) m+='<TD width=79><FONT COLOR= "669900">';
+    	else m+='<TD width=79><FONT COLOR= "CC0000">';
+    	m+= count + '</font> ('+FieldSpace[castle]+')</td>';
+    }
+    m+='</tr>';
+    for (b=0;b<20;b++){
+    	m+='<TR valign=top align=right><TD width=85>'+buildings[b]+'</td>';
+	    for (c=0;c<Seed.cities.length;c++){
+	    	m+='<TD style="width:79px; max-width:79px; word-wrap: break-word;">';
+	    		city= 'city'+Seed.cities[c][0];
+	    		var count =0;
+	    		for (y in Seed.buildings[city]) {
+	    			if (Seed.buildings[city][y][0] == b) {
+	    				count++;
+	    				if (count > 1) m+=",";
+	    				if (Seed.buildings[city][y][1] >= 9) m+='<FONT COLOR= "669900">';
+	    				m+=Seed.buildings[city][y][1];
+	    				if (Seed.buildings[city][y][1] >= 9) m+='</font>';
+	    				
+	    			}
+	    		}
+	    		if (count == 0) {
+	    			m+='<FONT COLOR= "CC0000">0</font>';
+	    		}
+	    	m+='</td>';		
+	    }
+	    m+='</tr>';
+	} 
+	m+='</tr></table><BR><TABLE class=ptBuilds  border=1px cellpadding=5 cellspacing=0>';
+	for(i=0; i<Cities.numCities; i++) {
+	}
+	m+='<TR valign=top align=right><TD width=85>Guardians</td>';
+	for(i=0; i<Seed.cities.length; i++) {
+	 	for(g=0;g<Seed.guardian.length;g++) {
+	 		if (Seed.guardian[g]['cityId'] == Seed.cities[i][0] && Seed.guardian[g]['level']!=0) {
+	 			m += '<TD width=79>';
+	 			if (Seed.guardian[g]['level'] >=9) m+='<FONT COLOR= "669900">'; 
+	 			m+=Seed.guardian[g]['level']+"("+Seed.guardian[g]['type']+")</td>";
+	 			if (Seed.guardian[g]['level'] >=9) m+='</font>'; 
+	 		}
+	 		else {if (Seed.guardian[g]['cityId'] == Seed.cities[i][0] && Seed.guardian[g]['level']==0) m += '<TD width=79><FONT COLOR= "CC0000">0</font></td>'};
+		}
+	}
+	
+    m+='</tr></table><BR></table><BR><TABLE class=ptBuilds  border=1px cellpadding=2 cellspacing=0><TR valign=top align=left>';
+    for (i in Research) {
+    	select = 'tch'+i;
+    	m+='<TD border=1px style="width:150px;">'+Research[i]+'</td><TD align=center style="width:50px max-width:150px;">';
+    	if (Seed.tech[select] >=9) m+='<FONT COLOR= "669900">';
+    	if (Seed.tech[select] ==0) m+='<FONT COLOR= "CC0000">';
+    	m+=Seed.tech[select];
+    	if (Seed.tech[select] >=9 || Seed.tech[select] ==0) m+='</font>';
+    	if (t.showReq) {
+    		for(z=0; z<Seed.cities.length; z++) {
+	    		city = 'city'+Seed.cities[z][0];
+	    		for (y in Seed.buildings[city]) {
+	    			var farm,sawmill,quarry,mine,alchemylab,workshop,blacksmith,stable,storehouse,barracks = 0;
+	    			if (Seed.buildings[city][y][0] == 1 && Seed.buildings[city][y][0] > farm) farm = Seed.buildings[city][y][1]; 
+	    			if (Seed.buildings[city][y][0] == 2 && Seed.buildings[city][y][0] > sawmill) sawmill = Seed.buildings[city][y][1];
+	    			if (Seed.buildings[city][y][0] == 3 && Seed.buildings[city][y][0] > quarry) quarry = Seed.buildings[city][y][1]; 
+	    			if (Seed.buildings[city][y][0] == 4 && Seed.buildings[city][y][0] > mine) mine = Seed.buildings[city][y][1];
+	    			if (Seed.buildings[city][y][0] == 9) storehouse = Seed.buildings[city][y][1];
+	    			if (Seed.buildings[city][y][0] == 11) alchemylab = Seed.buildings[city][y][1];
+	    			if (Seed.buildings[city][y][0] == 13 && Seed.buildings[city][y][0] > barracks) barracks = Seed.buildings[city][y][1];
+	    			if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1];
+	    			if (Seed.buildings[city][y][0] == 16) workshop = Seed.buildings[city][y][1];
+	    			if (Seed.buildings[city][y][0] == 17) stable = Seed.buildings[city][y][1];
+	    		}
+	    	}
+	    	m+='<FONT COLOR= "CC0000">';
+    		switch (i) {
+    			case '1': 
+    				if (alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab+ '('+ (Seed.tech[select]) +')';
+    				if (farm < Seed.tech[select]) m+='<BR>Farm '+ farm +'('+ (Seed.tech[select]+1) +')</td>';
+    				break;
+    			case '2': 
+    				if (alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab+ '('+ (Seed.tech[select]) +')';
+    				if (sawmill < Seed.tech[select]) m+='<BR>Sawmill '+ sawmill +'('+ (Seed.tech[select]) +')';
+    				break;
+    			case '3': 
+    				if (alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab+ '('+ (Seed.tech[select]) +')';
+    				if (quarry < Seed.tech[select]) m+='<BR>Quarry '+ quarry +'('+ (Seed.tech[select]) +')</td>';
+    				break;
+    			case '4': 
+    				if (alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab+ '('+ (Seed.tech[select]) +')';
+    				if (mine < Seed.tech[select]) m+='<BR>Mine '+ mine +'('+ (Seed.tech[select]) +')';
+    				break;
+    			case '5': 
+    				if (alchemylab < 3) m+='<BR>Alchemy Lab '+ alchemylab +'(3)';
+    				if (alchemylab >= 3 && alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[select]) +')';
+    				if (workshop < Seed.tech[select]) m+='<BR>Workshop ' + workshop +'('+ (Seed.tech[select]) +')';
+    				if (stoneworking < 2) m+='<BR>Stoneworking '+ stoneworking +'(2)';
+    				break;
+    			case '6': 
+    				if (alchemylab < 3) m+='<BR>Alchemy Lab '+ alchemylab +'(3)';
+    				if (alchemylab >= 3 && alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[select]) +')';
+    				break;	
+    			case '8': 
+    				if (alchemylab < 2) m+='<BR>Alchemy Lab '+ alchemylab +'(2)';
+    				if (alchemylab >= 2 && alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[select]) +')';
+    				if (barracks < 2) m+='<BR>Barracks '+ barracks +'(2)';
+    				break;		
+    			case '9': 
+    				if (alchemylab < 3) m+='<BR>Alchemy Lab '+ alchemylab +'(3)';
+    				if (alchemylab >= 3 && alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[select]) +')';
+    				if (blacksmith < Seed.tech[select]) m+='<BR>Blacksmith '+ blacksmith+'('+ (Seed.tech[select]) +')';
+    				if (mining < Seed.tech[select]) m+='<BR>Mining '+ mining +'('+ (Seed.tech[select]) +')';
+    				break;
+    			case '10': 
+    				if (alchemylab < 4) m+='<BR>Alchemy Lab '+ alchemylab +'(4)';
+    				if (alchemylab >= 4 && alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[select]) +')';
+    				break;
+    			case '11': 
+    				if (alchemylab < 4) m+='<BR>Alchemy Lab '+ alchemylab +'(4)';
+    				if (alchemylab >= 4 && alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[select]) +')';
+    				break;
+    			case '12': 
+    				if (alchemylab < 5) m+='<BR>Alchemy Lab '+ alchemylab +'(5)';
+    				if (alchemylab >= 5 && alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[select]) +')';
+    				if (stable < Seed.tech[select]) m+='<BR>Stable '+ stable +'('+ (Seed.tech[select]+1) +')';
+    				if (metalalloys < Seed.tech[select]) m+='<BR>Metal Alloys '+ metalalloys +'('+ (Seed.tech[select]+1) +')';
+    				break;
+    			case '13': 
+    				if (alchemylab < 4) m+='<BR>Alchemy Lab '+ alchemylab +'(4)';
+    				if (alchemylab >= 4 && alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[select]) +')';
+    				if (logging < 4) m+='<BR>Logging '+ logging +'(4)';
+    				break;
+    			case '14': 
+    				if (alchemylab < 6) m+='<BR>Alchemy Lab '+ alchemylab +'(6)';
+    				if (alchemylab >= 6 && alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[select]) +')';
+    				if (storehouse < Seed.tech[select]) m+='<BR>Storehouse '+ storehouse +'('+ (Seed.tech[select]) +')';
+    				if (logging < 3) m+='<BR>Logging '+ logging+'(3)';
+    				break;
+    			case '15': 
+    				if (alchemylab < 6) m+='<BR>Alchemy Lab '+ alchemylab +'(6)';
+    				if (alchemylab >= 6 && alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[select]) +')';
+    				if (featherweightpowder  < 3) m+='<BR>Featherweight Powder  '+ featherweightpowder +'(3)';
+    				break;
+    			case '16': 
+    				if (alchemylab < 5) m+='<BR>Alchemy Lab '+ alchemylab +'(5)';
+    				if (alchemylab >= 5 && alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[select]) +')';
+    				if (logging  < 5) m+='<BR>Logging '+ logging +'(5)';
+    				if (geometry  < 2) m+='<BR>Geometry  '+ geometry +'(2)';
+    				break;
+    		}
+    		m+='</font>';
+    	}
+    	m+='</td></tr>';
+    }	
+    m+='</table></div>';
+    
+    t.cont.style.maxHeight = '750px';
+    t.cont.style.overflowY = 'scroll';
+    t.cont.innerHTML = m;
+    
+    document.getElementById('showReq').addEventListener ('change', function (){
+    	t.showReq = document.getElementById('showReq').checked;
+    	t.paint();
+    },false);	
+    
+    t.displayTimer = setTimeout (t.paint, 1000);  
+  },
+
+ 
+  show : function (){
+  var t = Tabs.Builds;
+  t.paint();
+  },
+
+  hide : function (){
+  },
+};
+
+
+
 /********************************* Messages Tab *************************************/
 Tabs.msg = {
   tabOrder : 110,
   tabLabel : 'Messages',
-  maxPages:1,
+  maxPages:9999,
   totalPages:0,
   content:"",
 
@@ -4522,8 +4980,9 @@ Tabs.msg = {
   		    }, false);
     }
     
-    if ( t.maxPages==101)
+    if ( t.maxPages==101 && t.totalPages > 0)
        t.maxPages=t.totalPages;
+       
        
     if (parseInt(pageNum) <= t.maxPages) {
           document.getElementById('searchStatus').innerHTML = pageNum;
@@ -4612,7 +5071,7 @@ Tabs.msg = {
 		    }, false);
     }
     
-    if ( t.maxPages==101)
+    if ( t.maxPages==101 && t.totalPages > 0)
        t.maxPages=t.totalPages;
        
     if (parseInt(pageNum) <= t.maxPages) {
@@ -4863,6 +5322,7 @@ Tabs.Alliance = {
     }, false);
     document.getElementById('aldiplo').addEventListener('click', function(){t.paintDiplomacy();}, false);  
     
+     
   window.addEventListener('unload', t.onUnload, false);
   },
   
@@ -4997,7 +5457,7 @@ Tabs.Alliance = {
     	document.getElementById('alOverviewTab').innerHTML = m;
     },
     
-        
+  
     fetchAllianceMemberPage : function () {
     var t = Tabs.Alliance;
     document.getElementById('alList').disabled = true;
@@ -5056,6 +5516,7 @@ Tabs.Alliance = {
       },
     });
   },
+  
   
   hide : function (){         
     mainPop.div.style.width = 750 + 'px';
@@ -5402,7 +5863,7 @@ Tabs.Marches = {
   			    	result = match[0];
   			    	result = result.substr(4);
   			    	var seed = eval(result);
-	  			    WinLog.write ("seed @ "+ unixTime()  +" ("+ now +")\n\n"+ inspect (seed, 8, 1));
+	  			    //WinLog.write ("seed @ "+ unixTime()  +" ("+ now +")\n\n"+ inspect (seed, 8, 1));
 	  			    unsafeWindow.document.seed = seed;
 	  			    Seed = seed;
 	  			    unsafeWindow.seed = seed;
@@ -6593,8 +7054,8 @@ if (DEBUG_TRACE) logit (" 1b myAjaxRequest.mySuccess(): "+ inspect(rslt, 1, 1));
     }
 if (DEBUG_TRACE) logit (" 1b myAjaxRequest.mySuccess() !ok : "+ inspect(rslt, 3, 1));
     rslt.errorMsg = unsafeWindow.printLocalError((rslt.error_code || null), (rslt.msg || null), (rslt.feedback || null));
-    if ( (x = rslt.errorMsg.indexOf ('<br><br>')) > 0)
-      rslt.errorMsg = rslt.errorMsg.substr (0, x-1);
+    /*if ( (x = rslt.errorMsg.indexOf ('<br><br>')) > 0)
+      rslt.errorMsg = rslt.errorMsg.substr (0, x-1);*/
     if (!noRetry && (rslt.error_code==0 ||rslt.error_code==8 || rslt.error_code==1 || rslt.error_code==3)){
       dialogRetry (rslt.errorMsg, delay, function(){myRetry()}, function(){wasSuccess (rslt)});
     } else {
