@@ -3339,7 +3339,14 @@ Tabs.Train = {
       <TR><TD align=right># of slots: </td><TD><INPUT id='ptttInpSlots' size=2 type='text' value='1'\></td>\
         <TD width=75%><INPUT id='ptttButMaxSlots' type=submit value='max'\> &nbsp; (max <span id=ptttSpMaxSlots>1</span>)</td></tr>\
       <TR><TD align=right valign=top>Set Workers idle: </td><TD colspan=2><INPUT type=CHECKBOX id=chkPop"+ (Options.maxIdlePop?' CHECKED ':'') +"> \
-        <SPAN style='white-space:normal;'>Allows you to train more troops. May temporarily set idle population negative.</span></td></tr>\
+        <SPAN style='white-space:normal;'>Allows you to train more troops. May temporarily set idle population negative.</span>\
+		<br><INPUT type=CHECKBOX id=chkTut> \
+		<SELECT id=tutelage>\
+		<option value='36'>Lancelot's Tutelage</option>\
+        <option value='37'>Arthur's Tutelage</option>\
+        <option value='38'>Merlin's Tutelage</option>\
+		</select>\
+		</td></tr>\
       <TR><TD colspan=3 align=center><DIV style='height:10px'></div><INPUT id='ptttButDo' type=submit value='Train Troops'\></td></tr>\
       </table></td><TD width=20></td><TD style='border-left:solid 2px;' width=50% align=center>\
       <TABLE align=center><TR><TD align=right>Defense Type: </td><TD colspan=2>\
@@ -3571,7 +3578,12 @@ if (t.limitingFactor){
       t.divTrainStatus.innerHTML = '<FONT COLOR=#550000>Invalid number of slots.</font>';
       return;
     }
-    
+
+	if (document.getElementById ('chkTut').checked)
+		var tut = document.getElementById ('tutelage');
+	else
+		var tut = 0;
+		
     t.TDbutDo.disabled = true;
     t.TTbutDo.className = 'ptButCancel';
     t.TTbutDo.value = 'CANCEL';
@@ -3580,7 +3592,7 @@ if (t.limitingFactor){
       que.push (['T', unitId, parseInt (perSlot)]);
     t.divTrainStatus.innerHTML = '';
     t.running = true;
-    t.doQueue (cityId, que);
+    t.doQueue (cityId, tut, que);
   },
 
   
@@ -3997,7 +4009,7 @@ m += '<TABLE class=ptTab width=100%><TR align=center>\
   },
   
   
-  doQueue : function (cityId, que, errMsg){
+  doQueue : function (cityId, tut, que, errMsg){
     var t = Tabs.Train;
     clearTimeout (t.trainTimer);
     try {
@@ -4013,10 +4025,10 @@ m += '<TABLE class=ptTab width=100%><TR align=center>\
       }
       if (cmd[0] == 'T'){
         t.dispTrainStatus ('Training '+ cmd[2] +' '+  unsafeWindow.unitcost['unt'+cmd[1]][0] +' at '+ Cities.byID[cityId].name +' ('+ que.length +' slots remaining)<BR>');
-        doTrain (cityId, cmd[1], cmd[2], 
+        doTrain (cityId, tut, cmd[1], cmd[2], 
           function(errMsg){
             if (t.running)
-              t.trainTimer = setTimeout(function (){Tabs.Train.doQueue(cityId, que, errMsg);}, (Math.random()*2500)+1000 );
+              t.trainTimer = setTimeout(function (){Tabs.Train.doQueue(cityId, tut, que, errMsg);}, (Math.random()*2500)+1000 );
           }
         );
       }
@@ -7529,13 +7541,13 @@ function doDefTrain (cityId, unitId, num, notify){
 }
 
 
-function doTrain (cityId, unitId, num, notify){
+function doTrain (cityId, tut, unitId, num, notify){
   var time = unsafeWindow.modal_barracks_traintime(unitId, num);
   var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
   params.cid = cityId;
   params.type = unitId;
   params.quant = num;
-  params.items = 0;
+  params.items = tut;
 
   new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/train.php" + unsafeWindow.g_ajaxsuffix, {
     method: "post",
