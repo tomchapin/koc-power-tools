@@ -3580,7 +3580,7 @@ if (t.limitingFactor){
     }
 
 	if (document.getElementById ('chkTut').checked)
-		var tut = document.getElementById ('tutelage');
+		var tut = document.getElementById ('tutelage').value;
 	else
 		var tut = 0;
 		
