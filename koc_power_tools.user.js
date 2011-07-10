@@ -1761,7 +1761,6 @@ Tabs.AllianceList = {
   tabLabel : 'Players',
   cont : null,
   dat : [],
-
   
 
 /***
@@ -1900,7 +1899,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       }
       var m = '<DIV class=ptentry><TABLE width=100% cellpadding=0>\
           <TR><TD class=xtab align=right></td><TD class=xtab>Enter all or part of a player name: &nbsp;</td>\
-            <TD width=80% class=xtab><INPUT id=allPlayName size=20 type=text /> &nbsp; <INPUT id=playSubmit type=submit value="Find Player" /></td>\
+            <TD width=80% class=xtab><INPUT id=allPlayName size=20 type=text /> &nbsp; <INPUT id=playSubmit type=submit value="Find Player" /> &nbsp; <INPUT id=ffbuidsubmit type=submit value="By UID" /></td>\
             <TD class="xtab ptErrText"><SPAN id=ptplayErr></span></td></tr>\
           <TR><TD class=xtab>OR: </td><TD class=xtab> Enter all or part of an alliance name: &nbsp;</td>\
             <TD class=xtab><INPUT id=allAllName type=text /> &nbsp; <INPUT id=allSubmit type=submit value="Find Alliance" /></td>\
@@ -1928,6 +1927,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       t.cont.innerHTML = m;
       document.getElementById('allSubmit').addEventListener ('click', t.eventSubmit, false);
       document.getElementById('playSubmit').addEventListener ('click', t.eventPlayerSubmit, false);
+      document.getElementById('ffbuidsubmit').addEventListener ('click', t.eventPlayerUIDSubmit, false);
       document.getElementById('allAllName').addEventListener ('focus', function (){document.getElementById('ptallErr').innerHTML='';}, false);
       document.getElementById('allPlayName').addEventListener ('focus', function (){document.getElementById('ptplayErr').innerHTML='';}, false);
       document.getElementById('allListSubmit').addEventListener ('click', t.eventListSubmit, false);
@@ -1998,7 +1998,33 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     document.getElementById('allListOut').innerHTML = m;
   },
   
+    eventPlayerUIDSubmit : function (){
+    var t = Tabs.AllianceList;
+    document.getElementById('ptplayErr').innerHTML='';
+    var uid = document.getElementById('allPlayName').value;
+
+	var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    params.uid = uid;
+    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/getUserGeneralInfo.php" + unsafeWindow.g_ajaxsuffix, {
+      method: "post",
+      parameters: params,
+      onSuccess: function (rslt) {
+	  t.pName = rslt.userInfo[0].name;
+      },
+      onFailure: function (rslt) {
+           document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>Searching ...Not Found</center>';
+      },
+    });
+	name = t.pName;
+    document.getElementById('altInput').innerHTML = '';
+    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>Searching ...</center>';
+    t.fetchPlayerList (name, t.eventGotPlayerList);
+  },
     
+	UIDSearch : function (uid) {
+ 
+	},
+	
   clickedPlayerDetail : function (span, uid){
     var t = Tabs.AllianceList;
     span.onclick = '';
@@ -2625,6 +2651,8 @@ return 0;
     });
   },
 
+
+  
   fetchPlayerInfo : function (uid, notify){
     var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
     params.uid = uid;
