@@ -2005,25 +2005,22 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
 
 	var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
     params.uid = uid;
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/getUserGeneralInfo.php" + unsafeWindow.g_ajaxsuffix, {
+    MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/getUserGeneralInfo.php" + unsafeWindow.g_ajaxsuffix, {
       method: "post",
       parameters: params,
       onSuccess: function (rslt) {
-	  t.pName = rslt.userInfo[0].name;
+	  asname = rslt.userInfo[0].name;
       },
       onFailure: function (rslt) {
            document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>Searching ...Not Found</center>';
       },
     });
-	name = t.pName;
+	t.pName = asname;
     document.getElementById('altInput').innerHTML = '';
     document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>Searching ...</center>';
-    t.fetchPlayerList (name, t.eventGotPlayerList);
+    t.fetchPlayerList (asname, t.eventGotPlayerList);
   },
     
-	UIDSearch : function (uid) {
- 
-	},
 	
   clickedPlayerDetail : function (span, uid){
     var t = Tabs.AllianceList;
