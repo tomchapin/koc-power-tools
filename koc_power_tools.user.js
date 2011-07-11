@@ -1979,8 +1979,8 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     }
     var m = '<DIV class=ptstat>Showing players matching <B>"'+ t.pName +'"</b></div>\
       <DIV style="height:575px; max-height:575px; overflow-y:auto">\
-      <TABLE width=100% align=center class=ptTab cellspacing=0><TR style="font-weight:bold"><TD>Name</td>\
-      <TD align=right>Might</td><TD> &nbsp; Online</td><TD> &nbsp;Facebook &nbsp; </td><TD width=75%>Lookup </td></tr>';
+      <TABLE width=100% align=center class=ptTab cellspacing=0><TR style="font-weight:bold"><TD>Name &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp</td>\
+      <TD align=right>UserId &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp</td><TD>Might &nbsp &nbsp</td><TD> &nbsp; Online</td><TD> &nbsp;Facebook &nbsp; </td><TD width=75%>Lookup </td></tr>';
     var row=0;
     var cl='';
     for (k in t.playerList){
@@ -1989,7 +1989,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
         cl = 'class=ptOddrow ';
       else
         cl = '';
-      m += '<TR '+ cl +'valign=top><TD>'+ u.genderAndName +'</td><TD align=right>'+ addCommasInt(u.might) +'</td>\
+      m += '<TR '+ cl +'valign=top><TD>'+ u.genderAndName +'</td><TD>' + u.userId + '</td><TD align=right>'+ addCommasInt(u.might) +'</td>\
           <TD>'+ (rslt.data[u.userId]?"&nbsp;<SPAN class=boldDarkRed>ONLINE</span>":"") +'</td>\
           <TD align=center><A target="_tab" href="http://www.facebook.com/profile.php?id='+ u.fbuid +'">profile</a></td>\
           <TD><SPAN onclick="PTpd(this, '+ u.userId +')"><A>details</a> &nbsp; <BR></span><SPAN onclick="PTpl2(this,'+ u.userId+','+rslt.data[u.userId]+')"><A>leaderboard</a><BR></span><SPAN onclick="PCplo(this, \''+ u.userId +'\')"><A>last Login</a></span></td></tr>';
