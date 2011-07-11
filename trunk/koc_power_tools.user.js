@@ -1989,7 +1989,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
         cl = 'class=ptOddrow ';
       else
         cl = '';
-      m += '<TR '+ cl +'valign=top><TD>'+ u.genderAndName +'</td><TD>' + u.userId + '</td><TD align=right>'+ addCommasInt(u.might) +'</td>\
+      m += '<TR '+ cl +'valign=top><TD>'+ u.genderAndName +'</td><TD><A target="_tab" href="http://koc.dunno.com/index.sjs?f=ServersByUser&user_id='+ u.userId +'">' + u.userId + '</a></SPAM></td><TD align=right>'+ addCommasInt(u.might) +'</td>\
           <TD>'+ (rslt.data[u.userId]?"&nbsp;<SPAN class=boldDarkRed>ONLINE</span>":"") +'</td>\
           <TD align=center><A target="_tab" href="http://www.facebook.com/profile.php?id='+ u.fbuid +'">profile</a></td>\
           <TD><SPAN onclick="PTpd(this, '+ u.userId +')"><A>details</a> &nbsp; <BR></span><SPAN onclick="PTpl2(this,'+ u.userId+','+rslt.data[u.userId]+')"><A>leaderboard</a><BR></span><SPAN onclick="PCplo(this, \''+ u.userId +'\')"><A>last Login</a></span></td></tr>';
@@ -1997,7 +1997,6 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     m += '</table></div>';
     document.getElementById('allListOut').innerHTML = m;
   },
-  
   asName : '',
     eventPlayerUIDSubmit : function (){
     var t = Tabs.AllianceList;
