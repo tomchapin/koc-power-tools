@@ -2013,9 +2013,10 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       },
       onFailure: function (rslt) {
            document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>Searching ...Not Found</center>';
+		   return;
       },
     });
-	t.pName = asname;
+    t.pName = asname;
     document.getElementById('altInput').innerHTML = '';
     document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>Searching ...</center>';
     t.fetchPlayerList (asname, t.eventGotPlayerList);
