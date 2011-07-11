@@ -1998,6 +1998,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     document.getElementById('allListOut').innerHTML = m;
   },
   
+  asName : '',
     eventPlayerUIDSubmit : function (){
     var t = Tabs.AllianceList;
     document.getElementById('ptplayErr').innerHTML='';
@@ -2009,19 +2010,18 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       method: "post",
       parameters: params,
       onSuccess: function (rslt) {
-	  asname = rslt.userInfo[0].name;
+	  t.asName = rslt.userInfo[0].name;
       },
       onFailure: function (rslt) {
            document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>Searching ...Not Found</center>';
 		   return;
       },
     });
-    t.pName = asname;
+    t.pName = t.asName;
     document.getElementById('altInput').innerHTML = '';
     document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>Searching ...</center>';
-    t.fetchPlayerList (asname, t.eventGotPlayerList);
+    t.fetchPlayerList (t.asName, t.eventGotPlayerList);
   },
-    
 	
   clickedPlayerDetail : function (span, uid){
     var t = Tabs.AllianceList;
