@@ -6,7 +6,7 @@
 // @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110704a';
+var Version = '20110712a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -537,12 +537,10 @@ var ChatStuff = {
      	element_class = 'ptChatAttack';
     if (m[0].indexOf('My wilderness at') >= 0 && Options.chatAttack)
        	element_class = 'ptChatAttack';
-
 	var scripters = ["7552815","10681588","1747877","2865067","9688786","10153485","15182839","1550996"];
-		var suid = m[0].substring(m[0].indexOf('Chat.viewProfile(this,')+22,m[0].indexOf(',false);return false;'));
+	var suid = m[0].substring(m[0].indexOf('Chat.viewProfile(this,')+22,m[0].indexOf(',false);return false;'));
 	if (scripters.indexOf(suid) >= 0)
 		element_class = 'ptChatScripter';
-		
        msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
            
      if (msg.indexOf('claimAllianceChat')<0){
