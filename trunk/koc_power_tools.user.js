@@ -135,7 +135,7 @@ function ptStartup (){
     .ptChatAttack {color: #000; font-weight:bold; background-color: #FF4D4D; }\
     .ptChatWhisper {font-weight:bold;color:#FF0000}\
     .ptChatAlliance {font-weight:bold}\
-	.ptChatScripter {color: #000; font-weight:bold; background-color: #CCFFEE; }\
+	.ptChatScripter {color: #000; font-weight:bold; background-color: #99CC99; }\
     .ptChatGlobal {background-color: #CCCCFF}\
     .ptChatGlobalBold {font-weight:bold}\
     .ptChatGlobalAll {font-weight:bold;background-color: #CCCCFF}\
@@ -498,6 +498,7 @@ var ChatStuff = {
   
   e_iconClicked : function (name){
     var e = document.getElementById('mod_comm_input');
+    name = name.replace(/°°/g,"'");
     e.value = '@'+ name +' ';
   },
 
@@ -532,14 +533,16 @@ var ChatStuff = {
    	if (Options.chatbold && Options.chatglobal)
    		element_class = 'ptChatGlobalAll';
            } 
-		var scripters = ["7552815","10681588","1747877","2865067","9688786","10153485","15182839","1550996"];
-		var suid = m[0].substring(m[0].indexOf('Chat.viewProfile(this,')+22,m[0].indexOf(',false);return false;'));
-	if (scripters.indexOf(suid) >= 0)
-		element_class = 'ptChatScripter';
    	if (m[0].indexOf('My embassy has') >= 0 && Options.chatAttack)
      	element_class = 'ptChatAttack';
     if (m[0].indexOf('My wilderness at') >= 0 && Options.chatAttack)
        	element_class = 'ptChatAttack';
+
+	var scripters = ["7552815","10681588","1747877","2865067","9688786","10153485","15182839","1550996"];
+		var suid = m[0].substring(m[0].indexOf('Chat.viewProfile(this,')+22,m[0].indexOf(',false);return false;'));
+	if (scripters.indexOf(suid) >= 0)
+		element_class = 'ptChatScripter';
+		
        msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
            
      if (msg.indexOf('claimAllianceChat')<0){
@@ -548,6 +551,7 @@ var ChatStuff = {
        
      var m = /(Lord|Lady) (.*?)</im.exec(msg);
      if (m != null)
+       m[2] = m[2].replace(/\'/g,"°°");
        msg = msg.replace (/<img (.*?>)/img, '<A onclick=\"ptChatIconClicked(\''+ m[2] +'\')\"><img class=\"ptChatIcon\" $1</a>');
      
      if (whisp.indexOf('whispers to you') >= 0 && Options.enableWhisperAlert) {
@@ -1952,6 +1956,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     var t = Tabs.AllianceList;
     document.getElementById('ptplayErr').innerHTML='';
     var name = document.getElementById('allPlayName').value;
+    name = name.replace(/\'/g,"_");
     t.pName = name;
     if (name.length < 3){
       document.getElementById('ptplayErr').innerHTML = 'Enter at least 3 characters';
@@ -2002,6 +2007,8 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     document.getElementById('allListOut').innerHTML = m;
   },
   asName : '',
+  
+  
     eventPlayerUIDSubmit : function (){
     var t = Tabs.AllianceList;
     document.getElementById('ptplayErr').innerHTML='';
@@ -2009,11 +2016,13 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
 
 	var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
     params.uid = uid;
-    MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/getUserGeneralInfo.php" + unsafeWindow.g_ajaxsuffix, {
+    AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/getUserGeneralInfo.php" + unsafeWindow.g_ajaxsuffix, {
       method: "post",
       parameters: params,
-      onSuccess: function (rslt) {
-	  t.asName = rslt.userInfo[0].name;
+      onSuccess: function (transport) {
+      var rslt = eval("(" + transport.responseText + ")");
+	  if (rslt.ok) test = rslt.userInfo[0].name;
+	  else document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>Error ...Click again</center>';
       },
       onFailure: function (rslt) {
            document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>Searching ...Not Found</center>';
@@ -2023,7 +2032,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     t.pName = t.asName;
     document.getElementById('altInput').innerHTML = '';
     document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>Searching ...</center>';
-    t.fetchPlayerList (t.asName, t.eventGotPlayerList);
+    setTimeout(t.fetchPlayerList,500, test, t.eventGotPlayerList);
   },
 	
   clickedPlayerDetail : function (span, uid){
@@ -2954,10 +2963,10 @@ Tabs.Info = {
             .xtabHL { background:#ffffe8; border-width: 1px; border-style: none none none solid; padding-right:5px; padding-left:5px; margin-left:10px; }\
             .xtabL { background:none; border-width: 1px; border-style: none none none solid; padding-right:5px; padding-left: 5px; margin-left:10px; }\
             .xtabLine { padding:0px; spacing:0px; height:1px; border-color:black; border-width: 1px; border-style: none none solid none }</style>\
-        <DIV style="height:650px; max-height:650px; overflow-y:auto; overflow-x:hidden"><DIV class=ptstat>UNIT INFORMATION</div><TABLE align=center cellpadding=1 cellspacing=0>\
-        <TR align=center><TD class=xtab></td><TD class=xtabHL colspan=5><B>COST TO BUILD</b></td><TD class=xtabHL colspan=7><B>STATS</b></td><TD class=xtabHL><B>Upkeep</b></td></tr>\
-        <TR valign=bottom align=right><TD class=xtab></td><TD class=xtabHL>Food</td><TD class=xtabH>Wood</td><TD class=xtabH>Stone</td>\
-        <TD class=xtabH>Ore</td><TD class=xtabH>Pop</td><TD class=xtabHL>Might</td><TD class=xtabH>Life</td><TD class=xtabH>Atk</td><TD class=xtabH>Def</td><TD class=xtabH>Speed</td><TD class=xtabH>Range</td><TD class=xtabH>Load</td>\
+        <DIV style="height:650px; max-height:650px; overflow-y:auto; overflow-x:hidden"><DIV class=ptstat>'+unsafeWindow.g_js_strings.commonstr.troops+'</div><TABLE align=center cellpadding=1 cellspacing=0>\
+        <TR align=center><TD class=xtab></td><TD class=xtabHL colspan=5><B>'+unsafeWindow.g_js_strings.modal_marketplace.unitprice+'</b></td><TD class=xtabHL colspan=7><B>STATS</b></td><TD class=xtabHL><B>'+unsafeWindow.g_js_strings.commonstr.upkeep+'</b></td></tr>\
+        <TR valign=bottom align=right><TD class=xtab></td><TD class=xtabHL>'+unsafeWindow.g_js_strings.commonstr.food+'</td><TD class=xtabH>'+unsafeWindow.g_js_strings.commonstr.wood+'</td><TD class=xtabH>'+unsafeWindow.g_js_strings.commonstr.stone+'</td>\
+        <TD class=xtabH>'+unsafeWindow.g_js_strings.commonstr.ore+'</td><TD class=xtabH>'+unsafeWindow.g_js_strings.commonstr.population+'</td><TD class=xtabHL>Might</td><TD class=xtabH>Life</td><TD class=xtabH>Atk</td><TD class=xtabH>Def</td><TD class=xtabH>Speed</td><TD class=xtabH>Range</td><TD class=xtabH>Load</td>\
         <TD class=xtabHL>Food</td></tr>\
         <TR style="height:1px;"><TD style="padding:0px; spacing:0px; height:1px; border-color:black; border-width: 1px; border-style: none none solid none" colspan=14></td></tr>';
     for (ui=1; ui<13; ui++){
@@ -3343,61 +3352,65 @@ Tabs.Train = {
     t.cont = div;
     unsafeWindow.cancelTrain = t.butcancelTrain;
     unsafeWindow.cancelFort = t.butcancelFort;
-    
     s = "<DIV id=trainTopSelect>\
-      <DIV class=ptstat id=trainheader>Train troops and build wall/field defenses</div><DIV style='height:5px'></div><DIV class=ptentry>\
-      <DIV style='text-align:center; margin-bottom:5px;'>Select City: &nbsp; <span id=ptspeedcity></span></div>\
+      <DIV class=ptstat id=trainheader>"+unsafeWindow.g_js_strings.modal_openBarracks.trainttl+" & "+unsafeWindow.g_js_strings.modal_openWalls.builddefenses+"</div>\
+      <DIV style='height:5px'></div><DIV class=ptentry>\
+      <DIV style='text-align:center; margin-bottom:5px;'>"+unsafeWindow.g_js_strings.commonstr.city+": &nbsp; <span id=ptspeedcity></span></div>\
       <TABLE class=ptTab width=100%><TR valign=top><TD width=50%>\
-      <TABLE align=center><TR><TD align=right>Troop Type: </td><TD colspan=2>\
-      <SELECT id=ptttType>\
-        <option value='1'>Supply Troop</option>\
-        <option value='2'>Militiaman</option>\
-        <option value='3'>Scout</option>\
-        <option value='4'>Pikeman</option>\
-        <option value='5'>Swordsman</option>\
-        <option value='6'>Archer</option>\
-        <option value='7'>Cavalry</option>\
-        <option value='8'>Heavy Cavalry</option>\
-        <option value='9'>Supply Wagon</option>\
-        <option value='10'>Ballista</option>\
-        <option value='11'>Battering Ram</option>\
-        <option value='12'>Catapult</option>\
-      </select> &nbsp; (max <span id=ptttSpMax></span>)</td></tr>\
-      <TR><TD align=right># per slot: </td><TD><INPUT id='ptttInpPS' size=5 type='text' value='0'\></td>\
-        <TD><INPUT id='ptttButMaxPS' type=submit value='max'\> &nbsp; (max <span id=ptttSpMaxPS>0</span>)</td></tr>\
-      <TR><TD align=right># of slots: </td><TD><INPUT id='ptttInpSlots' size=2 type='text' value='1'\></td>\
-        <TD width=75%><INPUT id='ptttButMaxSlots' type=submit value='max'\> &nbsp; (max <span id=ptttSpMaxSlots>1</span>)</td></tr>\
-      <TR><TD align=right valign=top>Set Workers idle: </td><TD colspan=2><INPUT type=CHECKBOX id=chkPop"+ (Options.maxIdlePop?' CHECKED ':'') +"> \
-        <SPAN style='white-space:normal;'>Allows you to train more troops. May temporarily set idle population negative.</span>\
-		<br><INPUT type=CHECKBOX id=chkTut> \
-		<SELECT id=tutelage>\
-		<option value='36'>Lancelot's Tutelage</option>\
-        <option value='37'>Arthur's Tutelage</option>\
-        <option value='38'>Merlin's Tutelage</option>\
+      <TABLE align=center><TR><TD align=right>"+unsafeWindow.g_js_strings.modal_messages_viewdesertionreports.trooptypes+": </td><TD colspan=2>\
+      <SELECT id=ptttType>";
+     for (i=1;i<=12;i++){
+      	  s+='<option value='+i+'>'+unsafeWindow.unitcost['unt'+i][0]+'</option>';
+      }
+      s+="</select> &nbsp; ("+unsafeWindow.g_js_strings.commonstr.max+" <span id=ptttSpMax></span>)</td></tr>\
+      <TR><TD align=right>"+unsafeWindow.g_js_strings.modal_barracks_train.numtotrain+": </td><TD><INPUT id='ptttInpPS' size=5 type='text' value='0'\></td>\
+        <TD><INPUT id='ptttButMaxPS' type=submit value='"+unsafeWindow.g_js_strings.commonstr.max+"'\> &nbsp; (\
+        "+unsafeWindow.g_js_strings.commonstr.max+" <span id=ptttSpMaxPS>0</span>)</td></tr>\
+      <TR><TD align=right>"+unsafeWindow.buildingcost.bdg13[0]+": </td><TD><INPUT id='ptttInpSlots' size=2 type='text' value='1'\></td>\
+        <TD width=75%><INPUT id='ptttButMaxSlots' type=submit value='"+unsafeWindow.g_js_strings.commonstr.max+"'\> &nbsp;\
+        ("+unsafeWindow.g_js_strings.commonstr.max+" <span id=ptttSpMaxSlots>1</span>)</td></tr>\
+      <TR><TD align=right valign=top></td><TD colspan=2><INPUT type=CHECKBOX id=chkPop"+ (Options.maxIdlePop?' CHECKED ':'') +"> \
+        <SPAN style='white-space:normal;'>"+unsafeWindow.g_js_strings.commonstr.use +" "+ unsafeWindow.g_js_strings.commonstr.workers+"</span>\
+		<br><SELECT id=tutelage>\
+		<option value='0'><CENTER>--- "+unsafeWindow.g_js_strings.commonstr.speedup+" ---</center></option>\
+		<option value='36'>"+ unsafeWindow.itemlist.i36.name+"</option>\
+        <option value='37'>"+ unsafeWindow.itemlist.i37.name+"</option>\
+        <option value='38'>"+ unsafeWindow.itemlist.i38.name+"</option>\
 		</select>\
 		</td></tr>\
-      <TR><TD colspan=3 align=center><DIV style='height:10px'></div><INPUT id='ptttButDo' type=submit value='Train Troops'\></td></tr>\
+      <TR><TD colspan=3 align=center><DIV style='height:10px'></div><INPUT id='ptttButDo' type=submit value='"+unsafeWindow.g_js_strings.modal_openBarracks.trainttl+"'\
+      ></td></tr>\
       </table></td><TD width=20></td><TD style='border-left:solid 2px;' width=50% align=center>\
-      <TABLE align=center><TR><TD align=right>Defense Type: </td><TD colspan=2>\
+      <TABLE align=center><TR><TD align=right>"+unsafeWindow.g_js_strings.modal_openWalls.builddefenses+": </td><TD colspan=2>\
       <SELECT id=pttdType>\
-        <option value='53'>Crossbow</option>\
-        <option value='55'>Trebuchet</option>\
-        <option value='60'>Trap</option>\
-        <option value='61'>Caltrop</option>\
-        <option value='62'>Spiked Barrier</option>\
-      </select> &nbsp; (<span id=pttdSpMax></span>)</td></tr>\
-      <TR><TD align=right># per slot: </td><TD><INPUT id='pttdInpPS' size=5 type='text' value='0'\></td>\
-        <TD><INPUT id='pttdButMaxPS' type=submit value='max'\> &nbsp; (max <span id=pttdSpMaxPS>0</span>)</td></tr>\
-      <TR><TD align=right># of slots: </td><TD><INPUT id='pttdInpSlots' size=2 type='text' value='1'\></td>\
-        <TD width=75%><INPUT id='pttdButMaxSlots' type=submit value='max'\> &nbsp; (max <span id=pttdSpMaxSlots>1</span>)</td></tr>\
+        <option value='53'>"+unsafeWindow.fortcost.frt53[0]+"</option>\
+        <option value='55'>"+unsafeWindow.fortcost.frt55[0]+"</option>\
+        <option value='60'>"+unsafeWindow.fortcost.frt60[0]+"</option>\
+        <option value='61'>"+unsafeWindow.fortcost.frt61[0]+"</option>\
+        <option value='62'>"+unsafeWindow.fortcost.frt62[0]+"</option>\
+      </select> &nbsp; (<span id=pttdSpMax></span>)</td>\
+      <TR><TD align=right>"+unsafeWindow.g_js_strings.modal_walls_train.numdefbuild+": </td><TD><INPUT id='pttdInpPS' size=5 type='text' value='0'\></td>\
+        <TD><INPUT id='pttdButMaxPS' type=submit value='"+unsafeWindow.g_js_strings.commonstr.max+"'\> &nbsp; ("+unsafeWindow.g_js_strings.commonstr.max+"\
+         <span id=pttdSpMaxPS>0</span>)</td></tr>\
+      <TR><TD align=right>"+unsafeWindow.g_js_strings.commonstr.space+"("+unsafeWindow.buildingcost.bdg19[0]+"): </td>\
+      <TD><INPUT id='pttdInpSlots' size=2 type='text' value='1'\></td>\
+        <TD width=75%><INPUT id='pttdButMaxSlots' type=submit value='"+unsafeWindow.g_js_strings.commonstr.max+"'\>&nbsp; (\
+        "+unsafeWindow.g_js_strings.commonstr.max+" <span id=pttdSpMaxSlots>1</span>)</td></tr>\
       <TR align=center><TD colspan=3><SPAN id=pttdSpace></span></td></tr>\
-      <TR><TD colspan=3 align=center><DIV style='height:10px'></div><INPUT id='pttdButDo' type=submit value='Build Defenses'\></td></tr></table>\
+      <TR><TD colspan=3 align=center><DIV style='height:10px'>\
+      <SELECT id=siege>\
+      <option value='0'><CENTER>--- "+unsafeWindow.g_js_strings.commonstr.speedup+" ---</center></option>\
+      <option value='26'>"+ unsafeWindow.itemlist.i26.name+"</option>\
+      </select></div>\
+      <BR><INPUT id='pttdButDo' type=submit value='"+unsafeWindow.g_js_strings.modal_openWalls.builddefenses+"'\></td></tr></table>\
       </td></tr></table></div></div>\
       <TABLE align=center width=425 class=ptTab><TR><TD><div id=ptTrainStatus style='overflow-y:auto; max-height:78px; height: 78px;'></div></td></tr></table>\
       <div style='height: 330px; background: #e8ffe8'>\
       <TABLE width=100% class=ptTab><TR><TD colspan=3><DIV id=divSTtop></div></td></tr>\
-      <TR><TD width=50% style='padding-left:15px; padding-right:15px'><DIV style='text-align:center'><B>Troop Queue &nbsp; (<SPAN id=statTTtot></span>)</b><BR><HR></div><DIV id=divSTleft style='overflow-y: auto; height:210px; max-height:210px'></div></td>\
-        <TD width=50% style='padding-left:15px; padding-right:15px'><DIV style='text-align:center'><B>Defense Queue &nbsp; (<SPAN id=statDTtot></span>)</b><BR><HR></div><DIV id=divSTright style='overflow-y: auto; height:210px; max-height:210px'></div></td></tr>\
+      <TR><TD width=50% style='padding-left:15px; padding-right:15px'><DIV style='text-align:center'>\
+      <B>"+unsafeWindow.g_js_strings.commonstr.troops+" ("+unsafeWindow.g_js_strings.modal_openBarracks.trainingttl+")\
+        &nbsp; (<SPAN id=statTTtot></span>)</b><BR><HR></div><DIV id=divSTleft style='overflow-y: auto; height:210px; max-height:210px'></div></td>\
+        <TD width=50% style='padding-left:15px; padding-right:15px'><DIV style='text-align:center'><B>"+unsafeWindow.g_js_strings.modal_openWalls.defqueue+"&nbsp; (<SPAN\ id=statDTtot></span>)</b><BR><HR></div><DIV id=divSTright style='overflow-y: auto; height:210px; max-height:210px'></div></td></tr>\
       </div>";
     t.cont.innerHTML = s;
 
@@ -3536,19 +3549,19 @@ Tabs.Train = {
     var max = 9999999999;
     if ( (t.stats.food / uc[1]) < max){
       max = t.stats.food / uc[1];
-      t.limitingFactor = 'food';
+      t.limitingFactor = unsafeWindow.resourceinfo['rec1'];
     }
     if ( (t.stats.wood / uc[2]) < max){
       max = t.stats.wood / uc[2];
-      t.limitingFactor = 'wood';
+      t.limitingFactor = unsafeWindow.resourceinfo['rec2'];
     }
     if ( (t.stats.stone / uc[3]) < max){
       max = t.stats.stone / uc[3];
-      t.limitingFactor = 'stone';
+      t.limitingFactor = unsafeWindow.resourceinfo['rec3'];
     }
     if ( (t.stats.ore / uc[4]) < max){
       max = t.stats.ore / uc[4];
-      t.limitingFactor = 'ore';
+      t.limitingFactor = unsafeWindow.resourceinfo['rec4'];
     }
     if ( (t.stats.idlePop / uc[6]) < max){
       max = t.stats.idlePop / uc[6];
@@ -3578,6 +3591,7 @@ Tabs.Train = {
     }
 if (t.limitingFactor){
   document.getElementById('ptttr_'+ t.limitingFactor).className = 'boldRed';
+  document.getElementById('ptttr2_'+ t.limitingFactor).className = 'boldRed';
 }    
     t.updateTopTroops();
   },
@@ -3596,7 +3610,7 @@ if (t.limitingFactor){
       return; 
     }    
     if (perSlot<1){
-      t.divTrainStatus.innerHTML = '<FONT COLOR=#550000>Number of troops per slot must be greater than 0.</font>';
+      t.divTrainStatus.innerHTML = '<FONT COLOR=#550000>'+unsafeWindow.g_js_strings.commonstr.invalid +' ('+unsafeWindow.g_js_strings.modal_barracks_train.numtotrain+')</font>';
       return;
     }
     if (perSlot*numSlots > t.stats.MaxTrain){
@@ -3604,14 +3618,11 @@ if (t.limitingFactor){
       return;
     }
     if (numSlots<1 || numSlots>t.stats.barracks - t.stats.queued){
-      t.divTrainStatus.innerHTML = '<FONT COLOR=#550000>Invalid number of slots.</font>';
+      t.divTrainStatus.innerHTML = '<FONT COLOR=#550000>'+unsafeWindow.g_js_strings.commonstr.invalid +' ('+unsafeWindow.buildingcost.bdg13[0]+')</font>';
       return;
     }
 
-	if (document.getElementById ('chkTut').checked)
-		var tut = document.getElementById ('tutelage').value;
-	else
-		var tut = 0;
+	var tut = document.getElementById ('tutelage').value;
 		
     t.TDbutDo.disabled = true;
     t.TTbutDo.className = 'ptButCancel';
@@ -3632,15 +3643,17 @@ if (t.limitingFactor){
     var slots = parseInt(t.TDinpSlots.value, 10);
     if (isNaN(slots) || slots<0)
       slots = 0;
-    t.TDspMax.innerHTML = 'max:'+ t.stats.MaxDefTrain +'&nbsp; owned:'+ t.stats.defOwned;   
+    t.TDspMax.innerHTML = unsafeWindow.g_js_strings.commonstr.max+':'+ t.stats.MaxDefTrain +'&nbsp; '+unsafeWindow.g_js_strings.commonstr.owned+':'+ t.stats.defOwned;   
     t.TDspMaxSlots.innerHTML = t.stats.wallLevel-t.stats.Dqueued;
     if (slots<1)
       t.TDspMaxPS.innerHTML = 0;
     else
       t.TDspMaxPS.innerHTML = parseInt(t.stats.MaxDefTrain / slots);
 
-    t.TDspSpace.innerHTML = 'Wall level: <B>'+ t.stats.wallLevel +'</b><BR>Wall space: '+ (t.stats.wallSpaceUsed+t.stats.wallSpaceQueued)  +'/<B>'+ t.stats.wallSpace +'</b><BR>\
-        Field space: '+ (t.stats.fieldSpaceUsed+t.stats.fieldSpaceQueued) +'/<B>'+ t.stats.fieldSpace +'</b>';
+    t.TDspSpace.innerHTML = unsafeWindow.buildingcost.bdg19[0]+' ('+unsafeWindow.g_js_strings.guardian.cl1+'): <B>'+ t.stats.wallLevel +'\
+    </b><BR>'+unsafeWindow.g_js_strings.modal_openWalls.walldef+': \
+    '+ (t.stats.wallSpaceUsed+t.stats.wallSpaceQueued)  +'/<B>'+ t.stats.wallSpace +'</b><BR>\
+        '+unsafeWindow.g_js_strings.modal_openWalls.fielddef+': '+ (t.stats.fieldSpaceUsed+t.stats.fieldSpaceQueued) +'/<B>'+ t.stats.fieldSpace +'</b>';
   },
 
   changeDefSelect : function (){
@@ -3717,21 +3730,22 @@ if (t.limitingFactor){
     
     t.displayCityStats ();
     if (t.running){
-      t.stopTraining('<SPAN class=boldRed>Training cancelled by user</span>');
+      t.stopTraining('<SPAN class=boldRed>'+unsafeWindow.g_js_strings.commonstr.cancelled+'</span>');
       return; 
     }    
     if (perSlot<1){
-      t.divTrainStatus.innerHTML = '<FONT COLOR=#550000>Number of units per slot must be greater than 0.</font>';
+      //t.divTrainStatus.innerHTML = '<FONT COLOR=#550000>Number of units per slot must be greater than 0.</font>';
       return;
     }
     if (perSlot*numSlots > t.stats.MaxDefTrain){
-      t.divTrainStatus.innerHTML = '<FONT COLOR=#550000>Can\'t train that many unit (max is '+ t.stats.MaxDefTrain +' total)</font>';
+      t.divTrainStatus.innerHTML = '<FONT COLOR=#550000>'+ unsafeWindow.g_js_strings.modal_attack.maxtroops +': '+ t.stats.MaxDefTrain +'</font>';
       return;
     }
     if (numSlots<1 || numSlots > t.stats.wallLevel-t.stats.Dqueued){
-      t.divTrainStatus.innerHTML = '<FONT COLOR=#550000>Invalid number of slots.</font>';
+        t.divTrainStatus.innerHTML = '<FONT COLOR=#550000>'+unsafeWindow.g_js_strings.commonstr.invalid+' ()</font>';
       return;
     }
+    var siege = document.getElementById ('siege').value;
     t.TTbutDo.disabled = true;
     t.TDbutDo.className = 'ptButCancel';
     t.TDbutDo.value = 'CANCEL';
@@ -3740,10 +3754,10 @@ if (t.limitingFactor){
       que.push (['T', unitId, parseInt (perSlot)]);
     t.divTrainStatus.innerHTML = '';
     t.running = true;
-    t.doDefQueue (cityId, que);
+    t.doDefQueue (cityId, siege, que);
   },
 
-  doDefQueue : function (cityId, que, errMsg){
+  doDefQueue : function (cityId, siege, que, errMsg){
     var t = Tabs.Train;
     clearTimeout (t.trainTimer);
     try {
@@ -3759,9 +3773,9 @@ if (t.limitingFactor){
       }
       if (cmd[0] == 'T'){
         t.dispTrainStatus ('Training '+ cmd[2] +' '+  fortNamesShort[cmd[1]] +' at '+ Cities.byID[cityId].name +' ('+ que.length +' slots remaining)<BR>');
-        doDefTrain ( cityId, cmd[1], cmd[2], 
+        doDefTrain ( cityId, siege, cmd[1], cmd[2], 
           function(errMsg){
-            t.trainTimer = setTimeout(function (){Tabs.Train.doDefQueue(cityId, que, errMsg);}, (Math.random()*3500)+1500);
+            t.trainTimer = setTimeout(function (){Tabs.Train.doDefQueue(cityId, siege, que, errMsg);}, (Math.random()*3500)+1500);
           } );
       }
     } catch (err) {
@@ -3807,26 +3821,16 @@ if (t.limitingFactor){
     t.stats.barracks = getCityBuilding (cityId, 13).count;
     var m = '<CENTER><B>'+ Cities.byID[cityId].name +' &nbsp; ('+ Cities.byID[cityId].x +','+ Cities.byID[cityId].y +')</b></center><HR>';
 
-m += '<TABLE class=ptTab width=100%><TR align=center>\
-        <TD width=8%><B>Supply:</b></td><TD width=8%><B>Militia:</b></td><TD width=8%><B>Scout:</b></td>\
-        <TD width=8%><B>Pike:</b></td><TD width=8%><B>Sword:</b></td><TD width=8%><B>Archer:</b></td>\
-        <TD width=8%><B>Cav:</b></td><TD width=8%><B>Heavy Cav:</b></td><TD width=8%><B>Wagon:</b></td>\
-        <TD width=8%><B>Ballista:</b></td><TD width=8%><B>Ram:</b></td><TD width=8%><B>Catapult:</b></td><tr>';
-
- m += '<TR align=center><TD width=8%>'+addCommas(Seed.units['city'+cityId]['unt1'])+'</td><TD width=8%>'+addCommas(Seed.units['city'+cityId]['unt2'])+
- '<TD width=8%>'+addCommas(Seed.units['city'+cityId]['unt3'])+'</td><TD width=8%>'+addCommas(Seed.units['city'+cityId]['unt4'])+
- '<TD width=8%>'+addCommas(Seed.units['city'+cityId]['unt5'])+'</td><TD width=8%>'+addCommas(Seed.units['city'+cityId]['unt6'])+
- '<TD width=8%>'+addCommas(Seed.units['city'+cityId]['unt7'])+'</td><TD width=8%>'+addCommas(Seed.units['city'+cityId]['unt8'])+
- '<TD width=8%>'+addCommas(Seed.units['city'+cityId]['unt9'])+'</td><TD width=8%>'+addCommas(Seed.units['city'+cityId]['unt10'])+
- '<TD width=8%>'+addCommas(Seed.units['city'+cityId]['unt11'])+'</td><TD width=8%>'+addCommas(Seed.units['city'+cityId]['unt12'])+'</td><tr></table>';
-
-    m += '<TABLE class=ptTab width=100%><TR align=center>\
-        <TD width=18%><SPAN id=ptttr_food><B>Food:</b><BR>'+ addCommasInt(t.stats.food) +'</span></td>\
-        <TD width=16%><SPAN id=ptttr_wood><B>Wood:</b><BR>'+ addCommasInt(t.stats.wood) +'</span></td>\
-        <TD width=16%><SPAN id=ptttr_ore><B>Ore:</b><BR>'+ addCommasInt(t.stats.ore) +'</span></td>\
-        <TD width=16%><SPAN id=ptttr_gold><B>Stone:</b><BR>'+ addCommasInt(t.stats.stone) +'</span></td>\
-        <TD width=16%><SPAN id=ptttr_gold><B>Gold:</b><BR>'+ addCommasInt(t.stats.gold) +'</span></td>\
-        <TD width=16%><SPAN id=ptttr_pop><B>Idle Pop:</b><BR>'+ addCommasInt(t.stats.idlePop) +'</span></td></tr></table><BR>';
+    m += '<TABLE class=ptTab width=100%><TR align=center>';
+    for(i=1;i<=6;i++){
+    	m += '<TR><TD width=75px>'+unsafeWindow.unitcost['unt'+i][0]+'</td><TD width=60px>'+addCommas(parseInt(Seed.units['city'+cityId]['unt'+i]))+'</td>';
+    	m += '<TD width=75px>'+unsafeWindow.unitcost['unt'+(i+6)][0]+'</td><TD width=60px>'+addCommas(parseInt(Seed.units['city'+cityId]['unt'+(i+6)]))+'</td>';
+    	if (i<=4) m += '<TD width=75px><SPAN id=ptttr_'+unsafeWindow.resourceinfo['rec'+i]+'>'+unsafeWindow.resourceinfo['rec'+i]+'</span></td><TD width=60px><SPAN id=ptttr2_'+unsafeWindow.resourceinfo['rec'+i]+'>'+addCommas(parseInt(Seed.resources['city'+cityId]['rec'+i][0]/3600))+'</span></td>';
+    	if (i==5) m += '<TD width=75px><SPAN id=ptttr_gold>'+unsafeWindow.resourceinfo['rec0']+'</span></td><TD width=60px><SPAN id=ptttr2_gold>'+addCommas(Seed.citystats['city'+cityId].gold[0])+'</span></td>';
+    	if (i==6) m += '<TD width=75px><SPAN id=ptttr_pop>'+unsafeWindow.g_js_strings.showPopTooltip.idlepop+'</td><TD width=60px><SPAN id=ptttr2_pop>'+addCommas(t.stats.idlePop)+'</td>';
+    	m+='</tr>';
+    }
+    m+='</table>';
     document.getElementById ('divSTtop').innerHTML = m;
     
 // troop queue .... 
@@ -3873,11 +3877,11 @@ m += '<TABLE class=ptTab width=100%><TR align=center>\
       m += '</table>';
       document.getElementById ('divSTleft').innerHTML = m;
     }
-    m = t.stats.barracks +' barracks';
-    if (t.stats.queued > 0)
-      m += ', '+ t.stats.queued +' slots';
+    m = t.stats.queued +' ' + unsafeWindow.g_js_strings.commonstr.oftx +' ';
+    if (t.stats.queued >= 0)
+      m += t.stats.barracks;
     if (totTime > 0)
-      m += ', '+ unsafeWindow.timestr(totTime);
+      m += ' - '+ unsafeWindow.g_js_strings.commonstr.time + ': '+ unsafeWindow.timestr(totTime);
     document.getElementById ('statTTtot').innerHTML = m;
     
 // defense queue ....
@@ -4030,8 +4034,8 @@ m += '<TABLE class=ptTab width=100%><TR align=center>\
     t.dispTrainStatus (msg +'<BR>');
     t.TDbutDo.disabled = false;
     t.TTbutDo.disabled = false;
-    t.TTbutDo.value = 'Train Troops';
-    t.TDbutDo.value = 'Build Defenses';
+    t.TTbutDo.value = unsafeWindow.g_js_strings.modal_openBarracks.trainttl;
+    t.TDbutDo.value = unsafeWindow.g_js_strings.modal_openWalls.builddefenses;
     t.TTbutDo.className = '';
     t.TDbutDo.className = '';
     t.running = false;
@@ -4049,11 +4053,11 @@ m += '<TABLE class=ptTab width=100%><TR align=center>\
       }
       var cmd = que.shift();
       if (!cmd){
-        t.stopTraining ('<B>Done queueing troops.</b>');
+        t.stopTraining ('<B>'+unsafeWindow.g_js_strings.update_queue.troopqueue+'</b>');
         return;
       }
       if (cmd[0] == 'T'){
-        t.dispTrainStatus ('Training '+ cmd[2] +' '+  unsafeWindow.unitcost['unt'+cmd[1]][0] +' at '+ Cities.byID[cityId].name +' ('+ que.length +' slots remaining)<BR>');
+        t.dispTrainStatus (unsafeWindow.g_js_strings.modal_barracks_train.starttraining+': '+ cmd[2] +' '+  unsafeWindow.unitcost['unt'+cmd[1]][0] +' at '+ Cities.byID[cityId].name +' ('+ que.length +' slots remaining)<BR>');
         doTrain (cityId, tut, cmd[1], cmd[2], 
           function(errMsg){
             if (t.running)
@@ -4063,7 +4067,7 @@ m += '<TABLE class=ptTab width=100%><TR align=center>\
       }
     } catch (err) {
       logit (inspect (err, 8, 1));
-      t.stopTraining  ('<SPAN class=boldRed>PROGRAM ERROR: '+ err.message +'</span>');
+      t.stopTraining  ('<SPAN class=boldRed>'+unsafeWindow.g_js_strings.barbarian.erroroccured +' '+ err.message +'</span>');
     }
   },
 }
@@ -4263,11 +4267,9 @@ if (TEST_WIDE)
 		for (var i=0; i<5; i++)
           rows[i][Cities.numCities+1] = 0;
 	  }
-      str += _row ('Gold', rows[0]);
-      str += _row ('Food', rows[1]);
-      str += _row ('Wood', rows[2]);
-      str += _row ('Stone', rows[3]);
-      str += _row ('Ore', rows[4]);
+	  for (rec=0;rec<=4;rec++){
+	  	 str += _row (unsafeWindow.resourceinfo['rec' + rec], rows[rec]);
+	  }
       str += '<TR><TD colspan=12><BR></td></tr>';
 	  for (r=1; r<13; r++){
         rows[r] = [];
@@ -4302,18 +4304,10 @@ if (TEST_WIDE)
         }
       }
       rownum = 0;
-      str += _row ('SupTrp', rows[1]);
-      str += _row ('Militia', rows[2]);
-      str += _row ('Scout', rows[3]);
-      str += _row ('Pike', rows[4]);
-      str += _row ('Sword', rows[5]);
-      str += _row ('Archer', rows[6]);
-      str += _row ('Cavalry', rows[7]);
-      str += _row ('Heavy', rows[8]);
-      str += _row ('Wagon', rows[9]);
-      str += _row ('Ballista', rows[10]);
-      str += _row ('Ram', rows[11]);
-      str += _row ('Catapult', rows[12]);
+            
+      for (unt=0;unt<12;unt++) {
+      		str += _row (unsafeWindow.unitcost['unt' + (unt+1)][0], rows[unt+1]);
+      }
       str += '<TR><TD colspan=12><BR></td></tr>';
       
       row = [];
@@ -4325,7 +4319,7 @@ if (TEST_WIDE)
         row[0-1] = parseInt(row[0]) + parseInt(rp[1] - usage);
       }
      
-      str += _row ('Food +/-', row);
+      str += _row (unsafeWindow.g_js_strings.commonstr.food+'+/-', row);
       
       for(i=0; i<Cities.numCities; i++) {
         if (row[i] >= 0)
@@ -4343,7 +4337,7 @@ if (TEST_WIDE)
         }
       }
       
-      str += _row ('Food left', row, true);
+      str += _row (unsafeWindow.g_js_strings.showCityTooltip.foodsupply, row, true);
       str += '<TR><TD><BR></td></tr>';
       
       row = [];
@@ -4360,7 +4354,7 @@ if (TEST_WIDE)
         else
           row[i] = totWilds +'/'+ castle;
       }
-      str += _row ('#Wilds', row, true);
+      str += _row (unsafeWindow.g_js_strings.showMyWilderness.conqueredwild, row, true);
   
       row = [];
       for(i=0; i<Cities.numCities; i++) {
@@ -4370,7 +4364,7 @@ if (TEST_WIDE)
           ++totKnights;
         row[i] = totKnights;
       }
-      str += _row ('#Knights', row, true);
+      str += _row (unsafeWindow.g_js_strings.openKnights.myknights, row, true);
   
       var now = unixTime();
       var row = [];
@@ -4386,7 +4380,7 @@ if (TEST_WIDE)
         else
           row[i] = timestr(totTime);
       }
-      str += _row ('TroopQ', row, true);
+      str += _row (unsafeWindow.g_js_strings.commonstr.troops, row, true);
       
       var row = [];
       for(i=0; i<Cities.numCities; i++) {
@@ -4403,7 +4397,7 @@ if (TEST_WIDE)
         else
           row[i] = timestr(totTime);
       }    
-      str += _row ('WallQue', row, true);
+      str += _row (unsafeWindow.g_js_strings.modal_openWalls.defqueue, row, true);
       str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><BR><INPUT type=CHECKBOX id=ptoverOriginal'+ (Options.includeCity?' CHECKED':'') +'>Show Troops in City</td></tr>';
       str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=idCheck'+ (Options.includeMarching?' CHECKED':'') +'>Show Marching Troops/Resources</td></tr>';
       str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=ptoverIncTraining'+ (Options.includeTraining?' CHECKED':'') +'>Show troops training in city</td></tr>';
@@ -4511,42 +4505,6 @@ Tabs.Builds = {
 	var metalalloys = 0;
 	var logging = 0;
 	var poisonededge = 0;
-	
-	var buildings = {0:'Castle',
-				  1:'Farm',
-				  2:'Sawmill',
-				  3:'Quarry',
-				  4:'Mine',
-				  5:'Cottage',
-				  6:'Tavern',
-				  7:'Knights Hall',
-				  8:'Embassy',
-				  9:'Storehouse',
-				  10:'Market',
-				  11:'Alchemy Lab',
-				  12:'Rally Point',
-				  13:'Barracks',
-				  14:'Watch Tower',
-				  15:'Blacksmith',
-				  16:'Workshop',
-				  17:'Stable',
-				  18:'Relief Station',
-				  19:'Wall'};
-	var Research = {1:'Fertilizer',
-				  2:'Logging',
-				  3:'Stoneworking',
-				  4:'Mining',
-				  5:'Geometry',
-				  6:'Eagle Eyes',
-				  8:'Poisoned Edge',
-				  9:'Metal Alloys',
-				  10:'Featherweight Powder',
-				  11:'Magical Mapping',
-				  12:'Alloy Horseshoes',
-				  13:'Fletching',
-				  14:'Shrinking Powder',
-				  15:'Healing Potions',
-				  16:"Giant's Strength"};
 	var WallSpace = {1:1000,
 				  2:3000,
 				  3:6000,
@@ -4597,7 +4555,7 @@ Tabs.Builds = {
     	city = 'city'+Seed.cities[i][0];
     	m+='<TD width=79>';
     	if (Seed.queue_con[city][0] != undefined) {
-    		m+=buildings[Seed.queue_con[city][0][0]];
+    		m+=unsafeWindow.buildingcost['bdg' + Seed.queue_con[city][0][0]][0];
     		m+=' ('+Seed.queue_con[city][0][1]+')';
     		m+='<br>'+ timestr((Seed.queue_con[city][0][4] - unixTime()),true);
     	}
@@ -4609,14 +4567,14 @@ Tabs.Builds = {
     	city = 'city'+Seed.cities[i][0];
     	m+='<TD width=79>';
     	if (Seed.queue_tch[city][0] != undefined) {
-    		m+=Research[Seed.queue_tch[city][0][0]];
+    		m+=unsafeWindow.techcost['tch' + Seed.queue_tch[city][0][0]][0];
     		m+=' ('+Seed.queue_tch[city][0][1]+')';
     		m+='<br>'+ timestr((Seed.queue_tch[city][0][3] - unixTime()),true);
     	}
     	m+='</td>';		
     }
     m+='</tr></table><BR><TABLE class=ptBuilds border=1px cellpadding=5 cellspacing=0>';
-    m+='<TR valign=top align=right><TD width=85>CrossBows</td>';
+    m+='<TR valign=top align=right><TD width=85>'+unsafeWindow.fortcost['frt53'][0]+'</td>';
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
@@ -4633,7 +4591,7 @@ Tabs.Builds = {
    			m+='</td>';
    		} 		
     }
-    m+='</tr><TR valign=top align=right><TD width=85>Trebuchet</td>';
+    m+='</tr><TR valign=top align=right><TD width=85>'+unsafeWindow.fortcost['frt55'][0]+'</td>';
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
@@ -4664,7 +4622,7 @@ Tabs.Builds = {
     	m+= build+'</font>';
     	m+= '/' + max +'</td>';
     }
-    m+='</tr><TR valign=top align=right><TD width=85>Traps</td>';
+    m+='</tr><TR valign=top align=right><TD width=85>'+unsafeWindow.fortcost['frt60'][0]+'</td>';
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
@@ -4681,7 +4639,7 @@ Tabs.Builds = {
     			m+='</td>';
     	} 	
     }
-    m+='</tr><TR valign=top align=right><TD width=85>Caltrops</td>';
+    m+='</tr><TR valign=top align=right><TD width=85>'+unsafeWindow.fortcost['frt61'][0]+'</td>';
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
@@ -4697,7 +4655,7 @@ Tabs.Builds = {
     			m+='</td>';
     	} 	
     }
-    m+='</tr><TR valign=top align=right><TD>Spiked Barrier</td>';
+    m+='</tr><TR valign=top align=right><TD>'+unsafeWindow.fortcost['frt62'][0]+'</td>';
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
@@ -4758,7 +4716,7 @@ Tabs.Builds = {
     }
     m+='</tr>';
     for (b=0;b<20;b++){
-    	m+='<TR valign=top align=right><TD width=85>'+buildings[b]+'</td>';
+    	m+='<TR valign=top align=right><TD width=85>'+unsafeWindow.buildingcost['bdg' + b][0]+'</td>';
 	    for (c=0;c<Seed.cities.length;c++){
 	    	m+='<TD style="width:79px; max-width:79px; word-wrap: break-word;">';
 	    		city= 'city'+Seed.cities[c][0];
@@ -4797,13 +4755,12 @@ Tabs.Builds = {
 	}
 	
     m+='</tr></table><BR></table><BR><TABLE class=ptBuilds  border=1px cellpadding=2 cellspacing=0><TR valign=top align=left>';
-    for (i in Research) {
-    	select = 'tch'+i;
-    	m+='<TD border=1px style="width:150px;">'+Research[i]+'</td><TD align=center style="width:50px max-width:150px;">';
-    	if (Seed.tech[select] >=9) m+='<FONT COLOR= "669900">';
-    	if (Seed.tech[select] ==0) m+='<FONT COLOR= "CC0000">';
-    	m+=Seed.tech[select];
-    	if (Seed.tech[select] >=9 || Seed.tech[select] ==0) m+='</font>';
+    for (i in unsafeWindow.techcost) {
+    	m+='<TD border=1px style="width:150px;">'+unsafeWindow.techcost[i][0]+'</td><TD align=center style="width:50px max-width:150px;">';
+    	if (Seed.tech[i] >=9) m+='<FONT COLOR= "669900">';
+    	if (Seed.tech[i] ==0) m+='<FONT COLOR= "CC0000">';
+    	m+=Seed.tech[i];
+    	if (Seed.tech[i] >=9 || Seed.tech[i] ==0) m+='</font>';
     	if (t.showReq) {
     		for(z=0; z<Seed.cities.length; z++) {
 	    		city = 'city'+Seed.cities[z][0];
@@ -4824,75 +4781,75 @@ Tabs.Builds = {
 	    	m+='<FONT COLOR= "CC0000">';
     		switch (i) {
     			case '1': 
-    				if (alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab+ '('+ (Seed.tech[select]) +')';
-    				if (farm < Seed.tech[select]) m+='<BR>Farm '+ farm +'('+ (Seed.tech[select]+1) +')</td>';
+    				if (alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab+ '('+ (Seed.tech[i]) +')';
+    				if (farm < Seed.tech[i]) m+='<BR>Farm '+ farm +'('+ (Seed.tech[i]+1) +')</td>';
     				break;
     			case '2': 
-    				if (alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab+ '('+ (Seed.tech[select]) +')';
-    				if (sawmill < Seed.tech[select]) m+='<BR>Sawmill '+ sawmill +'('+ (Seed.tech[select]) +')';
+    				if (alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab+ '('+ (Seed.tech[i]) +')';
+    				if (sawmill < Seed.tech[i]) m+='<BR>Sawmill '+ sawmill +'('+ (Seed.tech[i]) +')';
     				break;
     			case '3': 
-    				if (alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab+ '('+ (Seed.tech[select]) +')';
-    				if (quarry < Seed.tech[select]) m+='<BR>Quarry '+ quarry +'('+ (Seed.tech[select]) +')</td>';
+    				if (alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab+ '('+ (Seed.tech[i]) +')';
+    				if (quarry < Seed.tech[i]) m+='<BR>Quarry '+ quarry +'('+ (Seed.tech[i]) +')</td>';
     				break;
     			case '4': 
-    				if (alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab+ '('+ (Seed.tech[select]) +')';
-    				if (mine < Seed.tech[select]) m+='<BR>Mine '+ mine +'('+ (Seed.tech[select]) +')';
+    				if (alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab+ '('+ (Seed.tech[i]) +')';
+    				if (mine < Seed.tech[i]) m+='<BR>Mine '+ mine +'('+ (Seed.tech[i]) +')';
     				break;
     			case '5': 
     				if (alchemylab < 3) m+='<BR>Alchemy Lab '+ alchemylab +'(3)';
-    				if (alchemylab >= 3 && alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[select]) +')';
-    				if (workshop < Seed.tech[select]) m+='<BR>Workshop ' + workshop +'('+ (Seed.tech[select]) +')';
+    				if (alchemylab >= 3 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
+    				if (workshop < Seed.tech[i]) m+='<BR>Workshop ' + workshop +'('+ (Seed.tech[i]) +')';
     				if (stoneworking < 2) m+='<BR>Stoneworking '+ stoneworking +'(2)';
     				break;
     			case '6': 
     				if (alchemylab < 3) m+='<BR>Alchemy Lab '+ alchemylab +'(3)';
-    				if (alchemylab >= 3 && alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[select]) +')';
+    				if (alchemylab >= 3 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
     				break;	
     			case '8': 
     				if (alchemylab < 2) m+='<BR>Alchemy Lab '+ alchemylab +'(2)';
-    				if (alchemylab >= 2 && alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[select]) +')';
+    				if (alchemylab >= 2 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
     				if (barracks < 2) m+='<BR>Barracks '+ barracks +'(2)';
     				break;		
     			case '9': 
     				if (alchemylab < 3) m+='<BR>Alchemy Lab '+ alchemylab +'(3)';
-    				if (alchemylab >= 3 && alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[select]) +')';
-    				if (blacksmith < Seed.tech[select]) m+='<BR>Blacksmith '+ blacksmith+'('+ (Seed.tech[select]) +')';
-    				if (mining < Seed.tech[select]) m+='<BR>Mining '+ mining +'('+ (Seed.tech[select]) +')';
+    				if (alchemylab >= 3 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
+    				if (blacksmith < Seed.tech[i]) m+='<BR>Blacksmith '+ blacksmith+'('+ (Seed.tech[i]) +')';
+    				if (mining < Seed.tech[i]) m+='<BR>Mining '+ mining +'('+ (Seed.tech[i]) +')';
     				break;
     			case '10': 
     				if (alchemylab < 4) m+='<BR>Alchemy Lab '+ alchemylab +'(4)';
-    				if (alchemylab >= 4 && alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[select]) +')';
+    				if (alchemylab >= 4 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
     				break;
     			case '11': 
     				if (alchemylab < 4) m+='<BR>Alchemy Lab '+ alchemylab +'(4)';
-    				if (alchemylab >= 4 && alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[select]) +')';
+    				if (alchemylab >= 4 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
     				break;
     			case '12': 
     				if (alchemylab < 5) m+='<BR>Alchemy Lab '+ alchemylab +'(5)';
-    				if (alchemylab >= 5 && alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[select]) +')';
-    				if (stable < Seed.tech[select]) m+='<BR>Stable '+ stable +'('+ (Seed.tech[select]+1) +')';
-    				if (metalalloys < Seed.tech[select]) m+='<BR>Metal Alloys '+ metalalloys +'('+ (Seed.tech[select]+1) +')';
+    				if (alchemylab >= 5 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
+    				if (stable < Seed.tech[i]) m+='<BR>Stable '+ stable +'('+ (Seed.tech[i]+1) +')';
+    				if (metalalloys < Seed.tech[i]) m+='<BR>Metal Alloys '+ metalalloys +'('+ (Seed.tech[i]+1) +')';
     				break;
     			case '13': 
     				if (alchemylab < 4) m+='<BR>Alchemy Lab '+ alchemylab +'(4)';
-    				if (alchemylab >= 4 && alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[select]) +')';
+    				if (alchemylab >= 4 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
     				if (logging < 4) m+='<BR>Logging '+ logging +'(4)';
     				break;
     			case '14': 
     				if (alchemylab < 6) m+='<BR>Alchemy Lab '+ alchemylab +'(6)';
-    				if (alchemylab >= 6 && alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[select]) +')';
-    				if (storehouse < Seed.tech[select]) m+='<BR>Storehouse '+ storehouse +'('+ (Seed.tech[select]) +')';
+    				if (alchemylab >= 6 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
+    				if (storehouse < Seed.tech[i]) m+='<BR>Storehouse '+ storehouse +'('+ (Seed.tech[i]) +')';
     				if (logging < 3) m+='<BR>Logging '+ logging+'(3)';
     				break;
     			case '15': 
     				if (alchemylab < 6) m+='<BR>Alchemy Lab '+ alchemylab +'(6)';
-    				if (alchemylab >= 6 && alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[select]) +')';
+    				if (alchemylab >= 6 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
     				if (featherweightpowder  < 3) m+='<BR>Featherweight Powder  '+ featherweightpowder +'(3)';
     				break;
     			case '16': 
     				if (alchemylab < 5) m+='<BR>Alchemy Lab '+ alchemylab +'(5)';
-    				if (alchemylab >= 5 && alchemylab < Seed.tech[select]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[select]) +')';
+    				if (alchemylab >= 5 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
     				if (logging  < 5) m+='<BR>Logging '+ logging +'(5)';
     				if (geometry  < 2) m+='<BR>Geometry  '+ geometry +'(2)';
     				break;
@@ -4943,7 +4900,7 @@ Tabs.msg = {
 	    
     var m = '<DIV class=ptstat>Search inbox or alliance reports</div>';
     m += '<DIV class=ptentry style="height:30px"><table>';
-    m += '<TABLE width=95% class=ptTab><TD>Search in: <select id="searchSelect"><option value="Reports">Reports</options>';
+    m += '<TABLE width=95% class=ptTab><TD>Search in: <select id="searchSelect"><option value="Reports">Reports</option>';
     m += '<option value="inbox">Inbox</option>';
     m += '<option value="outbox">Outbox</option></select></td>';
     
@@ -4962,7 +4919,7 @@ Tabs.msg = {
     m += '<option value=100> 100 </option>'
     m += '<option value=101> All </option></select></td>'
     
-    m += '<TD>Search in: <select disabled=true id="searchForSelect"><option value="Subject">Subject</options>';
+    m += '<TD>Search in: <select disabled=true id="searchForSelect"><option value="Subject">Subject</option>';
     m += '<option value="User">User</option></select></td>';
     
     m += '<TD>Search for:<INPUT id=searchString disabled=true type=text size=10 maxlength=25 value=""</td>';
@@ -5318,7 +5275,7 @@ Tabs.Alliance = {
     var t = Tabs.Alliance;      
     t.myDiv = div;
      t.myDiv.style.overflowY = 'scroll';
-     div.style.maxHeight = '500px';
+     t.myDiv.style.maxHeight = '750px';
      t.totalmembers=0;
      t.alliancemembers=[];	
      
@@ -5326,7 +5283,7 @@ Tabs.Alliance = {
     
     var m =  '<DIV class=ptstat>ALLIANCE FUNCTIONS</div><TABLE align=center cellpadding=1 cellspacing=0></table>';
     
-    m +='<TABLE class=ptTab><TD width=200px>List Alliance Members</td><TD>Sort by: <select id="searchAlli"><option value="name">Name</options>';
+    m +='<TABLE class=ptTab><TD width=200px>List Alliance Members</td><TD>Sort by: <select id="searchAlli"><option value="name">Name</option>';
     m += '<option value="might">Might</option>';
     m += '<option value="login">Last Login</option>';
     m += '<option value="cities">Cities</option>';
@@ -5364,7 +5321,7 @@ Tabs.Alliance = {
     document.getElementById('aldiplo').addEventListener('click', function(){t.paintDiplomacy();}, false);  
     
      
-  window.addEventListener('unload', t.onUnload, false);
+  //window.addEventListener('unload', t.onUnload, false);
   },
   
   
@@ -5586,9 +5543,9 @@ Tabs.Marches = {
     unsafeWindow.cancelMarch = t.butcancelmarch;
     
     t.cont = div;
-    t.cont.innerHTML = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubA type=submit value=Incoming></td>\
-          <TD><INPUT class=pbSubtab ID=ptmrchSubM type=submit value=Marches></td>\
-          <TD><INPUT class=pbSubtab ID=ptmrchSubR type=submit value=Reinforcements></td></tr></table><HR class=ptThin>\
+    t.cont.innerHTML = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubA type=submit value='+unsafeWindow.g_js_strings.attack_viewimpending_view.incomingtroops+'></td>\
+          <TD><INPUT class=pbSubtab ID=ptmrchSubM type=submit value='+unsafeWindow.g_js_strings.commonstr.marching+'></td>\
+          <TD><INPUT class=pbSubtab ID=ptmrchSubR type=submit value='+unsafeWindow.g_js_strings.commonstr.reinforced+'></td></tr></table><HR class=ptThin>\
       <DIV id=ptMarchOutput style="margin-top:10px; background-color:white; height:680px; overflow:scroll;"></div>';
             
     t.marchDiv = document.getElementById('ptMarchOutput');
@@ -5681,32 +5638,32 @@ Tabs.Marches = {
 				if (marchType == 2 && marchStatus == 2) marchType = 102;
 				
 				switch (marchType) {
-					case 1: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status="Transport";break;
-					case 2: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status="Reinforce";break;
-					case 3: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/scouting.jpg";status="Scout";break;
-					case 4: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status="Attack";break;
-					case 9: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status="Attack";break;
-					case 5: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status="Reassign";break;
-					case 100: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status="Returning";break;
-					case 102: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status="Encamped";break;
+					case 1: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status=unsafeWindow.g_js_strings.commonstr.transport;break;
+					case 2: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status=unsafeWindow.g_js_strings.commonstr.reinforce	;break;
+					case 3: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/scouting.jpg";status=unsafeWindow.g_js_strings.commonstr.scout;break;
+					case 4: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status=unsafeWindow.g_js_strings.commonstr.attack;break;
+					case 9: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status=unsafeWindow.g_js_strings.commonstr.attack;break;
+					case 5: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status=unsafeWindow.g_js_strings.commonstr.reassign;break;
+					case 100: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status=unsafeWindow.g_js_strings.commonstr.returning;break;
+					case 102: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status=unsafeWindow.g_js_strings.commonstr.encamped;break;
 				} 
 				
-				if(status == 'Encamped')
+				if(status == unsafeWindow.g_js_strings.commonstr.encamped)
 					z += '<TD width="10px"><A onclick="r8x6Home('+ Seed.queue_atkinc[k].marchId +')"><img src='+ icon +'></a></td>';
 				else
 					z += '<TD width="10px"><img src='+ icon +'></td>';
 				z += '<TD width="40px">'+ status +'</td>';
 				z += '<TD>' + cityname + '</td>';
 				z += '<TD>'+ marchtime +'</td>';
-				z +='<TD>From:' + FROM + '</td>';
-				z +='<TD>Might:' + addCommas(FROMmight) + '</td>';
-				if (Seed.queue_atkinc[k]["knt"] != undefined) z +='<TD>Knight:'+ Seed.queue_atkinc[k]["knt"]["cbt"]+'</td>';
+				z +='<TD>'+unsafeWindow.g_js_strings.commonstr.from+': ' + FROM + '</td>';
+				z +='<TD>'+unsafeWindow.g_js_strings.commonstr.might+': ' + addCommas(FROMmight) + '</td>';
+				if (Seed.queue_atkinc[k]["knt"] != undefined) z +='<TD>'+unsafeWindow.g_js_strings.commonstr.knight+': '+ Seed.queue_atkinc[k]["knt"]["cbt"]+'</td>';
 				
-				if (Seed.queue_atkinc[k]["gold"] > 0) z += '<TD>Gold:'+ addCommas(Seed.queue_atkinc[k]["gold"]) +'</td>';
-				if (Seed.queue_atkinc[k]["resource1"] > 0) z += '<TD>Food: '+ addCommas(Seed.queue_atkinc[k]["resource1"]) +'</td>';
-				if (Seed.queue_atkinc[k]["resource2"] > 0) z += '<TD>Wood: '+ addCommas(Seed.queue_atkinc[k]["resource2"]) +'</td>';
-				if (Seed.queue_atkinc[k]["resource3"] > 0) z += '<TD>Stone: '+ addCommas(Seed.queue_atkinc[k]["resource3"]) +'</td>';
-				if (Seed.queue_atkinc[k]["resource4"] > 0) z += '<TD>Ore: '+ addCommas(Seed.queue_atkinc[k]["resource4"]) +'</td>';
+				if (Seed.queue_atkinc[k]["gold"] > 0) z += '<TD>'+unsafeWindow.resourceinfo.rec0 +': '+ addCommas(Seed.queue_atkinc[k]["gold"]) +'</td>';
+				if (Seed.queue_atkinc[k]["resource1"] > 0) z += '<TD>'+unsafeWindow.resourceinfo.rec1 +': '+ addCommas(Seed.queue_atkinc[k]["resource1"]) +'</td>';
+				if (Seed.queue_atkinc[k]["resource2"] > 0) z += '<TD>'+unsafeWindow.resourceinfo.rec2 +': '+ addCommas(Seed.queue_atkinc[k]["resource2"]) +'</td>';
+				if (Seed.queue_atkinc[k]["resource3"] > 0) z += '<TD>'+unsafeWindow.resourceinfo.rec3 +': '+ addCommas(Seed.queue_atkinc[k]["resource3"]) +'</td>';
+				if (Seed.queue_atkinc[k]["resource4"] > 0) z += '<TD>'+unsafeWindow.resourceinfo.rec4 +': '+ addCommas(Seed.queue_atkinc[k]["resource4"]) +'</td>';
         		    
 				for(i=1; i<13; i++){
 					if(Seed.queue_atkinc[k]["unit"+i+"Count"] > 0 && marchdir == "going") z += '<TD>'+ unsafeWindow.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkinc[k]["unit"+i+"Count"]) +'</td>';
@@ -5714,9 +5671,9 @@ Tabs.Marches = {
 				}
         		
 				if (marchType == 3)
-					if (Seed.queue_atkinc[k]["unts"]["u3"] > 0) z += '<TD>Scouts: '+ addCommas(Seed.queue_atkinc[k]["unts"]["u3"]) +'</td>';
+					if (Seed.queue_atkinc[k]["unts"]["u3"] > 0) z += '<TD>'+unsafeWindow.unitcost.unt3[0]+': '+ addCommas(Seed.queue_atkinc[k]["unts"]["u3"]) +'</td>';
 				if (marchType == 4){
-					for(ui=1; i<13; i++){
+					for(ui=1; ui<13; ui++){
 						if (Seed.queue_atkinc[k]["unts"]["u"+ui] > 0) z += '<TD>'+ unsafeWindow.unitcost['unt'+ui][0] +': '+ addCommas(Seed.queue_atkinc[k]["unts"]["u"+ui]) +'</td>';
 					}
 				}
@@ -5740,7 +5697,7 @@ Tabs.Marches = {
      var  m = '<TABLE id=pdmarches cellSpacing=10 width=200px height=0% class=pbTab>';
      if (t.widescreen) m += '<TR><TD><INPUT id=Wide type=checkbox checked=true>Widescreen</td>';
      else  m += '<TR><TD><INPUT id=Wide type=checkbox unchecked=true>Widescreen</td>';
-     m += '<TD colspan=4><INPUT id=TEST type=submit value="Get Seed"></td></tr>';
+     m += '<TD colspan=4><INPUT id=TEST type=submit value='+unsafeWindow.g_js_strings.modal_progress_actions.updatestatus+'></td></tr>';
      m+='</table><TABLE id=pdmarches cellSpacing=10 width=100% height=0% class=pbTab>';
      for (var c=0; c< Seed.cities.length;c++) {
      		cityname = Seed.cities[c][1];
@@ -5819,16 +5776,16 @@ Tabs.Marches = {
   				    }
   
   				    switch (marchType) {
-  					    case 1: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status="Transport";break;
-  					    case 2: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status="Reinforce";break;
-  					    case 3: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/scouting.jpg";status="Scout";break;
-  					    case 4: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status="Attack";break;
-  					    case 5: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status="Reassign";break;
-  					    case 8: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status="Returning";break;
-  					    case 9: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status="Raiding";break;
-  					    case 102: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status="Encamped";break;
-						case 103: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/autoAttack/raid_stopped_desat.png";status="Stopped";break;
-						case 104: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/autoAttack/raid_resting.png";status="Resting";break;
+  					    case 1: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status=unsafeWindow.g_js_strings.commonstr.transport;break;
+  					    case 2: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status=unsafeWindow.g_js_strings.commonstr.reinforce;break;
+  					    case 3: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/scouting.jpg";status=unsafeWindow.g_js_strings.commonstr.scout;break;
+  					    case 4: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status=unsafeWindow.g_js_strings.commonstr.attack;break;
+  					    case 5: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status=unsafeWindow.g_js_strings.commonstr.reassign;break;
+  					    case 8: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status=unsafeWindow.g_js_strings.commonstr.returning;break;
+  					    case 9: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status=unsafeWindow.g_js_strings.commonstr.raid;break;
+  					    case 102: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status=unsafeWindow.g_js_strings.commonstr.encamped;break;
+						case 103: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/autoAttack/raid_stopped_desat.png";status=unsafeWindowg_js_strings.attack_generatequeue.raidstopped;break;
+						case 104: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/autoAttack/raid_resting.png";status=unsafeWindow.g_js_strings.attack_generatequeue.raidresting;break;
   				    } 
   				      				    
   				    if (Seed.queue_atkp[cityID][k]["knightId"] !=0){
@@ -5854,20 +5811,20 @@ Tabs.Marches = {
   				    else
 						m += '<TD style="padding-right:10px;">'+ cityTo +'</td>';
   				    
-  				    if (knight != null)  m += '<TD>K:'+ knight +'</td>';
+  				    if (knight != null)  m += '<TD>'+unsafeWindow.g_js_strings.commonstr.knight+': '+ knight +'</td>';
   				    
   				    if (Seed.queue_atkp[cityID][k]["toTileType"] == 11) m+='<TD>Lake Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
   				    else if (Seed.queue_atkp[cityID][k]["toTileType"] == 20) m+='<TD>Grassland Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
   				    else if (Seed.queue_atkp[cityID][k]["toTileType"] == 30) m+='<TD>Hills Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
   				    else if (Seed.queue_atkp[cityID][k]["toTileType"] == 40) m+='<TD>Mountain Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
   				    else if (Seed.queue_atkp[cityID][k]["toTileType"] == 50) m+='<TD>Plain Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
-  					else if (Seed.queue_atkp[cityID][k]["toCityId"] ==0) m +='<TD>Barb Lvl: '+Seed.queue_atkp[cityID][k]["toTileLevel"]+'</td>';
+  					else if (Seed.queue_atkp[cityID][k]["toCityId"] ==0) m +='<TD>'+unsafeWindow.g_js_strings.commonstr.barbariancamp+' '+unsafeWindow.g_js_strings.commonstr.lvl+': '+Seed.queue_atkp[cityID][k]["toTileLevel"]+'</td>';
   		
-  				    if (Seed.queue_atkp[cityID][k]["gold"] > 0) m += '<TD>Gold:'+ Seed.queue_atkp[cityID][k]["gold"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["resource1"] > 0) m += '<TD>Food: '+ addCommas(Seed.queue_atkp[cityID][k]["resource1"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["resource2"] > 0) m += '<TD>Wood: '+ addCommas(Seed.queue_atkp[cityID][k]["resource2"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["resource3"] > 0) m += '<TD>Stone: '+ addCommas(Seed.queue_atkp[cityID][k]["resource3"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["resource4"] > 0) m += '<TD>Ore: '+ addCommas(Seed.queue_atkp[cityID][k]["resource4"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["gold"] > 0) m += '<TD>'+unsafeWindow.resourceinfo.rec0 +': '+ Seed.queue_atkp[cityID][k]["gold"] +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["resource1"] > 0) m += '<TD>'+unsafeWindow.resourceinfo.rec1 +': '+ addCommas(Seed.queue_atkp[cityID][k]["resource1"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["resource2"] > 0) m += '<TD>'+unsafeWindow.resourceinfo.rec2 +': '+ addCommas(Seed.queue_atkp[cityID][k]["resource2"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["resource3"] > 0) m += '<TD>'+unsafeWindow.resourceinfo.rec3 +': '+ addCommas(Seed.queue_atkp[cityID][k]["resource3"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["resource4"] > 0) m += '<TD>'+unsafeWindow.resourceinfo.rec4 +': '+ addCommas(Seed.queue_atkp[cityID][k]["resource4"]) +'</td>';
   				    
   				    for(i=1; i<13; i++){
 						if(Seed.queue_atkp[cityID][k]["unit"+i+"Count"] > 0 && type == "going") m += '<TD>'+ unsafeWindow.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkp[cityID][k]["unit"+i+"Count"]) +'</td>';
@@ -7542,13 +7499,13 @@ Chat = {
   },
 }
 
-function doDefTrain (cityId, unitId, num, notify){
+function doDefTrain (cityId, siege, unitId, num, notify){
   var time = unsafeWindow.modal_walls_traintime(unitId, num);
   var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
   params.cid = cityId;
   params.type = unitId;
   params.quant = num;
-  params.items = 0;
+  params.items = siege;
   new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/fortify.php" + unsafeWindow.g_ajaxsuffix, {
       method: "post",
       parameters: params,
@@ -8396,7 +8353,5 @@ function CmatSimpleSound (playerUrl, container, attrs, onLoad, flashVars) {
   this.swfLoadComplete = function (chanNum, isError){    // called by plugin when a sound finishes loading  (overload to be notified)
   }
 }
-
-
 
 ptStartup ();
