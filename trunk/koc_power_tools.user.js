@@ -135,7 +135,7 @@ function ptStartup (){
     .ptChatAttack {color: #000; font-weight:bold; background-color: #FF4D4D; }\
     .ptChatWhisper {font-weight:bold;color:#FF0000}\
     .ptChatAlliance {font-weight:bold}\
-	.ptChatScripter {color: #000; font-weight:bold; background-color: #99CC99; }\
+	.ptChatScripter {color: #000; font-weight:bold; background-color: #DDFFEE; }\
     .ptChatGlobal {background-color: #CCCCFF}\
     .ptChatGlobalBold {font-weight:bold}\
     .ptChatGlobalAll {font-weight:bold;background-color: #CCCCFF}\
