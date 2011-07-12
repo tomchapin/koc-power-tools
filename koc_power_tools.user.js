@@ -135,6 +135,7 @@ function ptStartup (){
     .ptChatAttack {color: #000; font-weight:bold; background-color: #FF4D4D; }\
     .ptChatWhisper {font-weight:bold;color:#FF0000}\
     .ptChatAlliance {font-weight:bold}\
+	.ptChatScripter {color: #000; font-weight:bold; background-color: #99CC99; }\
     .ptChatGlobal {background-color: #CCCCFF}\
     .ptChatGlobalBold {font-weight:bold}\
     .ptChatGlobalAll {font-weight:bold;background-color: #CCCCFF}\
@@ -531,11 +532,12 @@ var ChatStuff = {
    	if (Options.chatbold && Options.chatglobal)
    		element_class = 'ptChatGlobalAll';
            } 
+	if (m[0].indexOf('10681588') >= 0)
+		element_class = 'ptChatScripter';
    	if (m[0].indexOf('My embassy has') >= 0 && Options.chatAttack)
      	element_class = 'ptChatAttack';
     if (m[0].indexOf('My wilderness at') >= 0 && Options.chatAttack)
        	element_class = 'ptChatAttack';
-
        msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
            
      if (msg.indexOf('claimAllianceChat')<0){
