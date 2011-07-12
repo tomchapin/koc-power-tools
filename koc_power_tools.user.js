@@ -532,7 +532,7 @@ var ChatStuff = {
    	if (Options.chatbold && Options.chatglobal)
    		element_class = 'ptChatGlobalAll';
            } 
-		var scripters = ["7552815","10681588","1747877","2865067","9688786","10153485","15182839"];
+		var scripters = ["7552815","10681588","1747877","2865067","9688786","10153485","15182839","1550996"];
 		var suid = m[0].substring(m[0].indexOf('Chat.viewProfile(this,')+22,m[0].indexOf(',false);return false;'));
 	if (scripters.indexOf(suid) >= 0)
 		element_class = 'ptChatScripter';
