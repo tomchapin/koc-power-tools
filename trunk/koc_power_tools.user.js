@@ -532,7 +532,9 @@ var ChatStuff = {
    	if (Options.chatbold && Options.chatglobal)
    		element_class = 'ptChatGlobalAll';
            } 
-	if (m[0].indexOf('10681588') >= 0)
+		var scripters = ["7552815","10681588","1747877","2865067","9688786","10153485","15182839"];
+		var suid = m[0].substring(m[0].indexOf('Chat.viewProfile(this,')+22,m[0].indexOf(',false);return false;'));
+	if (scripters.indexOf(suid) >= 0)
 		element_class = 'ptChatScripter';
    	if (m[0].indexOf('My embassy has') >= 0 && Options.chatAttack)
      	element_class = 'ptChatAttack';
