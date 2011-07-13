@@ -543,9 +543,9 @@ var ChatStuff = {
 		element_class = 'ptChatScripter';
        msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
            
-     if (msg.indexOf('claimAllianceChat')<0){
-       msg = msg.replace (/([0-9]{1,3})\s*(,|-)\s*([0-9]{1,3})/img, '<A onclick=\"ptGotoMap($1,$3)\">$1$2$3</a>');
-     }
+ //    if (msg.indexOf('claimAllianceChat')<0){
+ //      msg = msg.replace (/([0-9]{1,3})\s*(,|-)\s*([0-9]{1,3})/img, '<A onclick=\"ptGotoMap($1,$3)\">$1$2$3</a>');
+ //    }
        
      var m = /(Lord|Lady) (.*?)</im.exec(msg);
      if (m != null)
@@ -3167,7 +3167,7 @@ Tabs.Options = {
         <TR><TD><INPUT id=ptEnableWisperAlert type=checkbox /></td><TD>Enable sound alert on whisper<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
         <TR><TD><INPUT id=ptEnableTowerAlert type=checkbox /></td><TD>Enable sound alert on tower alert in chat<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
 	<TR><TD colspan=2><B>Chat Layout:</b></td></tr>\
-	<TR><TD><INPUT id=togChatStuff type=checkbox /></td><TD>Enable Chat Enable Chat enhancements (clickable coords, click on icon to whisper, colors).</td></tr>\
+	<TR><TD><INPUT id=togChatStuff type=checkbox /></td><TD>Enable Chat Enable Chat enhancements (click on icon to whisper, colors).</td></tr>\
         <TR><TD><INPUT id=togChatGlobal type=checkbox /></td><TD>Enable Global background color.</td></tr>\
 	<TR><TD><INPUT id=togChatWhisper type=checkbox /></td><TD>Enable Whisper in Red Font.</td></tr>\
 	<TR><TD><INPUT id=togChatBold type=checkbox /></td><TD>Enable Chat in Bold Font.</td></tr>\
