@@ -6,7 +6,7 @@
 // @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110712a';
+var Version = '20110714a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -90,24 +90,25 @@ var mainPop;
 var CPopUpTopClass = 'ptPopTop';
 var KOCversion = null;
 var ptStartupTimer = null;
+var uW = unsafeWindow;
 
 function ptStartup (){
   clearTimeout (ptStartupTimer);
-  if (unsafeWindow.ptLoaded)
+  if (uW.ptLoaded)
     return;
   var metc = getClientCoords(document.getElementById('main_engagement_tabs'));
   if (metc.width==null || metc.width==0){
     ptStartupTimer = setTimeout (ptStartup, 1000);
     return;
   }
-  unsafeWindow.ptLoaded = Version;
+  uW.ptLoaded = Version;
   KOCversion = anticd.getKOCversion();
   logit ("KofC client version: "+ KOCversion);
   
   readOptions();
 
-//logit ('g_timeoff: '+ unsafeWindow.g_timeoff);
-  Seed = unsafeWindow.seed;
+//logit ('g_timeoff: '+ uW.g_timeoff);
+  Seed = uW.seed;
   var gmstyles = '\
     .ptcastleButNon {background-image:url("'+ URL_CASTLE_BUT +'")}\
     .ptcastleButSel {background-image:url("'+ URL_CASTLE_BUT_SEL +'")}\
@@ -115,7 +116,7 @@ function ptStartup (){
     .ptcastleBut:hover {border-size:3px; border-color:#000;}\
   ';
   
-  var styles = '.xtab {padding-right: 5px; border:none; background:none; white-space:nowrap;}\
+  var styles = '.xtab {padding-right: 5px; border:none; background:none; white-space:nowrap}\
     .xtabBR {padding-right: 5px; border:none; background:none;}\
     div.ptDiv {background-color:#f0f0f0;}\
     table.ptTab tr td {border:none; background:none; white-space:nowrap;}\
@@ -135,10 +136,10 @@ function ptStartup (){
     .ptChatAttack {color: #000; font-weight:bold; background-color: #FF4D4D; }\
     .ptChatWhisper {font-weight:bold;color:#FF0000}\
     .ptChatAlliance {font-weight:bold}\
-	.ptChatScripter {color: #000; font-weight:bold; background-color: #DDFFEE; }\
-    .ptChatGlobal {background-color: #CCCCFF}\
+	  .ptChatScripter {color:#000; font-weight:bold; background-color:#DDFFEE;}\
+    .ptChatGlobal {background-color: #CCCCFF;}\
     .ptChatGlobalBold {font-weight:bold}\
-    .ptChatGlobalAll {font-weight:bold;background-color: #CCCCFF}\
+    .ptChatGlobalAll {font-weight:bold;background-color: #CCCCFF;}\
     .ptChatIcon {border: 1px inset black}\
     span.whiteOnRed {padding-left:3px; padding-right:3px; background-color:#700; color:white; font-weight:bold}\
     span.boldRed {color:#800; font-weight:bold}\
@@ -268,9 +269,9 @@ var TestSomething = {
   init : function (){
     t = TestSomething;
 return;    
-    var ft = unsafeWindow.modal_messages.toString().replace (/}\s*$/, 'TESTmyHook(); }');
+    var ft = uW.modal_messages.toString().replace (/}\s*$/, 'TESTmyHook(); }');
 //    logit ('FT: modal_messages = '+ ft);
-    unsafeWindow.TESTmyHook = t.hook;
+    uW.TESTmyHook = t.hook;
 /***
 var scr = document.createElement('script');   
 scr.innerHTML = 'modal_messages = '+ ft;
@@ -278,22 +279,22 @@ document.body.appendChild(scr);
 setTimeout ( function (){document.body.removeChild(scr);}, 500);
 ***/
 //with (unsafeWindow){
-//  eval ('unsafeWindow.modal_messages = '+ ft);
+//  eval ('uW.modal_messages = '+ ft);
 //  eval ('modal_messages = function (){alert("xxx")}');
 logit ("WITH");
-  unsafeWindow.modal_messages = eval ('function (){alert("xxx")}');
+  uW.modal_messages = eval ('function (){alert("xxx")}');
 logit ("EVALED");
 //}
 setTimeout ( function(){
-  var ft=unsafeWindow.modal_messages.toString(); 
-  logit('unsafeWindow.modal_messages:\n'+ ft.substr(ft.length-500));
+  var ft=uW.modal_messages.toString(); 
+  logit('uW.modal_messages:\n'+ ft.substr(ft.length-500));
 }, 100);
   },
   
   hook : function (){
     logit ('TestSomething.hook');
     logit ('tvuid: '+ tvuid);    
-    logit ('unsafeWindow.tvuid: '+ unsafeWindow.tvuid);    
+    logit ('uW.tvuid: '+ uW.tvuid);    
   }, 
   
 }
@@ -305,16 +306,16 @@ var battleReports = {
   init : function (){
     var t = battleReports; 
     t.getReportDisplayFunc = new CalterUwFunc ('getReportDisplay', [['return s.join("")', 'var themsg=s.join(""); themsg=getReportDisplay_hook(themsg, arguments[1]); return themsg']]);
-    unsafeWindow.getReportDisplay_hook = t.hook;
+    uW.getReportDisplay_hook = t.hook;
     t.getReportDisplayFunc.setEnable (true);
     t.renderBattleReportFunc = new CalterUwFunc ('MarchReport.prototype.renderBattleReport', [['return k.join("")', 'var themsg=k.join(""); themsg=renderBattleReport_hook(themsg, this.rslt); return themsg']]);
-    unsafeWindow.renderBattleReport_hook = t.hook2;
+    uW.renderBattleReport_hook = t.hook2;
     t.renderBattleReportFunc.setEnable (true);
     t.renderButtonsFunc = new CalterUwFunc ('MarchReport.prototype.generateBackButton', [[/return \"(.*)\"/i, 'var msg="$1"; return battleReports_hook3(msg, this.rptid);']]);
-    unsafeWindow.battleReports_hook3 = t.generateBackButtonHook;
+    uW.battleReports_hook3 = t.generateBackButtonHook;
     t.renderButtonsFunc.setEnable (true);
-    unsafeWindow.deleteAreport = t.e_deleteReport;
-//setTimeout (function(){logit('MarchReport.prototype.generateBackButton:\n'+ unsafeWindow.MarchReport.prototype.generateBackButton.toString(), 3, 1)}, 100);
+    uW.deleteAreport = t.e_deleteReport;
+//setTimeout (function(){logit('MarchReport.prototype.generateBackButton:\n'+ uW.MarchReport.prototype.generateBackButton.toString(), 3, 1)}, 100);
   },
 
   isRoundsAvailable : function (){
@@ -331,7 +332,7 @@ var battleReports = {
     if (!Options.reportDeleteButton)
       return msg;
     var delBut = msg.replace ('onclick=\'', 'onclick=\'deleteAreport('+ rptid +',false); ');
-    delBut = delBut.replace (/<span>(.*)<\/span>/, '<span>'+ unsafeWindow.g_js_strings.commonstr.deletetx +'</span>');
+    delBut = delBut.replace (/<span>(.*)<\/span>/, '<span>'+ uW.g_js_strings.commonstr.deletetx +'</span>');
 //logit ('DELBUT: '+ delBut);    
     return msg + delBut;
   },  
@@ -342,17 +343,17 @@ var battleReports = {
   },
     
   ajaxDeleteMyReport : function (rptid, isUnread, side, isCityReport, notify){
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
     params.s0rids = rptid;
     params.s1rids = '';
     params.cityrids = '';
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/deleteCheckedReports.php" + unsafeWindow.g_ajaxsuffix, {
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/deleteCheckedReports.php" + uW.g_ajaxsuffix, {
       method: "post",
       parameters: params,
       onSuccess: function (rslt) {
         if (rslt.ok && isUnread){
-          unsafeWindow.seed.newReportCount = parseInt(seed.newReportCount) - 1;
-          unsafeWindow.messages_notify_bug()
+          uW.seed.newReportCount = parseInt(seed.newReportCount) - 1;
+          uW.messages_notify_bug()
         }    
         if (notify)
           notify (rslt.errorMsg);
@@ -386,7 +387,7 @@ var anticd = {
   init: function (){
     if (this.isInited)
       return this.KOCversion;
-    unsafeWindow.cm.cheatDetector.detect = eval ('function (){}');
+    uW.cm.cheatDetector.detect = eval ('function (){}');
     var scripts = document.getElementsByTagName('script');
     for (var i=0; i<scripts.length; i++){
       if (scripts[i].src.indexOf('camelotmain') >=0){
@@ -481,8 +482,8 @@ var ChatStuff = {
   init : function (){
     var t = ChatStuff; 
     t.chatDivContentFunc = new CalterUwFunc ('Chat.chatDivContent', [['return e.join("");', 'var msg = e.join("");\n msg=chatDivContent_hook(msg);\n return msg;']]);
-    unsafeWindow.chatDivContent_hook = t.chatDivContentHook;
-    unsafeWindow.ptChatIconClicked = t.e_iconClicked;
+    uW.chatDivContent_hook = t.chatDivContentHook;
+    uW.ptChatIconClicked = t.e_iconClicked;
     t.setEnable (Options.chatEnhance);
   },
   
@@ -503,7 +504,7 @@ var ChatStuff = {
   },
 
   
-// "Report No: 5867445"  --->  see unsafeWindow.modal_alliance_report_view()
+// "Report No: 5867445"  --->  see uW.modal_alliance_report_view()
       
  chatDivContentHook : function (msg){
        var t = ChatStuff; 
@@ -537,15 +538,17 @@ var ChatStuff = {
      	element_class = 'ptChatAttack';
     if (m[0].indexOf('My wilderness at') >= 0 && Options.chatAttack)
        	element_class = 'ptChatAttack';
+
 	var scripters = ["7552815","10681588","1747877","2865067","9688786","10153485","15182839","1550996"];
-	var suid = m[0].substring(m[0].indexOf('Chat.viewProfile(this,')+22,m[0].indexOf(',false);return false;'));
+		var suid = m[0].substring(m[0].indexOf('Chat.viewProfile(this,')+22,m[0].indexOf(',false);return false;'));
 	if (scripters.indexOf(suid) >= 0)
 		element_class = 'ptChatScripter';
+		
        msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
            
- //    if (msg.indexOf('claimAllianceChat')<0){
- //      msg = msg.replace (/([0-9]{1,3})\s*(,|-)\s*([0-9]{1,3})/img, '<A onclick=\"ptGotoMap($1,$3)\">$1$2$3</a>');
- //    }
+     //if (msg.indexOf('claimAllianceChat')<0){
+     //  msg = msg.replace (/([0-9]{1,3})\s*(,|-)\s*([0-9]{1,3})/img, '<A onclick=\"ptGotoMap($1,$3)\">$1$2$3</a>');
+     //}
        
      var m = /(Lord|Lady) (.*?)</im.exec(msg);
      if (m != null)
@@ -605,11 +608,11 @@ RSLT:
 ***/
 /***/
 function displayReport (rptid, side){
-  var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+  var params = uW.Object.clone(uW.g_ajaxparams);
   params.rid = rptid;
   params.side = side;
   
-  new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/fetchReport.php" + unsafeWindow.g_ajaxsuffix, {
+  new MyAjaxRequest(uW.g_ajaxpath + "ajax/fetchReport.php" + uW.g_ajaxsuffix, {
     method: "post",
     parameters: params,
     onSuccess: function (rslt) {
@@ -655,9 +658,9 @@ Tabs.Wilds = {
   init : function (div){
     var t = Tabs.Wilds;
     t.cont = div;
-    unsafeWindow.ptButMaxTraps = t.e_butMaxTraps;
-    unsafeWindow.ptInpWildTraps = t.e_inpTraps;
-    unsafeWindow.ptButWildSet = t.e_butWildSet;
+    uW.ptButMaxTraps = t.e_butMaxTraps;
+    uW.ptInpWildTraps = t.e_inpTraps;
+    uW.ptButWildSet = t.e_butWildSet;
     t.cont.innerHTML = '<DIV id=wildContent style="maxheight:665px; height:665px; overflow-y:auto">';
 //    t.show ();
   },
@@ -885,11 +888,11 @@ if (wildDef==undefined || !wildDef)
       setTimeout (function (){notify(null)}, 1500);
       return;
     }
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
     params.cid = cid;
     params.tid = tid;
     params.quant = quant;
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/buyWildTraps.php" + unsafeWindow.g_ajaxsuffix, {
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/buyWildTraps.php" + uW.g_ajaxsuffix, {
       method: "post",
       parameters: params,
       onSuccess: function (rslt) {
@@ -913,12 +916,12 @@ if (wildDef==undefined || !wildDef)
       setTimeout (function (){notify('OK, so it\'s not really an error, it\'s just George playing around to see how the error message looks. It\'s a long one, how does it fit? Is it OK? Are you sure? JANE! Get me off of this thing!')}, 1500);
       return;
     }
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
     params.cid = cid;
     params.tid = tid;
     params.lv = newLevel;
     params.olv = oldLevel;
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/hireWildMerc.php" + unsafeWindow.g_ajaxsuffix, {
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/hireWildMerc.php" + uW.g_ajaxsuffix, {
       method: "post",
       parameters: params,
       onSuccess: function (rslt) {
@@ -949,7 +952,7 @@ Tabs.Knights = {
   init : function (div){
     var t = Tabs.Knights;
     t.cont = div;
-    unsafeWindow.ptAssignSkill = t.clickedAssignPoints;
+    uW.ptAssignSkill = t.clickedAssignPoints;
     t.cont.innerHTML = '<STYLE>table.ptTabPad tr.ptwpad {background-color:#ffffff; padding-left:15px}</style>\
        <DIV id=ptknightdiv style="max-height:660px; height:660px; overflow-y:auto">';
   },
@@ -1090,7 +1093,7 @@ Tabs.Knights = {
   },
   
   postSkillPoints : function (cid, kid, pol, com, int, res, notify){  
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
     params.cid = cid;
     params.kid = kid;
     params.p = pol;
@@ -1102,7 +1105,7 @@ Tabs.Knights = {
 //      setTimeout (  function (){notify({ok:false, errorMsg:"FAKE ERROR message, a long one, to test how it will fit and overflow! Perhaps you'll need to retry?"})}  , 2000);    
       return;  
     }
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/skillupKnight.php" + unsafeWindow.g_ajaxsuffix, {
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/skillupKnight.php" + uW.g_ajaxsuffix, {
       method: "post",
       parameters: params,
       onSuccess: function (rslt) {
@@ -1137,8 +1140,8 @@ var messageNav = {
     t = messageNav;
     t.mmFunc = new CalterUwFunc ('modal_messages', [[/}\s*$/, 'setTimeout(messageNav_hook,0); }']]);
     t.mmsFunc = new CalterUwFunc ('modal_messages_send', [[/{\s*var params/i, '{\nif (modal_messages_send_hook()) return;\nvar params']]);
-    unsafeWindow.messageNav_hook = messageNav.hook;
-    unsafeWindow.modal_messages_send_hook = messageNav.msgSendHook;
+    uW.messageNav_hook = messageNav.hook;
+    uW.modal_messages_send_hook = messageNav.msgSendHook;
     t.mmFunc.setEnable (true);
     t.mmsFunc.setEnable (true);
   },
@@ -1171,7 +1174,7 @@ var messageNav = {
     var from = document.getElementById('modal_msg_view_from').children[0].innerHTML;
     var body = document.getElementById('modal_msg_view_body').innerHTML.replace(/\n/g, '').replace(/<br>/gi, '\n').stripTags().replace (/back$/i, '');
     document.getElementById('modal_msg_write_txt').value = '[Original message from '+ from +' follows:]\n'+ body;
-    unsafeWindow.modal_messages_compose();
+    uW.modal_messages_compose();
   },
 
   msgSendHook : function (){
@@ -1180,27 +1183,27 @@ var messageNav = {
     var to = document.getElementById("modal_msg_write_to").value.trim();
     if (to.toLowerCase() != '<officers>' || getMyAlliance()[0]==0)
       return false;
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
     params.toIds = getMyAlliance()[0];
     params.subject = document.getElementById("modal_msg_write_subj").value +' [Sent to all officers]';
     params.message = document.getElementById("modal_msg_write_txt").value;
     params.type = 'alliance';
-    new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/sendMessage.php" + unsafeWindow.g_ajaxsuffix, {
+    new AjaxRequest(uW.g_ajaxpath + "ajax/sendMessage.php" + uW.g_ajaxsuffix, {
         method: "post",
         parameters: params,
         onSuccess: function (message) {
             var rslt = eval("(" + message.responseText + ")");
             if (rslt.ok) {
-                unsafeWindow.Modal.showAlert(unsafeWindow.g_js_strings.modal_messages_send.msgsent);
+                uW.Modal.showAlert(uW.g_js_strings.modal_messages_send.msgsent);
                 document.getElementById('modal_msg_write_to').value = "";
                 document.getElementById('modal_msg_write_subj').value = "";
                 document.getElementById('modal_msg_write_txt').value = ""
             } else {
-                unsafeWindow.Modal.showAlert(unsafeWindow.g_js_strings.modal_messages_send.enterexistingname)
+                uW.Modal.showAlert(uW.g_js_strings.modal_messages_send.enterexistingname)
             }
         },
         onFailure: function () {
-          unsafeWindow.Modal.showAlert(unsafeWindow.g_js_strings.modal_messages_send.oopscompose)
+          uW.Modal.showAlert(uW.g_js_strings.modal_messages_send.oopscompose)
         },
     });
     return true;
@@ -1212,7 +1215,7 @@ var AttackDialog = {
   init : function (){
     var t = AttackDialog;
     t.modal_attackFunc = new CalterUwFunc ('modal_attack', [[/}\s*$/, 'attackDialog_hook(); }']]);
-    unsafeWindow.attackDialog_hook = t.modalAttackHook;
+    uW.attackDialog_hook = t.modalAttackHook;
     t.modal_attackFunc.setEnable (true);
   },
   
@@ -1250,7 +1253,7 @@ var AttackDialog = {
       span.parentNode.parentNode.firstChild.innerHTML += ' &nbsp; <SPAN id=modal_attack_citybuts></span>';
     }
     new CdispCityPicker ('ptatp', document.getElementById('modal_attack_citybuts'), false, t.e_CityButton);
-    var cityIdx = Cities.byID[unsafeWindow.currentcityid].idx;
+    var cityIdx = Cities.byID[uW.currentcityid].idx;
     thisCityBut = document.getElementById('ptatp_'+ cityIdx);
     thisCityBut.style.opacity = '0.5';
     thisCityBut.disabled = true;
@@ -1261,7 +1264,7 @@ var AttackDialog = {
   e_CityButton : function (city){
     document.getElementById('modal_attack_target_coords_x').value = city.x;
     document.getElementById('modal_attack_target_coords_y').value = city.y;
-    unsafeWindow.modal_attack_update_time();
+    uW.modal_attack_update_time();
   },
       
   e_changeMarchType : function (evt){
@@ -1287,20 +1290,20 @@ var AttackDialog = {
 var AllianceReports = {
   checkPeriod : 300,
   allianceNames : [],
-  saveArfunc : unsafeWindow.allianceReports,
+  saveArfunc : uW.allianceReports,
 
   init : function (){
     t = AllianceReports;
     t.enable (Options.enhanceARpts);
     t.marvFunc = new CalterUwFunc ('modal_alliance_report_view', [['getReportDisplay', 'getReportDisplay_hook2']]);
-    unsafeWindow.getReportDisplay_hook2 = t.getReportDisplayHook;
+    uW.getReportDisplay_hook2 = t.getReportDisplayHook;
     t.marvFunc.setEnable (true);
   },
    
   getReportDisplayHook : function (a, b){
     var x = '';
     try {
-      x = unsafeWindow.getReportDisplay(a,b);  
+      x = uW.getReportDisplay(a,b);  
     } catch (e){
       x = 'Error formatting report: '+ e;
     }
@@ -1310,17 +1313,17 @@ var AllianceReports = {
   enable : function (tf){
     t = AllianceReports;
     if (tf)
-      unsafeWindow.allianceReports = t.myAllianceReports;
+      uW.allianceReports = t.myAllianceReports;
     else
-      unsafeWindow.allianceReports = t.saveArfunc;
+      uW.allianceReports = t.saveArfunc;
   },
   
   myAllianceReports : function (pageNum){
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
     if (pageNum)
       params.pageNo = pageNum;
     params.group = "a";
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/listReports.php" + unsafeWindow.g_ajaxsuffix, {
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/listReports.php" + uW.g_ajaxsuffix, {
       method: "post",
       parameters: params,
       onSuccess: function (rslt) {
@@ -1341,7 +1344,7 @@ var AllianceReports = {
             .msgviewtable tbody .myWarn div {font-weight:600; color:#442200}\
             </style>");
       msg.push("<div class='modal_msg_reports'>");
-      var rptkeys = unsafeWindow.Object.keys(ar);
+      var rptkeys = uW.Object.keys(ar);
       if (matTypeof(ar) != 'array') {
 //logit ('displayReports: '+ Options.allowAlterAR);        
         if (Options.allowAlterAR)
@@ -1377,18 +1380,18 @@ var AllianceReports = {
           if (i%2 == 0)
             msg.push(" class=stripe");
           msg.push("><TD class="+ colClass +"><div>");
-          msg.push(unsafeWindow.formatDateByUnixTime(rpt.reportUnixTime));
+          msg.push(uW.formatDateByUnixTime(rpt.reportUnixTime));
           msg.push ('<BR>Rpt #');
           msg.push (rpt.reportId);          
           msg.push("</div></td><TD class="+ colClass  +"><div>");
           if (rpt.marchType == 1)
-            msg.push (unsafeWindow.g_js_strings.commonstr.transport);
+            msg.push (uW.g_js_strings.commonstr.transport);
           else if (rpt.marchType == 3)
-            msg.push (unsafeWindow.g_js_strings.commonstr.scout);
+            msg.push (uW.g_js_strings.commonstr.scout);
           else if (rpt.marchType == 2)
             msg.push ('Reinf');
           else
-            msg.push (unsafeWindow.g_js_strings.commonstr.attack);
+            msg.push (uW.g_js_strings.commonstr.attack);
 
           // attacker ...
           msg.push ("</div></td><TD class="+ colClass +"><div>");
@@ -1415,7 +1418,7 @@ var AllianceReports = {
           var type = parseInt(rpt.side0TileType);
 
           if (type < 50){                              // wild
-            msg.push(unsafeWindow.g_mapObject.types[type].toString().capitalize());
+            msg.push(uW.g_mapObject.types[type].toString().capitalize());
             msg.push(" Lvl " + rpt.side0TileLevel)
             if (parseInt(rpt.side0PlayerId) != 0) {   // IF OWNED, show owner ...
               msg.push (' [');
@@ -1424,7 +1427,7 @@ var AllianceReports = {
             }
           } else {
             if (parseInt(rpt.side0PlayerId) == 0) {   //  barb
-              msg.push(unsafeWindow.g_js_strings.commonstr.barbariancamp);
+              msg.push(uW.g_js_strings.commonstr.barbariancamp);
               msg.push(" Lvl " + rpt.side0TileLevel)
             } else {        // city
               msg.push (escape(playerNames["p" + rpt.side0PlayerId]));
@@ -1478,7 +1481,7 @@ modal_alliance_report_view("6043602",1,51,9,13487684,"Fred8135i","M","Jetson","M
           if (parseInt(rpt.side0PlayerId) != 0)
             msg.push(escape(playerNames["p" + rpt.side0PlayerId]));
           else
-            msg.push(unsafeWindow.g_js_strings.commonstr.enemy);
+            msg.push(uW.g_js_strings.commonstr.enemy);
           msg.push('","');
           if (parseInt(rpt.side0PlayerId) != 0)
             msg.push(escape(playerNames["g" + rpt.side0PlayerId]));
@@ -1518,9 +1521,9 @@ modal_alliance_report_view("6043602",1,51,9,13487684,"Fred8135i","M","Jetson","M
       msg.push("</div><div id='modal_report_list_pagination'></div>");
       document.getElementById('allianceContent').innerHTML = msg.join("");
       if (pageNum) {
-        unsafeWindow.ctrlPagination("modal_report_list_pagination", totalPages, "allianceReports", pageNum)
+        uW.ctrlPagination("modal_report_list_pagination", totalPages, "allianceReports", pageNum)
       } else {
-        unsafeWindow.ctrlPagination("modal_report_list_pagination", totalPages, "allianceReports")
+        uW.ctrlPagination("modal_report_list_pagination", totalPages, "allianceReports")
       }
     }
   },
@@ -1580,11 +1583,11 @@ var TowerAlerts = {
       t.towerMarches = JSON2.parse (s);
  
     t.viewImpendingFunc = new CalterUwFunc ('attack_viewimpending_view', [[/Modal.showModal\((.*)\)/im, 'Modal.showModal\($1\); ptViewImpending_hook(a);']]);
-    unsafeWindow.ptViewImpending_hook = t.viewImpending_hook;
+    uW.ptViewImpending_hook = t.viewImpending_hook;
     t.viewImpendingFunc.setEnable (true);
 
     t.generateIncomingFunc = new CalterUwFunc ('attack_generateincoming', [[/.*} else {\s*e = true;\s*}/im, '} else { e = ptGenerateIncoming_hook(); }']]);
-    unsafeWindow.ptGenerateIncoming_hook = t.generateIncoming_hook;
+    uW.ptGenerateIncoming_hook = t.generateIncoming_hook;
   },
     
   // fix 'target', add button  
@@ -1656,7 +1659,7 @@ var TowerAlerts = {
   e_buttonPostToChat : function (march){
     var t = TowerAlerts;
     t.postToChat (march, true);
-    unsafeWindow.Modal.hideModal();
+    uW.Modal.hideModal();
   },
   
   postToChat : function (m, force){
@@ -1703,11 +1706,11 @@ var TowerAlerts = {
     if (!force)
       msg = t.postToChatOptions.aPrefix +' ';
     msg += 'My '+ target +' is being '+ atkType  +' by '+ who +'. Incoming Troops (arriving in '+
-        unsafeWindow.timestr(parseInt(m.arrivalTime - unixTime())) +') : ';
+        uW.timestr(parseInt(m.arrivalTime - unixTime())) +') : ';
     var totTroops = 0;
     for (k in m.unts){
       var uid = parseInt(k.substr (1));
-      msg += m.unts[k] +' '+ unsafeWindow.unitcost['unt'+uid][0] +', ';
+      msg += m.unts[k] +' '+ uW.unitcost['unt'+uid][0] +', ';
       totTroops += m.unts[k];
     }
     if ((totTroops < t.postToChatOptions.minTroops) && !force)
@@ -1754,11 +1757,11 @@ function officerId2String (oid){
   if (oid==null)
     return '';
   else if (oid==3) 	
-    return 'Officer';
+    return uW.allianceOfficerTypeMapping[3];
   else if (oid==2)
-    return 'Vice Chance';
+    return uW.allianceOfficerTypeMapping[2];
   else if (oid==1)
-    return 'Chancellor';
+    return uW.allianceOfficerTypeMapping[1];
   return '';
 }
 
@@ -1811,9 +1814,9 @@ ajax/viewCourt.php:
   (undefined) errorMsg: null = null
 ***/
 fetchPlayerCourt : function (uid, notify){
-  var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+  var params = uW.Object.clone(uW.g_ajaxparams);
   params.pid = uid;
-  new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/viewCourt.php" + unsafeWindow.g_ajaxsuffix, {
+  new MyAjaxRequest(uW.g_ajaxpath + "ajax/viewCourt.php" + uW.g_ajaxsuffix, {
     method: "post",
     parameters: params,
     onSuccess: function (rslt) {
@@ -1828,13 +1831,13 @@ logit ("ajax/viewCourt.php\n"+ inspect (rslt, 3, 1));
 
 
 fetchTEST : function (pageNum, notify){    // as in alliance list, sorted by rank, 10 per page
-  var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+  var params = uW.Object.clone(uW.g_ajaxparams);
   params.pageNo = 1;
   params.numPerPage = 100;
   params.perPage = 100;
   params.results = 100;
   params.numResults = 100;
-  new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetMembersInfo.php" + unsafeWindow.g_ajaxsuffix, {
+  new MyAjaxRequest(uW.g_ajaxpath + "ajax/allianceGetMembersInfo.php" + uW.g_ajaxsuffix, {
     method: "post",
     parameters: params,
     onSuccess: function (rslt) {
@@ -1851,13 +1854,13 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
    init : function (div){
     var t = Tabs.AllianceList;
     t.cont = div;
-    unsafeWindow.PTgetMembers = t.eventGetMembers;
-    unsafeWindow.PTpd = t.clickedPlayerDetail;
-    unsafeWindow.PTpl = t.clickedPlayerLeaderboard;
-    unsafeWindow.PTpl2 = t.clickedPlayerLeaderboard2;
-    unsafeWindow.PTalClickPrev = t.eventListPrev;
-    unsafeWindow.PTalClickNext = t.eventListNext;
-    unsafeWindow.PCplo = t.clickedPlayerGetLastLogin;
+    uW.PTgetMembers = t.eventGetMembers;
+    uW.PTpd = t.clickedPlayerDetail;
+    uW.PTpl = t.clickedPlayerLeaderboard;
+    uW.PTpl2 = t.clickedPlayerLeaderboard2;
+    uW.PTalClickPrev = t.eventListPrev;
+    uW.PTalClickNext = t.eventListNext;
+    uW.PCplo = t.clickedPlayerGetLastLogin;
     Lastlogin=0;
     t.show();
   },
@@ -1867,9 +1870,9 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     var t = Tabs.AllianceList;
     t.cont = div;
 //t.fetchTEST();    
-    unsafeWindow.PTgetMembers = t.eventGetMembers;
-    unsafeWindow.PTpd = t.clickedPlayerDetail;
-    unsafeWindow.PTpl = t.clickedPlayerLeaderboard;
+    uW.PTgetMembers = t.eventGetMembers;
+    uW.PTpd = t.clickedPlayerDetail;
+    uW.PTpl = t.clickedPlayerLeaderboard;
     if (getMyAlliance()[0] == 0) {
       t.cont.innerHTML = '<BR><BR><CENTER>You need to be in an alliance to use this feature.</center>';
       t.state = 1;
@@ -1899,34 +1902,34 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     var t = Tabs.AllianceList;
     if (t.state == null){
       if (getMyAlliance()[0] == 0) {
-        t.cont.innerHTML = '<BR><BR><CENTER>You need to be in an alliance to use this feature.</center>';
+        t.cont.innerHTML = '<BR><BR><CENTER>'+uW.g_js_strings.membersInfo.youmustbelong+'</center>';
         t.state = 1;
         return;
       }
       var m = '<DIV class=ptentry><TABLE width=100% cellpadding=0>\
-          <TR><TD class=xtab align=right></td><TD class=xtab>Enter all or part of a player name: &nbsp;</td>\
-            <TD width=80% class=xtab><INPUT id=allPlayName size=20 type=text /> &nbsp; <INPUT id=playSubmit type=submit value="Find Player" /> &nbsp; <INPUT id=ffbuidsubmit type=submit value="By UID" /></td>\
+          <TR><TD class=xtab align=right></td><TD class=xtab>'+uW.g_js_strings.modal_fow_leaderboard.searchuser+': &nbsp;</td>\
+            <TD width=80% class=xtab><INPUT id=allPlayName size=20 type=text /> &nbsp; <INPUT id=playSubmit type=submit value="'+uW.g_js_strings.modal_fow_leaderboard.finduser+'" /> &nbsp; <INPUT id=ffbuidsubmit type=submit value="UID" /></td>\
             <TD class="xtab ptErrText"><SPAN id=ptplayErr></span></td></tr>\
-          <TR><TD class=xtab>OR: </td><TD class=xtab> Enter all or part of an alliance name: &nbsp;</td>\
-            <TD class=xtab><INPUT id=allAllName type=text /> &nbsp; <INPUT id=allSubmit type=submit value="Find Alliance" /></td>\
+          <TR><TD class=xtab></td><TD class=xtab>'+uW.g_js_strings.setDiplomacyWindow.srchalli+': &nbsp;</td>\
+            <TD class=xtab><INPUT id=allAllName type=text /> &nbsp; <INPUT id=allSubmit type=submit value="'+uW.g_js_strings.modal_fow_leaderboard.findalli+'" /></td>\
             <TD class="xtab ptErrText"><SPAN id=ptallErr></span></td></tr>\
-           <TR><TD class=xtab><INPUT align=left id=allListSubmit type=submit value="List Alliances" /></td>\
+           <TR><TD class=xtab><INPUT align=left id=allListSubmit type=submit value="'+uW.g_js_strings.commonstr.alliances+'" /></td>\
             <TD class=xtab><INPUT align=right id=idMyAllSubmit type=submit value="'+ getMyAlliance()[1] +'"/>\
-             <TD class=xtab></td><TD class=xtab><span align=right <b>Model ETA with: </b></span>\
+             <TD class=xtab></td><TD class=xtab><span align=right <b>'+uW.g_js_strings.attack_generateincoming.estimatedarrival+': </b></span>\
             <div><select id="idFindETASelect">\
-        <option value="0,250" > -- Select -- </option>\
-        <option value="0,180" > Supply </option>\
-        <option value="0,200" > Militia </option>\
-        <option value="0,3000" > Scout </option>\
-        <option value="0,300" > Pikeman </option>\
-        <option value="0,275" > Swordsman </option>\
-        <option value="0,250" > Archer </option>\
-        <option value="1,1000" > Cavalry </option>\
-        <option value="1,750" > Heavy Cavalry </option>\
-        <option value="1,150" > Supply Wagon </option>\
-        <option value="1,100" > Balista </option>\
-        <option value="1,120" > Ram </option>\
-        <option value="1,80" > Catapult </option>\
+        <option value="0,0" > -- Select -- </option>\
+        <option value="0,180" >'+uW.unitcost["unt1"][0]+'</option>\
+        <option value="0,200" > '+uW.unitcost["unt2"][0]+' </option>\
+        <option value="0,3000" > '+uW.unitcost["unt3"][0]+' </option>\
+        <option value="0,300" > '+uW.unitcost["unt4"][0]+' </option>\
+        <option value="0,275" > '+uW.unitcost["unt5"][0]+' </option>\
+        <option value="0,250" > '+uW.unitcost["unt6"][0]+' </option>\
+        <option value="1,1000" > '+uW.unitcost["unt7"][0]+' </option>\
+        <option value="1,750" > '+uW.unitcost["unt8"][0]+' </option>\
+        <option value="1,150" > '+uW.unitcost["unt9"][0]+' </option>\
+        <option value="1,100" > '+uW.unitcost["unt10"][0]+' </option>\
+        <option value="1,120" > '+uW.unitcost["unt11"][0]+' </option>\
+        <option value="1,80" > '+uW.unitcost["unt12"][0]+' </option>\
         </select></div>\
         </td></tr>\
          </table><span style="vertical-align:middle;" id=altInput></span></div><SPAN id=allListOut></span>';
@@ -1957,11 +1960,11 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     name = name.replace(/\'/g,"_");
     t.pName = name;
     if (name.length < 3){
-      document.getElementById('ptplayErr').innerHTML = 'Enter at least 3 characters';
+      document.getElementById('ptplayErr').innerHTML = uW.g_js_strings.getAllianceSearchResults.entryatleast3;
       return;
     }
     document.getElementById('altInput').innerHTML = '';
-    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>Searching ...</center>';
+    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>'+uW.g_js_strings.commonstr.loadingddd+'</center>';
     t.fetchPlayerList (name, t.eventGotPlayerList);
   },
   
@@ -1984,10 +1987,10 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       document.getElementById('allListOut').innerHTML = rslt.errorMsg;
       return;
     }
-    var m = '<DIV class=ptstat>Showing players matching <B>"'+ t.pName +'"</b></div>\
+    var m = '<DIV class=ptstat>'+uW.g_js_strings.recommendSelectedFriends.playersrch+': <B>"'+ t.pName +'"</b></div>\
       <DIV style="height:575px; max-height:575px; overflow-y:auto">\
-      <TABLE width=100% align=center class=ptTab cellspacing=0><TR style="font-weight:bold"><TD>Name &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp</td>\
-      <TD align=right>UserId &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp</td><TD>Might &nbsp &nbsp</td><TD> &nbsp; Online</td><TD> &nbsp;Facebook &nbsp; </td><TD width=75%>Lookup </td></tr>';
+      <TABLE width=100% align=center class=ptTab cellspacing=0><TR style="font-weight:bold"><TD>'+uW.g_js_strings.commonstr.nametx+' &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp</td>\
+      <TD align=right>UID &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp</td><TD>'+uW.g_js_strings.commonstr.might+' &nbsp &nbsp</td><TD> &nbsp; '+uW.g_js_strings.commonstr.online+'</td><TD> &nbsp;Facebook &nbsp; </td><TD width=75%>'+uW.g_js_strings.commonstr.search+' </td></tr>';
     var row=0;
     var cl='';
     for (k in t.playerList){
@@ -1996,10 +1999,10 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
         cl = 'class=ptOddrow ';
       else
         cl = '';
-      m += '<TR '+ cl +'valign=top><TD>'+ u.genderAndName +'</td><TD><A target="_tab" href="http://koc.dunno.com/index.sjs?f=ServersByUser&user_id='+ u.userId +'">' + u.userId + '</a></SPAM></td><TD align=right>'+ addCommasInt(u.might) +'</td>\
-          <TD>'+ (rslt.data[u.userId]?"&nbsp;<SPAN class=boldDarkRed>ONLINE</span>":"") +'</td>\
-          <TD align=center><A target="_tab" href="http://www.facebook.com/profile.php?id='+ u.fbuid +'">profile</a></td>\
-          <TD><SPAN onclick="PTpd(this, '+ u.userId +')"><A>details</a> &nbsp; <BR></span><SPAN onclick="PTpl2(this,'+ u.userId+','+rslt.data[u.userId]+')"><A>leaderboard</a><BR></span><SPAN onclick="PCplo(this, \''+ u.userId +'\')"><A>last Login</a></span></td></tr>';
+      m += '<TR '+ cl +'valign=top><TD>'+ u.genderAndName +'</td><TD><A target="_tab" href="http://koc.dunno.com/index.sjs?f=ServersByUser&user_id='+ u.userId +'">' + u.userId + '</a></td><TD align=right>'+ addCommasInt(u.might) +'</td>\
+          <TD>'+ (rslt.data[u.userId]?"&nbsp;<SPAN class=boldDarkRed>"+uW.g_js_strings.commonstr.online+"</span>":"") +'</td>\
+          <TD align=center><A target="_tab" href="http://www.facebook.com/profile.php?id='+ u.fbuid +'">'+uW.g_js_strings.commonstr.profile+'</a></td>\
+          <TD><SPAN onclick="PTpd(this, '+ u.userId +')"><A>'+uW.g_js_strings.modaltitles.memberdetails+'</a> &nbsp; <BR></span><SPAN onclick="PTpl2(this,'+ u.userId+','+rslt.data[u.userId]+')"><A>'+uW.g_js_strings.modaltitles.leaderboard+'</a><BR></span><SPAN onclick="PCplo(this, \''+ u.userId +'\')"><A>'+uW.g_js_strings.modal_messages_viewreports_view.lastlogin+'</a></span></td></tr>';
     }
     m += '</table></div>';
     document.getElementById('allListOut').innerHTML = m;
@@ -2012,52 +2015,52 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     document.getElementById('ptplayErr').innerHTML='';
     var uid = document.getElementById('allPlayName').value;
 
-	var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+	var params = uW.Object.clone(uW.g_ajaxparams);
     params.uid = uid;
-    AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/getUserGeneralInfo.php" + unsafeWindow.g_ajaxsuffix, {
+    AjaxRequest(uW.g_ajaxpath + "ajax/getUserGeneralInfo.php" + uW.g_ajaxsuffix, {
       method: "post",
       parameters: params,
       onSuccess: function (transport) {
       var rslt = eval("(" + transport.responseText + ")");
 	  if (rslt.ok) test = rslt.userInfo[0].name;
-	  else document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>Error ...Click again</center>';
+	  else document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>'+uW.g_js_strings.barbarian.erroroccured+'</center>';
       },
       onFailure: function (rslt) {
-           document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>Searching ...Not Found</center>';
+           document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>'+uW.g_js_strings.errorcode.err_602+'</center>';
 		   return;
       },
     });
     t.pName = t.asName;
     document.getElementById('altInput').innerHTML = '';
-    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>Searching ...</center>';
+    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>'+uW.g_js_strings.commonstr.loadingddd+'</center>';
     setTimeout(t.fetchPlayerList,500, test, t.eventGotPlayerList);
   },
 	
   clickedPlayerDetail : function (span, uid){
     var t = Tabs.AllianceList;
     span.onclick = '';
-    span.innerHTML = "fetching details ...";
+    span.innerHTML = uW.g_js_strings.commonstr.search +': '+ uW.g_js_strings.modaltitles.memberdetails + " ...";
     t.fetchPlayerInfo (uid, function (r) {t.gotPlayerDetail(r, span)});
   },
 
   clickedPlayerLeaderboard : function (span, uid){
     var t = Tabs.AllianceList;
     span.onclick = '';
-    span.innerHTML = "fetching leaderboard info ...";
+    span.innerHTML = uW.g_js_strings.commonstr.search +': '+ uW.g_js_strings.modaltitles.leaderboard + " ...";
     t.fetchLeaderboard (uid, function (r) {t.gotPlayerLeaderboard(r, span)});
   },
 
   clickedPlayerLeaderboard2 : function (span, uid,status){
     var t = Tabs.AllianceList;
     span.onclick = '';
-    span.innerHTML = "fetching leaderboard info ... ";
+    span.innerHTML = uW.g_js_strings.commonstr.search +': '+ uW.g_js_strings.modaltitles.leaderboard + " ...";
     t.fetchLeaderboard (uid, function (r) {t.gotPlayerLeaderboard2(r, span,uid,status)});
   },
   
   clickedPlayerGetLastLogin : function (span, uid){
      var t = Tabs.AllianceList;
      span.onclick = '';
-     span.innerHTML = "fetching login date ...";
+     span.innerHTML = uW.g_js_strings.commonstr.search +': '+ uW.g_js_strings.modal_messages_viewreports_view.lastlogin + " ...";
      t.fetchPlayerLastLogin (uid, function (r) {t.gotPlayerLastLogin(r, span)});
    },
 
@@ -2069,7 +2072,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       return;
     }
     if (rslt.totalResults == 0){
-      span.innerHTML = '<B>Leaderboard:</b> Not found! (misted?)';
+      span.innerHTML = '<B>'+uW.g_js_strings.commonstr.leaderboard+': </b>'+uW.itemlist.i10021.name+'?<BR>';
       return;
     }
     var myA = getMyAlliance ();
@@ -2100,7 +2103,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       return;
     }
     if (rslt.totalResults == 0){
-      span.innerHTML = '<B>Leaderboard:</b> Not found! (misted?)';
+       span.innerHTML = '<B>'+uW.g_js_strings.commonstr.leaderboard+': </b>'+uW.itemlist.i10021.name+'?<BR>';
       return;
     }
     var p = rslt.results[0];
@@ -2111,7 +2114,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       an += ' ('+ officerId2String(p.officerType) +')';
     pStr = JSON2.stringify(p);
     logit (pStr);
-    m = '<TABLE cellspacing=0 class=ptTab><TR><TD><B>Leaderboard: </b></td><TD colspan=2> Might: '+ p.might  +' &nbsp; Alliance: '+ an +'</td></tr>'; 
+    m = '<TABLE cellspacing=0 class=ptTab><TR><TD><B>'+uW.g_js_strings.commonstr.leaderboard+': </b></td><TD colspan=2>'+uW.g_js_strings.commonstr.might +': '+ p.might  +' &nbsp; '+uW.g_js_strings.commonstr.alliance+': '+ an +'</td></tr>'; 
     for (var i=0; i<p.cities.length; i++){
       var c = p.cities[i];
       var created = '';
@@ -2134,18 +2137,18 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     var a = 'None';
     if (u.allianceName)
       a = u.allianceName +' ('+ getDiplomacy(u.allianceId) + ')';
-    var m = '<TABLE cellspacing=0 class=ptTab><TR><TD><B>Details:</b> &nbsp; </td><TD>Alliance: '+ a +' &nbsp; Cities: '
-          + u.cities +' &nbsp; Population: '+ u.population +'</td></tr><TR><TD></td><TD>Provinces: ';
+    var m = '<TABLE cellspacing=0 class=ptTab><TR><TD><B>Details:</b> &nbsp; </td><TD>'+uW.g_js_strings.commonstr.alliance+': '+ a +' &nbsp; '+uW.g_js_strings.commonstr.cities+': '
+          + u.cities +' &nbsp; '+uW.g_js_strings.commonstr.population+': '+ u.population +'</td></tr><TR><TD></td><TD>'+uW.g_js_strings.commonstr.province+': ';
     var pids = u.provinceIds.split (',');
     var p = [];
     for (var i=0; i<pids.length; i++)
-      p.push(unsafeWindow.provincenames['p'+pids[i]]);
+      p.push(uW.provincenames['p'+pids[i]]);
     span.innerHTML = m + p.join (', ') +'</td></tr></table>';
   },
 
   eventMyAllianceSubmit : function (){
     var t = Tabs.AllianceList;
-    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>Searching ...</center>';
+    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>'+uW.g_js_strings.commonstr.loadingddd+'</center>';
     t.fetchAllianceMemberList (getMyAlliance()[0], null, t.eventGotMemberList);
   },  
     
@@ -2155,12 +2158,12 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     document.getElementById('ptallErr').innerHTML='';
     t.aName = document.getElementById('allAllName').value;
     if (t.aName.length < 3){
-      document.getElementById('ptallErr').innerHTML = 'Enter at least 3 characters';
+      document.getElementById('ptallErr').innerHTML = uW.g_js_strings.getAllianceSearchResults.entryatleast3;
       return;
     }
     var myA = getMyAlliance ();
     document.getElementById('altInput').innerHTML = '';
-    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>Searching ...</center>';
+    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>'+uW.g_js_strings.commonstr.loadingddd+'</center>';
     if (myA[0]!=0 && myA[1].toLowerCase().indexOf(t.aName.toLowerCase())>=0 )
       t.fetchAllianceList (t.aName, myA[0], t.eventGotAllianceList);
     else
@@ -2170,14 +2173,14 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
   eventListSubmit : function (){
     var t = Tabs.AllianceList;
     var myA = getMyAlliance ();
-    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>Searching...</center>';
+    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>'+uW.g_js_strings.commonstr.loadingddd+'</center>';
     if (myA[0]!=0  ) {
        t.curPage=1;
        t.fetchOtherAllianceInfo ( 1, t.eventGotOtherAlliancePage);
        //document.getElementById('allGotoPage').disabled = false;
     }
     else {
-       document.getElementById('allListOut').innerHTML = 'You must be an alliance member to use this feature.';
+       document.getElementById('allListOut').innerHTML = uW.g_js_strings.membersInfo.youmustbelong;
     }
   },
 
@@ -2187,19 +2190,19 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       document.getElementById('allListOut').innerHTML = rslt.errorMsg;
       return;
     }
-    var m = '<DIV class=ptstat>Showing alliances matching <B>"'+ t.aName +'"</b></div>\
-    <TABLE><TR style="font-weight:bold"><TD class=xtab>Alliance Name</td><TD class=xtab>Rank</td><TD class=xtab>Members</td>\
-        <TD align=right class=xtab>Might</td><TD class=xtab>Diplomacy</td><TD class=xtab></td></tr>';
+    var m = '<DIV class=ptstat>'+uW.g_js_strings.commonstr.alliances+'<B>"'+ t.aName +'"</b></div>\
+    <TABLE><TR style="font-weight:bold"><TD class=xtab>'+uW.g_js_strings.commonstr.alliance+'</td><TD class=xtab>'+uW.g_js_strings.commonstr.rank+'</td><TD class=xtab>'+uW.g_js_strings.commonstr.members+'</td>\
+        <TD align=right class=xtab>'+uW.g_js_strings.commonstr.might+'</td><TD class=xtab>'+uW.g_js_strings.getAllianceSearchResults.currdiplo+'</td><TD class=xtab></td></tr>';
     for (k in rslt.alliancesMatched){
       var all = rslt.alliancesMatched[k];
       var dip = '';
       if (all.relation && all.relation==1)
-        dip = 'Friendly';
+        dip = uW.g_js_strings.commonstr.friendly;
       else if (all.relation && all.relation==2)
-        dip = 'Hostile';
+        dip = uW.g_js_strings.commonstr.hostile;
       m += '<TR><TD class=xtab>'+ all.allianceName +'</td><TD align=right class=xtab>'+ all.ranking +'</td><TD align=right class=xtab>'+ all.membersCount +'</td>\
        <TD align=right class=xtab>'+ addCommasInt(all.might) +'</td><TD class=xtab>'+ dip +'</td>\
-       <TD class=xtab><a onclick="PTgetMembers('+ all.allianceId +')">View Members</a></td></tr>';
+       <TD class=xtab><a onclick="PTgetMembers('+ all.allianceId +')">'+uW.g_js_strings.commonstr.members+'</a></td></tr>';
     }
     document.getElementById('allListOut').innerHTML = m;
   },
@@ -2208,12 +2211,12 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
   showMyAlliance : function (){
     var t = Tabs.AllianceList;
     var myA = getMyAlliance ();
-    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER> ...</center>';
+    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>'+uW.g_js_strings.commonstr.loadingddd+'</center>';
     if (myA[0]!=0  ) {
        t.eventGetMembers(myA[0]);
     }
     else {
-       document.getElementById('allListOut').innerHTML = 'You must be an alliance member to use this feature.';
+       document.getElementById('allListOut').innerHTML = uW.g_js_strings.membersInfo.youmustbelong;
     }
   },
 
@@ -2230,7 +2233,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
 	      t.curPage = t.MaxPage;
 	    }
     }
-    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>Searching...</center>';
+    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>'+uW.g_js_strings.commonstr.loadingddd+'</center>';
     t.fetchOtherAllianceInfo (t.curPage, t.eventGotOtherAlliancePage);
   },
 
@@ -2244,27 +2247,11 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
 	      t.curPage = 1;
 	    }
     }
-    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>Searching...</center>';
+    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>'+uW.g_js_strings.commonstr.loadingddd+'</center>';
     t.fetchOtherAllianceInfo (t.curPage, t.eventGotOtherAlliancePage);
   },
 
-  gotoPage : function (){
-    var t = Tabs.AllianceList;
-    //var val = document.getElementById('idPageNum').value;
-    if (t.MaxPage < 0 ) {
-      document.getElementById('allListOut').innerHTML = 'List Alliances first.';
-      return;
-    }
-    if (t.MaxPage < 0 || val > t.MaxPage || val < 1) {
-      document.getElementById('allListOut').innerHTML = 'Page number out of range';
-      return;
-    }
-    //t.curPage = val;
-    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER> ...</center>';
-    t.fetchOtherAllianceInfo (t.curPage, t.eventGotOtherAlliancePage);
-  },
-
-  eventGotOtherAlliancePage : function (rslt){
+   eventGotOtherAlliancePage : function (rslt){
     var t = Tabs.AllianceList;
 
     if (!rslt.ok){
@@ -2278,8 +2265,8 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     //document.getElementById('idMaxPageNum').innerHTML = 'of ' + t.MaxPage;
 
     var m = '<div style="overflow:auto; height:556px;width:564px;"><TABLE><thead><TR style="font-weight:bold"> \
-        <th class=xtab>Alliance Name</th><th class=xtab>Rank</th><th class=xtab>Members</th>\
-        <th align=right class=xtab>Might</th><th class=xtab>Diplomacy</th><th class=xtab></th></tr></thead><tbody>';
+        <th class=xtab>'+uW.g_js_strings.modaltitles.alliance+'</th><th class=xtab>'+uW.g_js_strings.commonstr.rank+'</th><th class=xtab>'+uW.g_js_strings.commonstr.members+'</th>\
+        <th align=right class=xtab>'+uW.g_js_strings.commonstr.might+'</th><th class=xtab>'+uW.g_js_strings.getAllianceSearchResults.currdiplo+'</th><th class=xtab></th></tr></thead><tbody>';
     document.getElementById('allListOut').innerHTML = m;
 
     for (var i=0; i<rslt.otherAlliances.length; i++) {
@@ -2289,10 +2276,10 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
 
       m += '<TR class="'+ dip + '"><TD class=xtab>' + alliance.name +'</td><TD align=right class=xtab>'+ alliance.ranking +'</td><TD align=right class=xtab>'+ alliance.membersCount +'</td>\
        <TD align=right class=xtab>'+ addCommasInt(alliance.might) +'</td><TD class=xtab>'+ dip +'</td>\
-       <TD class=xtab><a onclick="PTgetMembers('+ alliance.allianceId +')">View Members</a></td></tr>';
+       <TD class=xtab><a onclick="PTgetMembers('+ alliance.allianceId +')">'+uW.g_js_strings.commonstr.members+'</a></td></tr>';
     }
-    m += '</tbody></TABLE><div style="font-weight:bold"; height:20px;width:560px; ><span> <a onclick="PTalClickPrev(-1)"> [Begin] </a><a onclick="PTalClickPrev(10)"> [-10] </a><a onclick="PTalClickPrev(5)"> [-5] </a><a onclick="PTalClickPrev(1)"> [Prev] </a> \
-          <a onclick="PTalClickNext(1)"> [Next] </a><a onclick="PTalClickNext(5)"> [+5] </a><a onclick="PTalClickNext(10)"> [+10] </a><a onclick="PTalClickNext(9999)"> [End] </a> </span></div>';
+    m += '</tbody></TABLE><div style="font-weight:bold"; height:20px;width:560px; ><span> <a onclick="PTalClickPrev(-1)"> [|<] </a><a onclick="PTalClickPrev(10)"> [-10] </a><a onclick="PTalClickPrev(5)"> [-5] </a><a onclick="PTalClickPrev(1)"> [<] </a> \
+          <a onclick="PTalClickNext(1)"> [>] </a><a onclick="PTalClickNext(5)"> [+5] </a><a onclick="PTalClickNext(10)"> [+10] </a><a onclick="PTalClickNext(9999)"> [>|] </a> </span></div>';
     m += '</div>';
     document.getElementById('allListOut').innerHTML = m;
  },
@@ -2301,7 +2288,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     var t = Tabs.AllianceList;
     var myA = getMyAlliance ();
 
-    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER> ...</center>';
+    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>'+uW.g_js_strings.commonstr.loadingddd+'</center>';
     if (myA[0]!=0  ) {
        t.fetchOtherAllianceInfo ( t.curPage, t.eventGotOtherAlliancePage);
     }
@@ -2342,7 +2329,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
            t.friendEta = false;
         for (var c=0; c<p.cities.length; c++){
           t.dat.push ([p.displayName, parseInt(p.might), p.officerType, parseInt(p.numCities), parseInt(p.cities[c].tileLevel),
-               parseInt(p.cities[c].xCoord), parseInt(p.cities[c].yCoord), p.cities[c].cityName, 0, rslt.data[p.userId]?1:0,'NA',p.userId]);
+               parseInt(p.cities[c].xCoord), parseInt(p.cities[c].yCoord), p.cities[c].cityName, 0, rslt.data[p.userId]?1:0,'--',p.userId]);
         }
       }
     }
@@ -2380,7 +2367,7 @@ return 0;
          +'</td><TD class=xxtab>'+ (t.dat[i][9]?'<SPAN class=boldDarkRed>ONLINE</span>':'') +'</td><TD class=xxtab>'+ t.dat[i][7] +'</td><TD align=right class=xxtab>'+ t.dat[i][4] 
          +'</td><TD align=center class=xxtab><DIV onclick="ptGotoMap('+ t.dat[i][5] +','+ t.dat[i][6] +')"><A>'+ t.dat[i][5] +','+ t.dat[i][6] +'</a></div></td>\
             <TD align=right class=xxtab style="padding-right:20px;">'+ t.dat[i][8].toFixed(2) +'</td>\
-         </td><TD  nowrap class=xxtab>'+ (t.dat[i][10]?'<SPAN>'+ (t.dat[i][10]>0?timestr(t.dat[i][10],1):'NA') +'</span>':'<SPAN>NA</span>') +'<td class=xxtab><SPAN onclick="PCplo(this, \''+ t.dat[i][11] +'\')"><A>last Login</a></span><td></tr>';
+         </td><TD  nowrap class=xxtab>'+ (t.dat[i][10]?'<SPAN>'+ (t.dat[i][10]>0?timestr(t.dat[i][10],1):'--') +'</span>':'<SPAN>--</span>') +'<td class=xxtab><SPAN onclick="PCplo(this, \''+ t.dat[i][11] +'\')"><A>'+uW.g_js_strings.modal_messages_viewreports_view.lastlogin+'</a></span><td></tr>';
     }
     var tbody = document.getElementById('allBody');
     tbody.style.maxHeight = '';
@@ -2440,24 +2427,24 @@ return 0;
         t.sortColNum = newColNum;
       t.reDisp();
     }
-    unsafeWindow.PTalClickSort = alClickSort;
+    uW.PTalClickSort = alClickSort;
     var m = '<STYLE>.clickable{background-color:#ddd; border:2px outset; border-color:#555; padding-left:5px; padding-right:5px}\
             .clickableSel{background-color:#ffffcc;}\
             .xxtab{background-color:none; padding-left:5px; padding-right:5px;} </style>\
       <DIV class=ptstat ><TABLE id=tabAllMembers cellpadding=0  width=100%><TR font-weight:bold"><TD class=xtab> &nbsp; '+ allName +'</td>\
-        <TD class=xtab width=80% align=center>Distance is from <SPAN id=distFrom>'+ Cities.cities[0].name +' ('+ Cities.cities[0].x +','+ Cities.cities[0].y +')</span></td><TD class=xtab align=right>'+ numPlayers +' players found &nbsp; </td></tr></table></div>\
+        <TD class=xtab width=80% align=center>'+uW.g_js_strings.commonstr.distance+ uW.g_js_strings.commonstr.from+' <SPAN id=distFrom>'+ Cities.cities[0].name +' ('+ Cities.cities[0].x +','+ Cities.cities[0].y +')</span></td><TD class=xtab align=right>'+ numPlayers + uW.g_js_strings.commonstr.members+'&nbsp; </td></tr></table></div>\
       <div style="max-height:470px; height:470px; overflow-y:auto;"><TABLE id=tabAllMembers align=center cellpadding=0 cellspacing=0><THEAD style="overflow-y:hidden;">\
-      <TR style="font-weight:bold"><TD id=clickCol0 onclick="PTalClickSort(this)" class=clickable><A><DIV>Player</div></a></td>\
-        <TD id=clickCol1 onclick="PTalClickSort(this)" class=clickable align=center><A><DIV>Might</a></div></td>\
-        <TD id=clickCol3 onclick="PTalClickSort(this)" class=clickable><A><DIV>Cities</a></div></td>\
-        <TD id=clickCol2 onclick="PTalClickSort(this)" class=clickable align=center><A><DIV>Rank</a></div></td>\
-        <TD id=clickCol9 onclick="PTalClickSort(this)" class=clickable align=center><A><DIV>Online</a></div></td>\
-        <TD id=clickCol7 onclick="PTalClickSort(this)" class=clickable><A><DIV>City Name</a></div></td>\
-        <TD id=clickCol4 onclick="PTalClickSort(this)" class=clickable><A><DIV>Lvl</a></div></td>\
-        <TD id=clickCol5 onclick="PTalClickSort(this)" class=clickable><A><DIV>Coords</a></div></td>\
-        <TD id=clickCol8 onclick="PTalClickSort(this)" class=clickable><A><DIV>Distance</a></div></td>\
-        <TD id=clickCol10 onclick="PTalClickSort(this)" class=clickable><A><DIV>Eta</a></div></td>\
-        <TD class=clickable><A><DIV>Last Login</a></div></td></tr></thead>\
+      <TR style="font-weight:bold"><TD id=clickCol0 onclick="PTalClickSort(this)" class=clickable><A><DIV>'+uW.g_js_strings.commonstr.player+'</div></a></td>\
+        <TD id=clickCol1 onclick="PTalClickSort(this)" class=clickable align=center><A><DIV>'+uW.g_js_strings.commonstr.might+'</a></div></td>\
+        <TD id=clickCol3 onclick="PTalClickSort(this)" class=clickable><A><DIV>'+uW.g_js_strings.commonstr.cities+'</a></div></td>\
+        <TD id=clickCol2 onclick="PTalClickSort(this)" class=clickable align=center><A><DIV>'+uW.g_js_strings.commonstr.rank+'</a></div></td>\
+        <TD id=clickCol9 onclick="PTalClickSort(this)" class=clickable align=center><A><DIV>'+uW.g_js_strings.commonstr.online+'</a></div></td>\
+        <TD id=clickCol7 onclick="PTalClickSort(this)" class=clickable><A><DIV>'+uW.g_js_strings.MapObject.cityname+'</a></div></td>\
+        <TD id=clickCol4 onclick="PTalClickSort(this)" class=clickable><A><DIV>'+uW.g_js_strings.commonstr.lvl+'</a></div></td>\
+        <TD id=clickCol5 onclick="PTalClickSort(this)" class=clickable><A><DIV>'+uW.g_js_strings.commonstr.coordinates+'</a></div></td>\
+        <TD id=clickCol8 onclick="PTalClickSort(this)" class=clickable><A><DIV>'+uW.g_js_strings.commonstr.distance+'</a></div></td>\
+        <TD id=clickCol10 onclick="PTalClickSort(this)" class=clickable><A><DIV>'+uW.g_js_strings.attack_generateincoming.estimatedarrival+'</a></div></td>\
+        <TD class=clickable><A><DIV>'+uW.g_js_strings.modal_messages_viewreports_view.lastlogin+'</a></div></td></tr></thead>\
       <TBODY id=allBody style="background-color:#ffffff;"></tbody></table></div>';
       
     document.getElementById('allListOut').innerHTML = m; //style="top:670px; left:0px; position:absolute;
@@ -2488,12 +2475,12 @@ return 0;
         t.sortColNum = newColNum;
       t.reDisp();
     }
-    unsafeWindow.PTalClickSort = alClickSort;
+    uW.PTalClickSort = alClickSort;
     var m = '<STYLE>.clickable{background-color:#ddd; border:2px outset; border-color:#555; padding-left:5px; padding-right:5px}\
             .clickableSel{background-color:#ffffcc;}\
             .xxtab{background-color:none; padding-left:5px; padding-right:5px;} </style>\
             <DIV class=ptstat ><TABLE id=tabAllMembers cellpadding=0  width=100%><TR font-weight:bold"><TD class=xtab>Alliance: '+ allName +'</td>\
-              <TD class=xtab width=80% align=center>Last login: <SPAN id=lastlogin>'+  rslt.playerInfo.lastLogin+'</span></td><TD class=xtab align=right></td></tr></table></div>\
+              <TD class=xtab width=80% align=center>'+uW.g_js_strings.modal_messages_viewreports_view.lastlogin+': <SPAN id=lastlogin>'+  rslt.playerInfo.lastLogin+'</span></td><TD class=xtab align=right></td></tr></table></div>\
       <div style="max-height:470px; height:470px; overflow-y:auto;"><TABLE id=tabAllMembers align=center cellpadding=0 cellspacing=0><THEAD style="overflow-y:hidden;">\
       <TR style="font-weight:bold"><TD id=clickCol0 onclick="PTalClickSort(this)" class=clickable><A><DIV>Player</div></a></td>\
         <TD id=clickCol1 onclick="PTalClickSort(this)" class=clickable align=center><A><DIV>Might</a></div></td>\
@@ -2505,7 +2492,7 @@ return 0;
         <TD id=clickCol5 onclick="PTalClickSort(this)" class=clickable><A><DIV>Coords</a></div></td>\
         <TD id=clickCol8 onclick="PTalClickSort(this)" class=clickable><A><DIV>Distance</a></div></td>\
         <TD id=clickCol10 onclick="PTalClickSort(this)" class=clickable><A><DIV>Eta</a></div></td>\
-		<TD class=clickable><A><DIV>Last Login</a></div></td></tr></thead>\
+		<TD class=clickable><A><DIV>'+uW.g_js_strings.modal_messages_viewreports_view.lastlogin+'</a></div></td></tr></thead>\
       <TBODY id=allBody style="background-color:#ffffff;"></tbody></table></div>\
       <DIV  width:100%; style="top:670px; left:0px; position:absolute; background-color:#ffffff; border-top:1px solid; margin-top:8px; color:#700; font-weight:bold;">';
     document.getElementById('allListOut').innerHTML = m;  //style="top:670px; left:0px; position:absolute;
@@ -2537,19 +2524,19 @@ return 0;
 
   eventGetMembers : function (aid){
     var t = Tabs.AllianceList;
-    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>Searching ...</center>';
+    document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>'+uW.g_js_strings.commonstr.loadingddd+'</center>';
     t.fetchAllianceMemberList (aid, null, t.eventGotMemberList);
   },
 
   fetchAllianceMemberList : function (allianceId, allianceName, notify) {
     var t = Tabs.AllianceList;
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
     params.perPage = 100;
     if (allianceName)
       params.allianceName = allianceName;
     if (allianceId && allianceId != 0)
       params.allianceId = allianceId;
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/getUserLeaderboard.php" + unsafeWindow.g_ajaxsuffix, {
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/getUserLeaderboard.php" + uW.g_ajaxsuffix, {
       method: "post",
       parameters: params,
       onSuccess: function (rslt) {
@@ -2563,9 +2550,9 @@ return 0;
 
   fetchLeaderboard : function (uid, notify) {
     var t = Tabs.AllianceList;
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
     params.userId = uid;
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/getUserLeaderboard.php" + unsafeWindow.g_ajaxsuffix, {
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/getUserLeaderboard.php" + uW.g_ajaxsuffix, {
       method: "post",
       parameters: params,
       onSuccess: function (rslt) {
@@ -2596,9 +2583,9 @@ return 0;
       }
       notify (rsltA);
     }
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
     params.allianceName = allianceName;
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetSearchResults.php" + unsafeWindow.g_ajaxsuffix, {
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/allianceGetSearchResults.php" + uW.g_ajaxsuffix, {
       method: "post",
       parameters: params,
       onSuccess: function (rslt) {
@@ -2614,10 +2601,10 @@ return 0;
   },
 
   fetchOtherAllianceInfo : function (pageNum, notify){    // as in alliance list, sorted by rank, 10 per page
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
     params.pageNo = pageNum;
-    params.cityId = unsafeWindow.currentcityid;
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetOtherInfo.php" + unsafeWindow.g_ajaxsuffix, {
+    params.cityId = uW.currentcityid;
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/allianceGetOtherInfo.php" + uW.g_ajaxsuffix, {
       method: "post",
       parameters: params,
       onSuccess: function (rslt) {
@@ -2630,8 +2617,8 @@ return 0;
   },
 
   fetchMyAllianceInfo : function (notify){
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetInfo.php" + unsafeWindow.g_ajaxsuffix, {
+    var params = uW.Object.clone(uW.g_ajaxparams);
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/allianceGetInfo.php" + uW.g_ajaxsuffix, {
       method: "post",
       parameters: params,
       onSuccess: function (rslt) {
@@ -2644,10 +2631,10 @@ return 0;
   },
 
   fetchPlayerList : function (name, notify){  // at least 3 chars!! 
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
     params.searchName = name;
     params.subType = "ALLIANCE_INVITE";
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/searchPlayers.php" + unsafeWindow.g_ajaxsuffix, {
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/searchPlayers.php" + uW.g_ajaxsuffix, {
       method: "post",
       parameters: params,
       onSuccess: function (rslt) {
@@ -2662,9 +2649,9 @@ return 0;
 
   
   fetchPlayerInfo : function (uid, notify){
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
     params.uid = uid;
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/getUserGeneralInfo.php" + unsafeWindow.g_ajaxsuffix, {
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/getUserGeneralInfo.php" + uW.g_ajaxsuffix, {
       method: "post",
       parameters: params,
       onSuccess: function (rslt) {
@@ -2684,9 +2671,9 @@ ajax/getOnline.php:
   (undefined) errorMsg: null = null
 ***/
   fetchPlayerStatus : function (uidArray, notify){
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
     params.checkArr = uidArray.join(',');
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/getOnline.php" + unsafeWindow.g_ajaxsuffix, {
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/getOnline.php" + uW.g_ajaxsuffix, {
       method: "post",
       parameters: params,
       onSuccess: function (rslt) {
@@ -2699,9 +2686,9 @@ ajax/getOnline.php:
   },
   
   fetchPlayerLastLogin : function (uid, notify){
-      var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+      var params = uW.Object.clone(uW.g_ajaxparams);
       params.pid = uid;
-      new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/viewCourt.php" + unsafeWindow.g_ajaxsuffix, {
+      new MyAjaxRequest(uW.g_ajaxpath + "ajax/viewCourt.php" + uW.g_ajaxsuffix, {
         method: "post",
         parameters: params,
         onSuccess: function (rslt) {
@@ -2724,7 +2711,7 @@ ajax/getOnline.php:
         var lastLogin = rslt.playerInfo.lastLogin;
     
         if (lastLogin) {
-          m = '<span style="color:black">Last login: '+lastLogin+'</span>';
+          m = '<span style="color:black">'+uW.g_js_strings.modal_messages_viewreports_view.lastlogin+': '+lastLogin+'</span>';
         } else {
            m = '<span style="color:red">No login date found: '+lastLogin+'</span>';
         }
@@ -2895,7 +2882,7 @@ Tabs.Test = {
 
     march.toCityId = Cities.cities[cityNum].id;
     if (isWild) {
-      keys = unsafeWindow.Object.keys(Seed.wilderness['city'+Cities.cities[cityNum].id]);
+      keys = uW.Object.keys(Seed.wilderness['city'+Cities.cities[cityNum].id]);
       march.toTileId = Seed.wilderness['city'+Cities.cities[cityNum].id][keys[0]].tileId;
     } else {
       march.toTileId = Cities.cities[cityNum].tileId;
@@ -2961,10 +2948,10 @@ Tabs.Info = {
             .xtabHL { background:#ffffe8; border-width: 1px; border-style: none none none solid; padding-right:5px; padding-left:5px; margin-left:10px; }\
             .xtabL { background:none; border-width: 1px; border-style: none none none solid; padding-right:5px; padding-left: 5px; margin-left:10px; }\
             .xtabLine { padding:0px; spacing:0px; height:1px; border-color:black; border-width: 1px; border-style: none none solid none }</style>\
-        <DIV style="height:650px; max-height:650px; overflow-y:auto; overflow-x:hidden"><DIV class=ptstat>'+unsafeWindow.g_js_strings.commonstr.troops+'</div><TABLE align=center cellpadding=1 cellspacing=0>\
-        <TR align=center><TD class=xtab></td><TD class=xtabHL colspan=5><B>'+unsafeWindow.g_js_strings.modal_marketplace.unitprice+'</b></td><TD class=xtabHL colspan=7><B>STATS</b></td><TD class=xtabHL><B>'+unsafeWindow.g_js_strings.commonstr.upkeep+'</b></td></tr>\
-        <TR valign=bottom align=right><TD class=xtab></td><TD class=xtabHL>'+unsafeWindow.g_js_strings.commonstr.food+'</td><TD class=xtabH>'+unsafeWindow.g_js_strings.commonstr.wood+'</td><TD class=xtabH>'+unsafeWindow.g_js_strings.commonstr.stone+'</td>\
-        <TD class=xtabH>'+unsafeWindow.g_js_strings.commonstr.ore+'</td><TD class=xtabH>'+unsafeWindow.g_js_strings.commonstr.population+'</td><TD class=xtabHL>Might</td><TD class=xtabH>Life</td><TD class=xtabH>Atk</td><TD class=xtabH>Def</td><TD class=xtabH>Speed</td><TD class=xtabH>Range</td><TD class=xtabH>Load</td>\
+        <DIV style="height:650px; max-height:650px; overflow-y:auto; overflow-x:hidden"><DIV class=ptstat>'+uW.g_js_strings.commonstr.troops+'</div><TABLE align=center cellpadding=1 cellspacing=0>\
+        <TR align=center><TD class=xtab></td><TD class=xtabHL colspan=5><B>'+uW.g_js_strings.modal_marketplace.unitprice+'</b></td><TD class=xtabHL colspan=7><B>STATS</b></td><TD class=xtabHL><B>'+uW.g_js_strings.commonstr.upkeep+'</b></td></tr>\
+        <TR valign=bottom align=right><TD class=xtab></td><TD class=xtabHL>'+uW.g_js_strings.commonstr.food+'</td><TD class=xtabH>'+uW.g_js_strings.commonstr.wood+'</td><TD class=xtabH>'+uW.g_js_strings.commonstr.stone+'</td>\
+        <TD class=xtabH>'+uW.g_js_strings.commonstr.ore+'</td><TD class=xtabH>'+uW.g_js_strings.commonstr.population+'</td><TD class=xtabHL>Might</td><TD class=xtabH>Life</td><TD class=xtabH>Atk</td><TD class=xtabH>Def</td><TD class=xtabH>Speed</td><TD class=xtabH>Range</td><TD class=xtabH>Load</td>\
         <TD class=xtabHL>Food</td></tr>\
         <TR style="height:1px;"><TD style="padding:0px; spacing:0px; height:1px; border-color:black; border-width: 1px; border-style: none none solid none" colspan=14></td></tr>';
     for (ui=1; ui<13; ui++){
@@ -2972,10 +2959,10 @@ Tabs.Info = {
         rsty = '';
       else
         rsty = ' style="background: #e8e8e8" ';
-      cost = unsafeWindow.unitcost['unt'+ui];     //  NAME, Food, Wood, Stone, Ore, ?, IdlePop, Time
-      stats = unsafeWindow.unitstats['unt'+ui];   //  Life, Attack, Defense, Speed, Range, Load
-      food = unsafeWindow.unitupkeeps[ui];
-      might = unsafeWindow.unitmight['u'+ui];
+      cost = uW.unitcost['unt'+ui];     //  NAME, Food, Wood, Stone, Ore, ?, IdlePop, Time
+      stats = uW.unitstats['unt'+ui];   //  Life, Attack, Defense, Speed, Range, Load
+      food = uW.unitupkeeps[ui];
+      might = uW.unitmight['u'+ui];
       m += '<TR '+ rsty +'align=right><TD class=xtab align=left><B>'+ cost[0].substr(0,16) +'</b></td><TD class=xtabL>'+ cost[1] +'</td><TD class=xtab>'+ cost[2] +'</td>\
           <TD class=xtab>'+ cost[3] +'</td><TD class=xtab>'+ cost[4] +'</td><TD class=xtab>'+ cost[6] +'</td><TD class=xtabL>'+ might +'</td>\
           <TD class=xtab>'+ stats[0] +'</td><TD class=xtab>'+ stats[1] +'</td><TD class=xtab>'+ stats[2] +'</td><TD class=xtab>'+ stats[3] +'</td>\
@@ -2983,14 +2970,14 @@ Tabs.Info = {
 
     }
     m += '<TR class=xtabLine><TD colspan=14 class=xtabLine></td></tr>';
-    for (k in unsafeWindow.fortcost){
+    for (k in uW.fortcost){
       if (++rownum % 2)
         rsty = '';
       else
         rsty = ' style="background: #e8e8e8" ';
-      cost = unsafeWindow.fortcost[k];     //  NAME, Food, Wood, Stone, Ore, ?, IdlePop, Time
+      cost = uW.fortcost[k];     //  NAME, Food, Wood, Stone, Ore, ?, IdlePop, Time
       fi = k.substring(3);
-      stats = unsafeWindow.fortstats['unt'+fi];   //  Life, Attack, Defense, Speed, Range, Load
+      stats = uW.fortstats['unt'+fi];   //  Life, Attack, Defense, Speed, Range, Load
       food = 0;
       might = fortmight['u'+fi];
       name = cost[0].replace ('Defensive','');
@@ -3167,7 +3154,7 @@ Tabs.Options = {
         <TR><TD><INPUT id=ptEnableWisperAlert type=checkbox /></td><TD>Enable sound alert on whisper<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
         <TR><TD><INPUT id=ptEnableTowerAlert type=checkbox /></td><TD>Enable sound alert on tower alert in chat<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
 	<TR><TD colspan=2><B>Chat Layout:</b></td></tr>\
-	<TR><TD><INPUT id=togChatStuff type=checkbox /></td><TD>Enable Chat Enable Chat enhancements (click on icon to whisper, colors).</td></tr>\
+	<TR><TD><INPUT id=togChatStuff type=checkbox /></td><TD>Enable Chat Enable Chat enhancements (clickable coords, click on icon to whisper, colors).</td></tr>\
         <TR><TD><INPUT id=togChatGlobal type=checkbox /></td><TD>Enable Global background color.</td></tr>\
 	<TR><TD><INPUT id=togChatWhisper type=checkbox /></td><TD>Enable Whisper in Red Font.</td></tr>\
 	<TR><TD><INPUT id=togChatBold type=checkbox /></td><TD>Enable Chat in Bold Font.</td></tr>\
@@ -3315,11 +3302,11 @@ if (DEBUG_TRACE) logit (" 1 Map.request(): "+ left +' , '+ top +' , '+ width);
     width = parseInt((width+4) / 5) * 5;
     var blockString = this.generateBlockList(left, top, width);
     Map.callback = cb;
-    if (unsafeWindow.SANDBOX)
+    if (uW.SANDBOX)
       return RequestMAPTEST(left, top, width, callback);
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
     params.blocks = blockString;
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/fetchMapTiles.php" + unsafeWindow.g_ajaxsuffix, {
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/fetchMapTiles.php" + uW.g_ajaxsuffix, {
       method: "post",
       parameters: params,
       onSuccess: function (rslt) {
@@ -3348,67 +3335,67 @@ Tabs.Train = {
   init : function (div){
     var t = Tabs.Train;
     t.cont = div;
-    unsafeWindow.cancelTrain = t.butcancelTrain;
-    unsafeWindow.cancelFort = t.butcancelFort;
+    uW.cancelTrain = t.butcancelTrain;
+    uW.cancelFort = t.butcancelFort;
     s = "<DIV id=trainTopSelect>\
-      <DIV class=ptstat id=trainheader>"+unsafeWindow.g_js_strings.modal_openBarracks.trainttl+" & "+unsafeWindow.g_js_strings.modal_openWalls.builddefenses+"</div>\
+      <DIV class=ptstat id=trainheader>"+uW.g_js_strings.modal_openBarracks.trainttl+" & "+uW.g_js_strings.modal_openWalls.builddefenses+"</div>\
       <DIV style='height:5px'></div><DIV class=ptentry>\
-      <DIV style='text-align:center; margin-bottom:5px;'>"+unsafeWindow.g_js_strings.commonstr.city+": &nbsp; <span id=ptspeedcity></span></div>\
+      <DIV style='text-align:center; margin-bottom:5px;'>"+uW.g_js_strings.commonstr.city+": &nbsp; <span id=ptspeedcity></span></div>\
       <TABLE class=ptTab width=100%><TR valign=top><TD width=50%>\
-      <TABLE align=center><TR><TD align=right>"+unsafeWindow.g_js_strings.modal_messages_viewdesertionreports.trooptypes+": </td><TD colspan=2>\
+      <TABLE align=center><TR><TD align=right>"+uW.g_js_strings.modal_messages_viewdesertionreports.trooptypes+": </td><TD colspan=2>\
       <SELECT id=ptttType>";
      for (i=1;i<=12;i++){
-      	  s+='<option value='+i+'>'+unsafeWindow.unitcost['unt'+i][0]+'</option>';
+      	  s+='<option value='+i+'>'+uW.unitcost['unt'+i][0]+'</option>';
       }
-      s+="</select> &nbsp; ("+unsafeWindow.g_js_strings.commonstr.max+" <span id=ptttSpMax></span>)</td></tr>\
-      <TR><TD align=right>"+unsafeWindow.g_js_strings.modal_barracks_train.numtotrain+": </td><TD><INPUT id='ptttInpPS' size=5 type='text' value='0'\></td>\
-        <TD><INPUT id='ptttButMaxPS' type=submit value='"+unsafeWindow.g_js_strings.commonstr.max+"'\> &nbsp; (\
-        "+unsafeWindow.g_js_strings.commonstr.max+" <span id=ptttSpMaxPS>0</span>)</td></tr>\
-      <TR><TD align=right>"+unsafeWindow.buildingcost.bdg13[0]+": </td><TD><INPUT id='ptttInpSlots' size=2 type='text' value='1'\></td>\
-        <TD width=75%><INPUT id='ptttButMaxSlots' type=submit value='"+unsafeWindow.g_js_strings.commonstr.max+"'\> &nbsp;\
-        ("+unsafeWindow.g_js_strings.commonstr.max+" <span id=ptttSpMaxSlots>1</span>)</td></tr>\
+      s+="</select> &nbsp; ("+uW.g_js_strings.commonstr.max+" <span id=ptttSpMax></span>)</td></tr>\
+      <TR><TD align=right>"+uW.g_js_strings.modal_barracks_train.numtotrain+": </td><TD><INPUT id='ptttInpPS' size=5 type='text' value='0'\></td>\
+        <TD><INPUT id='ptttButMaxPS' type=submit value='"+uW.g_js_strings.commonstr.max+"'\> &nbsp; (\
+        "+uW.g_js_strings.commonstr.max+" <span id=ptttSpMaxPS>0</span>)</td></tr>\
+      <TR><TD align=right>"+uW.buildingcost.bdg13[0]+": </td><TD><INPUT id='ptttInpSlots' size=2 type='text' value='1'\></td>\
+        <TD width=75%><INPUT id='ptttButMaxSlots' type=submit value='"+uW.g_js_strings.commonstr.max+"'\> &nbsp;\
+        ("+uW.g_js_strings.commonstr.max+" <span id=ptttSpMaxSlots>1</span>)</td></tr>\
       <TR><TD align=right valign=top></td><TD colspan=2><INPUT type=CHECKBOX id=chkPop"+ (Options.maxIdlePop?' CHECKED ':'') +"> \
-        <SPAN style='white-space:normal;'>"+unsafeWindow.g_js_strings.commonstr.use +" "+ unsafeWindow.g_js_strings.commonstr.workers+"</span>\
+        <SPAN style='white-space:normal;'>"+uW.g_js_strings.commonstr.use +" "+ uW.g_js_strings.commonstr.workers+"</span>\
 		<br><SELECT id=tutelage>\
-		<option value='0'><CENTER>--- "+unsafeWindow.g_js_strings.commonstr.speedup+" ---</center></option>\
-		<option value='36'>"+ unsafeWindow.itemlist.i36.name+"</option>\
-        <option value='37'>"+ unsafeWindow.itemlist.i37.name+"</option>\
-        <option value='38'>"+ unsafeWindow.itemlist.i38.name+"</option>\
+		<option value='0'><CENTER>--- "+uW.g_js_strings.commonstr.speedup+" ---</center></option>\
+		<option value='36'>"+ uW.itemlist.i36.name+"</option>\
+        <option value='37'>"+ uW.itemlist.i37.name+"</option>\
+        <option value='38'>"+ uW.itemlist.i38.name+"</option>\
 		</select>\
 		</td></tr>\
-      <TR><TD colspan=3 align=center><DIV style='height:10px'></div><INPUT id='ptttButDo' type=submit value='"+unsafeWindow.g_js_strings.modal_openBarracks.trainttl+"'\
+      <TR><TD colspan=3 align=center><DIV style='height:10px'></div><INPUT id='ptttButDo' type=submit value='"+uW.g_js_strings.modal_openBarracks.trainttl+"'\
       ></td></tr>\
       </table></td><TD width=20></td><TD style='border-left:solid 2px;' width=50% align=center>\
-      <TABLE align=center><TR><TD align=right>"+unsafeWindow.g_js_strings.modal_openWalls.builddefenses+": </td><TD colspan=2>\
+      <TABLE align=center><TR><TD align=right>"+uW.g_js_strings.modal_openWalls.builddefenses+": </td><TD colspan=2>\
       <SELECT id=pttdType>\
-        <option value='53'>"+unsafeWindow.fortcost.frt53[0]+"</option>\
-        <option value='55'>"+unsafeWindow.fortcost.frt55[0]+"</option>\
-        <option value='60'>"+unsafeWindow.fortcost.frt60[0]+"</option>\
-        <option value='61'>"+unsafeWindow.fortcost.frt61[0]+"</option>\
-        <option value='62'>"+unsafeWindow.fortcost.frt62[0]+"</option>\
+        <option value='53'>"+uW.fortcost.frt53[0]+"</option>\
+        <option value='55'>"+uW.fortcost.frt55[0]+"</option>\
+        <option value='60'>"+uW.fortcost.frt60[0]+"</option>\
+        <option value='61'>"+uW.fortcost.frt61[0]+"</option>\
+        <option value='62'>"+uW.fortcost.frt62[0]+"</option>\
       </select> &nbsp; (<span id=pttdSpMax></span>)</td>\
-      <TR><TD align=right>"+unsafeWindow.g_js_strings.modal_walls_train.numdefbuild+": </td><TD><INPUT id='pttdInpPS' size=5 type='text' value='0'\></td>\
-        <TD><INPUT id='pttdButMaxPS' type=submit value='"+unsafeWindow.g_js_strings.commonstr.max+"'\> &nbsp; ("+unsafeWindow.g_js_strings.commonstr.max+"\
+      <TR><TD align=right>"+uW.g_js_strings.modal_walls_train.numdefbuild+": </td><TD><INPUT id='pttdInpPS' size=5 type='text' value='0'\></td>\
+        <TD><INPUT id='pttdButMaxPS' type=submit value='"+uW.g_js_strings.commonstr.max+"'\> &nbsp; ("+uW.g_js_strings.commonstr.max+"\
          <span id=pttdSpMaxPS>0</span>)</td></tr>\
-      <TR><TD align=right>"+unsafeWindow.g_js_strings.commonstr.space+"("+unsafeWindow.buildingcost.bdg19[0]+"): </td>\
+      <TR><TD align=right>"+uW.g_js_strings.commonstr.space+"("+uW.buildingcost.bdg19[0]+"): </td>\
       <TD><INPUT id='pttdInpSlots' size=2 type='text' value='1'\></td>\
-        <TD width=75%><INPUT id='pttdButMaxSlots' type=submit value='"+unsafeWindow.g_js_strings.commonstr.max+"'\>&nbsp; (\
-        "+unsafeWindow.g_js_strings.commonstr.max+" <span id=pttdSpMaxSlots>1</span>)</td></tr>\
+        <TD width=75%><INPUT id='pttdButMaxSlots' type=submit value='"+uW.g_js_strings.commonstr.max+"'\>&nbsp; (\
+        "+uW.g_js_strings.commonstr.max+" <span id=pttdSpMaxSlots>1</span>)</td></tr>\
       <TR align=center><TD colspan=3><SPAN id=pttdSpace></span></td></tr>\
       <TR><TD colspan=3 align=center><DIV style='height:10px'>\
       <SELECT id=siege>\
-      <option value='0'><CENTER>--- "+unsafeWindow.g_js_strings.commonstr.speedup+" ---</center></option>\
-      <option value='26'>"+ unsafeWindow.itemlist.i26.name+"</option>\
+      <option value='0'><CENTER>--- "+uW.g_js_strings.commonstr.speedup+" ---</center></option>\
+      <option value='26'>"+ uW.itemlist.i26.name+"</option>\
       </select></div>\
-      <BR><INPUT id='pttdButDo' type=submit value='"+unsafeWindow.g_js_strings.modal_openWalls.builddefenses+"'\></td></tr></table>\
+      <BR><INPUT id='pttdButDo' type=submit value='"+uW.g_js_strings.modal_openWalls.builddefenses+"'\></td></tr></table>\
       </td></tr></table></div></div>\
       <TABLE align=center width=425 class=ptTab><TR><TD><div id=ptTrainStatus style='overflow-y:auto; max-height:78px; height: 78px;'></div></td></tr></table>\
       <div style='height: 330px; background: #e8ffe8'>\
       <TABLE width=100% class=ptTab><TR><TD colspan=3><DIV id=divSTtop></div></td></tr>\
       <TR><TD width=50% style='padding-left:15px; padding-right:15px'><DIV style='text-align:center'>\
-      <B>"+unsafeWindow.g_js_strings.commonstr.troops+" ("+unsafeWindow.g_js_strings.modal_openBarracks.trainingttl+")\
+      <B>"+uW.g_js_strings.commonstr.troops+" ("+uW.g_js_strings.modal_openBarracks.trainingttl+")\
         &nbsp; (<SPAN id=statTTtot></span>)</b><BR><HR></div><DIV id=divSTleft style='overflow-y: auto; height:210px; max-height:210px'></div></td>\
-        <TD width=50% style='padding-left:15px; padding-right:15px'><DIV style='text-align:center'><B>"+unsafeWindow.g_js_strings.modal_openWalls.defqueue+"&nbsp; (<SPAN\ id=statDTtot></span>)</b><BR><HR></div><DIV id=divSTright style='overflow-y: auto; height:210px; max-height:210px'></div></td></tr>\
+        <TD width=50% style='padding-left:15px; padding-right:15px'><DIV style='text-align:center'><B>"+uW.g_js_strings.modal_openWalls.defqueue+"&nbsp; (<SPAN\ id=statDTtot></span>)</b><BR><HR></div><DIV id=divSTright style='overflow-y: auto; height:210px; max-height:210px'></div></td></tr>\
       </div>";
     t.cont.innerHTML = s;
 
@@ -3543,23 +3530,23 @@ Tabs.Train = {
     var id = t.TTselType.value;
     t.lastTroopSelect = id;
     t.limitingFactor = null;
-    var uc = unsafeWindow.unitcost['unt'+id];
+    var uc = uW.unitcost['unt'+id];
     var max = 9999999999;
     if ( (t.stats.food / uc[1]) < max){
       max = t.stats.food / uc[1];
-      t.limitingFactor = unsafeWindow.resourceinfo['rec1'];
+      t.limitingFactor = uW.resourceinfo['rec1'];
     }
     if ( (t.stats.wood / uc[2]) < max){
       max = t.stats.wood / uc[2];
-      t.limitingFactor = unsafeWindow.resourceinfo['rec2'];
+      t.limitingFactor = uW.resourceinfo['rec2'];
     }
     if ( (t.stats.stone / uc[3]) < max){
       max = t.stats.stone / uc[3];
-      t.limitingFactor = unsafeWindow.resourceinfo['rec3'];
+      t.limitingFactor = uW.resourceinfo['rec3'];
     }
     if ( (t.stats.ore / uc[4]) < max){
       max = t.stats.ore / uc[4];
-      t.limitingFactor = unsafeWindow.resourceinfo['rec4'];
+      t.limitingFactor = uW.resourceinfo['rec4'];
     }
     if ( (t.stats.idlePop / uc[6]) < max){
       max = t.stats.idlePop / uc[6];
@@ -3608,7 +3595,7 @@ if (t.limitingFactor){
       return; 
     }    
     if (perSlot<1){
-      t.divTrainStatus.innerHTML = '<FONT COLOR=#550000>'+unsafeWindow.g_js_strings.commonstr.invalid +' ('+unsafeWindow.g_js_strings.modal_barracks_train.numtotrain+')</font>';
+      t.divTrainStatus.innerHTML = '<FONT COLOR=#550000>'+uW.g_js_strings.commonstr.invalid +' ('+uW.g_js_strings.modal_barracks_train.numtotrain+')</font>';
       return;
     }
     if (perSlot*numSlots > t.stats.MaxTrain){
@@ -3616,7 +3603,7 @@ if (t.limitingFactor){
       return;
     }
     if (numSlots<1 || numSlots>t.stats.barracks - t.stats.queued){
-      t.divTrainStatus.innerHTML = '<FONT COLOR=#550000>'+unsafeWindow.g_js_strings.commonstr.invalid +' ('+unsafeWindow.buildingcost.bdg13[0]+')</font>';
+      t.divTrainStatus.innerHTML = '<FONT COLOR=#550000>'+uW.g_js_strings.commonstr.invalid +' ('+uW.buildingcost.bdg13[0]+')</font>';
       return;
     }
 
@@ -3641,17 +3628,17 @@ if (t.limitingFactor){
     var slots = parseInt(t.TDinpSlots.value, 10);
     if (isNaN(slots) || slots<0)
       slots = 0;
-    t.TDspMax.innerHTML = unsafeWindow.g_js_strings.commonstr.max+':'+ t.stats.MaxDefTrain +'&nbsp; '+unsafeWindow.g_js_strings.commonstr.owned+':'+ t.stats.defOwned;   
+    t.TDspMax.innerHTML = uW.g_js_strings.commonstr.max+':'+ t.stats.MaxDefTrain +'&nbsp; '+uW.g_js_strings.commonstr.owned+':'+ t.stats.defOwned;   
     t.TDspMaxSlots.innerHTML = t.stats.wallLevel-t.stats.Dqueued;
     if (slots<1)
       t.TDspMaxPS.innerHTML = 0;
     else
       t.TDspMaxPS.innerHTML = parseInt(t.stats.MaxDefTrain / slots);
 
-    t.TDspSpace.innerHTML = unsafeWindow.buildingcost.bdg19[0]+' ('+unsafeWindow.g_js_strings.guardian.cl1+'): <B>'+ t.stats.wallLevel +'\
-    </b><BR>'+unsafeWindow.g_js_strings.modal_openWalls.walldef+': \
+    t.TDspSpace.innerHTML = uW.buildingcost.bdg19[0]+' ('+uW.g_js_strings.guardian.cl1+'): <B>'+ t.stats.wallLevel +'\
+    </b><BR>'+uW.g_js_strings.modal_openWalls.walldef+': \
     '+ (t.stats.wallSpaceUsed+t.stats.wallSpaceQueued)  +'/<B>'+ t.stats.wallSpace +'</b><BR>\
-        '+unsafeWindow.g_js_strings.modal_openWalls.fielddef+': '+ (t.stats.fieldSpaceUsed+t.stats.fieldSpaceQueued) +'/<B>'+ t.stats.fieldSpace +'</b>';
+        '+uW.g_js_strings.modal_openWalls.fielddef+': '+ (t.stats.fieldSpaceUsed+t.stats.fieldSpaceQueued) +'/<B>'+ t.stats.fieldSpace +'</b>';
   },
 
   changeDefSelect : function (){
@@ -3661,7 +3648,7 @@ if (t.limitingFactor){
     var id = t.TDselType.value;
     t.lastDefSelect = id;
     t.stats.defOwned = parseInt(Seed.fortifications['city' + cityId]['fort'+id]);    
-    var uc = unsafeWindow.fortcost['frt'+id];
+    var uc = uW.fortcost['frt'+id];
     var max = 9999999999;
     if ( (t.stats.food / uc[1]) < max)
       max = t.stats.food / uc[1];
@@ -3694,7 +3681,7 @@ if (t.limitingFactor){
       }
     }
 
-    var spaceEach = parseInt(unsafeWindow.fortstats["unt"+ id][5]);
+    var spaceEach = parseInt(uW.fortstats["unt"+ id][5]);
     if (id<60)
       var spaceAvail = t.stats.wallSpace - t.stats.wallSpaceUsed - t.stats.wallSpaceQueued;
     else
@@ -3728,7 +3715,7 @@ if (t.limitingFactor){
     
     t.displayCityStats ();
     if (t.running){
-      t.stopTraining('<SPAN class=boldRed>'+unsafeWindow.g_js_strings.commonstr.cancelled+'</span>');
+      t.stopTraining('<SPAN class=boldRed>'+uW.g_js_strings.commonstr.cancelled+'</span>');
       return; 
     }    
     if (perSlot<1){
@@ -3736,11 +3723,11 @@ if (t.limitingFactor){
       return;
     }
     if (perSlot*numSlots > t.stats.MaxDefTrain){
-      t.divTrainStatus.innerHTML = '<FONT COLOR=#550000>'+ unsafeWindow.g_js_strings.modal_attack.maxtroops +': '+ t.stats.MaxDefTrain +'</font>';
+      t.divTrainStatus.innerHTML = '<FONT COLOR=#550000>'+ uW.g_js_strings.modal_attack.maxtroops +': '+ t.stats.MaxDefTrain +'</font>';
       return;
     }
     if (numSlots<1 || numSlots > t.stats.wallLevel-t.stats.Dqueued){
-        t.divTrainStatus.innerHTML = '<FONT COLOR=#550000>'+unsafeWindow.g_js_strings.commonstr.invalid+' ()</font>';
+        t.divTrainStatus.innerHTML = '<FONT COLOR=#550000>'+uW.g_js_strings.commonstr.invalid+' ()</font>';
       return;
     }
     var siege = document.getElementById ('siege').value;
@@ -3821,11 +3808,11 @@ if (t.limitingFactor){
 
     m += '<TABLE class=ptTab width=100%><TR align=center>';
     for(i=1;i<=6;i++){
-    	m += '<TR><TD width=75px>'+unsafeWindow.unitcost['unt'+i][0]+'</td><TD width=60px>'+addCommas(parseInt(Seed.units['city'+cityId]['unt'+i]))+'</td>';
-    	m += '<TD width=75px>'+unsafeWindow.unitcost['unt'+(i+6)][0]+'</td><TD width=60px>'+addCommas(parseInt(Seed.units['city'+cityId]['unt'+(i+6)]))+'</td>';
-    	if (i<=4) m += '<TD width=75px><SPAN id=ptttr_'+unsafeWindow.resourceinfo['rec'+i]+'>'+unsafeWindow.resourceinfo['rec'+i]+'</span></td><TD width=60px><SPAN id=ptttr2_'+unsafeWindow.resourceinfo['rec'+i]+'>'+addCommas(parseInt(Seed.resources['city'+cityId]['rec'+i][0]/3600))+'</span></td>';
-    	if (i==5) m += '<TD width=75px><SPAN id=ptttr_gold>'+unsafeWindow.resourceinfo['rec0']+'</span></td><TD width=60px><SPAN id=ptttr2_gold>'+addCommas(Seed.citystats['city'+cityId].gold[0])+'</span></td>';
-    	if (i==6) m += '<TD width=75px><SPAN id=ptttr_pop>'+unsafeWindow.g_js_strings.showPopTooltip.idlepop+'</td><TD width=60px><SPAN id=ptttr2_pop>'+addCommas(t.stats.idlePop)+'</td>';
+    	m += '<TR><TD width=75px>'+uW.unitcost['unt'+i][0]+'</td><TD width=60px>'+addCommas(parseInt(Seed.units['city'+cityId]['unt'+i]))+'</td>';
+    	m += '<TD width=75px>'+uW.unitcost['unt'+(i+6)][0]+'</td><TD width=60px>'+addCommas(parseInt(Seed.units['city'+cityId]['unt'+(i+6)]))+'</td>';
+    	if (i<=4) m += '<TD width=75px><SPAN id=ptttr_'+uW.resourceinfo['rec'+i]+'>'+uW.resourceinfo['rec'+i]+'</span></td><TD width=60px><SPAN id=ptttr2_'+uW.resourceinfo['rec'+i]+'>'+addCommas(parseInt(Seed.resources['city'+cityId]['rec'+i][0]/3600))+'</span></td>';
+    	if (i==5) m += '<TD width=75px><SPAN id=ptttr_gold>'+uW.resourceinfo['rec0']+'</span></td><TD width=60px><SPAN id=ptttr2_gold>'+addCommas(Seed.citystats['city'+cityId].gold[0])+'</span></td>';
+    	if (i==6) m += '<TD width=75px><SPAN id=ptttr_pop>'+uW.g_js_strings.showPopTooltip.idlepop+'</td><TD width=60px><SPAN id=ptttr2_pop>'+addCommas(t.stats.idlePop)+'</td>';
     	m+='</tr>';
     }
     m+='</table>';
@@ -3863,7 +3850,7 @@ if (t.limitingFactor){
             actual = 0;
           q[i][6] = cityId;
           m += '<TR align=right><TD width="5px"><A><DIV onclick="cancelTrain('+ q[i][0]+','+q[i][1]+','+q[i][2]+','+q[i][3]+','+q[i][5]+','+q[i][6]+','+i +')">X</div></a></td>';
-          m += '<TD>'+ q[i][1] +' </td><TD align=left> '+ unsafeWindow.unitcost['unt'+q[i][0]][0];
+          m += '<TD>'+ q[i][1] +' </td><TD align=left> '+ uW.unitcost['unt'+q[i][0]][0];
           if (first)
             m += '</td><TD> &nbsp; '+  timestr(end-start, true) +'</td><TD> (<SPAN id=ptttfq>'+ timestr(actual, true) +'</span>)';
           else
@@ -3875,11 +3862,11 @@ if (t.limitingFactor){
       m += '</table>';
       document.getElementById ('divSTleft').innerHTML = m;
     }
-    m = t.stats.queued +' ' + unsafeWindow.g_js_strings.commonstr.oftx +' ';
+    m = t.stats.queued +' ' + uW.g_js_strings.commonstr.oftx +' ';
     if (t.stats.queued >= 0)
       m += t.stats.barracks;
     if (totTime > 0)
-      m += ' - '+ unsafeWindow.g_js_strings.commonstr.time + ': '+ unsafeWindow.timestr(totTime);
+      m += ' - '+ uW.g_js_strings.commonstr.time + ': '+ uW.timestr(totTime);
     document.getElementById ('statTTtot').innerHTML = m;
     
 // defense queue ....
@@ -3907,9 +3894,9 @@ if (t.limitingFactor){
         first = true;
         for (i=0; i<q.length; i++){
           if (q[i][0] < 60)          
-            t.stats.wallSpaceQueued += parseInt(unsafeWindow.fortstats["unt"+ q[i][0]][5]) * parseInt(q[i][1]);
+            t.stats.wallSpaceQueued += parseInt(uW.fortstats["unt"+ q[i][0]][5]) * parseInt(q[i][1]);
           else          
-            t.stats.fieldSpaceQueued += parseInt(unsafeWindow.fortstats["unt"+ q[i][0]][5]) * parseInt(q[i][1]);
+            t.stats.fieldSpaceQueued += parseInt(uW.fortstats["unt"+ q[i][0]][5]) * parseInt(q[i][1]);
           start = q[i][2];
           end = q[i][3];
           if (first)
@@ -3934,7 +3921,7 @@ if (t.limitingFactor){
     }
     m = t.stats.Dqueued +' slots';
     if (totTime > 0)
-      m += ', '+ unsafeWindow.timestr(totTime);
+      m += ', '+ uW.timestr(totTime);
     document.getElementById ('statDTtot').innerHTML = m;
   },
   
@@ -3946,7 +3933,7 @@ if (t.limitingFactor){
 
   butcancelTrain : function (typetrn, numtrptrn, trnTmp, trnETA, trnNeeded, cityId, trainingId){
     var t = Tabs.Train;
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
     
     params.pf =0;
     params.requestType = "CANCEL_TRAINING";
@@ -3957,7 +3944,7 @@ if (t.limitingFactor){
     params.trnTmp = trnTmp;
     params.trnNeeded = trnNeeded;
     
-    new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/cancelTraining.php" + unsafeWindow.g_ajaxsuffix, {
+    new AjaxRequest(uW.g_ajaxpath + "ajax/cancelTraining.php" + uW.g_ajaxsuffix, {
         method: "post",
         parameters: params,
         onSuccess: function (message) {
@@ -3974,7 +3961,7 @@ if (t.limitingFactor){
 			
 			Seed.queue_unt["city"+cityId].splice(trainingId,1);
 			for(var i=1;i<5;i++){
-				var totalReturn=parseInt(unsafeWindow.unitcost["unt"+typetrn][i])*parseInt(numtrptrn)*3600/2;
+				var totalReturn=parseInt(uW.unitcost["unt"+typetrn][i])*parseInt(numtrptrn)*3600/2;
 				Seed.resources["city"+cityId]["rec"+i][0]=parseInt(Seed.resources["city"+cityId]["rec"+i][0])+totalReturn;
 			}
         } 
@@ -3986,7 +3973,7 @@ if (t.limitingFactor){
   
  butcancelFort : function (typefrt, numtrpfrt, frtTmp, frtETA, frtNeeded, frtid, cityId, queueId){
    var t = Tabs.Train;
-   var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+   var params = uW.Object.clone(uW.g_ajaxparams);
    
    params.pf =0;
    params.requestType = "CANCEL_FORTIFICATIONS";
@@ -3998,7 +3985,7 @@ if (t.limitingFactor){
    params.frtNeeded = frtNeeded;
    params.frtid = frtid;
    
-   new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/cancelFortifications.php" + unsafeWindow.g_ajaxsuffix, {
+   new AjaxRequest(uW.g_ajaxpath + "ajax/cancelFortifications.php" + uW.g_ajaxsuffix, {
        method: "post",
        parameters: params,
        onSuccess: function (message) {
@@ -4012,7 +3999,7 @@ if (t.limitingFactor){
  					k++;
  				}
  			}
-			unsafeWindow.update_seed(rslt.updateSeed);
+			uW.update_seed(rslt.updateSeed);
  			Seed.queue_fort["city"+cityId].splice(queueId,1);
  			for(var i=1;i<5;i++){
  				Seed.resources["city"+cityId]["rec"+i][0]=parseInt(Seed.resources["city"+cityId]["rec"+i][0])+totalReturn;
@@ -4032,8 +4019,8 @@ if (t.limitingFactor){
     t.dispTrainStatus (msg +'<BR>');
     t.TDbutDo.disabled = false;
     t.TTbutDo.disabled = false;
-    t.TTbutDo.value = unsafeWindow.g_js_strings.modal_openBarracks.trainttl;
-    t.TDbutDo.value = unsafeWindow.g_js_strings.modal_openWalls.builddefenses;
+    t.TTbutDo.value = uW.g_js_strings.modal_openBarracks.trainttl;
+    t.TDbutDo.value = uW.g_js_strings.modal_openWalls.builddefenses;
     t.TTbutDo.className = '';
     t.TDbutDo.className = '';
     t.running = false;
@@ -4051,11 +4038,11 @@ if (t.limitingFactor){
       }
       var cmd = que.shift();
       if (!cmd){
-        t.stopTraining ('<B>'+unsafeWindow.g_js_strings.update_queue.troopqueue+'</b>');
+        t.stopTraining ('<B>'+uW.g_js_strings.update_queue.troopqueue+'</b>');
         return;
       }
       if (cmd[0] == 'T'){
-        t.dispTrainStatus (unsafeWindow.g_js_strings.modal_barracks_train.starttraining+': '+ cmd[2] +' '+  unsafeWindow.unitcost['unt'+cmd[1]][0] +' at '+ Cities.byID[cityId].name +' ('+ que.length +' slots remaining)<BR>');
+        t.dispTrainStatus (uW.g_js_strings.modal_barracks_train.starttraining+': '+ cmd[2] +' '+  uW.unitcost['unt'+cmd[1]][0] +' at '+ Cities.byID[cityId].name +' ('+ que.length +' slots remaining)<BR>');
         doTrain (cityId, tut, cmd[1], cmd[2], 
           function(errMsg){
             if (t.running)
@@ -4065,7 +4052,7 @@ if (t.limitingFactor){
       }
     } catch (err) {
       logit (inspect (err, 8, 1));
-      t.stopTraining  ('<SPAN class=boldRed>'+unsafeWindow.g_js_strings.barbarian.erroroccured +' '+ err.message +'</span>');
+      t.stopTraining  ('<SPAN class=boldRed>'+uW.g_js_strings.barbarian.erroroccured +' '+ err.message +'</span>');
     }
   },
 }
@@ -4220,12 +4207,12 @@ if (TEST_WIDE)
         <TR align=left><TD><SPAN class=ptStatLight>Joined on:</span> '+ dt.toLocaleDateString() +'</td>\
         <TD><SPAN class=ptStatLight>Might:</span> ' + addCommas(Seed.player.might) +'</td>\
         <TD><SPAN class=ptStatLight>Alliance:</span> ' + getMyAlliance()[1] +'</td>\
-        <TD align=right><SPAN class=ptStatLight>Domain:</span> ' + unsafeWindow.domainName +'</td></tr></table></div>';
+        <TD align=right><SPAN class=ptStatLight>Domain:</span> ' + uW.domainName +'</td></tr></table></div>';
 
               
-      str += "<DIV id=overMainDiv style='font-size:"+ Options.overviewFontSize +"px'><TABLE class=ptTabOverview cellpadding=0 cellspacing=0><TR valign=top align=right><TD width=65></td><TD width=88 style='background: #ffc'><B>TOTAL</b></td>";
+      str += "<DIV id=overMainDiv style='font-size:"+ Options.overviewFontSize +"px'><TABLE class=ptTabOverview cellpadding=0 cellspacing=0><TR valign=top align=right><TD width=65></td><TD width=88 style='background: #ffc'><B>"+uW.g_js_strings.commonstr.owned+"</b></td>";
       for(i=0; i<Cities.numCities; i++) {
-        str += "<TD width=81><B>"+ Cities.cities[i].name.substring(0,11) +'</b><BR>'+ coordLink (Cities.cities[i].x, Cities.cities[i].y) +"<BR>"+ unsafeWindow.provincenames['p'+ Cities.cities[i].provId] +"</td>";
+        str += "<TD width=81><B>"+ Cities.cities[i].name.substring(0,11) +'</b><BR>'+ coordLink (Cities.cities[i].x, Cities.cities[i].y) +"<BR>"+ uW.provincenames['p'+ Cities.cities[i].provId] +"</td>";
       }
       if (Options.includeMarching)
         str += '<TD width=81><B>Marching</b></td>';
@@ -4266,7 +4253,7 @@ if (TEST_WIDE)
           rows[i][Cities.numCities+1] = 0;
 	  }
 	  for (rec=0;rec<=4;rec++){
-	  	 str += _row (unsafeWindow.resourceinfo['rec' + rec], rows[rec]);
+	  	 str += _row (uW.resourceinfo['rec' + rec], rows[rec]);
 	  }
       str += '<TR><TD colspan=12><BR></td></tr>';
 	  for (r=1; r<13; r++){
@@ -4304,7 +4291,7 @@ if (TEST_WIDE)
       rownum = 0;
             
       for (unt=0;unt<12;unt++) {
-      		str += _row (unsafeWindow.unitcost['unt' + (unt+1)][0], rows[unt+1]);
+      		str += _row (uW.unitcost['unt' + (unt+1)][0], rows[unt+1]);
       }
       str += '<TR><TD colspan=12><BR></td></tr>';
       
@@ -4317,7 +4304,7 @@ if (TEST_WIDE)
         row[0-1] = parseInt(row[0]) + parseInt(rp[1] - usage);
       }
      
-      str += _row (unsafeWindow.g_js_strings.commonstr.food+'+/-', row);
+      str += _row (uW.g_js_strings.commonstr.food+'+/-', row);
       
       for(i=0; i<Cities.numCities; i++) {
         if (row[i] >= 0)
@@ -4335,7 +4322,7 @@ if (TEST_WIDE)
         }
       }
       
-      str += _row (unsafeWindow.g_js_strings.showCityTooltip.foodsupply, row, true);
+      str += _row (uW.g_js_strings.showCityTooltip.foodsupply, row, true);
       str += '<TR><TD><BR></td></tr>';
       
       row = [];
@@ -4352,7 +4339,7 @@ if (TEST_WIDE)
         else
           row[i] = totWilds +'/'+ castle;
       }
-      str += _row (unsafeWindow.g_js_strings.showMyWilderness.conqueredwild, row, true);
+      str += _row (uW.g_js_strings.showMyWilderness.conqueredwild, row, true);
   
       row = [];
       for(i=0; i<Cities.numCities; i++) {
@@ -4362,7 +4349,7 @@ if (TEST_WIDE)
           ++totKnights;
         row[i] = totKnights;
       }
-      str += _row (unsafeWindow.g_js_strings.openKnights.myknights, row, true);
+      str += _row (uW.g_js_strings.openKnights.myknights, row, true);
   
       var now = unixTime();
       var row = [];
@@ -4378,7 +4365,7 @@ if (TEST_WIDE)
         else
           row[i] = timestr(totTime);
       }
-      str += _row (unsafeWindow.g_js_strings.commonstr.troops, row, true);
+      str += _row (uW.g_js_strings.commonstr.troops, row, true);
       
       var row = [];
       for(i=0; i<Cities.numCities; i++) {
@@ -4395,7 +4382,7 @@ if (TEST_WIDE)
         else
           row[i] = timestr(totTime);
       }    
-      str += _row (unsafeWindow.g_js_strings.modal_openWalls.defqueue, row, true);
+      str += _row (uW.g_js_strings.modal_openWalls.defqueue, row, true);
       str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><BR><INPUT type=CHECKBOX id=ptoverOriginal'+ (Options.includeCity?' CHECKED':'') +'>Show Troops in City</td></tr>';
       str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=idCheck'+ (Options.includeMarching?' CHECKED':'') +'>Show Marching Troops/Resources</td></tr>';
       str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=ptoverIncTraining'+ (Options.includeTraining?' CHECKED':'') +'>Show troops training in city</td></tr>';
@@ -4476,9 +4463,9 @@ function getWallInfo (cityId, objOut){
   for (k in fort){
     var id = parseInt(k.substr(4));
     if (id<60)
-      objOut.wallSpaceUsed += parseInt(unsafeWindow.fortstats["unt"+ id][5]) * parseInt(fort[k]);
+      objOut.wallSpaceUsed += parseInt(uW.fortstats["unt"+ id][5]) * parseInt(fort[k]);
     else
-      objOut.fieldSpaceUsed += parseInt(unsafeWindow.fortstats["unt"+ id][5]) * parseInt(fort[k]);
+      objOut.fieldSpaceUsed += parseInt(uW.fortstats["unt"+ id][5]) * parseInt(fort[k]);
   }
 }    
 
@@ -4553,7 +4540,7 @@ Tabs.Builds = {
     	city = 'city'+Seed.cities[i][0];
     	m+='<TD width=79>';
     	if (Seed.queue_con[city][0] != undefined) {
-    		m+=unsafeWindow.buildingcost['bdg' + Seed.queue_con[city][0][0]][0];
+    		m+=uW.buildingcost['bdg' + Seed.queue_con[city][0][0]][0];
     		m+=' ('+Seed.queue_con[city][0][1]+')';
     		m+='<br>'+ timestr((Seed.queue_con[city][0][4] - unixTime()),true);
     	}
@@ -4565,14 +4552,14 @@ Tabs.Builds = {
     	city = 'city'+Seed.cities[i][0];
     	m+='<TD width=79>';
     	if (Seed.queue_tch[city][0] != undefined) {
-    		m+=unsafeWindow.techcost['tch' + Seed.queue_tch[city][0][0]][0];
+    		m+=uW.techcost['tch' + Seed.queue_tch[city][0][0]][0];
     		m+=' ('+Seed.queue_tch[city][0][1]+')';
     		m+='<br>'+ timestr((Seed.queue_tch[city][0][3] - unixTime()),true);
     	}
     	m+='</td>';		
     }
     m+='</tr></table><BR><TABLE class=ptBuilds border=1px cellpadding=5 cellspacing=0>';
-    m+='<TR valign=top align=right><TD width=85>'+unsafeWindow.fortcost['frt53'][0]+'</td>';
+    m+='<TR valign=top align=right><TD width=85>'+uW.fortcost['frt53'][0]+'</td>';
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
@@ -4589,7 +4576,7 @@ Tabs.Builds = {
    			m+='</td>';
    		} 		
     }
-    m+='</tr><TR valign=top align=right><TD width=85>'+unsafeWindow.fortcost['frt55'][0]+'</td>';
+    m+='</tr><TR valign=top align=right><TD width=85>'+uW.fortcost['frt55'][0]+'</td>';
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
@@ -4620,7 +4607,7 @@ Tabs.Builds = {
     	m+= build+'</font>';
     	m+= '/' + max +'</td>';
     }
-    m+='</tr><TR valign=top align=right><TD width=85>'+unsafeWindow.fortcost['frt60'][0]+'</td>';
+    m+='</tr><TR valign=top align=right><TD width=85>'+uW.fortcost['frt60'][0]+'</td>';
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
@@ -4637,7 +4624,7 @@ Tabs.Builds = {
     			m+='</td>';
     	} 	
     }
-    m+='</tr><TR valign=top align=right><TD width=85>'+unsafeWindow.fortcost['frt61'][0]+'</td>';
+    m+='</tr><TR valign=top align=right><TD width=85>'+uW.fortcost['frt61'][0]+'</td>';
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
@@ -4653,7 +4640,7 @@ Tabs.Builds = {
     			m+='</td>';
     	} 	
     }
-    m+='</tr><TR valign=top align=right><TD>'+unsafeWindow.fortcost['frt62'][0]+'</td>';
+    m+='</tr><TR valign=top align=right><TD>'+uW.fortcost['frt62'][0]+'</td>';
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
@@ -4714,7 +4701,7 @@ Tabs.Builds = {
     }
     m+='</tr>';
     for (b=0;b<20;b++){
-    	m+='<TR valign=top align=right><TD width=85>'+unsafeWindow.buildingcost['bdg' + b][0]+'</td>';
+    	m+='<TR valign=top align=right><TD width=85>'+uW.buildingcost['bdg' + b][0]+'</td>';
 	    for (c=0;c<Seed.cities.length;c++){
 	    	m+='<TD style="width:79px; max-width:79px; word-wrap: break-word;">';
 	    		city= 'city'+Seed.cities[c][0];
@@ -4753,8 +4740,8 @@ Tabs.Builds = {
 	}
 	
     m+='</tr></table><BR></table><BR><TABLE class=ptBuilds  border=1px cellpadding=2 cellspacing=0><TR valign=top align=left>';
-    for (i in unsafeWindow.techcost) {
-    	m+='<TD border=1px style="width:150px;">'+unsafeWindow.techcost[i][0]+'</td><TD align=center style="width:50px max-width:150px;">';
+    for (i in uW.techcost) {
+    	m+='<TD border=1px style="width:150px;">'+uW.techcost[i][0]+'</td><TD align=center style="width:50px max-width:150px;">';
     	if (Seed.tech[i] >=9) m+='<FONT COLOR= "669900">';
     	if (Seed.tech[i] ==0) m+='<FONT COLOR= "CC0000">';
     	m+=Seed.tech[i];
@@ -4893,8 +4880,8 @@ Tabs.msg = {
   init : function (div){
     var t = Tabs.msg;
     t.cont=div;
-    unsafeWindow.getmsg = t.getEmailBody;
-	unsafeWindow.getReport = t.getReportBody;
+    uW.getmsg = t.getEmailBody;
+	uW.getReport = t.getReportBody;
 	    
     var m = '<DIV class=ptstat>Search inbox or alliance reports</div>';
     m += '<DIV class=ptentry style="height:30px"><table>';
@@ -4959,12 +4946,12 @@ Tabs.msg = {
     t.maxPages=document.getElementById("pagesSelect").value;
     
     if (t.totalPages==0){
-  		    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+  		    var params = uW.Object.clone(uW.g_ajaxparams);
   		      params.pf=0;
   		      params.group="a";
   		      params.pageNo = 1;
   		         
-  		      new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/listReports.php" + unsafeWindow.g_ajaxsuffix, {
+  		      new MyAjaxRequest(uW.g_ajaxpath + "ajax/listReports.php" + uW.g_ajaxsuffix, {
   		      method: "post",
   		      parameters: params,
   		      onSuccess: function (rslt) {
@@ -4991,12 +4978,12 @@ Tabs.msg = {
   
   getReports : function (pageNum){
     var t = Tabs.msg;
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
       params.pf=0;
       params.group="a";
       params.pageNo = pageNum;
          
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/listReports.php" + unsafeWindow.g_ajaxsuffix, {
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/listReports.php" + uW.g_ajaxsuffix, {
       method: "post",
       parameters: params,
       onSuccess: function (rslt) {
@@ -5018,7 +5005,7 @@ Tabs.msg = {
   	   	if (getMyAlliance()[0] != myarray[k]['side1AllianceId'] || myarray[k]['marchType'] == 2) {
 	  	        t.content += '<TR><TD><A><SPAN onclick="getReport('+ myarray[k]['reportId']+','+myarray[k]['side0TileType']	 +')">OPEN</span></a></td>';
 	  	    	t.content +='<TD>'+ pageNum +'</td>';
-	  	    	t.content +='<TD>'+ unsafeWindow.formatDateByUnixTime(myarray[k]['reportUnixTime']) +'</td>';
+	  	    	t.content +='<TD>'+ uW.formatDateByUnixTime(myarray[k]['reportUnixTime']) +'</td>';
 	  	    	t.content +='<TD>';
 	  	    	if ( rslt['arPlayerNames']['g'+myarray[k]['side1PlayerId']] == "M") t.content +='Lord ';
 	  	    	if ( rslt['arPlayerNames']['g'+myarray[k]['side1PlayerId']] == "F") t.content +='Lady ';
@@ -5049,13 +5036,13 @@ Tabs.msg = {
     t.maxPages=document.getElementById("pagesSelect").value;
     
     if (t.totalPages==0){
-		    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+		    var params = uW.Object.clone(uW.g_ajaxparams);
 		      params.pf=0;
 		      params.requestType="GET_MESSAGE_HEADERS_FOR_USER_INBOX";
 		      params.boxType = document.getElementById('searchSelect').value;
 		      params.pageNo = 1;
 		         
-		      new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/getEmail.php" + unsafeWindow.g_ajaxsuffix, {
+		      new MyAjaxRequest(uW.g_ajaxpath + "ajax/getEmail.php" + uW.g_ajaxsuffix, {
 		      method: "post",
 		      parameters: params,
 		      onSuccess: function (rslt) {
@@ -5081,13 +5068,13 @@ Tabs.msg = {
   
   getMail : function (pageNum){
     var t = Tabs.msg;
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
       params.pf=0;
       params.requestType="GET_MESSAGE_HEADERS_FOR_USER_INBOX";
       params.boxType = document.getElementById('searchSelect').value;
       params.pageNo = pageNum;
          
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/getEmail.php" + unsafeWindow.g_ajaxsuffix, {
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/getEmail.php" + uW.g_ajaxsuffix, {
       method: "post",
       parameters: params,
       onSuccess: function (rslt) {
@@ -5101,12 +5088,12 @@ Tabs.msg = {
   
   getReportBody : function(ID,TileId){
     var t = Tabs.msg;
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
     params.pf=0;
     params.rid=ID;
     params.side=0;
      
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/fetchReport.php" + unsafeWindow.g_ajaxsuffix, {
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/fetchReport.php" + uW.g_ajaxsuffix, {
       method: "post",
       parameters: params,
       onSuccess: function (rslt) {
@@ -5202,11 +5189,11 @@ Tabs.msg = {
   
   getEmailBody : function(ID){
     var t = Tabs.msg;
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
       params.messageId=ID;
       params.requestType="GET_MESSAGE_FOR_ID";
      
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/getEmail.php" + unsafeWindow.g_ajaxsuffix, {
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/getEmail.php" + uW.g_ajaxsuffix, {
       method: "post",
       parameters: params,
       onSuccess: function (rslt) {
@@ -5277,13 +5264,13 @@ Tabs.Alliance = {
      t.totalmembers=0;
      t.alliancemembers=[];	
      
-     unsafeWindow.getdetails = t.getMemberDetails;
+     uW.getdetails = t.getMemberDetails;
     
     var m =  '<DIV class=ptstat>ALLIANCE FUNCTIONS</div><TABLE align=center cellpadding=1 cellspacing=0></table>';
     
     m +='<TABLE class=ptTab><TD width=200px>List Alliance Members</td><TD>Sort by: <select id="searchAlli"><option value="name">Name</option>';
     m += '<option value="might">Might</option>';
-    m += '<option value="login">Last Login</option>';
+    m += '<option value="login">'+uW.g_js_strings.modal_messages_viewreports_view.lastlogin+'</option>';
     m += '<option value="cities">Cities</option>';
     m += '<option value="position">Position</option>';
     m += '<option value="dip">Days in position (dip)</option></select></td>';
@@ -5303,7 +5290,7 @@ Tabs.Alliance = {
 	    	t.alliancemembers=[];	
 		    document.getElementById('alOverviewTab').innerHTML ="";
 		    document.getElementById('progress').innerHTML ="";
-		    document.getElementById('progress').innerHTML = "Searching...";
+		    document.getElementById('progress').innerHTML = uW.g_js_strings.commonstr.loadingddd;
 		    document.getElementById('alList').disabled = true;
 		    t.error=false;
 		    t.fetchAllianceMemberPage();
@@ -5457,11 +5444,11 @@ Tabs.Alliance = {
     fetchAllianceMemberPage : function () {
     var t = Tabs.Alliance;
     document.getElementById('alList').disabled = true;
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
     
     params.pf = 0;
     
-    new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetInfo.php" + unsafeWindow.g_ajaxsuffix, {
+    new AjaxRequest(uW.g_ajaxpath + "ajax/allianceGetInfo.php" + uW.g_ajaxsuffix, {
       method: "post",
       parameters: params,
       onSuccess: function (transport) {
@@ -5470,7 +5457,7 @@ Tabs.Alliance = {
           for (var i=1;i<=10;i++) {
                  params.pageNo = i;
                  params.pf = 0;
-                 new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetMembersInfo.php" + unsafeWindow.g_ajaxsuffix, {
+                 new AjaxRequest(uW.g_ajaxpath + "ajax/allianceGetMembersInfo.php" + uW.g_ajaxsuffix, {
                    method: "post",
                    parameters: params,
                    onSuccess: function (transport) {
@@ -5536,14 +5523,14 @@ Tabs.Marches = {
   	
   init : function (div){
     var t = Tabs.Marches;
-    unsafeWindow.pr56Recall = t.butRecall;
-    unsafeWindow.r8x6Home = t.butSendHome;
-    unsafeWindow.cancelMarch = t.butcancelmarch;
+    uW.pr56Recall = t.butRecall;
+    uW.r8x6Home = t.butSendHome;
+    uW.cancelMarch = t.butcancelmarch;
     
     t.cont = div;
-    t.cont.innerHTML = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubA type=submit value='+unsafeWindow.g_js_strings.attack_viewimpending_view.incomingtroops+'></td>\
-          <TD><INPUT class=pbSubtab ID=ptmrchSubM type=submit value='+unsafeWindow.g_js_strings.commonstr.marching+'></td>\
-          <TD><INPUT class=pbSubtab ID=ptmrchSubR type=submit value='+unsafeWindow.g_js_strings.commonstr.reinforced+'></td></tr></table><HR class=ptThin>\
+    t.cont.innerHTML = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubA type=submit value='+uW.g_js_strings.attack_viewimpending_view.incomingtroops+'></td>\
+          <TD><INPUT class=pbSubtab ID=ptmrchSubM type=submit value='+uW.g_js_strings.commonstr.marching+'></td>\
+          <TD><INPUT class=pbSubtab ID=ptmrchSubR type=submit value='+uW.g_js_strings.commonstr.reinforced+'></td></tr></table><HR class=ptThin>\
       <DIV id=ptMarchOutput style="margin-top:10px; background-color:white; height:680px; overflow:scroll;"></div>';
             
     t.marchDiv = document.getElementById('ptMarchOutput');
@@ -5636,43 +5623,43 @@ Tabs.Marches = {
 				if (marchType == 2 && marchStatus == 2) marchType = 102;
 				
 				switch (marchType) {
-					case 1: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status=unsafeWindow.g_js_strings.commonstr.transport;break;
-					case 2: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status=unsafeWindow.g_js_strings.commonstr.reinforce	;break;
-					case 3: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/scouting.jpg";status=unsafeWindow.g_js_strings.commonstr.scout;break;
-					case 4: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status=unsafeWindow.g_js_strings.commonstr.attack;break;
-					case 9: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status=unsafeWindow.g_js_strings.commonstr.attack;break;
-					case 5: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status=unsafeWindow.g_js_strings.commonstr.reassign;break;
-					case 100: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status=unsafeWindow.g_js_strings.commonstr.returning;break;
-					case 102: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status=unsafeWindow.g_js_strings.commonstr.encamped;break;
+					case 1: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status=uW.g_js_strings.commonstr.transport;break;
+					case 2: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status=uW.g_js_strings.commonstr.reinforce	;break;
+					case 3: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/scouting.jpg";status=uW.g_js_strings.commonstr.scout;break;
+					case 4: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status=uW.g_js_strings.commonstr.attack;break;
+					case 9: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status=uW.g_js_strings.commonstr.attack;break;
+					case 5: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status=uW.g_js_strings.commonstr.reassign;break;
+					case 100: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status=uW.g_js_strings.commonstr.returning;break;
+					case 102: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status=uW.g_js_strings.commonstr.encamped;break;
 				} 
 				
-				if(status == unsafeWindow.g_js_strings.commonstr.encamped)
+				if(status == uW.g_js_strings.commonstr.encamped)
 					z += '<TD width="10px"><A onclick="r8x6Home('+ Seed.queue_atkinc[k].marchId +')"><img src='+ icon +'></a></td>';
 				else
 					z += '<TD width="10px"><img src='+ icon +'></td>';
 				z += '<TD width="40px">'+ status +'</td>';
 				z += '<TD>' + cityname + '</td>';
 				z += '<TD>'+ marchtime +'</td>';
-				z +='<TD>'+unsafeWindow.g_js_strings.commonstr.from+': ' + FROM + '</td>';
-				z +='<TD>'+unsafeWindow.g_js_strings.commonstr.might+': ' + addCommas(FROMmight) + '</td>';
-				if (Seed.queue_atkinc[k]["knt"] != undefined) z +='<TD>'+unsafeWindow.g_js_strings.commonstr.knight+': '+ Seed.queue_atkinc[k]["knt"]["cbt"]+'</td>';
+				z +='<TD>'+uW.g_js_strings.commonstr.from+': ' + FROM + '</td>';
+				z +='<TD>'+uW.g_js_strings.commonstr.might+': ' + addCommas(FROMmight) + '</td>';
+				if (Seed.queue_atkinc[k]["knt"] != undefined) z +='<TD>'+uW.g_js_strings.commonstr.knight+': '+ Seed.queue_atkinc[k]["knt"]["cbt"]+'</td>';
 				
-				if (Seed.queue_atkinc[k]["gold"] > 0) z += '<TD>'+unsafeWindow.resourceinfo.rec0 +': '+ addCommas(Seed.queue_atkinc[k]["gold"]) +'</td>';
-				if (Seed.queue_atkinc[k]["resource1"] > 0) z += '<TD>'+unsafeWindow.resourceinfo.rec1 +': '+ addCommas(Seed.queue_atkinc[k]["resource1"]) +'</td>';
-				if (Seed.queue_atkinc[k]["resource2"] > 0) z += '<TD>'+unsafeWindow.resourceinfo.rec2 +': '+ addCommas(Seed.queue_atkinc[k]["resource2"]) +'</td>';
-				if (Seed.queue_atkinc[k]["resource3"] > 0) z += '<TD>'+unsafeWindow.resourceinfo.rec3 +': '+ addCommas(Seed.queue_atkinc[k]["resource3"]) +'</td>';
-				if (Seed.queue_atkinc[k]["resource4"] > 0) z += '<TD>'+unsafeWindow.resourceinfo.rec4 +': '+ addCommas(Seed.queue_atkinc[k]["resource4"]) +'</td>';
+				if (Seed.queue_atkinc[k]["gold"] > 0) z += '<TD>'+uW.resourceinfo.rec0 +': '+ addCommas(Seed.queue_atkinc[k]["gold"]) +'</td>';
+				if (Seed.queue_atkinc[k]["resource1"] > 0) z += '<TD>'+uW.resourceinfo.rec1 +': '+ addCommas(Seed.queue_atkinc[k]["resource1"]) +'</td>';
+				if (Seed.queue_atkinc[k]["resource2"] > 0) z += '<TD>'+uW.resourceinfo.rec2 +': '+ addCommas(Seed.queue_atkinc[k]["resource2"]) +'</td>';
+				if (Seed.queue_atkinc[k]["resource3"] > 0) z += '<TD>'+uW.resourceinfo.rec3 +': '+ addCommas(Seed.queue_atkinc[k]["resource3"]) +'</td>';
+				if (Seed.queue_atkinc[k]["resource4"] > 0) z += '<TD>'+uW.resourceinfo.rec4 +': '+ addCommas(Seed.queue_atkinc[k]["resource4"]) +'</td>';
         		    
 				for(i=1; i<13; i++){
-					if(Seed.queue_atkinc[k]["unit"+i+"Count"] > 0 && marchdir == "going") z += '<TD>'+ unsafeWindow.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkinc[k]["unit"+i+"Count"]) +'</td>';
-					if(Seed.queue_atkinc[k]["unit"+i+"Return"] > 0 && marchdir == "returning") z += '<TD>'+ unsafeWindow.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkinc[k]["unit"+i+"Return"]) +'</td>';
+					if(Seed.queue_atkinc[k]["unit"+i+"Count"] > 0 && marchdir == "going") z += '<TD>'+ uW.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkinc[k]["unit"+i+"Count"]) +'</td>';
+					if(Seed.queue_atkinc[k]["unit"+i+"Return"] > 0 && marchdir == "returning") z += '<TD>'+ uW.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkinc[k]["unit"+i+"Return"]) +'</td>';
 				}
         		
 				if (marchType == 3)
-					if (Seed.queue_atkinc[k]["unts"]["u3"] > 0) z += '<TD>'+unsafeWindow.unitcost.unt3[0]+': '+ addCommas(Seed.queue_atkinc[k]["unts"]["u3"]) +'</td>';
+					if (Seed.queue_atkinc[k]["unts"]["u3"] > 0) z += '<TD>'+uW.unitcost.unt3[0]+': '+ addCommas(Seed.queue_atkinc[k]["unts"]["u3"]) +'</td>';
 				if (marchType == 4){
 					for(ui=1; ui<13; ui++){
-						if (Seed.queue_atkinc[k]["unts"]["u"+ui] > 0) z += '<TD>'+ unsafeWindow.unitcost['unt'+ui][0] +': '+ addCommas(Seed.queue_atkinc[k]["unts"]["u"+ui]) +'</td>';
+						if (Seed.queue_atkinc[k]["unts"]["u"+ui] > 0) z += '<TD>'+ uW.unitcost['unt'+ui][0] +': '+ addCommas(Seed.queue_atkinc[k]["unts"]["u"+ui]) +'</td>';
 					}
 				}
 				
@@ -5695,7 +5682,7 @@ Tabs.Marches = {
      var  m = '<TABLE id=pdmarches cellSpacing=10 width=200px height=0% class=pbTab>';
      if (t.widescreen) m += '<TR><TD><INPUT id=Wide type=checkbox checked=true>Widescreen</td>';
      else  m += '<TR><TD><INPUT id=Wide type=checkbox unchecked=true>Widescreen</td>';
-     m += '<TD colspan=4><INPUT id=TEST type=submit value='+unsafeWindow.g_js_strings.modal_progress_actions.updatestatus+'></td></tr>';
+     m += '<TD colspan=4><INPUT id=TEST type=submit value='+uW.g_js_strings.modal_progress_actions.updatestatus+'></td></tr>';
      m+='</table><TABLE id=pdmarches cellSpacing=10 width=100% height=0% class=pbTab>';
      for (var c=0; c< Seed.cities.length;c++) {
      		cityname = Seed.cities[c][1];
@@ -5774,16 +5761,16 @@ Tabs.Marches = {
   				    }
   
   				    switch (marchType) {
-  					    case 1: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status=unsafeWindow.g_js_strings.commonstr.transport;break;
-  					    case 2: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status=unsafeWindow.g_js_strings.commonstr.reinforce;break;
-  					    case 3: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/scouting.jpg";status=unsafeWindow.g_js_strings.commonstr.scout;break;
-  					    case 4: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status=unsafeWindow.g_js_strings.commonstr.attack;break;
-  					    case 5: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status=unsafeWindow.g_js_strings.commonstr.reassign;break;
-  					    case 8: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status=unsafeWindow.g_js_strings.commonstr.returning;break;
-  					    case 9: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status=unsafeWindow.g_js_strings.commonstr.raid;break;
-  					    case 102: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status=unsafeWindow.g_js_strings.commonstr.encamped;break;
+  					    case 1: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status=uW.g_js_strings.commonstr.transport;break;
+  					    case 2: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status=uW.g_js_strings.commonstr.reinforce;break;
+  					    case 3: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/scouting.jpg";status=uW.g_js_strings.commonstr.scout;break;
+  					    case 4: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status=uW.g_js_strings.commonstr.attack;break;
+  					    case 5: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status=uW.g_js_strings.commonstr.reassign;break;
+  					    case 8: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status=uW.g_js_strings.commonstr.returning;break;
+  					    case 9: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status=uW.g_js_strings.commonstr.raid;break;
+  					    case 102: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status=uW.g_js_strings.commonstr.encamped;break;
 						case 103: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/autoAttack/raid_stopped_desat.png";status=unsafeWindowg_js_strings.attack_generatequeue.raidstopped;break;
-						case 104: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/autoAttack/raid_resting.png";status=unsafeWindow.g_js_strings.attack_generatequeue.raidresting;break;
+						case 104: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/autoAttack/raid_resting.png";status=uW.g_js_strings.attack_generatequeue.raidresting;break;
   				    } 
   				      				    
   				    if (Seed.queue_atkp[cityID][k]["knightId"] !=0){
@@ -5809,24 +5796,24 @@ Tabs.Marches = {
   				    else
 						m += '<TD style="padding-right:10px;">'+ cityTo +'</td>';
   				    
-  				    if (knight != null)  m += '<TD>'+unsafeWindow.g_js_strings.commonstr.knight+': '+ knight +'</td>';
+  				    if (knight != null)  m += '<TD>'+uW.g_js_strings.commonstr.knight+': '+ knight +'</td>';
   				    
   				    if (Seed.queue_atkp[cityID][k]["toTileType"] == 11) m+='<TD>Lake Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
   				    else if (Seed.queue_atkp[cityID][k]["toTileType"] == 20) m+='<TD>Grassland Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
   				    else if (Seed.queue_atkp[cityID][k]["toTileType"] == 30) m+='<TD>Hills Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
   				    else if (Seed.queue_atkp[cityID][k]["toTileType"] == 40) m+='<TD>Mountain Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
   				    else if (Seed.queue_atkp[cityID][k]["toTileType"] == 50) m+='<TD>Plain Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
-  					else if (Seed.queue_atkp[cityID][k]["toCityId"] ==0) m +='<TD>'+unsafeWindow.g_js_strings.commonstr.barbariancamp+' '+unsafeWindow.g_js_strings.commonstr.lvl+': '+Seed.queue_atkp[cityID][k]["toTileLevel"]+'</td>';
+  					else if (Seed.queue_atkp[cityID][k]["toCityId"] ==0) m +='<TD>'+uW.g_js_strings.commonstr.barbariancamp+' '+uW.g_js_strings.commonstr.lvl+': '+Seed.queue_atkp[cityID][k]["toTileLevel"]+'</td>';
   		
-  				    if (Seed.queue_atkp[cityID][k]["gold"] > 0) m += '<TD>'+unsafeWindow.resourceinfo.rec0 +': '+ Seed.queue_atkp[cityID][k]["gold"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["resource1"] > 0) m += '<TD>'+unsafeWindow.resourceinfo.rec1 +': '+ addCommas(Seed.queue_atkp[cityID][k]["resource1"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["resource2"] > 0) m += '<TD>'+unsafeWindow.resourceinfo.rec2 +': '+ addCommas(Seed.queue_atkp[cityID][k]["resource2"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["resource3"] > 0) m += '<TD>'+unsafeWindow.resourceinfo.rec3 +': '+ addCommas(Seed.queue_atkp[cityID][k]["resource3"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["resource4"] > 0) m += '<TD>'+unsafeWindow.resourceinfo.rec4 +': '+ addCommas(Seed.queue_atkp[cityID][k]["resource4"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["gold"] > 0) m += '<TD>'+uW.resourceinfo.rec0 +': '+ Seed.queue_atkp[cityID][k]["gold"] +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["resource1"] > 0) m += '<TD>'+uW.resourceinfo.rec1 +': '+ addCommas(Seed.queue_atkp[cityID][k]["resource1"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["resource2"] > 0) m += '<TD>'+uW.resourceinfo.rec2 +': '+ addCommas(Seed.queue_atkp[cityID][k]["resource2"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["resource3"] > 0) m += '<TD>'+uW.resourceinfo.rec3 +': '+ addCommas(Seed.queue_atkp[cityID][k]["resource3"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["resource4"] > 0) m += '<TD>'+uW.resourceinfo.rec4 +': '+ addCommas(Seed.queue_atkp[cityID][k]["resource4"]) +'</td>';
   				    
   				    for(i=1; i<13; i++){
-						if(Seed.queue_atkp[cityID][k]["unit"+i+"Count"] > 0 && type == "going") m += '<TD>'+ unsafeWindow.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkp[cityID][k]["unit"+i+"Count"]) +'</td>';
-						if(Seed.queue_atkp[cityID][k]["unit"+i+"Return"] > 0 && type == "returning") m += '<TD>'+ unsafeWindow.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkp[cityID][k]["unit"+i+"Return"]) +'</td>';
+						if(Seed.queue_atkp[cityID][k]["unit"+i+"Count"] > 0 && type == "going") m += '<TD>'+ uW.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkp[cityID][k]["unit"+i+"Count"]) +'</td>';
+						if(Seed.queue_atkp[cityID][k]["unit"+i+"Return"] > 0 && type == "returning") m += '<TD>'+ uW.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkp[cityID][k]["unit"+i+"Return"]) +'</td>';
 					}
 					m += '</tr>';
 				}
@@ -5844,8 +5831,8 @@ Tabs.Marches = {
   	
   	
   	document.getElementById('TEST').addEventListener('click', function(){
-		var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-  			new AjaxRequest(unsafeWindow.g_ajaxpath + "/fb/e2/src/main_src.php?g=&y=0&n=nan001&l=nl_NL&messagebox=&standalone=0&res=1&iframe=1&lang=en&ts=1304248288.7067&s=250&appBar=" + unsafeWindow.g_ajaxsuffix, {
+		var params = uW.Object.clone(uW.g_ajaxparams);
+  			new AjaxRequest(uW.g_ajaxpath + "/fb/e2/src/main_src.php?g=&y=0&n=nan001&l=nl_NL&messagebox=&standalone=0&res=1&iframe=1&lang=en&ts=1304248288.7067&s=250&appBar=" + uW.g_ajaxsuffix, {
   			    method: "POST",
   			    parameters: params,
   			    onSuccess: function (rslt) {
@@ -5860,9 +5847,9 @@ Tabs.Marches = {
   			    	result = result.substr(4);
   			    	var seed = eval(result);
 	  			    //WinLog.write ("seed @ "+ unixTime()  +" ("+ now +")\n\n"+ inspect (seed, 8, 1));
-	  			    unsafeWindow.document.seed = seed;
+	  			    uW.document.seed = seed;
 	  			    Seed = seed;
-	  			    unsafeWindow.seed = seed;
+	  			    uW.seed = seed;
   			    	}
   			    },
   			    onFailure: function () {
@@ -5888,7 +5875,7 @@ Tabs.Marches = {
     
     butcancelmarch: function(marchID){
     	 var t = Tabs.Marches;
-    	 	 var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    	 	 var params = uW.Object.clone(uW.g_ajaxparams);
     	 	 params.mid = marchID;
      	 	 for (var c=0; c<Cities.numCities; c++){
     	 	   var que = Seed.queue_atkp['city'+ Cities.cities[c].id];
@@ -5902,15 +5889,15 @@ Tabs.Marches = {
     	 	   }    
     	 	 }    
     	 	 
-    	 	 new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/cancelMarch.php" + unsafeWindow.g_ajaxsuffix, {
+    	 	 new AjaxRequest(uW.g_ajaxpath + "ajax/cancelMarch.php" + uW.g_ajaxsuffix, {
     	 	     method: "post",
     	 	     parameters: params,
     	 	     onSuccess: function (rslt) {
-    	 	     var march = unsafeWindow.seed.queue_atkp["city" + params.cid]["m" + params.mid];
+    	 	     var march = uW.seed.queue_atkp["city" + params.cid]["m" + params.mid];
     	 	     march.marchStatus = 8;
     	 	      var marchtime = parseInt(march.returnUnixTime) - parseInt(march.destinationUnixTime);
     	 	      var ut = unixTime();
-    	 	      if (unsafeWindow.seed.playerEffects.returnExpire > unixtime())
+    	 	      if (uW.seed.playerEffects.returnExpire > unixtime())
     	 	        marchtime *= 0.5
     	 	       march.returnUnixTime = ut + marchtime;
     	 	       march.destinationUnixTime = ut;
@@ -6069,7 +6056,7 @@ return;
   /***  
   // not working, returns 'invalid parameters' :(  
   ajaxCancelMarch : function (marchId, notify){
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
 logit ('ajaxCancelMarch: '+ marchId);    
     for (var c=0; c<Cities.numCities; c++){
       var que = Seed.queue_atkp['city'+ Cities.cities[c].id];
@@ -6086,7 +6073,7 @@ logit ('ajaxCancelMarch: '+ marchId);
     params.marchId = marchId;
     params.mid = 'm'+ marchId;
     params.requestType = "CANCEL_MARCH";
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/cancelMarch.php" + unsafeWindow.g_ajaxsuffix, {
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/cancelMarch.php" + uW.g_ajaxsuffix, {
         method: "post",
         parameters: params,
         onSuccess: function (rslt) {
@@ -6112,29 +6099,29 @@ logit ('ajaxSendHome: '+ marchId);
       notify ('March not found!'); 
       return;
     }    
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
     params.mid = marchId;
     params.cid = march.toCityId;
     params.fromUid = march.fromPlayerId;
     params.fromCid = march.fromCityId;
    
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/kickoutReinforcements.php" + unsafeWindow.g_ajaxsuffix, {
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/kickoutReinforcements.php" + uW.g_ajaxsuffix, {
         method: "post",
         parameters: params,
         onSuccess: function (rslt) {
           if (rslt.ok){
             var upkeep = 0;
             for (var i=1; i<13; i++)
-              upkeep += parseInt(march["unit" + i + "Return"]) * parseInt(unsafeWindow.unitupkeeps[i])
-            unsafeWindow.seed.resources["city"+ march.toCityId].rec1[3] -= upkeep;
-            if (parseInt(march.fromPlayerId) == parseInt(unsafeWindow.tvuid)) {
+              upkeep += parseInt(march["unit" + i + "Return"]) * parseInt(uW.unitupkeeps[i])
+            uW.seed.resources["city"+ march.toCityId].rec1[3] -= upkeep;
+            if (parseInt(march.fromPlayerId) == parseInt(uW.tvuid)) {
 //logit ('FROM ME!'); 
-              var mymarch = unsafeWindow.seed.queue_atkp["city" + march.fromCityId]["m" + marchId];
+              var mymarch = uW.seed.queue_atkp["city" + march.fromCityId]["m" + marchId];
               var marchtime = Math.abs(parseInt(mymarch.destinationUnixTime) - parseInt(mymarch.eventUnixTime));
               mymarch.returnUnixTime = unixTime() + marchtime;
               mymarch.marchStatus = 8;
             }
-            delete unsafeWindow.seed.queue_atkinc["m" + marchId];
+            delete uW.seed.queue_atkinc["m" + marchId];
             if (notify != null)
               notify(null);
           } else {
@@ -6191,7 +6178,7 @@ function kickout_allies(mid, cid, fromUid, fromCid, upkeep) {
 
  
   ajaxRecall : function (marchId, notify){
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
     for (var c=0; c<Cities.numCities; c++){
       var que = Seed.queue_atkp['city'+ Cities.cities[c].id];
       if (matTypeof(que)=='array')
@@ -6204,15 +6191,15 @@ function kickout_allies(mid, cid, fromUid, fromCid, upkeep) {
       }    
     }    
     params.mid = marchId;
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/undefend.php" + unsafeWindow.g_ajaxsuffix, {
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/undefend.php" + uW.g_ajaxsuffix, {
         method: "post",
         parameters: params,
         onSuccess: function (rslt) {
-          var march = unsafeWindow.seed.queue_atkp["city" + params.cid]["m" + params.mid];
+          var march = uW.seed.queue_atkp["city" + params.cid]["m" + params.mid];
           march.marchStatus = 8;
           var marchtime = parseInt(march.returnUnixTime) - parseInt(march.destinationUnixTime);
           var ut = unixTime();
-          if (unsafeWindow.seed.playerEffects.returnExpire > unixTime())
+          if (uW.seed.playerEffects.returnExpire > unixTime())
             marchtime *= 0.5
           march.returnUnixTime = ut + marchtime;
           march.destinationUnixTime = ut;
@@ -6245,9 +6232,9 @@ var PageNavigator = {
         [/pageNavigatorView =.*$/im, 'pageNavigatorView=pager'],
         [/pageNavigatorController =.*$/im, 'pageNavigatorController=pager']
         ]);
-    unsafeWindow.ptPagerHook = t.Cpager;
-    t.ctrlPaginationOld = unsafeWindow.ctrlPagination;
-    t.loadPage_paginationOld = unsafeWindow.loadPage_pagination;
+    uW.ptPagerHook = t.Cpager;
+    t.ctrlPaginationOld = uW.ctrlPagination;
+    t.loadPage_paginationOld = uW.loadPage_pagination;
     t.cpPager = new t.Cpager (0,0);
     t.cpPager.oldStyle = true;
     t.enable(Options.fixPageNav);
@@ -6275,18 +6262,18 @@ var PageNavigator = {
       curPage = 1;
     t.cpPager.gotoPage(curPage);
     t.cpPager.onClick = unsafeWindow[notify];
-    unsafeWindow.pageNavigatorView = t.cpPager;
+    uW.pageNavigatorView = t.cpPager;
   },  
   
   enable : function (tf){
     var t = PageNavigator;
     t.modalMessagesFunc.setEnable(tf);
     if (tf){
-      unsafeWindow.ctrlPagination = t.ctrlPagination;
-      unsafeWindow.loadPage_pagination = t.loadPage_pagination;
+      uW.ctrlPagination = t.ctrlPagination;
+      uW.loadPage_pagination = t.loadPage_pagination;
     } else {
-      unsafeWindow.ctrlPagination = t.ctrlPaginationOld;
-      unsafeWindow.loadPage_pagination = t.loadPage_paginationOld;
+      uW.ctrlPagination = t.ctrlPaginationOld;
+      uW.loadPage_pagination = t.loadPage_paginationOld;
     }
   },
   
@@ -6425,7 +6412,7 @@ var CalterUwFunc = function (funcName, findReplace) {
 //      	scr.innerHTML = funcName +' = '+ t.funcNew;
 //      	document.body.appendChild(scr);
 //        setTimeout ( function (){document.body.removeChild(scr);}, 500);
-unsafeWindow.uwuwuwFunc(funcName +' = '+ t.funcNew);
+uW.uwuwuwFunc(funcName +' = '+ t.funcNew);
       	t.isEnabled = true;
       } else {
       var x = funcName.split('.');
@@ -6457,7 +6444,7 @@ var MessageCounts = {
 		['$("chrome_messages_notify").addClassName("noCount");','msgCount_hook(a);'] 
 	]); 
 	if (t.messagesNotifyFunc.isAvailable()){ 
-		unsafeWindow.msgCount_hook = t.msgCount_hook; 
+		uW.msgCount_hook = t.msgCount_hook; 
 		e = document.getElementById('chrome_messages_notify'); 
 		span = document.createElement('span'); 
 		span.id = 'chrome_messages_notify_Msg'; 
@@ -6465,7 +6452,7 @@ var MessageCounts = {
 		span.style.visibility = 'hidden'; 
 			if (Options.fixMsgCount){ 
 				t.enable (true); 
-				setTimeout (unsafeWindow.messages_notify_bug, 1000); 
+				setTimeout (uW.messages_notify_bug, 1000); 
 			} 
 		} 
 	},
@@ -6491,7 +6478,7 @@ var MessageCounts = {
     t.messagesNotifyFunc.setEnable (tf);
     if (!tf)
       document.getElementById('chrome_messages_notifyL').style.display = 'none';
-    setTimeout (unsafeWindow.messages_notify_bug, 0);
+    setTimeout (uW.messages_notify_bug, 0);
   },
     
   isAvailable : function (){
@@ -6506,7 +6493,7 @@ var WarnZeroAttack = {
   init : function (){
     var t = WarnZeroAttack;
     t.modalAttackFunc = new CalterUwFunc ('modal_attack', [['modal_attack_check()', 'modalAttack_hook()']]);
-    unsafeWindow.modalAttack_hook = t.hook;
+    uW.modalAttack_hook = t.hook;
     t.modalAttackFunc.setEnable(Options.fixWarnZero);
   },
    
@@ -6524,9 +6511,9 @@ var WarnZeroAttack = {
     var t = WarnZeroAttack;
     if (parseIntZero(document.getElementById('modal_attack_target_coords_x').value) == 0
     && parseIntZero(document.getElementById('modal_attack_target_coords_y').value) == 0){
-      new CdialogCancelContinue ('<SPAN class=boldRed>You are about to march to location 0,0!</span>', null, unsafeWindow.modal_attack_check, document.getElementById('modalInner1'));      
+      new CdialogCancelContinue ('<SPAN class=boldRed>You are about to march to location 0,0!</span>', null, uW.modal_attack_check, document.getElementById('modalInner1'));      
     } else {
-      unsafeWindow.modal_attack_check();
+      uW.modal_attack_check();
     }
   },
   
@@ -6550,14 +6537,14 @@ var MapDistanceFix = {
     var t = MapDistanceFix;
     t.popSlotsFunc = new CalterUwFunc ('MapObject.prototype.populateSlots', [['this.distance', 'fixMapDistance_hook']]);
     if (t.popSlotsFunc.isAvailable()){
-      unsafeWindow.fixMapDistance_hook = t.fixMapDistance_hook;
+      uW.fixMapDistance_hook = t.fixMapDistance_hook;
       if (Options.fixMapDistance)
         t.enable (true);
 
     }
   },
   fixMapDistance_hook : function (cityX, cityY, tileX, tileY){
-    var city = Cities.byID[unsafeWindow.currentcityid];
+    var city = Cities.byID[uW.currentcityid];
     return distance (city.x, city.y, tileX, tileY);
   },
   enable : function (tf){
@@ -6771,14 +6758,14 @@ function setCities(){
 function officerId2String (oid){
   if (oid==null)
     return '';
-  else if (oid==3)
-    return 'Officer';
+  else if (oid==3) 	
+    return uW.allianceOfficerTypeMapping[3];
   else if (oid==2)
-    return 'Vice Chance';
+    return uW.allianceOfficerTypeMapping[2];
   else if (oid==1)
-    return 'Chancellor';
+    return uW.allianceOfficerTypeMapping[1];
   else if (oid==4)
-      return 'Member';
+      return uW.allianceOfficerTypeMapping[0];
   return '';
 }
 
@@ -7010,7 +6997,7 @@ if (DEBUG_TRACE_AJAX) logit ("AJAX: "+ url +"\n" + inspect (opts, 3, 1));
 
 function MyAjaxRequest (url, o, noRetry){
 if (DEBUG_TRACE) logit (" 0 myAjaxRequest: "+ url +"\n" + inspect (o, 2, 1));
-  var opts = unsafeWindow.Object.clone(o);
+  var opts = uW.Object.clone(o);
   var wasSuccess = o.onSuccess;
   var wasFailure = o.onFailure;
   var retry = 0;
@@ -7044,12 +7031,12 @@ if (DEBUG_TRACE) logit ("myAjaxRequest.myFailure(): "+ inspect(rslt, 1, 1));
 if (DEBUG_TRACE) logit (" 1b myAjaxRequest.mySuccess(): "+ inspect(rslt, 1, 1));
       rslt.errorMsg = null;   ///// !!!!!!!!!!!!!  ************
       if (rslt.updateSeed)
-        unsafeWindow.update_seed(rslt.updateSeed);
+        uW.update_seed(rslt.updateSeed);
       wasSuccess (rslt);
       return;
     }
 if (DEBUG_TRACE) logit (" 1b myAjaxRequest.mySuccess() !ok : "+ inspect(rslt, 3, 1));
-    rslt.errorMsg = unsafeWindow.printLocalError((rslt.error_code || null), (rslt.msg || null), (rslt.feedback || null));
+    rslt.errorMsg = uW.printLocalError((rslt.error_code || null), (rslt.msg || null), (rslt.feedback || null));
     /*if ( (x = rslt.errorMsg.indexOf ('<br><br>')) > 0)
       rslt.errorMsg = rslt.errorMsg.substr (0, x-1);*/
     if (!noRetry && (rslt.error_code==0 ||rslt.error_code==8 || rslt.error_code==1 || rslt.error_code==3)){
@@ -7067,14 +7054,14 @@ if (DEBUG_TRACE) logit (" 1b myAjaxRequest.mySuccess() !ok : "+ inspect(rslt, 3,
 // returns: 'neutral', 'friendly', or 'hostile'
 function getDiplomacy (aid) {
   if (Seed.allianceDiplomacies == null)
-    return 'neutral';
+    return uW.g_js_strings.commonstr.neutral;
   if (Seed.allianceDiplomacies.friendly && Seed.allianceDiplomacies.friendly['a'+aid] != null)
-    return 'friendly';
+    return uW.g_js_strings.commonstr.friendly;
   if (Seed.allianceDiplomacies.hostile && Seed.allianceDiplomacies.hostile['a'+aid] != null)
-    return 'hostile';
+    return uW.g_js_strings.commonstr.hostile;
   if (aid == Seed.allianceDiplomacies.allianceId)
-    return 'ally';
-  return 'neutral';
+    return uW.g_js_strings.modaltitles.alliance;
+  return uW.g_js_strings.commonstr.neutral;
 };
 
 function getMyAlliance (){
@@ -7222,7 +7209,7 @@ var debugWin = {
     }
     function clickedShow (){
       var now = new Date();
-      var myseed = unsafeWindow.Object.clone (Seed);
+      var myseed = uW.Object.clone (Seed);
       var div = document.getElementById('dbpoplist');
       for (var i=0; i<div.childNodes.length; i++){
         if (div.childNodes[i].type && div.childNodes[i].type=='checkbox'){
@@ -7303,9 +7290,9 @@ var myServers = {   // incomplete, untested
       notify (myServers.serverlist);
       return;
     }
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
     
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/myServers.php" + unsafeWindow.g_ajaxsuffix, {
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/myServers.php" + uW.g_ajaxsuffix, {
       method: "post",
       parameters: params,
       onSuccess: function(rslt) {
@@ -7383,25 +7370,25 @@ function coordLink (x, y){
 }
 
 
-unsafeWindow.ptGotoMapHide = function (x, y){
+uW.ptGotoMapHide = function (x, y){
   try {
-    unsafeWindow.Modal.hideModal();
+    uW.Modal.hideModal();
   } catch (e){ }
   try {
     Modal.hideModal();
   } catch (e){ }
-  unsafeWindow.ptGotoMap (x, y);  
+  uW.ptGotoMap (x, y);  
 }
 
 
 
-unsafeWindow.ptGotoMap = function (x, y){
+uW.ptGotoMap = function (x, y){
   if (Options.hideOnGoto)
     hideMe ();
   setTimeout (function (){ 
     document.getElementById('mapXCoor').value = x;
     document.getElementById('mapYCoor').value = y;
-    unsafeWindow.reCenterMapWithCoor();
+    uW.reCenterMapWithCoor();
     var a = document.getElementById("mod_views").getElementsByTagName("a");
     for (var b = 0; b < a.length; b++) {
         a[b].className = ""
@@ -7410,7 +7397,7 @@ unsafeWindow.ptGotoMap = function (x, y){
     document.getElementById("maparea_city").style.display = 'none';
     document.getElementById("maparea_fields").style.display = 'none';
     document.getElementById("maparea_map").style.display = 'block';
-    unsafeWindow.tutorialClear()
+    uW.tutorialClear()
   }, 0);
 };
 
@@ -7451,7 +7438,7 @@ function cityStatusString (cs){
 // Simple method, as if it were typed in thru DOM
 function sendChat (msg){
   document.getElementById ("mod_comm_input").value = msg;
-  unsafeWindow.Chat.sendChat ();
+  uW.Chat.sendChat ();
 }
 
 // works well, but message is not echoed back to local client
@@ -7459,20 +7446,20 @@ Chat = {
   params : null,
 
   sendWhisper : function (msg, who, notify){
-    this.params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    this.params = uW.Object.clone(uW.g_ajaxparams);
     this.params.ctype = 3;
     this.params.name = who;
     this._sendit (msg, notify);
   },
 
   sendGlobal : function (msg, notify){
-    this.params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    this.params = uW.Object.clone(uW.g_ajaxparams);
     this.params.ctype = 1;
     this._sendit (msg, notify);
   },
 
   sendAlliance : function (msg, notify){
-    this.params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    this.params = uW.Object.clone(uW.g_ajaxparams);
     this.params.ctype = 2;
     this._sendit (msg, notify);
   },
@@ -7482,7 +7469,7 @@ Chat = {
        return s.replace(/^\s+/, '').replace(/\s+$/, '');
     }
     this.params.comment = strip (msg);
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/sendChat.php" + unsafeWindow.g_ajaxsuffix, {
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/sendChat.php" + uW.g_ajaxsuffix, {
       method: "post",
       parameters: this.params,
       onSuccess: function(transport) {
@@ -7498,18 +7485,18 @@ Chat = {
 }
 
 function doDefTrain (cityId, siege, unitId, num, notify){
-  var time = unsafeWindow.modal_walls_traintime(unitId, num);
-  var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+  var time = uW.modal_walls_traintime(unitId, num);
+  var params = uW.Object.clone(uW.g_ajaxparams);
   params.cid = cityId;
   params.type = unitId;
   params.quant = num;
   params.items = siege;
-  new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/fortify.php" + unsafeWindow.g_ajaxsuffix, {
+  new MyAjaxRequest(uW.g_ajaxpath + "ajax/fortify.php" + uW.g_ajaxsuffix, {
       method: "post",
       parameters: params,
       onSuccess: function (rslt) {
         if (rslt.ok) {
-          unsafeWindow.seed.queue_fort["city" + cityId].push([unitId, num, rslt.initTS, parseInt(rslt.initTS) + time, 0, time, rslt.fortifyId]);
+          uW.seed.queue_fort["city" + cityId].push([unitId, num, rslt.initTS, parseInt(rslt.initTS) + time, 0, time, rslt.fortifyId]);
           if (notify != null)
             setTimeout (function (){notify(null);}, 500);
         } else {
@@ -7526,24 +7513,24 @@ function doDefTrain (cityId, siege, unitId, num, notify){
 
 
 function doTrain (cityId, tut, unitId, num, notify){
-  var time = unsafeWindow.modal_barracks_traintime(unitId, num);
-  var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+  var time = uW.modal_barracks_traintime(unitId, num);
+  var params = uW.Object.clone(uW.g_ajaxparams);
   params.cid = cityId;
   params.type = unitId;
   params.quant = num;
   params.items = tut;
 
-  new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/train.php" + unsafeWindow.g_ajaxsuffix, {
+  new MyAjaxRequest(uW.g_ajaxpath + "ajax/train.php" + uW.g_ajaxsuffix, {
     method: "post",
     parameters: params,
     onSuccess: function(rslt) {
       if (rslt.ok) {
         for (var i = 1; i < 5; i++) {
-          unsafeWindow.seed.resources["city" + cityId]["rec" + i][0] = parseInt(unsafeWindow.seed.resources["city" + cityId]["rec" + i][0]) - parseInt(unsafeWindow.unitcost["unt" + unitId][i]) * 3600 * parseInt(num)
+          uW.seed.resources["city" + cityId]["rec" + i][0] = parseInt(uW.seed.resources["city" + cityId]["rec" + i][0]) - parseInt(uW.unitcost["unt" + unitId][i]) * 3600 * parseInt(num)
         }
-        unsafeWindow.seed.citystats["city" + cityId].gold[0] = parseInt(unsafeWindow.seed.citystats["city" + cityId].gold[0]) - parseInt(unsafeWindow.unitcost["unt" + unitId][5]) * parseInt(num);
-        unsafeWindow.seed.citystats["city" + cityId].pop[0] = parseInt(unsafeWindow.seed.citystats["city" + cityId].pop[0]) - parseInt(unsafeWindow.unitcost["unt" + unitId][6]) * parseInt(num);
-        unsafeWindow.seed.queue_unt["city" + cityId].push([unitId, num, rslt.initTS, parseInt(rslt.initTS) + time, 0, time, null]);
+        uW.seed.citystats["city" + cityId].gold[0] = parseInt(uW.seed.citystats["city" + cityId].gold[0]) - parseInt(uW.unitcost["unt" + unitId][5]) * parseInt(num);
+        uW.seed.citystats["city" + cityId].pop[0] = parseInt(uW.seed.citystats["city" + cityId].pop[0]) - parseInt(uW.unitcost["unt" + unitId][6]) * parseInt(num);
+        uW.seed.queue_unt["city" + cityId].push([unitId, num, rslt.initTS, parseInt(rslt.initTS) + time, 0, time, null]);
         if (notify != null)
           setTimeout (function (){notify(null);}, 500);
       } else {
@@ -7595,7 +7582,7 @@ function debugPos  (e){
 }
 
 function debugElement  (e){
-  var x = unsafeWindow.Object.clone (e.wrappedJSObject);
+  var x = uW.Object.clone (e.wrappedJSObject);
   x.innerHTML = '';
   x.innerText = '';
   x.textContent = '';
@@ -7656,15 +7643,15 @@ var WinManager = {
   add : function (prefix, pop){
     var t = WinManager;
     t.wins[prefix] = pop;
-    if (unsafeWindow.cpopupWins == null)
-      unsafeWindow.cpopupWins = {};
-    unsafeWindow.cpopupWins[prefix] = pop;
+    if (uW.cpopupWins == null)
+      uW.cpopupWins = {};
+    uW.cpopupWins[prefix] = pop;
   },
   
   delete : function (prefix){
     var t = WinManager;
     delete t.wins[prefix];
-    delete unsafeWindow.cpopupWins[prefix];
+    delete uW.cpopupWins[prefix];
   }    
 }
 
@@ -7738,9 +7725,9 @@ function CPopup (prefix, x, y, width, height, enableDrag, onClose) {
 
   function focusMe (){
     t.setLayer(5);
-    for (k in unsafeWindow.cpopupWins){
+    for (k in uW.cpopupWins){
       if (k != t.prefix)
-        unsafeWindow.cpopupWins[k].unfocusMe(); 
+        uW.cpopupWins[k].unfocusMe(); 
     }
   }
   function unfocusMe (){
@@ -8080,7 +8067,7 @@ function htmlSelector (valNameObj, curVal, tags){
 
 
 function unixTime (){
-  return parseInt (new Date().getTime() / 1000) + unsafeWindow.g_timeoff;
+  return parseInt (new Date().getTime() / 1000) + uW.g_timeoff;
 }
 function htmlOptions (a, curVal){
   m = '';
