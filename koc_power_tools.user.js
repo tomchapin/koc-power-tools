@@ -6,7 +6,7 @@
 // @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110714a';
+var Version = '20110716a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -486,6 +486,7 @@ var ChatStuff = {
     uW.ptChatIconClicked = t.e_iconClicked;
     t.setEnable (Options.chatEnhance);
   },
+  	    
   
   isAvailable : function (){
     var t = ChatStuff; 
@@ -545,11 +546,7 @@ var ChatStuff = {
 		element_class = 'ptChatScripter';
 		
        msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
-           
-     //if (msg.indexOf('claimAllianceChat')<0){
-     //  msg = msg.replace (/([0-9]{1,3})\s*(,|-)\s*([0-9]{1,3})/img, '<A onclick=\"ptGotoMap($1,$3)\">$1$2$3</a>');
-     //}
-       
+           	       
      var m = /(Lord|Lady) (.*?)</im.exec(msg);
      if (m != null)
        m[2] = m[2].replace(/\'/g,"°°");
@@ -564,6 +561,7 @@ var ChatStuff = {
      if (whisp.indexOf('My wilderness at') >= 0 && Options.enableTowerAlert) {
        	msg +='<span id="dummy"><iframe src="http://koc.god-like.info/alarm2.html" height="0" width="0"></iframe></span>';
      }
+     
      return msg;
    },
  }
@@ -1753,6 +1751,8 @@ function parseIntZero (n){
 
 /*********************************** Players TAB ***********************************/
 
+
+
 function officerId2String (oid){
   if (oid==null)
     return '';
@@ -1762,6 +1762,8 @@ function officerId2String (oid){
     return uW.allianceOfficerTypeMapping[2];
   else if (oid==1)
     return uW.allianceOfficerTypeMapping[1];
+    else if (oid==4)
+    return uW.allianceOfficerTypeMapping[4];
   return '';
 }
 
@@ -1865,36 +1867,6 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     t.show();
   },
  
- /* 
-  init : function (div){
-    var t = Tabs.AllianceList;
-    t.cont = div;
-//t.fetchTEST();    
-    uW.PTgetMembers = t.eventGetMembers;
-    uW.PTpd = t.clickedPlayerDetail;
-    uW.PTpl = t.clickedPlayerLeaderboard;
-    if (getMyAlliance()[0] == 0) {
-      t.cont.innerHTML = '<BR><BR><CENTER>You need to be in an alliance to use this feature.</center>';
-      t.state = 1;
-      return;
-    }
-    var m = '<div ><DIV class=ptentry><TABLE width=100% cellpadding=0>\
-        <TR><TD class=xtab align=right></td><TD class=xtab>Enter all or part of a player name: &nbsp;</td>\
-          <TD width=80% class=xtab><INPUT id=allPlayName size=20 type=text /> &nbsp; <INPUT id=playSubmit type=submit value="Find Player" /></td>\
-          <TD class="xtab ptErrText"><SPAN id=ptplayErr></span></td></tr>\
-        <TR><TD class=xtab>OR: </td><TD class=xtab> Enter all or part of an alliance name: &nbsp;</td>\
-          <TD class=xtab><INPUT id=allAllName type=text /> &nbsp; <INPUT id=allSubmit type=submit value="Find Alliance" /> &nbsp; <INPUT id=myAllSubmit type=submit value="'+ getMyAlliance()[1] +'" /></td>\
-          <TD class="xtab ptErrText"><SPAN id=ptallErr></span></td></tr>\
-        </table><span style="vertical-align:middle;" id=altInput></span></div>\
-        <div style="overflow-y:auto;"; id=allListOut ></div></div>';
-    t.cont.innerHTML = m;
-    document.getElementById('allSubmit').addEventListener ('click', t.eventSubmit, false);
-    document.getElementById('myAllSubmit').addEventListener ('click', t.eventMyAllianceSubmit, false);
-    document.getElementById('playSubmit').addEventListener ('click', t.eventPlayerSubmit, false);
-    document.getElementById('allAllName').addEventListener ('focus', function (){document.getElementById('ptallErr').innerHTML='';}, false);
-    document.getElementById('allPlayName').addEventListener ('focus', function (){document.getElementById('ptplayErr').innerHTML='';}, false);
-  },
-*/
   hide : function (){
   },
 
@@ -1906,9 +1878,11 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
         t.state = 1;
         return;
       }
-      var m = '<DIV class=ptentry><TABLE width=100% cellpadding=0>\
-          <TR><TD class=xtab align=right></td><TD class=xtab>'+uW.g_js_strings.modal_fow_leaderboard.searchuser+': &nbsp;</td>\
-            <TD width=80% class=xtab><INPUT id=allPlayName size=20 type=text /> &nbsp; <INPUT id=playSubmit type=submit value="'+uW.g_js_strings.modal_fow_leaderboard.finduser+'" /> &nbsp; <INPUT id=ffbuidsubmit type=submit value="UID" /></td>\
+      
+       var m = '<DIV class=ptentry><TABLE width=100% cellpadding=0>';
+       m+='<TR><TD class=xtab align=right></td><TD class=xtab>'+uW.g_js_strings.modal_fow_leaderboard.searchuser+': &nbsp; </td>';
+       m+=' <TD width=80% class=xtab><INPUT id=allPlayName size=20 type=text/> &nbsp;'; 
+       m+='<INPUT id=playSubmit type=submit value="'+uW.g_js_strings.modal_fow_leaderboard.finduser+'" /> &nbsp; <INPUT id=ffbuidsubmit type=submit value="UID" /></td>\
             <TD class="xtab ptErrText"><SPAN id=ptplayErr></span></td></tr>\
           <TR><TD class=xtab></td><TD class=xtab>'+uW.g_js_strings.setDiplomacyWindow.srchalli+': &nbsp;</td>\
             <TD class=xtab><INPUT id=allAllName type=text /> &nbsp; <INPUT id=allSubmit type=submit value="'+uW.g_js_strings.modal_fow_leaderboard.findalli+'" /></td>\
@@ -1934,16 +1908,17 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
         </td></tr>\
          </table><span style="vertical-align:middle;" id=altInput></span></div><SPAN id=allListOut></span>';
       t.cont.innerHTML = m;
+      document.getElementById('allPlayName').addEventListener ('keypress', function(e) {if ( e.which == 13)  document.getElementById('playSubmit').click();}, false);
+      document.getElementById('allAllName').addEventListener ('keypress', function(e) {if ( e.which == 13)  document.getElementById('allSubmit').click();}, false);
+      
       document.getElementById('allSubmit').addEventListener ('click', t.eventSubmit, false);
       document.getElementById('playSubmit').addEventListener ('click', t.eventPlayerSubmit, false);
       document.getElementById('ffbuidsubmit').addEventListener ('click', t.eventPlayerUIDSubmit, false);
       document.getElementById('allAllName').addEventListener ('focus', function (){document.getElementById('ptallErr').innerHTML='';}, false);
       document.getElementById('allPlayName').addEventListener ('focus', function (){document.getElementById('ptplayErr').innerHTML='';}, false);
       document.getElementById('allListSubmit').addEventListener ('click', t.eventListSubmit, false);
-      //document.getElementById('allGotoPage').addEventListener ('click', t.gotoPage, false);
       document.getElementById('idMyAllSubmit').addEventListener ('click', t.showMyAlliance, false);
       document.getElementById('idFindETASelect').addEventListener ('click', t.handleEtaSelect, false);
-      //document.getElementById('allGotoPage').disabled = true;
       document.getElementById('idFindETASelect').disabled = true;
       t.ModelCity=Cities.cities[0];
       t.curPage = 0;
@@ -1951,7 +1926,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       t.state = 1;
     }
   },
-
+   	
   pName : '',
   eventPlayerSubmit : function (){
     var t = Tabs.AllianceList;
@@ -3160,7 +3135,7 @@ Tabs.Options = {
 	<TR><TD><INPUT id=togChatBold type=checkbox /></td><TD>Enable Chat in Bold Font.</td></tr>\
 	<TR><TD><INPUT id=togChatAttack type=checkbox /></td><TD>Enable Red background on tower alert.<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
 	<TR><TD colspan=2><B>KofC Features:</b></td></tr>\
-        <TR><TD><INPUT id=togMsgCountFix type=checkbox /></td><TD>Show number of new messages separately from number of reports on Messages icon.</td></tr>';
+        <TR><TD><INPUT id=togMsgCountFix type=checkbox /></td><TD>Change message icons place(Msg/Reports) and allign them.</td></tr>';
       m += '<TR><TD><INPUT id=togAllRpts type=checkbox /></td><TD>Enable enhanced Alliance Reports.</td></tr>\
         <TR><TD><INPUT id=togAllowAlter type=checkbox /></td><TD>Allow other scripts to change format of Alliance Reports.</td></tr>\
         <TR><TD><INPUT id=togEnhanceMsging type=checkbox /></td><TD>Enable enhanced messaging ("forward" and "all officers" buttons).</td></tr>\
@@ -3189,7 +3164,7 @@ Tabs.Options = {
       t.togOpt ('togAllowAlter', 'allowAlterAR');
       t.togOpt ('togTowerFix', 'fixTower', TowerAlerts.enableFixTarget, TowerAlerts.isFixTargetAvailable);
       t.togOpt ('togTowerFix2', 'fixTower2', TowerAlerts.enableFixFalseReports, TowerAlerts.isFixFalseReportsAvailable);
-      t.togOpt ('togMsgCountFix', 'fixMsgCount', MessageCounts.enable, MessageCounts.isAvailable);
+      t.togOpt ('togMsgCountFix', 'fixMsgCount', MessageCounts.init);
       t.togOpt ('togMapDistFix', 'fixMapDistance', MapDistanceFix.enable, MapDistanceFix.isAvailable);
       t.togOpt ('togWarnZero', 'fixWarnZero', WarnZeroAttack.setEnable, WarnZeroAttack.isAvailable);
       t.togOpt ('togPageNav', 'fixPageNav', PageNavigator.enable, PageNavigator.isAvailable);
@@ -4468,6 +4443,7 @@ function getWallInfo (cityId, objOut){
       objOut.fieldSpaceUsed += parseInt(uW.fortstats["unt"+ id][5]) * parseInt(fort[k]);
   }
 }    
+
 
 
 /********************************* BUILDS TAB *************************************/
@@ -6437,54 +6413,15 @@ var MessageCounts = {
   
   init : function (){ 
 	var t = MessageCounts; 
-	//MOD ALTER UWF 
-		t.messagesNotifyFunc = new CalterUwFunc ('messages_notify_bug', [ 
-		['$("chrome_messages_notify").innerHTML = a;', 'msgCount_hook(a);'], 
-		['$("chrome_messages_notify").removeClassName("noCount");', ''], 
-		['$("chrome_messages_notify").addClassName("noCount");','msgCount_hook(a);'] 
-	]); 
-	if (t.messagesNotifyFunc.isAvailable()){ 
-		uW.msgCount_hook = t.msgCount_hook; 
-		e = document.getElementById('chrome_messages_notify'); 
-		span = document.createElement('span'); 
-		span.id = 'chrome_messages_notify_Msg'; 
-		e.parentNode.insertBefore (span, e); 
-		span.style.visibility = 'hidden'; 
-			if (Options.fixMsgCount){ 
-				t.enable (true); 
-				setTimeout (uW.messages_notify_bug, 1000); 
-			} 
-		} 
-	},
-  
-	msgCount_hook : function (a) { 
-		var l = document.getElementById('chrome_messages_notify_Msg'); 
-		var r = document.getElementById('chrome_messages_notify'); 
-		var newMessages = parseInt(Seed.newMailCount); 
-		var newReports = parseInt(Seed.newTradeReports) + parseInt(Seed.newReportCount); 
-		//logit('Messages: '+ newMessages + ',' + ' Reports: '+ newReports); 
-		l.innerHTML = newMessages; 
-		r.innerHTML = newReports; 
-		l.className = 'notificationCount'; 
-		r.className = 'notificationCount'; 
-		l.style.margin = '10px 0 0 10px'; 
-		r.style.margin = '-23px 0 0 40px'; 
-		l.style.visibility = (newMessages > 0) ? 'visible' : 'hidden' ; 
-		r.style.visibility = (newReports > 0) ? 'visible' : 'hidden' ; 
-	}, 
+	if (Options.fixMsgCount){ 
+		document.getElementById('chrome_messages_report').style.margin = '10px 0 0 65px'; 
+		document.getElementById('chrome_messages_notify').style.margin = '10px 0 0 10px'; 		
+	}
+  },
+}
 
-  enable : function (tf){
-    var t = MessageCounts;
-    t.messagesNotifyFunc.setEnable (tf);
-    if (!tf)
-      document.getElementById('chrome_messages_notifyL').style.display = 'none';
-    setTimeout (uW.messages_notify_bug, 0);
-  },
-    
-  isAvailable : function (){
-    var t = MessageCounts;
-    return t.messagesNotifyFunc.isAvailable();
-  },
+function ShowExtraInfo(){
+	document.getElementById('kocmain_bottom').innerHTML = 'test'; 
 }
 
 var WarnZeroAttack = {
@@ -6765,7 +6702,7 @@ function officerId2String (oid){
   else if (oid==1)
     return uW.allianceOfficerTypeMapping[1];
   else if (oid==4)
-      return uW.allianceOfficerTypeMapping[0];
+      return uW.allianceOfficerTypeMapping[4];
   return '';
 }
 
@@ -7173,94 +7110,125 @@ function logit (msg){
 
 /************ DEBUG WIN *************/
 var debugWin = {
-  popDebug : null,
-  dbDefaultNot : 'tech,tutorial,items,quests,wilderness,wildDef,buildings,knights,allianceDiplomacies,appFriends,players',
-  dbSelect : {},
+	popDebug:			null,
+	dbDefaultNot:	'tech,tutorial,items,quests,wilderness,wildDef,buildings,knights,allianceDiplomacies,appFriends,players',
+	dbSelect:			{},
+	sortSeed:			[],
+	sortNonSeed:	[],
 
-  doit : function (){ 
-    var t = debugWin;    
+	doit: function (){
+		var t = debugWin;
 
-    function syncBoxes (){
-      var div = document.getElementById('dbpoplist');
-      for (var i=0; i<div.childNodes.length; i++){
-        if (div.childNodes[i].type && div.childNodes[i].type=='checkbox'){
-          var name=div.childNodes[i].name.substr(6);
-          div.childNodes[i].checked = t.dbSelect[name];
-        }
-      } 
-    }
-    function clickedAll (){
-      for (var k in t.dbSelect)
-        t.dbSelect[k] = true;
-      syncBoxes();
-    }
-    function clickedNone (){
-      for (var k in t.dbSelect)
-        t.dbSelect[k] = false;
-      syncBoxes();
-    }
-    function clickedDefaults (){
-      for (k in t.dbSelect)
-        t.dbSelect[k] = true;
-      var not = t.dbDefaultNot.split(',');
-      for (var i=0; i<not.length; i++)
-        t.dbSelect[not[i]] = false;
-      syncBoxes();
-    }
-    function clickedShow (){
-      var now = new Date();
-      var myseed = uW.Object.clone (Seed);
-      var div = document.getElementById('dbpoplist');
-      for (var i=0; i<div.childNodes.length; i++){
-        if (div.childNodes[i].type && div.childNodes[i].type=='checkbox'){
-          var name=div.childNodes[i].name.substr(6);
-          if (!div.childNodes[i].checked)
-            delete myseed[name];
-        }
-      } 
-      WinLog.write ("seed @ "+ unixTime()  +" ("+ now +")\n\n"+ inspect (myseed, 8, 1));
-      myseed=null;
-    }
-    
-    function clickedShowScripts (){
-      var scripts = document.getElementsByTagName('script');
-      for (var i=0; i<scripts.length; i++){
-        if (scripts[i].src!=null && scripts[i].src!='')
-          WinLog.write ('<A TARGET=_tab HREF="'+ scripts[i].src +'">'+ scripts[i].src +'</a>');
-      }
-    }
-    
-    if (t.popDebug == null){  
-      t.popDebug = new CPopup ('db', 0, 0, 400,500, true);
-      t.popDebug.getTopDiv().innerHTML = 'DEBUG';
-      t.popDebug.getMainDiv().innerHTML = '<DIV><INPUT type=submit id=dbsuball value=ALL> &nbsp; <INPUT type=submit id=dbsubnone value=NONE> &nbsp; \
-        <INPUT type=submit id=dbdefaults value=DEFAULTS> &nbsp; <INPUT type=submit id=dbsubdo value=SHOW> &nbsp; <INPUT type=submit id=dbsubscripts value=SCRIPTS></div>\
-        <DIV id=dbpoplist style="max-height:400px; height:400px; overflow-y:auto"></div>';
-      var div = document.getElementById('dbpoplist');
-      for (var k in Seed)
-        t.dbSelect[k] = true;
-      var not = t.dbDefaultNot.split(',');
-      for (var i=0; i<not.length; i++)
-        t.dbSelect[not[i]] = false;
-      var m = [];
-      for (k in t.dbSelect){
-        m.push ('<INPUT type=checkbox ');
-        m.push ('name="dbpop_');
-        m.push (k);
-        m.push ('"> &nbsp; ');
-        m.push (k);
-        m.push ('<BR>');
-      }
-      div.innerHTML = m.join ('');
-      document.getElementById('dbsuball').addEventListener('click', clickedAll, false);
-      document.getElementById('dbsubnone').addEventListener('click', clickedNone, false);
-      document.getElementById('dbdefaults').addEventListener('click', clickedDefaults, false);
-      document.getElementById('dbsubdo').addEventListener('click', clickedShow, false);
-      document.getElementById('dbsubscripts').addEventListener('click', clickedShowScripts, false);
-      syncBoxes();
-    }
-    t.popDebug.show (true);
-  },
+		function syncBoxes (){
+			for (var i=0; i<t.sortSeed.length; i++){
+				var name = t.sortSeed[i];
+				var box = document.getElementById('dbpop_'+name);
+				box.checked = t.dbSelect[name];
+			}
+		}
+		function clickedAll (){
+			for (var k in t.dbSelect)
+				t.dbSelect[k] = true;
+			syncBoxes();
+		}
+		function clickedNone (){
+			for (var k in t.dbSelect)
+				t.dbSelect[k] = false;
+			syncBoxes();
+		}
+		function clickedDefaults (){
+			for (k in t.dbSelect)
+				t.dbSelect[k] = true;
+			var not = t.dbDefaultNot.split(',');
+			for (var i=0; i<not.length; i++)
+				t.dbSelect[not[i]] = false;
+			syncBoxes();
+		}
+		function clickedShow (){
+			var resultsDiv = document.getElementById('idDebugResultsDiv')
+			var s = '<PRE>';
+			for (var i=0; i<t.sortSeed.length; i++){
+				var name = t.sortSeed[i];
+				var box = document.getElementById('dbpop_'+name);
+				if (box.checked)
+					s += name + " =\n" + inspect (Seed[name], 10, 1);
+			}
+			resultsDiv.innerHTML = s + '</PRE>';
+		}
+
+		function clickedShowNonSeed (){
+			var resultsDiv = document.getElementById('idDebugResultsDiv');
+			nsvalue = document.getElementById('dbnonseed').value;
+			if (nsvalue != '') {
+				val = unsafeWindow[nsvalue];
+				valtype = typeof(val);
+				resultsDiv.innerHTML = '<PRE>(' + valtype + ') ' + nsvalue + ((valtype == 'string')?(" = " + val):(" =\n" + inspect (val, 10, 1))) + '</PRE>';
+			}
+		}
+
+		function clickedShowScripts (){
+			var resultsDiv = document.getElementById('idDebugResultsDiv')
+			var scripts = document.getElementsByTagName('script');
+			var s = '';
+			for (var i=0; i<scripts.length; i++)
+				if (scripts[i].src!=null && scripts[i].src!='')
+					s+='<A TARGET=_tab HREF="'+ scripts[i].src +'">'+ scripts[i].src +'</A><BR />';
+			resultsDiv.innerHTML = s;
+		}
+
+		if (t.popDebug == null){
+			t.popDebug = new CPopup ('db', 0, 45, 749, 900, true);
+			t.popDebug.getTopDiv().innerHTML = '<DIV align=center><B>DEBUG</B></DIV>';
+			var sl = 0;
+			for (var k in Seed) {
+				t.dbSelect[k] = true;
+				t.sortSeed[sl] = k;
+				sl++;
+			}
+			t.sortSeed.sort();
+			sl = 0;
+			for (var k in unsafeWindow) {
+				kType = typeof(unsafeWindow[k]);
+				if ((k.indexOf('actionlink_data') != 0) && (k != 'content') && (k != 'document') && (k.indexOf('feed') != 0) && (k.indexOf('frame') != 0) && (k != 'globalStorage') &&
+					(k != 'g_mapObject') && (k != 'history') && (k != 'Modal') && (k != 'navigator') && (k != 'parent') && (k.indexOf('pb') != 0) && (k.indexOf('pt') != 0) && (k != 'seed') &&
+					(k != 'self') && (k.indexOf('template_data') != 0) && (k != 'that') && (k != 'window') && (k != '_htmlElement') && (kType != 'function') && (kType != 'undefined')) {
+					t.sortNonSeed[sl] = k;
+					sl++;
+				}
+			}
+			t.sortNonSeed.sort(function(x,y) {var a = String(x).toUpperCase(); var b = String(y).toUpperCase(); if (a > b) return 1; else if (a < b) return -1; else return 0;});
+			var nsSelect = '<SELECT id="dbnonseed"><OPTION value="" ></option>';
+			for (var i=0; i<t.sortNonSeed.length; i++)
+				nsSelect += '<OPTION value="' + t.sortNonSeed[i] + '" >' + t.sortNonSeed[i] + '</option>';
+			nsSelect += '</SELECT>';
+			var not = t.dbDefaultNot.split(',');
+			for (var i=0; i<not.length; i++)
+				t.dbSelect[not[i]] = false;
+			var m = '<DIV class=ptentry><B>Seed: </B><INPUT type=submit id=dbsuball value=ALL>&nbsp;<INPUT type=submit id=dbsubnone value=NONE>&nbsp;' +
+				'<INPUT type=submit id=dbdefaults value=DEFAULTS>&nbsp;<INPUT type=submit id=dbsubdo value=SHOW>&nbsp;<INPUT type=submit id=dbsubscripts value=SCRIPTS><BR /><TABLE width=100%>';
+			var cols = 5;
+			var entries = t.sortSeed.length;
+			var rows = parseInt (0.99 + entries / cols);
+			for (var rowno=1; rowno<=rows; rowno++) {
+				m += '<TR>';
+				for (colno=1; colno<=cols; colno++) {
+					var slvalue = rows*(colno-1)+rowno-1;
+					m += ((slvalue < entries)?('<TD class=xtab><INPUT type=checkbox id="dbpop_'+t.sortSeed[slvalue]+'">&nbsp;'+t.sortSeed[slvalue]+'</TD>'):'<TD class=xtab></TD>');
+				}
+				m += '</TR>';
+			}
+			m += '</TABLE><B>Non-Seed: </B>' + nsSelect + '</DIV><DIV id="idDebugResultsDiv" style="width:738px; height:600px; max-height:600px; overflow-y:auto; white-space:pre-wrap;"></DIV>';
+			t.popDebug.getMainDiv().innerHTML = m;
+			document.getElementById('dbsuball').addEventListener('click', clickedAll, false);
+			document.getElementById('dbsubnone').addEventListener('click', clickedNone, false);
+			document.getElementById('dbdefaults').addEventListener('click', clickedDefaults, false);
+			document.getElementById('dbsubdo').addEventListener('click', clickedShow, false);
+			document.getElementById('dbsubscripts').addEventListener('click', clickedShowScripts, false);
+			document.getElementById('dbnonseed').addEventListener('change', clickedShowNonSeed, false);
+			syncBoxes();
+		}
+		t.popDebug.show (true);
+	},
 }
 
 
@@ -8261,20 +8229,6 @@ t.state = null;
 };
 
 
-
-
-
-function WhisperSound (){
-	//alert('enter');
-	document.all.sound.src = 'http://www.mediavue.net/phplive/sounds/doorbell.wav';
-	//test = '<embed src="http://www.mediavue.net/phplive/sounds/doorbell.wav" autostart=false loop=false>';
-	
-	//var player = new CmatSimpleSound(SWF_PLAYER_URL, null, {height:0, width:0}, t.e_swfLoaded, 'debug=n'); 
-	//player.play(1,0);
-}
-
-
-
 function CmatSimpleSound (playerUrl, container, attrs, onLoad, flashVars) {
   var self = this;
   this.player = null;
@@ -8338,5 +8292,6 @@ function CmatSimpleSound (playerUrl, container, attrs, onLoad, flashVars) {
   this.swfLoadComplete = function (chanNum, isError){    // called by plugin when a sound finishes loading  (overload to be notified)
   }
 }
+
 
 ptStartup ();
