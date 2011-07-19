@@ -6,7 +6,7 @@
 // @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110716a';
+var Version = '20110720a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -76,6 +76,7 @@ var Options = {
   playersNoCities : false,
   enableWhisperAlert : true,
   enableTowerAlert : true,
+  OverViewShowExtra : 'maximum',
   //alertConfig  : {aChat:false, aPrefix:'** I\'m being attacked! **', scouting:false, wilds:false, minTroops:10000, spamLimit:10 },
 };
 
@@ -208,6 +209,11 @@ if (TEST_WIDE){
   CoordBox.init ();
   GMTclock.init ();
   tabManager.init (mainPop.getMainDiv());
+  
+ 
+  title = uW.document.getElementById('main_engagement_tabs').innerHTML;
+  title += '<span><B>'+ getMyAlliance()[1] + ' (' + GetServerId() +')</b></span>';
+  uW.document.getElementById('main_engagement_tabs').innerHTML = title ; 
   
   if (Options.ptWinIsOpen){
     mainPop.show (true);
@@ -485,8 +491,13 @@ var ChatStuff = {
     uW.chatDivContent_hook = t.chatDivContentHook;
     uW.ptChatIconClicked = t.e_iconClicked;
     t.setEnable (Options.chatEnhance);
+    
+   // alert(uW.Chat.Methods.changeTab);
+   // uW.Chat.Methods.changeTab = t.Myadd;
+   uW.Chat.Methods.changeTab = 'Chat.changeTab function (a) {$("mod_comm_list" + this.chatType).hide();$("mod_comm_list" + a).show();$("comm_tabs").className = "comm_tabs seltab" + a;if ( a == 1) $("mod_comm_inpot").style.background = "E080808";this.chatType = a})';  
+      //       alert(uW.Chat.Methods.changeTab);
+          
   },
-  	    
   
   isAvailable : function (){
     var t = ChatStuff; 
@@ -646,6 +657,7 @@ var mercNames = {
 
 Tabs.Wilds = {
   tabOrder : 35,
+  tabLabel : 'Wilds',
 
   cont : null,
 //  state : null,
@@ -944,6 +956,7 @@ if (wildDef==undefined || !wildDef)
 /*************** KNIGHTS TAB *********************/
 Tabs.Knights = {
   tabOrder : 30,
+  tabLabel : uW.g_js_strings.commonstr.knight,
   cont : null,
   displayTimer : null,
 
@@ -1769,7 +1782,7 @@ function officerId2String (oid){
 
 Tabs.AllianceList = {
   tabOrder : 25,
-  tabLabel : 'Players',
+  tabLabel : uW.g_js_strings.commonstr.player,
   cont : null,
   dat : [],
   
@@ -2478,6 +2491,7 @@ return 0;
     t.reDisp();
     new CdispCityPicker ('plyrdcp', document.getElementById ('dmcoords'), true, t.eventCoords, 0).bindToXYboxes(document.getElementById('plyrX'), document.getElementById('plyrY'));
     document.getElementById('idFindETASelect').disabled = false;
+    
   },
   
   eventCoords : function (city, x, y){
@@ -2491,7 +2505,7 @@ return 0;
     if (distFrom)
         distFrom.innerHTML = m;
     t.ModelCity=city;
-    t.JumpCity(city.name);
+    if (city !=null) t.JumpCity(city.name);
     t.setDistances(x,y);
     t.setEta();
     t.reDisp();
@@ -2905,6 +2919,7 @@ Tabs.Test = {
 
 Tabs.Info = {
   tabOrder : 20,
+  tabLabel : document.getElementById('mod_views_map').innerHTML,
   cont : null,
 
   init : function (div){
@@ -2918,116 +2933,15 @@ Tabs.Info = {
       u62: "3",
     };
     var t = Tabs.Info;
-    rownum = 0;
-    m = '<STYLE>.xtabH {background:#ffffe8; border:none; padding-right: 5px; padding-left: 5px; margin-left:10px; }\
-            .xtabHL { background:#ffffe8; border-width: 1px; border-style: none none none solid; padding-right:5px; padding-left:5px; margin-left:10px; }\
-            .xtabL { background:none; border-width: 1px; border-style: none none none solid; padding-right:5px; padding-left: 5px; margin-left:10px; }\
-            .xtabLine { padding:0px; spacing:0px; height:1px; border-color:black; border-width: 1px; border-style: none none solid none }</style>\
-        <DIV style="height:650px; max-height:650px; overflow-y:auto; overflow-x:hidden"><DIV class=ptstat>'+uW.g_js_strings.commonstr.troops+'</div><TABLE align=center cellpadding=1 cellspacing=0>\
-        <TR align=center><TD class=xtab></td><TD class=xtabHL colspan=5><B>'+uW.g_js_strings.modal_marketplace.unitprice+'</b></td><TD class=xtabHL colspan=7><B>STATS</b></td><TD class=xtabHL><B>'+uW.g_js_strings.commonstr.upkeep+'</b></td></tr>\
-        <TR valign=bottom align=right><TD class=xtab></td><TD class=xtabHL>'+uW.g_js_strings.commonstr.food+'</td><TD class=xtabH>'+uW.g_js_strings.commonstr.wood+'</td><TD class=xtabH>'+uW.g_js_strings.commonstr.stone+'</td>\
-        <TD class=xtabH>'+uW.g_js_strings.commonstr.ore+'</td><TD class=xtabH>'+uW.g_js_strings.commonstr.population+'</td><TD class=xtabHL>Might</td><TD class=xtabH>Life</td><TD class=xtabH>Atk</td><TD class=xtabH>Def</td><TD class=xtabH>Speed</td><TD class=xtabH>Range</td><TD class=xtabH>Load</td>\
-        <TD class=xtabHL>Food</td></tr>\
-        <TR style="height:1px;"><TD style="padding:0px; spacing:0px; height:1px; border-color:black; border-width: 1px; border-style: none none solid none" colspan=14></td></tr>';
-    for (ui=1; ui<13; ui++){
-      if (++rownum % 2)
-        rsty = '';
-      else
-        rsty = ' style="background: #e8e8e8" ';
-      cost = uW.unitcost['unt'+ui];     //  NAME, Food, Wood, Stone, Ore, ?, IdlePop, Time
-      stats = uW.unitstats['unt'+ui];   //  Life, Attack, Defense, Speed, Range, Load
-      food = uW.unitupkeeps[ui];
-      might = uW.unitmight['u'+ui];
-      m += '<TR '+ rsty +'align=right><TD class=xtab align=left><B>'+ cost[0].substr(0,16) +'</b></td><TD class=xtabL>'+ cost[1] +'</td><TD class=xtab>'+ cost[2] +'</td>\
-          <TD class=xtab>'+ cost[3] +'</td><TD class=xtab>'+ cost[4] +'</td><TD class=xtab>'+ cost[6] +'</td><TD class=xtabL>'+ might +'</td>\
-          <TD class=xtab>'+ stats[0] +'</td><TD class=xtab>'+ stats[1] +'</td><TD class=xtab>'+ stats[2] +'</td><TD class=xtab>'+ stats[3] +'</td>\
-          <TD class=xtab>'+ stats[4] +'</td><TD class=xtab>'+ stats[5] +'</td><TD class=xtabL>'+ food +'</td></tr>';
-
-    }
-    m += '<TR class=xtabLine><TD colspan=14 class=xtabLine></td></tr>';
-    for (k in uW.fortcost){
-      if (++rownum % 2)
-        rsty = '';
-      else
-        rsty = ' style="background: #e8e8e8" ';
-      cost = uW.fortcost[k];     //  NAME, Food, Wood, Stone, Ore, ?, IdlePop, Time
-      fi = k.substring(3);
-      stats = uW.fortstats['unt'+fi];   //  Life, Attack, Defense, Speed, Range, Load
-      food = 0;
-      might = fortmight['u'+fi];
-      name = cost[0].replace ('Defensive','');
-      name = name.replace ('Wall-Mounted','');
-      m += '<TR '+ rsty +'align=right><TD align=left class=xtab><B>'+ name +'</b></td><TD class=xtabL>'+ cost[1] +'</td><TD class=xtab>'+ cost[2] +'</td>\
-          <TD class=xtab>'+ cost[3] +'</td><TD class=xtab>'+ cost[4] +'</td><TD class=xtab>'+ cost[6] +'</td><TD class=xtabL>'+ might +'</td>\
-          <TD class=xtab>'+ stats[0] +'</td><TD class=xtab>'+ stats[1] +'</td><TD class=xtab>'+ stats[2] +'</td><TD class=xtab>'+ stats[3] +'</td>\
-          <TD class=xtab>'+ stats[4] +'</td><TD class=xtab>'+ stats[5] +'</td><TD class=xtabL>'+ food +'</td></tr>';
-    }
-    m += '<TR class=xtabLine><TD colspan=14 class=xtabLine></td></tr>';
-    m += '</table>';
-	//Crest info
-	var crestname = { 1101:'Bor', 
-				  1102:'Ector',
-				  1103:'Kay',
-				  1104:'Bedivere',
-				  1105:'Gawain',
-				  1106:'Percival',
-				  1107:'Galahad',
-				  1108:'Lancelot',
-				  1109:'Arthur',
-				  1110:'Morgana',
-				  1111:'Mordred',
-				  1112:'Stag',
-				  1113:'Pendragon',
-				  1114:'Lady of the lake'};
-	var crest = {};
-	for (k in crestname){
-		if(Seed.items['i'+k])
-			crest[k] = Seed.items['i'+k];
-		else
-			crest[k] = 0;
-	}
-var crestreq = { 3:{1101:4, 1102:2, 1103:1},
-				 4:{1103:4, 1104:3, 1105:1},
-				 5:{1106:4, 1107:3, 1108:2},
-				 6:{1109:4, 1110:3, 1111:2},
-				 7:{1112:4, 1113:3, 1114:2}
-				};
- 
- m += '<DIV class=ptstat>CREST REQUIREMENTS</div><TABLE align=center cellpadding=1 cellspacing=0>\
-      <TR CLASS="xtabH">\
-        <TD class=xtab></TH>\
-        <TD class=xtabHL><b>Req 1 (Owned)</b></TD>\
-        <TD class=xtabHL><b>Req 2 (Owned)</b></TD>\
-        <TD class=xtabHL><b>Req 3 (Owned)</b></TD>\
-      </TR>\
-	  <TR style="height:1px;"><TD style="padding:0px; spacing:0px; height:1px; border-color:black; border-width: 1px; border-style: none none solid none" colspan=14></td></tr>';
-	  rownum = 0;
-	  for(k in crestreq){
-	  if (++rownum % 2)
-        rsty = '';
-      else
-        rsty = ' style="background: #e8e8e8" ';
-		m += '<TR '+rsty+'>  \
-			<TD class=xtab><B>City '+k+'</B></TD>';
-		for(u in crestreq[k])
-			m+='<TD class=xtabL>'+crestreq[k][u]+' '+crestname[u]+ ' ('+crest[u]+') </TD>';
-		m += '</TR>';
-	  }
- m += '</TABLE>';
-	//End crest info
-    m += '<BR><DIV class=ptstat>DISTANCE CALCULATOR</div><DIV class=ptentry><TABLE align=center cellpadding=1 cellspacing=0>\
+    
+    var m = '<DIV class=ptstat>PROVINCE MAP</div><DIV id=ptProvMap style="height:'+ provMapCoords.imgHeight +'px; width:'+ provMapCoords.imgWidth +'px; background-repeat:no-repeat; background-image:url(\''+ URL_PROVINCE_MAP +'\')"></div>';
+    m+= '<BR><DIV class=ptstat>DISTANCE CALCULATOR</div><DIV class=ptentry><TABLE align=center cellpadding=1 cellspacing=0>\
       <TR><TD class=xtab align=right><B>First Location: </b></td><TD  class=xtab> X: <INPUT id=calcX type=text\> Y: <INPUT id=calcY type=text\> Or, choose city: <SPAN id=ptloc1></span></td></tr>\
       <TR><TD class=xtab><B>Second Location: </b></td><TD class=xtab> X: <INPUT id=calcX2 type=text\> Y: <INPUT id=calcY2 type=text\> Or, choose city: <SPAN id=ptloc2></span></td></tr></table>\
       <CENTER><DIV style="width:60%; font-size:14px; border: 1px solid; background-color:white; margin:20px 3px 3px 0px; padding:4px" id=ptdistout></div></div>\
-      <BR><BR></center>';
-    m += '<DIV class=ptstat>PROVINCE MAP</div><DIV id=ptProvMap style="height:'+ provMapCoords.imgHeight +'px; width:'+ provMapCoords.imgWidth +'px; background-repeat:no-repeat; background-image:url(\''+ URL_PROVINCE_MAP +'\')"></div>';
-    m += '<BR><DIV class=ptstat>MISC INFO</div>KofC client version: '+ KOCversion +'<BR>';
-    if (DEBUG_BUTTON)
-      m += '<BR><INPUT id=ptButDebug type=submit name="SEED" value="DEBUG">';
-    
+      <BR></center>';
     t.cont.innerHTML = m +'</div>';
-    if (DEBUG_BUTTON)
-      document.getElementById('ptButDebug').addEventListener('click', function (){debugWin.doit()}, false);
+    
     for (var c=0; c<Cities.numCities; c++)      
       t.makeCityImg (c, document.getElementById('ptProvMap'));
 	new CdispCityPicker ('ptloc1', document.getElementById('ptloc1'), true, t.eventLocChanged, 0).bindToXYboxes(document.getElementById('calcX'), document.getElementById('calcY'));
@@ -3111,6 +3025,7 @@ var crestreq = { 3:{1101:4, 1102:2, 1103:1},
 
 Tabs.Options = {
   tabOrder : 40,
+  tabLabel : 'Options',
   cont : null,
   fixAvailable : {},
 
@@ -3300,6 +3215,7 @@ if (DEBUG_TRACE) logit (" 2 Map.request  Map = "+ inspect (Map, 2, 1, 2));
 
 Tabs.Train = {
   tabOrder : 15,
+  tabLabal : uW.g_js_strings.commonstr.train,
   cont : null,
   timer : null,
   stats : {},
@@ -4066,17 +3982,17 @@ var GMTclock = {
 function getResourceProduction (cityId){
   var ret = [0,0,0,0,0];
   var now = unixTime ();
-  
+  var search='type==10 || type==11';
   var wilds = [0, 0, 0, 0, 0];
   var w = Seed.wilderness["city" + cityId];
   for (var k in w){
     var type = parseInt(w[k].tileType);
+
     if (type==10 || type==11)
-      wilds[1] += parseInt(w[k].tileLevel);
-    else 
-      wilds[type/10] += parseInt(w[k].tileLevel);
+	      wilds[1] += parseInt(w[k].tileLevel);
+	    else 
+	      wilds[type/10] += parseInt(w[k].tileLevel);
   }  
-  
   knight = 0;       
   var s = Seed.knights["city" + cityId];
   if (s) {
@@ -4105,319 +4021,6 @@ function getResourceProduction (cityId){
   return ret;  
 }
 
-Tabs.Overview = {
-  tabOrder : 1,
-  cont : null,
-  displayTimer : null,
-
-  Overview : function (){
-  },
-
-  init : function (div){
-    this.cont = div;
-    if (Options.overviewAllowOverflow)
-      this.cont.style.overflowX = 'visible';
-  },
-
-  hide : function (){
-    clearTimeout (Tabs.Overview.displayTimer);
-  },
-  
-  show : function (){
-    var rownum = 0;
-    var t = Tabs.Overview;
-
-    clearTimeout (t.displayTimer);
-
-    function _row (name, row, noTotal){
-      if (rownum++ % 2)
-        style = '';
-      else
-        style = ' style = "background: #e8e8e8"';
-      var tot = 0;
-      var m = [];
-      m.push ('<TR style="background: #fff" align=right');
-      m.push (style);
-      m.push ('><TD');
-      m.push (style);
-      m.push ('><B>');
-      m.push (name);
-      m.push (' &nbsp; </td>');
-      if (noTotal){
-        m.push ('<TD');
-        m.push (style);
-        m.push ('> &nbsp;</td>');
-      } else {
-        for (i=0; i<row.length; i++)
-          tot += row[i];
-        m.push ('<TD style="background: #ffc">');
-if (TEST_WIDE)
-  m.push ('X,');        
-        m.push (addCommas(tot));
-        m.push ('</td>');
-      }
-      for (i=0; i<row.length; i++){
-        m.push ('<TD');
-        m.push (style);
-        m.push ('>');
-if (TEST_WIDE)
-  m.push ('X,');        
-        m.push (addCommas(row[i]));
-        m.push ('</td>');
-      }
-      m.push ('</tr>');
-      return m.join('');
-    }
-    
-//DebugTimer.start(); 
-    try {
-      if (Options.includeMarching)
-        march = getMarchInfo ();
-		train = getTrainInfo ();
-
-      dt = new Date ();
-      dt.setTime (Seed.player.datejoinUnixTime * 1000);
-      
-      str = '<DIV class=ptstat style="margin-top:5px; margin-bottom:5px;"><TABLE cellspacing=0 cellpadding=0 class=ptTab width=97% align=center>\
-        <TR align=left><TD><SPAN class=ptStatLight>Joined on:</span> '+ dt.toLocaleDateString() +'</td>\
-        <TD><SPAN class=ptStatLight>Might:</span> ' + addCommas(Seed.player.might) +'</td>\
-        <TD><SPAN class=ptStatLight>Alliance:</span> ' + getMyAlliance()[1] +'</td>\
-        <TD align=right><SPAN class=ptStatLight>Domain:</span> ' + uW.domainName +'</td></tr></table></div>';
-
-              
-      str += "<DIV id=overMainDiv style='font-size:"+ Options.overviewFontSize +"px'><TABLE class=ptTabOverview cellpadding=0 cellspacing=0><TR valign=top align=right><TD width=65></td><TD width=88 style='background: #ffc'><B>"+uW.g_js_strings.commonstr.owned+"</b></td>";
-      for(i=0; i<Cities.numCities; i++) {
-        str += "<TD width=81><B>"+ Cities.cities[i].name.substring(0,11) +'</b><BR>'+ coordLink (Cities.cities[i].x, Cities.cities[i].y) +"<BR>"+ uW.provincenames['p'+ Cities.cities[i].provId] +"</td>";
-      }
-      if (Options.includeMarching)
-        str += '<TD width=81><B>Marching</b></td>';
-	  if (Options.includeTrainingTotal)
-		str += '<TD width=81><B>Training</b></td>';
-      str += "</tr>";
-	  
-	  str += '<TR valign=top align=right><TD></td><TD style=\'background: #ffc\'></td>';
-		for(i=0; i<Cities.numCities; i++){
-		  cityID = 'city'+Cities.cities[i].id;
-		  Gate = parseInt(Seed.citystats[cityID].gate);
-		if(Gate == 0)
-		  str += '<TD>Hiding</td>';
-		else
-		  str += '<TD><SPAN class=boldRed>Defending</span></td>';
-		}
-  
-      rows = [];
-      rows[0] = [];
-      for(i=0; i<Cities.numCities; i++) {
-        cityID = 'city'+ Cities.cities[i].id;
-        rows[0][i] = parseInt(Seed.citystats[cityID].gold[0]);
-      }
-      for (r=1; r<5; r++){
-        rows[r] = [];
-        for(i=0; i<Cities.numCities; i++) {
-          cityID = 'city'+ Cities.cities[i].id;
-          rows[r][i] = parseInt(Seed.resources[cityID]['rec'+r][0] / 3600);
-        }
-      }
-  
-      if (Options.includeMarching){
-        for (var i=0; i<5; i++)
-          rows[i][Cities.numCities] = march.resources[i];
-      }
-	  if (Options.includeTrainingTotal){
-		for (var i=0; i<5; i++)
-          rows[i][Cities.numCities+1] = 0;
-	  }
-	  for (rec=0;rec<=4;rec++){
-	  	 str += _row (uW.resourceinfo['rec' + rec], rows[rec]);
-	  }
-      str += '<TR><TD colspan=12><BR></td></tr>';
-	  for (r=1; r<13; r++){
-        rows[r] = [];
-		for(i=0; i<Cities.numCities; i++) {
-            rows[r][i] = 0;
-        }
-	  }
-	  if (Options.includeCity){
-        for (r=1; r<13; r++){
-          for(i=0; i<Cities.numCities; i++) {
-            cityID = 'city'+ Cities.cities[i].id;
-            rows[r][i] = parseInt(Seed.units[cityID]['unt'+r]);
-          }
-        }
-	  }
-      if (Options.includeMarching){
-        for (var i=0; i<13; i++)
-          rows[i][Cities.numCities] = march.marchUnits[i];
-      }
-	  if (Options.includeTrainingTotal){
-		for (var i=0; i<13; i++)
-          rows[i][Cities.numCities+1] = train.trainUnts[i];
-	  }
-      if (Options.includeTraining){
-        var q = Seed.queue_unt;
-        for(i=0; i<Cities.numCities; i++) {
-          q = Seed.queue_unt['city'+ Cities.cities[i].id];
-          if (q && q.length>0){
-            for (qi=0; qi<q.length; qi++)
-              rows[q[qi][0]][i] += parseInt(q[qi][1]);
-          }    
-        }
-      }
-      rownum = 0;
-            
-      for (unt=0;unt<12;unt++) {
-      		str += _row (uW.unitcost['unt' + (unt+1)][0], rows[unt+1]);
-      }
-      str += '<TR><TD colspan=12><BR></td></tr>';
-      
-      row = [];
-      row[0-1] = 0;
-      for(i=0; i<Cities.numCities; i++) {
-        var rp = getResourceProduction (Cities.cities[i].id);
-        var usage = parseInt(Seed.resources["city" + Cities.cities[i].id]['rec1'][3]);
-        row[i] = rp[1] - usage;
-        row[0-1] = parseInt(row[0]) + parseInt(rp[1] - usage);
-      }
-     
-      str += _row (uW.g_js_strings.commonstr.food+'+/-', row);
-      
-      for(i=0; i<Cities.numCities; i++) {
-        if (row[i] >= 0)
-          row[i] = '----';
-        else {
-          var timeLeft = parseInt(Seed.resources["city" + Cities.cities[i].id]['rec1'][0]) / 3600 / (0-row[i]) * 3600;
-          if (timeLeft > 86313600)
-            row[i] = '----';
-          else {
-            if (Options.enableFoodWarn && timeLeft<(Options.foodWarnHours*3600))
-              row[i] = '<SPAN class=whiteOnRed>'+ timestrShort(timeLeft) +'</span>';
-            else
-              row[i] = timestrShort(timeLeft);              
-          }
-        }
-      }
-      
-      str += _row (uW.g_js_strings.showCityTooltip.foodsupply, row, true);
-      str += '<TR><TD><BR></td></tr>';
-      
-      row = [];
-      for(i=0; i<Cities.numCities; i++) {
-        var totWilds = 0;
-        dat = Seed.wilderness['city'+ Cities.cities[i].id];
-        if (dat!=null && matTypeof(dat)=='object')
-          for (k in dat)
-            ++totWilds;
-        var castle = parseInt(Seed.buildings['city'+ Cities.cities[i].id].pos0[1]);
-		if(castle == 11) castle = 12;
-        if (totWilds < castle)
-          row[i] = '<SPAN class=boldRed><B>'+ totWilds +'/'+ castle +'</b></span>';
-        else
-          row[i] = totWilds +'/'+ castle;
-      }
-      str += _row (uW.g_js_strings.showMyWilderness.conqueredwild, row, true);
-  
-      row = [];
-      for(i=0; i<Cities.numCities; i++) {
-        totKnights = 0;
-        dat = Seed.knights['city'+ Cities.cities[i].id];
-        for (k in dat)
-          ++totKnights;
-        row[i] = totKnights;
-      }
-      str += _row (uW.g_js_strings.openKnights.myknights, row, true);
-  
-      var now = unixTime();
-      var row = [];
-      for(i=0; i<Cities.numCities; i++) {
-        var totTime = 0;
-        var q = Seed.queue_unt['city'+Cities.cities[i].id]; 
-        if (q!=null && q.length>0)
-          totTime = q[q.length-1][3] - now;
-        if (totTime < 0)
-          totTime = 0;
-        if (totTime < 3600)
-          row[i] = '<SPAN class=boldRed><B>'+ timestr(totTime) +'</b></span>';
-        else
-          row[i] = timestr(totTime);
-      }
-      str += _row (uW.g_js_strings.commonstr.troops, row, true);
-      
-      var row = [];
-      for(i=0; i<Cities.numCities; i++) {
-        var wall = {};
-        getWallInfo (Cities.cities[i].id, wall);
-        var totTime = 0;
-        var q = Seed.queue_fort['city'+Cities.cities[i].id]; 
-        if (q!=null && q.length>0)
-          totTime = q[q.length-1][3] - now;
-        if (totTime < 0)
-          totTime = 0;
-        if (totTime<1 && (wall.wallSpaceUsed < wall.wallSpace-4 || wall.fieldSpaceUsed < wall.fieldSpace-4))
-          row[i] = '<SPAN class=boldRed><B>'+ timestr(totTime) +'</b></span>';
-        else
-          row[i] = timestr(totTime);
-      }    
-      str += _row (uW.g_js_strings.modal_openWalls.defqueue, row, true);
-      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><BR><INPUT type=CHECKBOX id=ptoverOriginal'+ (Options.includeCity?' CHECKED':'') +'>Show Troops in City</td></tr>';
-      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=idCheck'+ (Options.includeMarching?' CHECKED':'') +'>Show Marching Troops/Resources</td></tr>';
-      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=ptoverIncTraining'+ (Options.includeTraining?' CHECKED':'') +'>Show troops training in city</td></tr>';
-      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=ptoverIncTrainingTotal'+ (Options.includeTrainingTotal?' CHECKED':'') +'>Show troops training totals</td></tr>';
-      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=ptOverOver'+ (Options.overviewAllowOverflow?' CHECKED':'') +'>Allow width overflow \
-         &nbsp; &nbsp; FONT SIZE: '+ htmlSelector ({9:9, 10:10, 11:11, 12:12}, Options.overviewFontSize, 'id=ptoverfont') +'</td></tr>';
-      str += "</table></div>";
-	  str+= 'Koc Power Tools Version:' + Version;
-      Tabs.Overview.cont.innerHTML = str;
-      document.getElementById('ptoverOriginal').addEventListener('click', e_clickEnableTroops, false);
-      document.getElementById('idCheck').addEventListener('click', e_clickEnableMarch, false);
-      document.getElementById('ptoverIncTraining').addEventListener('click', e_clickEnableTraining, false);
-      document.getElementById('ptoverIncTrainingTotal').addEventListener('click', e_clickEnableTrainingTotal, false);
-      document.getElementById('ptOverOver').addEventListener('click', e_allowWidthOverflow, false);
-      document.getElementById('ptoverfont').addEventListener('change', e_fontSize, false);
-//DebugTimer.display ('Draw Overview');    
-    } catch (e){
-      Tabs.Overview.cont.innerHTML = '<PRE>'+ e.name +' : '+ e.message +'</pre>';
-    }   
-    t.displayTimer = setTimeout (t.show, 5000);
-
-    function e_clickEnableTroops (){
-      var t = Tabs.Overview;
-      Options.includeCity = document.getElementById('ptoverOriginal').checked;
-      t.show ();
-    }
-    function e_clickEnableMarch (){
-      var t = Tabs.Overview;
-      Options.includeMarching = document.getElementById('idCheck').checked;
-      t.show ();
-    }
-    function e_clickEnableTraining (){
-      var t = Tabs.Overview;
-      Options.includeTraining = document.getElementById('ptoverIncTraining').checked;
-      t.show ();
-    }
-    function e_clickEnableTrainingTotal (){
-      var t = Tabs.Overview;
-      Options.includeTrainingTotal = document.getElementById('ptoverIncTrainingTotal').checked;
-      t.show ();
-    }
-
-    function e_fontSize(evt){
-      document.getElementById('overMainDiv').style.fontSize = evt.target.value +'px'; 
-      Options.overviewFontSize = evt.target.value;
-    }
-
-    function e_allowWidthOverflow (evt){
-      var tf = document.getElementById('ptOverOver').checked;
-      Options.overviewAllowOverflow = tf;
-      if (tf)
-        t.cont.style.overflowX = 'visible';
-      else
-        t.cont.style.overflowX = 'auto';
-    }
-
-  },
-};
-
-
 function getWallInfo (cityId, objOut){
   objOut.wallSpaceUsed = 0;
   objOut.fieldSpaceUsed = 0;
@@ -4445,8 +4048,1094 @@ function getWallInfo (cityId, objOut){
 }    
 
 
+Tabs.OverView = {
+  tabOrder : 1,
+  tabLabel : uW.g_js_strings.commonstr.overview,
+  cont:null,
+  displayTimer:null,
+  curTabBut : null,
+  curTabName : null,
+  	
+  init : function (div){
+    var t = Tabs.OverView;
+    dt = new Date ();
+    dt.setTime (Seed.player.datejoinUnixTime * 1000);
+    t.cont = div;
+    
+    var main = '<DIV class=ptstat style="margin-top:5px; margin-bottom:5px;"><TABLE cellspacing=0 cellpadding=0 class=ptTab width=97% align=center>';
+    main +='<TR align=left><TD><SPAN class=ptStatLight>Joined on:</span> '+ dt.toLocaleDateString() +'</td>';
+    main +='<TD><SPAN class=ptStatLight>Might:</span> ' + addCommas(Seed.player.might) +'</td>';
+    main +='<TD><SPAN class=ptStatLight>Alliance:</span> ' + getMyAlliance()[1] +'</td>';
+    main +='<TD align=right><SPAN class=ptStatLight>Domain:</span> ' + uW.domainName +'</td></tr></table></div>';      
+    main +='<TABLE class=ptTab align=left><TR>';
+    main +='<TD width=125px><SELECT id="ShowExtra"><option value="maximum">'+uW.g_js_strings.commonstr.maximum+'</options>';
+    main +='<option value="normal">'+uW.g_js_strings.commonstr.normal+'</options></select></td>';
+    main +='<TD><INPUT class=pbSubtab ID=ptmrchSubA type=submit value='+uW.g_js_strings.commonstr.resources+'></td>';
+    main +='<TD><INPUT class=pbSubtab ID=ptmrchSubB type=submit value='+uW.g_js_strings.commonstr.troops+'></td>';
+    main +='<TD><INPUT class=pbSubtab ID=ptmrchSubC type=submit value='+uW.g_js_strings.modaltitles.buildings+'></td>';
+    main +='<TD><INPUT class=pbSubtab ID=ptmrchSubD type=submit value='+uW.g_js_strings.commonstr.info+'></td></tr></table><BR><BR>';
+    main +='<DIV id=ptOverOutput align=left style="margin-top:10px; background-color:"#F8F8F8"; height:680px; overflow:scroll;"></div>';
+            
+    t.cont.innerHTML = main;
+    t.Overv = document.getElementById('ptOverOutput');
+    
+    document.getElementById('ShowExtra').value = Options.OverViewShowExtra; 
+    document.getElementById('ptmrchSubA').addEventListener('click', e_butSubtab, false);
+    document.getElementById('ptmrchSubB').addEventListener('click', e_butSubtab, false);
+    document.getElementById('ptmrchSubC').addEventListener('click', e_butSubtab, false);
+    document.getElementById('ptmrchSubD').addEventListener('click', e_butSubtab, false);
+    document.getElementById('ShowExtra').addEventListener('change', function(){
+           Options.OverViewShowExtra = document.getElementById('ShowExtra').value;
+           saveOptions();
+           clearTimeout (t.displayTimer);
+           t.init(div); 
+    }, false);
+    changeSubtab (document.getElementById('ptmrchSubA'));
+    
+    function e_butSubtab (evt){            
+      changeSubtab (evt.target);   
+    }
 
-/********************************* BUILDS TAB *************************************/
+    function changeSubtab (but){
+      if (but == t.curTabBut)
+        return;
+      if (t.curTabBut){
+        t.curTabBut.className='pbSubtab'; 
+        t.curTabBut.disabled=false;
+      }
+      t.curTabBut = but;
+      but.className='pbSubtab pbSubtabSel'; 
+      but.disabled=true;
+      t.curTabName = but.id.substr(9);
+      Options.curMarchTab = t.curTabName;
+      t.show ();
+    }    
+  },
+
+  hide : function (){
+    var t = Tabs.OverView;
+    clearTimeout (t.displayTimer);
+  },
+  
+  show : function (){
+    var t = Tabs.OverView;
+    clearTimeout (t.displayTimer);
+    if (t.curTabName == 'A') 
+    	if (Options.OverViewShowExtra == "maximum") t.showResources(); 
+    		else t.paintOld();
+    else if (t.curTabName == 'B')
+      t.showTroops();
+    else if (t.curTabName == 'C')
+      t.showBuilds();
+    else if (t.curTabName == 'D')
+      t.showInfo();
+  },
+  
+      showResources : function (){
+        var t = Tabs.OverView;
+        t.Overv.innerHTML = null;
+        t.Overv.style.maxHeight = '700px';
+        t.Overv.style.overflowY = 'scroll';
+        clearTimeout (t.displayTimer);	
+         var z = "<DIV id=overMain><TABLE class=ptTabOverview cellpadding=0 cellspacing=0><TR valign=top align=right><TD style='background: #FFFFFF; border:none;'></td>";
+              for(i=0; i<Cities.numCities; i++) {
+                z += "<TD width=81 style='background: #FFFFFF'><B>"+ Cities.cities[i].name.substring(0,11) +'</b><BR>'+ coordLink (Cities.cities[i].x, Cities.cities[i].y) +"<BR>"+ uW.provincenames['p'+ Cities.cities[i].provId] +"</td>";
+              }
+        	  for (a=1;a<=4;a++){
+        	  		var total = 0;
+        	  		z+='<TR><TD colspan="8" style="background: #FFFFFF"><B>'+uW.resourceinfo['rec'+a]+': </b></td></tr><TR>';
+        	  		for(b=0; b<Cities.numCities; b++) total += parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]/3600);
+        	  		z+='<TD style="background: #F0F0F0">'+ addCommas(total) +'</td>';
+        	  		for(b=0; b<Cities.numCities; b++) z+='<TD align=right style="background: #F0F0F0">'+ addCommas( parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]/3600)) +'</font></td>';
+        	  		z+='</tr><TR><TD style="background: #FFFFFF"><FONT COLOR="686868">'+uW.g_js_strings.showResourceTooltip.caplimit+':</font></td>';
+        	  		for(b=0; b<Cities.numCities; b++) {
+        	  			    z+='<TD align=right style="background: #FFFFFF">';
+        	  				if (parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][1]/3600) > parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]/3600)) z+='<FONT COLOR= "669900">';
+        	  				else z+='<FONT COLOR="686868">';
+        	  				z+= addCommas( parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][1]/3600));
+        	  				z+='</font></td>';
+        	  		}
+        	  		z+='</tr><TR><TD style="background: #FFFFFF"><FONT COLOR="686868">'+uW.g_js_strings.showResourceTooltip.hrprod+':</font></td>';
+        	  		for(b=0; b<Cities.numCities; b++) {
+        	  				var rp = getResourceProduction (Seed.cities[b][0]);
+        	  				var usage = parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][3]);
+        	  				z+='<TD align=right style="background: #FFFFFF"><FONT COLOR="686868">'+ addCommas(rp[a] - usage)  +'</font></td>';
+        	  		}
+        	  		z+='</tr>';
+        	  		if (a==1){
+        	  			z+='<TR><TD style="background: #FFFFFF"><FONT COLOR="686868">'+uW.g_js_strings.commonstr.upkeep+':</font></td>';
+        	  			for(b=0; b<Cities.numCities; b++){
+        	  				 var rp = getResourceProduction (Seed.cities[b][0]);
+        	  				 var usage = parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][3]);
+        	  				 var prod = rp[a] - usage;
+        	  				 var timeLeft = parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]) / 3600 / (0-prod) * 3600;
+        				 	 if (prod > 0) z+='<TD align=right style="background: #FFFFFF"><FONT COLOR="686868">----</font></td>';
+        	  				 else {
+        		  				 if (Options.enableFoodWarn && timeLeft<(Options.foodWarnHours*3600)) z+='<TD align=right style="background: #FFFFFF"><FONT COLOR=RED>';
+        		  				 else  z+='<TD align=right style="background: #FFFFFF"> <FONT COLOR="686868">';
+        		  				 z+= timestrShort(timeLeft) +'</font></td>';
+        		  				 
+        	  				}
+        	  		   }
+        	  	  }
+        	  	  var totalmarching = 0;
+        	  	  for(b=0; b<Cities.numCities; b++) {
+        	  	  	   var march = Seed.queue_atkp['city' + Seed.cities[b][0]];
+        	  	  	   if (march != []) for (c in march) 
+        	  	  	   		if (march[c]['resource'+a] != undefined && march[c]['marchType'] != 9) totalmarching += parseInt(march[c]['resource'+a]);
+        	  	  } 
+        	  	  if (totalmarching > 0){
+		        	  	  z+='</tr><TR><TD style="background: #FFFFFF"><FONT COLOR="686868">'+uW.g_js_strings.commonstr.marching+':</font></td>';
+		        	  	  for(b=0; b<Cities.numCities; b++) {
+		        	  	  	   var recmarching = 0;
+		        	  	  	   var march = Seed.queue_atkp['city' + Seed.cities[b][0]];
+		        	  	  	   if (march != []) for (c in march) 
+		        	  	  	   		if (march[c]['resource'+a] != undefined && march[c]['marchType'] != 9) recmarching += (parseInt(march[c]['resource'+a]));
+		        	  	       if (recmarching !=0)	z+= '<TD align=right style="background: #FFFFFF"><FONT COLOR="686868">'+addCommas(recmarching)+'</font></td>';
+		        	  	       else z+= '<TD align=right style="background: #FFFFFF"></td>';
+		        	  	  }	
+		       	  }
+        	  }
+        	  z+='</tr><TR><TD colspan="8" style="background: #FFFFFF; border:none">&nbsp;</td><TR><TD colspan="8" style="background: #FFFFFF"><B>'+uW.g_js_strings.commonstr.gold+':</b></td></tr><TR>';
+        	  var goldtotal = 0;
+        	  for(b=0; b<Cities.numCities; b++) goldtotal += parseInt(Seed.citystats["city" + Seed.cities[b][0]]['gold'][0]);
+        	  z+='<TD style="background: #F0F0F0">'+addCommas(goldtotal)+'</td>';
+        	  for(b=0; b<Cities.numCities; b++) {
+        	  		z+='<TD align=right style="background: #F0F0F0">'+ addCommas(Seed.citystats["city" + Seed.cities[b][0]]['gold'][0])  +'</td>';
+        	  }
+        	  z+='<TR><TD style="background: #FFFFFF"><FONT COLOR="686868">'+uW.g_js_strings.showGoldTooltip.netincome+':</font></td>';
+        	  for(b=0; b<Cities.numCities; b++) {
+        	  		var f = 1;
+        	  		if (parseInt(Seed.playerEffects.r0BstExp) > unixTime()) f = 2;
+        	  		var g = parseInt(parseInt(Seed.citystats["city" + Seed.cities[b][0]]['gold'][1] * Seed.citystats["city" + Seed.cities[b][0]]['pop'][0]) * 0.01) * f;
+        	  		var h = parseInt(Seed.citystats["city" + Seed.cities[b][0]]["gold"][2] * 10 * -1);
+        	  		z+='<TD align=right style="background: #FFFFFF"><FONT COLOR="686868">'+ addCommas(g+h)  +'</font></td>';
+        	  }
+        	  z+='</tr><TR><TD colspan="8" style="background: #FFFFFF">&nbsp;</td> </tr><TR><TD style="background: #F8F8F8"><B>'+uW.g_js_strings.showPopTooltip.idlepop+':</b></td>';
+        	  for(b=0; b<Cities.numCities; b++) {
+    	  			var i = Seed.citystats["city" + Seed.cities[b][0]]['pop'][0];
+    	  			var j = Seed.citystats["city" + Seed.cities[b][0]]['pop'][3];
+    	  			var k = i - j;
+    	  			if (k > 0) z+='<TD align=right style="background: #FFFFFF">'+ addCommas(k)  +'</td>'; 
+    	  			 else z+='<TD align=right style="background: #FFFFFF"><FONT COLOR=red>'+ addCommas(k)  +'</font></td>';
+        	  }  
+        	 z+='</tr><TR><TD colspan="8" style="background: #FFFFFF">&nbsp;</td> </tr><TR><TD style="background: #F8F8F8"><B>'+uW.g_js_strings.showMyWilderness.conqueredwild+':</b></td>';
+        		for(b=0; b<Cities.numCities; b++) {
+        		      var totWilds = 0;
+        			  dat = Seed.wilderness['city'+ Seed.cities[b][0]];
+        			  if (dat!=null && matTypeof(dat)=='object')
+        		  			for (k in dat)
+        		    			++totWilds;
+        			 var castle = parseInt(Seed.buildings['city'+ Seed.cities[b][0]].pos0[1]);
+        			 if(castle == 11) castle = 12;
+        			 if (totWilds < castle)
+        		  	z+=  '<TD align=right style="background: #F0F0F0"><FONT COLOR=RED>'+ totWilds +'/'+ castle +'</font></span>';
+        			else
+        		  		z+=  '<TD align=right style="background: #F0F0F0">'+ totWilds +'/'+ castle +'</span>';
+        		}
+        		z+='</tr>';
+              for (c in uW.cm.WILDERNESS_TYPES){
+              		var wildtype ='';
+              		switch (c) {
+              		  case 'GRASSLAND' : wildtype = uW.g_js_strings.commonstr.grassland;break;
+              		  case 'LAKE' : wildtype = uW.g_js_strings.commonstr.lake;break;
+              		  case 'WOODS' : wildtype = uW.g_js_strings.commonstr.woods;break;
+              		  case 'HILLS' : wildtype = uW.g_js_strings.commonstr.hills;break;
+              		  case 'MOUNTAIN' : wildtype = uW.g_js_strings.commonstr.mountain;break;
+              		  case 'PLAIN' : wildtype = uW.g_js_strings.commonstr.plain;break;
+              		}
+              		var grandtotal = 0;
+              		for(b=0; b<Cities.numCities; b++) {
+              			dat = Seed.wilderness['city'+ Seed.cities[b][0]];
+              			if (dat!=null && matTypeof(dat)=='object') for (k in dat) if (dat[k]['tileType'] == uW.cm.WILDERNESS_TYPES[c]) grandtotal++; 
+              		}
+              		if (grandtotal >0) {
+		              		z+='<TR><TD style="background: #FFFFFF">'+wildtype+'</td>';
+		              		for(b=0; b<Cities.numCities; b++) {		
+		              			var total =0;
+		              			dat = Seed.wilderness['city'+ Seed.cities[b][0]];
+		              			if (dat!=null && matTypeof(dat)=='object')
+		              					for (k in dat)
+		              						if (dat[k]['tileType'] == uW.cm.WILDERNESS_TYPES[c])
+		              							++total;  
+		        				if (total >0) z+='<TD align=right style="background: #FFFFFF">'+total+'</td>';
+		        				else z+='<TD style="background: #FFFFFF"></td>';
+		        					
+		              		}
+		              		z+='</tr>';
+		      	    }       
+              }
+             
+        var totboosts = false;
+        	  var l = Seed.playerEffects;
+            for (p in l) if (l[p] > unixTime()) totboosts =true;               
+            if (totboosts) {
+                z+='</tr><TR><TD colspan="8" style="background: #FFFFFF; border:none">&nbsp;</td> </tr><TR><TD style="background: #F8F8F8"><B>'+uW.g_js_strings.commonstr.boost+':</b></td>';
+                for (p in l) {
+                   if (p =='r0BstExp' && l[p] > unixTime()) z+='<TR><TD style="background: #FFFFFF">'+uW.resourceinfo['rec'+0]+'</td><TD align=right style="background: #FFFFFF">'+ timestr((l[p] - unixTime())) +'</td></tr>';
+                   if (p =='r1BstExp' && l[p] > unixTime()) z+='<TR><TD style="background: #FFFFFF">'+uW.resourceinfo['rec'+1]+'</td><TD align=right style="background: #FFFFFF">'+ timestr((l[p] - unixTime())) +'</td></tr>';
+                   if (p =='r2BstExp' && l[p] > unixTime()) z+='<TR><TD style="background: #FFFFFF">'+uW.resourceinfo['rec'+2]+'</td><TD align=right style="background: #FFFFFF">'+ timestr((l[p] - unixTime())) +'</td></tr>';
+                   if (p =='r3BstExp' && l[p] > unixTime()) z+='<TR><TD style="background: #FFFFFF">'+uW.resourceinfo['rec'+3]+'</td><TD align=right style="background: #FFFFFF">'+ timestr((l[p] - unixTime())) +'</td></tr>';
+                   if (p =='r4BstExp' && l[p] > unixTime()) z+='<TR><TD style="background: #FFFFFF">'+uW.resourceinfo['rec'+4]+'</td><TD align=right style="background: #FFFFFF">'+ timestr((l[p] - unixTime())) +'</td></tr>';
+                   if (p =='atkExpire' && l[p] > unixTime()) z+='<TR><TD style="background: #FFFFFF">'+uW.g_js_strings.commonstr.attack+'</td><TD align=right style="background: #FFFFFF">'+ timestr((l[p] - unixTime())) +'</td></tr>';
+                   if (p =='defExpire' && l[p] > unixTime()) z+='<TR><TD style="background: #FFFFFF">'+uW.g_js_strings.commonstr.defend+'</td><TD align=right style="background: #FFFFFF">'+ timestr((l[p] - unixTime())) +'</td></tr>';
+                   if (p =='loadExpire' && l[p] > unixTime()) z+='<TR><TD style="background: #FFFFFF">'+uW.g_js_strings.modal_barracks_train.load+'</td><TD align=right style="background: #FFFFFF">'+ timestr((l[p] - unixTime())) +'</td></tr>';
+                   if (p =='returnExpire' && l[p] > unixTime()) z+='<TR><TD style="background: #FFFFFF">'+uW.g_js_strings.commonstr.returning+'</td><TD align=right style="background: #FFFFFF">'+ timestr((l[p] - unixTime())) +'</td></tr>';
+                   if (p =='troopUpkeepReductExp' && l[p] > unixTime()) z+='<TR><TD style="background: #FFFFFF">'+uW.g_js_strings.commonstr.upkeep+'</td><TD align=right style="background: #FFFFFF">'+ timestr((l[p] - unixTime())) +'</td></tr>';
+                   if (p =='fogExpire' && l[p] > unixTime()) z+='<TR ><TD style="background: #FFFFFF">'+uW.itemlist.i10021.name+'</td><TD align=right style="background: #FFFFFF">'+ timestr((l[p] - unixTime())) +'</td></tr>';
+               }
+            }      
+        z+='</table></div>';
+      t.Overv.innerHTML = z;
+     	t.displayTimer = setTimeout (t.showResources, 1000);  
+   },   
+      
+        
+    showTroops : function (){
+      var t = Tabs.OverView;
+      t.Overv.innerHTML =null;
+      t.Overv.style.maxHeight = '700px';
+      t.Overv.style.overflowY = 'scroll';
+      var n = "<TABLE class=ptTabOverview cellpadding=0 cellspacing=0><TR valign=top align=right><TD style='background: #FFFFFF; border:none;'></td><TD style='background: #FFFFFF; border:none;'></td>";
+           for(i=0; i<Cities.numCities; i++) {
+             n += "<TD width=81 style='background: #FFFFFF'><B>"+ Cities.cities[i].name.substring(0,11) +'</b><BR>'+ coordLink (Cities.cities[i].x, Cities.cities[i].y) +"<BR>"+ uW.provincenames['p'+ Cities.cities[i].provId] +"</td>";
+           }
+   	  for(a=1;a<13;a++) {
+   	        var total=0;
+   	        var marching = 0;
+   	        var raiding = 0;
+   	        var tottraining = 0;
+   	        
+   	        for(b=0; b<Cities.numCities; b++) {
+   	        	   var train = Seed.queue_unt['city' + Seed.cities[b][0]];
+   	        	   if (train != []) for (c in train) if (train[c][0] == a) tottraining += parseInt(train[c][1]);
+   	        }
+   	        if (tottraining > 0) var rowsp = 3; 
+   	        else var rowsp = 2; 
+   	        n+='<TR><TD rowspan="'+rowsp+'" style="background: #FFFFFF; vertical-align:top;"><img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_'+a+'_30.jpg></td>';
+   	        for(b=0; b<Cities.numCities; b++) total += parseInt(Seed.units['city' + Seed.cities[b][0]]['unt'+a]);
+   	        if (total >0) n+='<TD align=right style="background: #F0F0F0">'+addCommas(total)+'</td>';
+   	        else n+='<TD align=right style="background: #F0F0F0">&nbsp;</td>';
+   	        for(b=0; b<Cities.numCities; b++) {
+   	        	if (Seed.units['city' + Seed.cities[b][0]]['unt'+a] > 0) n+= '<TD align=right style="background: #F0F0F0">'+addCommas(Seed.units['city' + Seed.cities[b][0]]['unt'+a])+'</td>';
+   	        	else n+='<TD style="background: #F0F0F0"></td>';
+   	        }
+   	        n+='</tr><TR><TD style="background: #FFFFFF"><FONT COLOR="686868">'+uW.g_js_strings.commonstr.marching+'</font></td>';
+   	        for(b=0; b<Cities.numCities; b++) {
+   	        	   marching = 0;
+   	        	   raiding = 0;
+   	        	   var atkp = Seed.queue_atkp['city' + Seed.cities[b][0]];
+   	        	   if (atkp != []){
+	   	        	   for (c in atkp){
+	   	        	   		if (atkp[c]['marchType'] == 9) raiding += (parseInt(atkp[c]['unit'+a+'Count']) + parseInt(atkp[c]['unit'+a+'Return']));
+	   	        	   		else if (atkp[c]['marchType'] != undefined)marching += parseInt(atkp[c]['unit'+a+'Count']);
+	   	        	   }
+	   	        	   if (marching >0 || raiding > 0) {
+	   	        	   		n+= '<TD align=right style="background: #FFFFFF"><FONT COLOR="686868">'+addCommas(marching)+' / ';
+	   	        	   		n+= addCommas(raiding)+'</font></td>';
+   	        	   	   }
+   	        	   	   else n+='<TD style="background: #FFFFFF"></td>';	
+   	        	   }
+   	        }
+   	      if (tottraining >0){
+   	        n+='</tr><TR><TD style="background: #FFFFFF"><FONT COLOR="686868">'+uW.g_js_strings.modal_openBarracks.trainingttl+'</font></td>';
+   	        for(b=0; b<Cities.numCities; b++) {
+   	        	   training = 0;
+   	        	   var train = Seed.queue_unt['city' + Seed.cities[b][0]];
+   	        	   if (train != []){
+	   	        	   for (c in train) if (train[c][0] == a) training += parseInt(train[c][1]);
+	   	        	   if (training >0) {
+	   	        	   		n+= '<TD align=right style="background: #FFFFFF"><FONT COLOR="686868">'+addCommas(training)+'</font></td>';
+   	        	   	   }
+   	        	   	   else n+='<TD style="background: #FFFFFF"></td>';	
+   	        	   }
+   	      }
+   	  		n+='</tr>';
+   	  	}
+   	  }
+   	  n+='<TR><TD colspan="8" style="background: #FFFFFF; border:none;">&nbsp;</td> </tr>';
+      n+='<TR><TD colspan="2" style="background: #F0F0F0 ; border=solid">'+uW.g_js_strings.openKnights.myknights+':</td>';
+      for(b=0; b<Cities.numCities; b++) {
+           var knights=0;
+           var knightscity = Seed.knights['city' + Seed.cities[b][0]];
+           if (knightscity != []) for (c in knightscity) if (knightscity[c]['knightId'] > 0) knights++;
+        	 n+= '<TD align=right style="background: #F0F0F0">'+knights+'</td>';	
+      }
+      n+='</tr><TR><TD colspan="2" style="background: #FFFFFF">'+uW.g_js_strings.commonstr.combat+':</td>';
+      for(b=0; b<Cities.numCities; b++) {
+           var combat=0;
+           var knightscity = Seed.knights['city' + Seed.cities[b][0]];
+           if (knightscity != []) for (c in knightscity) if (knightscity[c]['combat'] > combat) 
+               if (Seed.leaders['city' + Seed.cities[b][0]]['combatKnightId'] != knightscity[c]['knightId'])  combat = knightscity[c]['combat'];
+        	 n+= '<TD align=right style="background: #FFFFFF">'+combat+'</td>';	
+      }
+      
+      n+='<TR><TD colspan="8" style="background: #FFFFFF; border:none;">&nbsp;</td> </tr>';
+      n+='<TR><TD colspan="2" style="background: #F0F0F0 ; border=solid">'+uW.g_js_strings.modal_barracks_trainingtab.totaltraintime+':</td>';
+      for(b=0; b<Cities.numCities; b++) {
+           var time=0;
+           now = unixTime();
+           var  unt = Seed.queue_unt['city' + Seed.cities[b][0]];
+           //alert(unt.length);
+           if (unt != null && unt.length > 0) time = (unt[unt.length-1][3] - now);
+           if (time < 0) time=0;
+           if (time < 3600) n+= '<TD align=right style="background: #F0F0F0"><FONT COLOR=red>'+timestr(time)+'</font></td>';	
+           else n+= '<TD align=right style="background: #F0F0F0">'+timestr(time)+'</td>';	
+      }
+      
+      
+      
+   	  n+='</tr></table>';
+   	  t.Overv.innerHTML = n;
+      t.displayTimer = setTimeout (t.showTroops, 1000);  
+    },
+	
+	
+  showBuilds : function (){
+    var t = Tabs.OverView;
+    clearTimeout (t.displayTimer);
+    t.Overv.innerHTML =null;
+    t.Overv.style.maxHeight = '700px';
+    t.Overv.style.overflowY = 'scroll';	
+    var wall=0;
+    var blacksmith=0;
+    var fletching=0;
+    var geometry = 0;
+    var metalalloys = 0;
+    var logging = 0;
+    var poisonededge = 0;
+    var WallSpace = {1:1000,
+    			  2:3000,
+    			  3:6000,
+    			  4:10000,
+    			  5:15000,
+    			  6:21000,
+    			  7:28000,
+    			  8:36000,
+    			  9:45000,
+    			  10:55000,
+    			  11:66000};
+    var FieldSpace = {1:13,
+    			  2:16,
+    			  3:19,
+    			  4:22,
+    			  5:25,
+    			  6:28,
+    			  7:31,
+    			  8:34,
+    			  9:37,
+    			  10:40,
+    			  11:40};
+    			  		   
+    fertilizer = Seed.tech['tch1'];
+    logging = Seed.tech['tch2'];
+    stoneworking = Seed.tech['tch3'];
+    mining = Seed.tech['tch4'];
+    geometry = Seed.tech['tch5'];
+    eagleeyes = Seed.tech['tch6'];
+    poisonededge = Seed.tech['tch8'];
+    metalalloys = Seed.tech['tch9'];
+    featherweightpowder = Seed.tech['tch10'];
+    magicalmapping = Seed.tech['tch11'];
+    alloyhorseshoes = Seed.tech['tch12'];
+    fletching = Seed.tech['tch13'];
+    shrinkingpowder = Seed.tech['tch14'];
+    healingpotions = Seed.tech['tch15'];
+    giantsstrength = Seed.tech['tch16'];			  		       
+    
+    var m = '<DIV id=BuildsDiv style="font-size:12px"><TABLE class=ptBuilds cellpadding=5 cellspacing=0 border="1" style="border: 1px solid; border-style: none none none none;"><TR valign=top align=right>';
+    m += "<TD align=left width=85 style='background:#F0F0F0'><INPUT id=showReq type=checkbox " + (t.showReq?'CHECKED ':'') +">Show missing req.</td>";
+    for(i=0; i<Cities.numCities; i++) {
+      m += "<TD width=79 style='background:#F0F0F0'><B>"+ Cities.cities[i].name.substring(0,11) +"</b><BR>"+ coordLink(Cities.cities[i].x, Cities.cities[i].y) +"<BR></td>";
+    }
+    m+='<TR valign=top align=right><TD width=85 style="background:#F0F0F0">Building</td>';	
+    for(i=0; i<Seed.cities.length; i++) {
+    	city = 'city'+Seed.cities[i][0];
+    	m+='<TD width=79 style="background:#FFFFFF">';
+    	if (Seed.queue_con[city][0] != undefined) {
+    		m+=uW.buildingcost['bdg' + Seed.queue_con[city][0][0]][0];
+    		m+=' ('+Seed.queue_con[city][0][1]+')';
+    		m+='<br>'+ timestr((Seed.queue_con[city][0][4] - unixTime()),true);
+    	}
+    	m+='</td>';	
+    }
+    m+='</tr>';
+    m+='<TR valign=top align=right><TD width=85 style="background:#F0F0F0">Researching</td>';	
+    for(i=0; i<Seed.cities.length; i++) {
+    	city = 'city'+Seed.cities[i][0];
+    	m+='<TD width=79 style="background:#FFFFFF">';
+    	if (Seed.queue_tch[city][0] != undefined) {
+    		m+=uW.techcost['tch' + Seed.queue_tch[city][0][0]][0];
+    		m+=' ('+Seed.queue_tch[city][0][1]+')';
+    		m+='<br>'+ timestr((Seed.queue_tch[city][0][3] - unixTime()),true);
+    	}
+    	m+='</td>';		
+    }
+    m+='</tr><TR><TD colspan="8" style="background: #FFFFFF; border:none">&nbsp;</td></tr>';
+    m+='<TR valign=top align=right><TD width=85 style="background:#F0F0F0">'+uW.fortcost['frt53'][0]+'</td>';
+    for (i=0;i<Seed.cities.length;i++){
+    	city = 'city'+Seed.cities[i][0];
+    	for (y in Seed.buildings[city]) {
+    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
+    		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
+    	}
+    	max = WallSpace[wall]/2/2 - parseInt(Seed.fortifications[city]["fort53"]) - parseInt(Seed.fortifications[city]["fort55"]);
+    	m+= '<TD width=79 style="background:#FFFFFF">' + Seed.fortifications[city]["fort53"];
+    	if (wall >=6 && blacksmith >=6 && fletching >=5 && max > 0) m+= '<br>Left: ' + max +'</td>';
+    	else if (t.showReq){
+    			if (wall < 6) m+= '<br><FONT COLOR= "CC0000">Wall: ' + wall + '(6)</font>';
+    			if (blacksmith < 6) m+= '<br><FONT COLOR= "CC0000">BlackS.: ' + blacksmith + '(6)</font>';
+    			if (fletching < 5) m+= '<br><FONT COLOR= "CC0000">Fletch.: ' + fletching + '(5)</font>';
+    			m+='</td>';
+    		} 		
+    }
+    m+='</tr><TR valign=top align=right><TD width=85 style="background:#F0F0F0">'+uW.fortcost['frt55'][0]+'</td>';
+    for (i=0;i<Seed.cities.length;i++){
+    	city = 'city'+Seed.cities[i][0];
+    	for (y in Seed.buildings[city]) {
+    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
+    		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
+    	}
+    	max = WallSpace[wall]/2/4 - parseInt(Seed.fortifications[city]["fort53"]) - parseInt(Seed.fortifications[city]["fort55"]);
+    	m+=  '<TD width=79 style="background:#FFFFFF">' +Seed.fortifications[city]["fort55"];
+    	if (wall >=8 && blacksmith >=8 && fletching >=7 && geometry>=7 && max > 0) m+= '<br>Left: ' + max+'</td>';
+    	else if (t.showReq){
+    			if (wall < 8) m+= '<br><FONT COLOR= "CC0000">Wall: ' + wall + '(8)</font>';
+    			if (blacksmith < 8) m+= '<br><FONT COLOR= "CC0000">BlackS.: ' + blacksmith + '(8)</font>';
+    			if (fletching < 7) m+= '<br><FONT COLOR= "CC0000">Fletch.: ' + fletching + '(7)</font>';
+    			if (geometry < 7) m+= '<br><FONT COLOR= "CC0000">Geomet.: ' + geometry + '(7)</font>';
+    			m+='</td>';
+    	} 	
+    }
+    m+='<TR valign=top align=right><TD width=85 style="background:#F0F0F0">Wall defences</td>';
+    for (i=0;i<Seed.cities.length;i++){
+    	city = 'city'+Seed.cities[i][0];
+    	for (y in Seed.buildings[city]) {
+    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
+    	}
+    	build = (parseInt(Seed.fortifications[city]["fort53"])*2)+ (parseInt(Seed.fortifications[city]["fort55"])*4);
+    	max = WallSpace[wall]/2;
+    	if (build < max) m+='<TD width=79 style="background:#FFFFFF"><FONT COLOR= "CC0000">';
+    	else m+='<TD width=79 style="background:#FFFFFF"><FONT COLOR= "669900">';
+    	m+= build+'</font>';
+    	m+= '/' + max +'</td>';
+    }
+    m+='</tr><TR valign=top align=right><TD width=85 style="background:#F0F0F0">'+uW.fortcost['frt60'][0]+'</td>';
+    for (i=0;i<Seed.cities.length;i++){
+    	city = 'city'+Seed.cities[i][0];
+    	for (y in Seed.buildings[city]) {
+    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
+    		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
+    	}
+    	max = WallSpace[wall]/2/4 - (parseInt(Seed.fortifications[city]["fort60"])*4) - (parseInt(Seed.fortifications[city]["fort61"])*1) - (parseInt(Seed.fortifications[city]["fort62"])*3);
+    	m+=  '<TD width=79 style="background:#FFFFFF">'+Seed.fortifications[city]["fort60"];
+    	if (wall >=4 && blacksmith >=4 && poisonededge>=4 && max>0) m+= '<br>Left: ' + max+'</td>';
+    	else if (t.showReq){
+    			if (wall < 4) m+= '<br><FONT COLOR= "CC0000">Wall: ' + wall + '(4)</font>';
+    			if (blacksmith < 4) m+= '<br><FONT COLOR= "CC0000">BlackS.: ' + blacksmith + '(4)</font>';
+    			if (poisonededge < 4) m+= '<br><FONT COLOR= "CC0000">Poison.: ' + poisonededge + '(4)</font>';
+    			m+='</td>';
+    	} 	
+    }
+    m+='</tr><TR valign=top align=right><TD width=85 style="background:#F0F0F0">'+uW.fortcost['frt61'][0]+'</td>';
+    for (i=0;i<Seed.cities.length;i++){
+    	city = 'city'+Seed.cities[i][0];
+    	for (y in Seed.buildings[city]) {
+    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
+    		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
+    	}
+    	max = WallSpace[wall]/2/1 - (parseInt(Seed.fortifications[city]["fort60"])*4) - (parseInt(Seed.fortifications[city]["fort61"])*1) - (parseInt(Seed.fortifications[city]["fort62"])*3);
+    	m+= '<TD width=79 style="background:#FFFFFF">'+Seed.fortifications[city]["fort61"];
+    	if (wall >=1 && metalalloys >=1 && max>0) m+= '<br>Left: ' + max+'</td>';
+    	else if (t.showReq){
+    			if (wall < 1) m+= '<br><FONT COLOR= "CC0000">Wall: ' + wall + '(1)</font>';
+    			if (metalalloys < 1) m+= '<br><FONT COLOR= "CC0000">Metal.: ' + metalalloys + '(1)</font>';
+    			m+='</td>';
+    	} 	
+    }
+    m+='</tr><TR valign=top align=right><TD style="background:#F0F0F0">'+uW.fortcost['frt62'][0]+'</td>';
+    for (i=0;i<Seed.cities.length;i++){
+    	city = 'city'+Seed.cities[i][0];
+    	for (y in Seed.buildings[city]) {
+    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
+    		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
+    	}
+    	max = (WallSpace[wall]/2/3).toFixed(0) - (parseInt(Seed.fortifications[city]["fort60"])*4) - (parseInt(Seed.fortifications[city]["fort61"])*1) - (parseInt(Seed.fortifications[city]["fort62"])*3);
+    	m+=  '<TD width=79 style="background:#FFFFFF">'+Seed.fortifications[city]["fort62"];
+    	if (wall >=2 && blacksmith>=2 && logging>=2 && max>0) m+= '<br>Left: ' + max+'</td>';
+    	else if (t.showReq){
+    			if (wall < 2) m+= '<br><FONT COLOR= "CC0000">Wall: ' + wall + '(2)</font>';
+    			if (blacksmith < 2) m+= '<br><FONT COLOR= "CC0000">BlackS.: ' + blacksmith + '(2)</font>';
+    			if (logging < 2) m+= '<br><FONT COLOR= "CC0000">Logg.: ' + logging + '(2)</font>';
+    			m+='</td>';
+    	} 	
+    }
+    m+='<TR valign=top align=right><TD width=85 style="background:#F0F0F0">Field defences</td>';
+    for (i=0;i<Seed.cities.length;i++){
+    	city = 'city'+Seed.cities[i][0];
+    	for (y in Seed.buildings[city]) {
+    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
+    	}
+    	build = (parseInt(Seed.fortifications[city]["fort60"])*4)+ (parseInt(Seed.fortifications[city]["fort61"])*1) + (parseInt(Seed.fortifications[city]["fort62"])*3);
+    	max = WallSpace[wall]/2;
+    	if (build < max) m+='<TD width=79 style="background:#FFFFFF"><FONT COLOR= "CC0000">';
+    	else m+='<TD width=79 style="background:#FFFFFF"><FONT COLOR= "669900">';
+    	m+= build+'</font>';
+    	m+= '/' + max +'</td>';
+    }
+    m+='</tr><TR><TD colspan="8" style="background: #FFFFFF; border:none">&nbsp;</td></tr>';
+    m+='<TR valign=top align=right><TD width=85 style="background:#F0F0F0">City space</td>';
+    
+    for(i=0; i<Seed.cities.length; i++) {
+    	var count=0;
+    	city = 'city'+Seed.cities[i][0];
+    	for (y in Seed.buildings[city]) {
+    		if (Seed.buildings[city][y][0] >=5 && Seed.buildings[city][y][0] <19) count++;
+    	}
+    	if (count == 31) m+='<TD width=79 style="background:#FFFFFF"><FONT COLOR= "669900">';
+    	else m+='<TD width=79 style="background:#FFFFFF"><FONT COLOR= "CC0000">';
+    	m+= count + '</font> (31)</td>';
+    }
+    m+='</tr>';
+    m+='<TR valign=top align=right><TD width=85 style="background:#F0F0F0">Field space</td>';
+    
+    for(i=0; i<Seed.cities.length; i++) {
+    	var count=0;
+    	var castle=0;
+    	city = 'city'+Seed.cities[i][0];
+    	for (y in Seed.buildings[city]) {
+    		if (Seed.buildings[city][y][0] == 0) castle = Seed.buildings[city][y][1];
+    		if (Seed.buildings[city][y][0] >=1 && Seed.buildings[city][y][0] <=4) count++;
+    	}
+    	if (count == FieldSpace[castle]) m+='<TD width=79 style="background:#FFFFFF"><FONT COLOR= "669900">';
+    	else m+='<TD width=79 style="background:#FFFFFF"><FONT COLOR= "CC0000">';
+    	m+= count + '</font> ('+FieldSpace[castle]+')</td>';
+    }
+    m+='</tr>';
+    for (b=0;b<20;b++){
+    	m+='<TR valign=top align=right><TD width=85 style="background:#F0F0F0">'+uW.buildingcost['bdg' + b][0]+'</td>';
+        for (c=0;c<Seed.cities.length;c++){
+        	m+='<TD style="width:79px; max-width:79px; word-wrap: break-word; background:#FFFFFF">';
+        		city= 'city'+Seed.cities[c][0];
+        		var count =0;
+        		for (y in Seed.buildings[city]) {
+        			if (Seed.buildings[city][y][0] == b) {
+        				count++;
+        				if (count > 1) m+=",";
+        				if (Seed.buildings[city][y][1] >= 9) m+='<FONT COLOR= "669900">';
+        				m+=Seed.buildings[city][y][1];
+        				if (Seed.buildings[city][y][1] >= 9) m+='</font>';
+        				
+        			}
+        		}
+        		if (count == 0) {
+        			m+='<FONT COLOR= "CC0000">0</font>';
+        		}
+        	m+='</td>';		
+        }
+        m+='</tr>';
+    } 
+    m+='</tr><TR><TD colspan="8" style="background: #FFFFFF; border:none">&nbsp;</td></tr>';
+    for(i=0; i<Cities.numCities; i++) {
+    }
+    m+='<TR valign=top align=right><TD width=85 style="background:#F0F0F0">Guardians</td>';
+    for(i=0; i<Seed.cities.length; i++) {
+     	for(g=0;g<Seed.guardian.length;g++) {
+     		if (Seed.guardian[g]['cityId'] == Seed.cities[i][0] && Seed.guardian[g]['level']!=0) {
+     			m += '<TD width=79 style="background:#FFFFFF">';
+     			if (Seed.guardian[g]['level'] >=9) m+='<FONT COLOR= "669900">'; 
+     			m+=Seed.guardian[g]['level']+"("+Seed.guardian[g]['type']+")</td>";
+     			if (Seed.guardian[g]['level'] >=9) m+='</font>'; 
+     		}
+     		else {if (Seed.guardian[g]['cityId'] == Seed.cities[i][0] && Seed.guardian[g]['level']==0) m += '<TD width=79 style="background:#FFFFFF"><FONT COLOR= "CC0000">0</font></td>'};
+    	}
+    }
+    m+='</tr></table><BR></table><BR><TABLE class=ptBuilds  border=1px cellpadding=2 cellspacing=0><TR valign=top align=left>';
+    for (i in uW.techcost) {
+    	m+='<TD border=1px style="width:150px; background:#FFFFFF">'+uW.techcost[i][0]+'</td><TD align=center style="width:50px max-width:150px; background:#FFFFFF;">';
+    	if (Seed.tech[i] >=9) m+='<FONT COLOR= "669900">';
+    	if (Seed.tech[i] ==0) m+='<FONT COLOR= "CC0000">';
+    	m+=Seed.tech[i];
+    	if (Seed.tech[i] >=9 || Seed.tech[i] ==0) m+='</font>';
+    	if (t.showReq) {
+    		for(z=0; z<Seed.cities.length; z++) {
+        		city = 'city'+Seed.cities[z][0];
+        		for (y in Seed.buildings[city]) {
+        			var farm,sawmill,quarry,mine,alchemylab,workshop,blacksmith,stable,storehouse,barracks = 0;
+        			if (Seed.buildings[city][y][0] == 1 && Seed.buildings[city][y][0] > farm) farm = Seed.buildings[city][y][1]; 
+        			if (Seed.buildings[city][y][0] == 2 && Seed.buildings[city][y][0] > sawmill) sawmill = Seed.buildings[city][y][1];
+        			if (Seed.buildings[city][y][0] == 3 && Seed.buildings[city][y][0] > quarry) quarry = Seed.buildings[city][y][1]; 
+        			if (Seed.buildings[city][y][0] == 4 && Seed.buildings[city][y][0] > mine) mine = Seed.buildings[city][y][1];
+        			if (Seed.buildings[city][y][0] == 9) storehouse = Seed.buildings[city][y][1];
+        			if (Seed.buildings[city][y][0] == 11) alchemylab = Seed.buildings[city][y][1];
+        			if (Seed.buildings[city][y][0] == 13 && Seed.buildings[city][y][0] > barracks) barracks = Seed.buildings[city][y][1];
+        			if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1];
+        			if (Seed.buildings[city][y][0] == 16) workshop = Seed.buildings[city][y][1];
+        			if (Seed.buildings[city][y][0] == 17) stable = Seed.buildings[city][y][1];
+        		}
+        	}
+        	m+='<FONT COLOR= "CC0000">';
+    		switch (i) {
+    			case '1': 
+    				if (alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab+ '('+ (Seed.tech[i]) +')';
+    				if (farm < Seed.tech[i]) m+='<BR>Farm '+ farm +'('+ (Seed.tech[i]+1) +')</td>';
+    				break;
+    			case '2': 
+    				if (alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab+ '('+ (Seed.tech[i]) +')';
+    				if (sawmill < Seed.tech[i]) m+='<BR>Sawmill '+ sawmill +'('+ (Seed.tech[i]) +')';
+    				break;
+    			case '3': 
+    				if (alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab+ '('+ (Seed.tech[i]) +')';
+    				if (quarry < Seed.tech[i]) m+='<BR>Quarry '+ quarry +'('+ (Seed.tech[i]) +')</td>';
+    				break;
+    			case '4': 
+    				if (alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab+ '('+ (Seed.tech[i]) +')';
+    				if (mine < Seed.tech[i]) m+='<BR>Mine '+ mine +'('+ (Seed.tech[i]) +')';
+    				break;
+    			case '5': 
+    				if (alchemylab < 3) m+='<BR>Alchemy Lab '+ alchemylab +'(3)';
+    				if (alchemylab >= 3 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
+    				if (workshop < Seed.tech[i]) m+='<BR>Workshop ' + workshop +'('+ (Seed.tech[i]) +')';
+    				if (stoneworking < 2) m+='<BR>Stoneworking '+ stoneworking +'(2)';
+    				break;
+    			case '6': 
+    				if (alchemylab < 3) m+='<BR>Alchemy Lab '+ alchemylab +'(3)';
+    				if (alchemylab >= 3 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
+    				break;	
+    			case '8': 
+    				if (alchemylab < 2) m+='<BR>Alchemy Lab '+ alchemylab +'(2)';
+    				if (alchemylab >= 2 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
+    				if (barracks < 2) m+='<BR>Barracks '+ barracks +'(2)';
+    				break;		
+    			case '9': 
+    				if (alchemylab < 3) m+='<BR>Alchemy Lab '+ alchemylab +'(3)';
+    				if (alchemylab >= 3 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
+    				if (blacksmith < Seed.tech[i]) m+='<BR>Blacksmith '+ blacksmith+'('+ (Seed.tech[i]) +')';
+    				if (mining < Seed.tech[i]) m+='<BR>Mining '+ mining +'('+ (Seed.tech[i]) +')';
+    				break;
+    			case '10': 
+    				if (alchemylab < 4) m+='<BR>Alchemy Lab '+ alchemylab +'(4)';
+    				if (alchemylab >= 4 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
+    				break;
+    			case '11': 
+    				if (alchemylab < 4) m+='<BR>Alchemy Lab '+ alchemylab +'(4)';
+    				if (alchemylab >= 4 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
+    				break;
+    			case '12': 
+    				if (alchemylab < 5) m+='<BR>Alchemy Lab '+ alchemylab +'(5)';
+    				if (alchemylab >= 5 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
+    				if (stable < Seed.tech[i]) m+='<BR>Stable '+ stable +'('+ (Seed.tech[i]+1) +')';
+    				if (metalalloys < Seed.tech[i]) m+='<BR>Metal Alloys '+ metalalloys +'('+ (Seed.tech[i]+1) +')';
+    				break;
+    			case '13': 
+    				if (alchemylab < 4) m+='<BR>Alchemy Lab '+ alchemylab +'(4)';
+    				if (alchemylab >= 4 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
+    				if (logging < 4) m+='<BR>Logging '+ logging +'(4)';
+    				break;
+    			case '14': 
+    				if (alchemylab < 6) m+='<BR>Alchemy Lab '+ alchemylab +'(6)';
+    				if (alchemylab >= 6 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
+    				if (storehouse < Seed.tech[i]) m+='<BR>Storehouse '+ storehouse +'('+ (Seed.tech[i]) +')';
+    				if (logging < 3) m+='<BR>Logging '+ logging+'(3)';
+    				break;
+    			case '15': 
+    				if (alchemylab < 6) m+='<BR>Alchemy Lab '+ alchemylab +'(6)';
+    				if (alchemylab >= 6 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
+    				if (featherweightpowder  < 3) m+='<BR>Featherweight Powder  '+ featherweightpowder +'(3)';
+    				break;
+    			case '16': 
+    				if (alchemylab < 5) m+='<BR>Alchemy Lab '+ alchemylab +'(5)';
+    				if (alchemylab >= 5 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
+    				if (logging  < 5) m+='<BR>Logging '+ logging +'(5)';
+    				if (geometry  < 2) m+='<BR>Geometry  '+ geometry +'(2)';
+    				break;
+    		}
+    		m+='</font>';
+    	}
+    	m+='</td></tr>';
+    }	
+    m+='</table></div>';
+    t.Overv.innerHTML = m;
+    document.getElementById('showReq').addEventListener ('change', function (){
+    	t.showReq = document.getElementById('showReq').checked;
+    	t.showBuilds();
+    },false);	
+    t.displayTimer = setTimeout (t.showBuilds, 1000);
+  },
+  
+  showInfo : function (){
+      var t = Tabs.OverView;
+      t.Overv.innerHTML = null;
+      t.Overv.style.maxHeight = '700px';
+      t.Overv.style.overflowY = 'scroll';
+      clearTimeout (t.displayTimer);	
+      
+	  var u='<DIV class=ptstat>USEFULL LINKS</div><DIV id=ptLinks><TABLE align=center cellpadding=1 cellspacing=0><TR>';
+	  u+='<TD width="300px" style="background:#F0F0F0; border:none">Scripts</td><TD width="300px" style="background:#F0F0F0; border:none">Information sites</td></tr>';
+	  u+='<TR><TD width="300px" style="background:#F0F0F0; border:none"><a href="http://userscripts.org/scripts/show/103659" target="_blank">Power Tools (Koc Scripters)</a></td>';
+	  u+='<TD width="300px" style="background:#F0F0F0; border:none"><a href="http://koctools.com/index.php?pageid=servers" target="_blank">KOCTools</a></td></tr>';
+	  u+='<TR><TD width="100px" style="background:#F0F0F0; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/Home?tm=6" target="_blank">Power Tools WIKI</a></td>';
+	  u+='<TD width="300px" style="background:#F0F0F0; border:none"><a href="http://koc.dunno.com/index.sjs?f=ListServers" target="_blank">KOC Mapper</a></td></tr>';
+	  u+='<TR><TD width="100px" style="background:#F0F0F0; border:none"><a href="http://userscripts.org/scripts/show/101052" target="_blank">Power Bot (Koc Scripters)</a></td>';
+	  u+='<TD width="300px" style="background:#F0F0F0; border:none"><a href="http://kocmon.com/" target="_blank">KoC Monitor</a></td></tr>';
+	  u+='<TR><TD width="100px" style="background:#F0F0F0; border:none"><a href="http://code.google.com/p/koc-power-bot/wiki/Home?tm=6" target="_blank">Power Bot WIKI</a></td>';
+	  u+='<TD width="300px" style="background:#F0F0F0; border:none"><a href="http://koc.wikia.com/wiki/" target="_blank">Koc Wikia</a></td></tr>';
+	  u+='<TR><TD width="100px" style="background:#F0F0F0; border:none"><a href="https://addons.mozilla.org/en/firefox/addon/greasemonkey/" target="_blank">Greasemonkey</a></td><TD width="100px" style="background:#F0F0F0; border:none"></td>';
+	  u+='<TR><TD width="100px" style="background:#F0F0F0; border:none"><a href="https://addons.mozilla.org/en/firefox/addon/scriptish/" target="_blank">Scriptish</a></td><TD width="100px" style="background:#F0F0F0; border:none"></td>';
+	  u+='</tr></table></div><BR>';
+	  
+	  var crestreq = { 3:{1101:4, 1102:2, 1103:1},
+	  				 4:{1103:4, 1104:3, 1105:1},
+	  				 5:{1106:4, 1107:3, 1108:2},
+	  				 6:{1109:4, 1110:3, 1111:2},
+	  				 7:{1112:4, 1113:3, 1114:2}
+	  				};
+	  				
+	  u+='<DIV class=ptstat>CREST INFO</div><DIV id=ptLinks><TABLE align=center cellpadding=1 cellspacing=0><TR>';
+	  for (city in crestreq){
+	  		u+='<TR><TD width=75px>'+uW.g_js_strings.commonstr.city+' '+city+'</td><TD>';
+	  		for (crest in crestreq[city]){
+	  			owned = Seed.items['i'+crest];
+	  			if (owned == undefined) owned=0;
+	  			if (owned < crestreq[city][crest]) u+='<TD width=200px><FONT color=red>'+owned+'/'+crestreq[city][crest]+'</font> '+uW.itemlist['i'+crest]['name']+'</td>';
+	  				else  u+='<TD width=200px><FONT color=green>'+owned+'/'+crestreq[city][crest]+'</font> '+uW.itemlist['i'+crest]['name']+'</td>'; 
+	  		}
+	  		u+='</tr>';
+	  }
+	  u+='</table></div><BR>';
+	  fortmight = {
+	        u53: "4",
+	        u55: "7",
+	        u60: "1",
+	        u61: "2",
+	        u62: "3",
+	      };
+	      rownum = 0;
+	      u += '<STYLE>.xtabH {background:#ffffe8; border:none; padding-right: 5px; padding-left: 5px; margin-left:10px; }\
+	              .xtabHL { background:#ffffe8; border-width: 1px; border-style: none none none solid; padding-right:5px; padding-left:5px; margin-left:10px; }\
+	              .xtabL { background:none; border-width: 1px; border-style: none none none solid; padding-right:5px; padding-left: 5px; margin-left:10px; }\
+	              .xtabLine { padding:0px; spacing:0px; height:1px; border-color:black; border-width: 1px; border-style: none none solid none }</style>\
+	          <DIV style="overflow-y:auto; overflow-x:hidden"><DIV class=ptstat>UNIT INFORMATION</div><TABLE align=center cellpadding=1 cellspacing=0>\
+	          <TR align=center><TD class=xtab></td><TD class=xtabHL colspan=5><B>COST TO BUILD</b></td><TD class=xtabHL colspan=7><B>STATS</b></td><TD class=xtabHL><B>Upkeep</b></td></tr>\
+	          <TR valign=bottom align=right><TD class=xtab></td><TD class=xtabHL>Food</td><TD class=xtabH>Wood</td><TD class=xtabH>Stone</td>\
+	          <TD class=xtabH>Ore</td><TD class=xtabH>Pop</td><TD class=xtabHL>Might</td><TD class=xtabH>Life</td><TD class=xtabH>Atk</td><TD class=xtabH>Def</td><TD class=xtabH>Speed</td><TD class=xtabH>Range</td><TD class=xtabH>Load</td>\
+	          <TD class=xtabHL>Food</td></tr>\
+	          <TR style="height:1px;"><TD style="padding:0px; spacing:0px; height:1px; border-color:black; border-width: 1px; border-style: none none solid none" colspan=14></td></tr>';
+	      for (ui=1; ui<13; ui++){
+	        if (++rownum % 2)
+	          rsty = '';
+	        else
+	          rsty = ' style="background: #e8e8e8" ';
+	        cost = unsafeWindow.unitcost['unt'+ui];     //  NAME, Food, Wood, Stone, Ore, ?, IdlePop, Time
+	        stats = unsafeWindow.unitstats['unt'+ui];   //  Life, Attack, Defense, Speed, Range, Load
+	        food = unsafeWindow.unitupkeeps[ui];
+	        might = unsafeWindow.unitmight['u'+ui];
+	        u += '<TR '+ rsty +'align=right><TD class=xtab align=left><B>'+ cost[0].substr(0,16) +'</b></td><TD class=xtabL>'+ cost[1] +'</td><TD class=xtab>'+ cost[2] +'</td>\
+	            <TD class=xtab>'+ cost[3] +'</td><TD class=xtab>'+ cost[4] +'</td><TD class=xtab>'+ cost[6] +'</td><TD class=xtabL>'+ might +'</td>\
+	            <TD class=xtab>'+ stats[0] +'</td><TD class=xtab>'+ stats[1] +'</td><TD class=xtab>'+ stats[2] +'</td><TD class=xtab>'+ stats[3] +'</td>\
+	            <TD class=xtab>'+ stats[4] +'</td><TD class=xtab>'+ stats[5] +'</td><TD class=xtabL>'+ food +'</td></tr>';
+	  
+	      }
+	      u += '<TR class=xtabLine><TD colspan=14 class=xtabLine></td></tr>';
+	      for (k in unsafeWindow.fortcost){
+	        if (++rownum % 2)
+	          rsty = '';
+	        else
+	          rsty = ' style="background: #e8e8e8" ';
+	        cost = unsafeWindow.fortcost[k];     //  NAME, Food, Wood, Stone, Ore, ?, IdlePop, Time
+	        fi = k.substring(3);
+	        stats = unsafeWindow.fortstats['unt'+fi];   //  Life, Attack, Defense, Speed, Range, Load
+	        food = 0;
+	        might = fortmight['u'+fi];
+	        name = cost[0].replace ('Defensive','');
+	        name = name.replace ('Wall-Mounted','');
+	        u+= '<TR '+ rsty +'align=right><TD align=left class=xtab><B>'+ name +'</b></td><TD class=xtabL>'+ cost[1] +'</td><TD class=xtab>'+ cost[2] +'</td>\
+	            <TD class=xtab>'+ cost[3] +'</td><TD class=xtab>'+ cost[4] +'</td><TD class=xtab>'+ cost[6] +'</td><TD class=xtabL>'+ might +'</td>\
+	            <TD class=xtab>'+ stats[0] +'</td><TD class=xtab>'+ stats[1] +'</td><TD class=xtab>'+ stats[2] +'</td><TD class=xtab>'+ stats[3] +'</td>\
+	            <TD class=xtab>'+ stats[4] +'</td><TD class=xtab>'+ stats[5] +'</td><TD class=xtabL>'+ food +'</td></tr>';
+	      }
+	      u += '<TR class=xtabLine><TD colspan=14 class=xtabLine></td></tr>';
+	      u += '</table></div><BR>';
+	      
+	      u += '<DIV class=ptstat>MISC INFO</div><TABLE><TD width="200px" style="background:#F0F0F0; border:none">KofC client version: '+ KOCversion +'</td>';
+	      u += '<TD style="background:#F0F0F0; border:none"><INPUT id=ptButDebug type=submit name="SEED" value="DEBUG"></td></table></div>';
+      
+      t.Overv.innerHTML = u;   
+      document.getElementById('ptButDebug').addEventListener('click', function (){debugWin.doit()}, false);  
+  },      
+
+  paintOld : function (){
+    var rownum = 0;
+    var t = Tabs.OverView;
+    
+    clearTimeout (Tabs.OverView.displayTimer);
+    t.Overv.innerHTML = null;
+    t.Overv.style.maxHeight = '700px';
+    t.Overv.style.overflowY = 'scroll';
+
+    function _row (name, row, noTotal){
+      var t = Tabs.OverView;
+      if (rownum++ % 2)
+        style = '';
+      else
+        style = ' style = "background: #e8e8e8"';
+      var tot = 0;
+      var m = [];
+      m.push ('<TR style="background: #fff" align=right');
+      m.push (style);
+      m.push ('><TD');
+      m.push (style);
+      m.push ('><B>');
+      m.push (name);
+      m.push (' &nbsp; </td>');
+      if (noTotal){
+        m.push ('<TD');
+        m.push (style);
+        m.push ('> &nbsp;</td>');
+      } else {
+        for (i=0; i<row.length; i++)
+          tot += row[i];
+        m.push ('<TD style="background: #ffc">');
+      if (TEST_WIDE)
+          m.push ('X,');        
+        m.push (addCommas(tot));
+        m.push ('</td>');
+      }
+      for (i=0; i<row.length; i++){
+        m.push ('<TD');
+        m.push (style);
+        m.push ('>');
+      if (TEST_WIDE)
+         m.push ('X,');        
+        m.push (addCommas(row[i]));
+        m.push ('</td>');
+      }
+      m.push ('</tr>');
+      return m.join('');
+    }
+    
+    //DebugTimer.start(); 
+    try {
+      if (Options.includeMarching)
+        march = getMarchInfo ();
+
+      dt = new Date ();
+      dt.setTime (Seed.player.datejoinUnixTime * 1000);
+              
+      str = "<DIV id=overMainDiv style='font-size:"+ Options.overviewFontSize +"px'><TABLE class=ptTabOverview cellpadding=0 cellspacing=0><TR valign=top align=right><TD width=65></td><TD width=88 style='background: #ffc'><B>TOTAL</b></td>";
+      for(i=0; i<Cities.numCities; i++) {
+        str += "<TD width=81><B>"+ Cities.cities[i].name.substring(0,11) +'</b><BR>'+ coordLink (Cities.cities[i].x, Cities.cities[i].y) +"<BR>"+ unsafeWindow.provincenames['p'+ Cities.cities[i].provId] +"</td>";
+      }
+      if (Options.includeMarching)
+        str += '<TD width=81><B>Marching</b></td>';
+      str += "</tr>";
+  
+    str += '<TR valign=top align=right><TD></td><TD style=\'background: #ffc\'></td>';
+    for(i=0; i<Cities.numCities; i++){
+      cityID = 'city'+Cities.cities[i].id;
+      Gate = parseInt(Seed.citystats[cityID].gate);
+    if(Gate == 0)
+      str += '<TD>Hiding</td>';
+    else
+      str += '<TD><SPAN class=boldRed><blink>Defending</blink></span></td>';
+    }
+
+      rows = [];
+      rows[0] = [];
+      for(i=0; i<Cities.numCities; i++) {
+        cityID = 'city'+ Cities.cities[i].id;
+        rows[0][i] = parseInt(Seed.citystats[cityID].gold[0]);
+      }
+      for (r=1; r<5; r++){
+        rows[r] = [];
+        for(i=0; i<Cities.numCities; i++) {
+          cityID = 'city'+ Cities.cities[i].id;
+          rows[r][i] = parseInt(Seed.resources[cityID]['rec'+r][0] / 3600);
+        }
+      }
+  
+      if (Options.includeMarching){
+        for (var i=0; i<5; i++)
+          rows[i][Cities.numCities] = march.resources[i];
+      }
+      str += _row ('Gold', rows[0]);
+      str += _row ('Food', rows[1]);
+      str += _row ('Wood', rows[2]);
+      str += _row ('Stone', rows[3]);
+      str += _row ('Ore', rows[4]);
+      str += '<TR><TD colspan=10><BR></td></tr>';
+      for (r=1; r<13; r++){
+        rows[r] = [];
+        for(i=0; i<Cities.numCities; i++) {
+          cityID = 'city'+ Cities.cities[i].id;
+          rows[r][i] = parseInt(Seed.units[cityID]['unt'+r]);
+        }
+      }
+      if (Options.includeMarching){
+        for (var i=0; i<13; i++)
+          rows[i][Cities.numCities] = march.marchUnits[i];
+      }
+      if (Options.includeTraining){
+        var q = Seed.queue_unt;
+        for(i=0; i<Cities.numCities; i++) {
+          q = Seed.queue_unt['city'+ Cities.cities[i].id];
+          if (q && q.length>0){
+            for (qi=0; qi<q.length; qi++)
+              rows[q[qi][0]][i] += parseInt(q[qi][1]);
+          }    
+        }
+      }
+      rownum = 0;
+      str += _row ('SupTrp', rows[1]);
+      str += _row ('Militia', rows[2]);
+      str += _row ('Scout', rows[3]);
+      str += _row ('Pike', rows[4]);
+      str += _row ('Sword', rows[5]);
+      str += _row ('Archer', rows[6]);
+      str += _row ('Cavalry', rows[7]);
+      str += _row ('Heavy', rows[8]);
+      str += _row ('Wagon', rows[9]);
+      str += _row ('Ballista', rows[10]);
+      str += _row ('Ram', rows[11]);
+      str += _row ('Catapult', rows[12]);
+      str += '<TR><TD colspan=10><BR></td></tr>';
+      
+      row = [];
+      for(i=0; i<Cities.numCities; i++) {
+        var rp = getResourceProduction (Cities.cities[i].id);
+        var usage = parseInt(Seed.resources["city" + Cities.cities[i].id]['rec1'][3]);
+        row[i] = rp[1] - usage;
+      }
+     
+      str += _row ('Food +/-', row, true);
+      
+      for(i=0; i<Cities.numCities; i++) {
+        if (row[i] >= 0)
+          row[i] = '----';
+        else {
+          var timeLeft = parseInt(Seed.resources["city" + Cities.cities[i].id]['rec1'][0]) / 3600 / (0-row[i]) * 3600;
+          if (timeLeft > 86313600)
+            row[i] = '----';
+          else {
+            if (Options.enableFoodWarn && timeLeft<(Options.foodWarnHours*3600))
+              row[i] = '<SPAN class=whiteOnRed>'+ timestrShort(timeLeft) +'</span>';
+            else
+              row[i] = timestrShort(timeLeft);
+          }
+        }
+      }    
+      str += _row ('Food left', row, true);
+      str += '<TR><TD><BR></td></tr>';
+      
+      row = [];
+      for(i=0; i<Cities.numCities; i++) {
+        var totWilds = 0;
+        dat = Seed.wilderness['city'+ Cities.cities[i].id];
+        if (dat!=null && matTypeof(dat)=='object')
+          for (k in dat)
+            ++totWilds;
+        var castle = parseInt(Seed.buildings['city'+ Cities.cities[i].id].pos0[1]);
+        if (totWilds < castle)
+          row[i] = '<SPAN class=boldRed><B>'+ totWilds +'/'+ castle +'</b></span>';
+        else
+          row[i] = totWilds +'/'+ castle;
+      }
+      str += _row ('#Wilds', row, true);
+  
+      row = [];
+      for(i=0; i<Cities.numCities; i++) {
+        totKnights = 0;
+        dat = Seed.knights['city'+ Cities.cities[i].id];
+        for (k in dat)
+          ++totKnights;
+        row[i] = totKnights;
+      }
+      str += _row ('#Knights', row, true);
+  
+      var now = unixTime();
+      var row = [];
+      for(i=0; i<Cities.numCities; i++) {
+        var totTime = 0;
+        var q = Seed.queue_unt['city'+Cities.cities[i].id]; 
+        if (q!=null && q.length>0)
+          totTime = q[q.length-1][3] - now;
+        if (totTime < 0)
+          totTime = 0;
+        if (totTime < 3600)
+          row[i] = '<SPAN class=boldRed><B>'+ timestr(totTime) +'</b></span>';
+        else
+          row[i] = timestr(totTime);
+      }
+      str += _row ('TroopQ', row, true);
+      
+      var row = [];
+      for(i=0; i<Cities.numCities; i++) {
+        var wall = {};
+        getWallInfo (Cities.cities[i].id, wall);
+        var totTime = 0;
+        var q = Seed.queue_fort['city'+Cities.cities[i].id]; 
+        if (q!=null && q.length>0)
+          totTime = q[q.length-1][3] - now;
+        if (totTime < 0)
+          totTime = 0;
+        if (totTime<1 && (wall.wallSpaceUsed < wall.wallSpace-4 || wall.fieldSpaceUsed < wall.fieldSpace-4))
+          row[i] = '<SPAN class=boldRed><B>'+ timestr(totTime) +'</b></span>';
+        else
+          row[i] = timestr(totTime);
+      }    
+      str += _row ('WallQue', row, true);
+      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><BR><INPUT type=CHECKBOX id=idCheck'+ (Options.includeMarching?' CHECKED':'') +'>Include Marching Troops/Resources</td></tr>';
+      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=ptoverIncTraining'+ (Options.includeTraining?' CHECKED':'') +'>Include troops in training</td></tr>';
+      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=ptOverOver'+ (Options.overviewAllowOverflow?' CHECKED':'') +'>Allow width overflow \
+         &nbsp; &nbsp; FONT SIZE: '+ htmlSelector ({9:9, 10:10, 11:11, 12:12}, Options.overviewFontSize, 'id=ptoverfont') +'</td></tr><BR>';
+      str += "</table></div>";
+      str+= 'Koc Power Tools Version:' + Version;
+      t.Overv.innerHTML = str;
+      document.getElementById('idCheck').addEventListener('click', e_clickEnableMarch, false);
+      document.getElementById('ptoverIncTraining').addEventListener('click', e_clickEnableTraining, false);
+      document.getElementById('ptOverOver').addEventListener('click', e_allowWidthOverflow, false);
+      document.getElementById('ptoverfont').addEventListener('change', e_fontSize, false);
+    //DebugTimer.display ('Draw Overview');    
+    } catch (e){
+      t.Overv.innerHTML = '<PRE>'+ e.name +' : '+ e.message +'</pre>';
+    }   
+    t.displayTimer = setTimeout (t.paintOld, 5000);	
+
+    function e_clickEnableMarch (){
+      var t = Tabs.OverView;
+      Options.includeMarching = document.getElementById('idCheck').checked;
+      t.paintOld ();
+    }
+    function e_clickEnableTraining (){
+      var t = Tabs.OverView;
+      Options.includeTraining = document.getElementById('ptoverIncTraining').checked;
+      t.paintOld ();
+    }
+
+    function e_fontSize(evt){
+      document.getElementById('ptOverOutput').style.fontSize = evt.target.value +'px'; 
+      Options.overviewFontSize = evt.target.value;
+      t.paintOld ();
+    }
+
+    function e_allowWidthOverflow (evt){
+      var t = Tabs.OverView;
+      var tf = document.getElementById('ptOverOver').checked;
+      Options.overviewAllowOverflow = tf;
+      if (tf)
+        t.Overv.style.overflowX = 'visible';
+      else
+        t.Overv.style.overflowX = 'auto';
+      t.paintOld ();
+    }
+  },
+};
+
+
+
+
+
+/********************************* BUILDS TAB ************************************
 Tabs.Builds = {
   tabOrder : 2,
   tabLabel : 'Builds',
@@ -4843,12 +5532,12 @@ Tabs.Builds = {
   },
 };
 
-
+*/
 
 /********************************* Messages Tab *************************************/
 Tabs.msg = {
   tabOrder : 110,
-  tabLabel : 'Messages',
+  tabLabel : uW.g_js_strings.modaltitles.messages,
   maxPages:9999,
   totalPages:0,
   content:"",
@@ -5226,6 +5915,7 @@ Tabs.msg = {
 /*********************************** Alliance TAB ***********************************/
 Tabs.Alliance = {
   tabOrder : 120,
+  tabLabel : uW.g_js_strings.commonstr.alliance,
   myDiv : null,
   alliancemembers:[],
   number:0,
@@ -5491,6 +6181,7 @@ Tabs.Alliance = {
 
 Tabs.Marches = {
   tabOrder : 5,
+  tabLabel : uW.g_js_strings.commonstr.marching,
   cont:null,
   displayTimer:null,
   curTabBut : null,
@@ -5504,11 +6195,12 @@ Tabs.Marches = {
     uW.cancelMarch = t.butcancelmarch;
     
     t.cont = div;
-    t.cont.innerHTML = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubA type=submit value='+uW.g_js_strings.attack_viewimpending_view.incomingtroops+'></td>\
-          <TD><INPUT class=pbSubtab ID=ptmrchSubM type=submit value='+uW.g_js_strings.commonstr.marching+'></td>\
-          <TD><INPUT class=pbSubtab ID=ptmrchSubR type=submit value='+uW.g_js_strings.commonstr.reinforced+'></td></tr></table><HR class=ptThin>\
-      <DIV id=ptMarchOutput style="margin-top:10px; background-color:white; height:680px; overflow:scroll;"></div>';
-            
+    var main = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubA type=submit value='+uW.g_js_strings.attack_viewimpending_view.incomingtroops+'></td>';
+    main +='<TD><INPUT class=pbSubtab ID=ptmrchSubM type=submit value='+uW.g_js_strings.commonstr.marching+'></td>';
+    main +='<TD><INPUT class=pbSubtab ID=ptmrchSubR type=submit value='+uW.g_js_strings.commonstr.reinforced+'></td></tr></table><HR class=ptThin>';
+    main +='<DIV id=ptMarchOutput style="margin-top:10px; background-color:white; height:680px; overflow:scroll;"></div>';
+    
+    t.cont.innerHTML = main;       
     t.marchDiv = document.getElementById('ptMarchOutput');
     document.getElementById('ptmrchSubA').addEventListener('click', e_butSubtab, false);
     document.getElementById('ptmrchSubR').addEventListener('click', e_butSubtab, false);
@@ -5547,7 +6239,7 @@ Tabs.Marches = {
       t.showReinforcements();
     else if (t.curTabName == 'M')
       t.showMarches();
-    else
+    else if (t.curTabName == 'A')
       t.showIncoming();
   },
   
