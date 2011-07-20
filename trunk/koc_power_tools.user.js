@@ -6,7 +6,7 @@
 // @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110720a';
+var Version = '20110721a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -65,6 +65,7 @@ var Options = {
   chatwhisper : true,
   chatbold : false,
   chatAttack : true,
+  chatLeaders : true,
   fixKnightSelect : true,
   attackCityPicker : true,
   mapCoordsTop : true,
@@ -77,6 +78,7 @@ var Options = {
   enableWhisperAlert : true,
   enableTowerAlert : true,
   OverViewShowExtra : 'maximum',
+  AllianceLeaders : [],
   //alertConfig  : {aChat:false, aPrefix:'** I\'m being attacked! **', scouting:false, wilds:false, minTroops:10000, spamLimit:10 },
 };
 
@@ -137,7 +139,8 @@ function ptStartup (){
     .ptChatAttack {color: #000; font-weight:bold; background-color: #FF4D4D; }\
     .ptChatWhisper {font-weight:bold;color:#FF0000}\
     .ptChatAlliance {font-weight:bold}\
-	  .ptChatScripter {color:#000; font-weight:bold; background-color:#DDFFEE;}\
+	  .ptChatScripter {color:#A56631; font-weight:bold; background-color:#E0E0E0;}\
+	  .ptChatOfficers {color:#000; background-color:#E0E0E0;}\
     .ptChatGlobal {background-color: #CCCCFF;}\
     .ptChatGlobalBold {font-weight:bold}\
     .ptChatGlobalAll {font-weight:bold;background-color: #CCCCFF;}\
@@ -195,6 +198,7 @@ if (TEST_WIDE){
 
   GM_addStyle (gmstyles);  
   mainPop.getMainDiv().innerHTML = '<STYLE>'+ styles +'</style>';
+  getAllianceLeaders();
   FoodAlerts.init();
   TowerAlerts.init();
   MessageCounts.init ();
@@ -210,10 +214,9 @@ if (TEST_WIDE){
   GMTclock.init ();
   tabManager.init (mainPop.getMainDiv());
   
- 
-  title = uW.document.getElementById('main_engagement_tabs').innerHTML;
-  title += '<span><B>'+ getMyAlliance()[1] + ' (' + GetServerId() +')</b></span>';
-  uW.document.getElementById('main_engagement_tabs').innerHTML = title ; 
+  title = uW.document.getElementById('comm_tabs').innerHTML;
+  title += '<DIV><BR><FONT color=white><B>&nbsp;&nbsp;&nbsp;&nbsp;'+ getMyAlliance()[1] + ' (' + GetServerId() +')</b></font></div>';
+  uW.document.getElementById('comm_tabs').innerHTML = title ; 
   
   if (Options.ptWinIsOpen){
     mainPop.show (true);
@@ -341,7 +344,18 @@ var battleReports = {
     delBut = delBut.replace (/<span>(.*)<\/span>/, '<span>'+ uW.g_js_strings.commonstr.deletetx +'</span>');
 //logit ('DELBUT: '+ delBut);    
     return msg + delBut;
-  },  
+  },
+  
+  generateMoreButtonHook : function (msg, rptid){
+    //if (!Options.reportDeleteButton)
+    //  return msg;
+    var MoreBut = msg.replace ('onclick=\'', 'onclick=\'deleteAreport('+ rptid +',false); ');
+    MoreBut = MoreBut.replace (/<span>(.*)<\/span>/, '<span>'+ uW.g_js_strings.commonstr.deletetx +'</span>');
+//logit ('DELBUT: '+ delBut);    
+    return msg + delBut;
+  },
+  
+    
 
   e_deleteReport : function (rptid){
     var t = battleReports; 
@@ -551,11 +565,18 @@ var ChatStuff = {
     if (m[0].indexOf('My wilderness at') >= 0 && Options.chatAttack)
        	element_class = 'ptChatAttack';
 
-	var scripters = ["7552815","10681588","1747877","2865067","9688786","10153485","15182839","1550996"];
-		var suid = m[0].substring(m[0].indexOf('Chat.viewProfile(this,')+22,m[0].indexOf(',false);return false;'));
-	if (scripters.indexOf(suid) >= 0)
-		element_class = 'ptChatScripter';
-		
+	var scripters = ["7552815","10681588","1747877","2865067","10153485","15182839","1550996","1617431819","9688786"];
+	var suid = m[0].substring(m[0].indexOf('Chat.viewProfile(this,')+22,m[0].indexOf(',false);return false;'));
+    var IsMe = false;
+	
+	if (Options.chatLeaders) {
+		if (Options.AllianceLeaders.indexOf(uW.tvuid) >= 0 && suid.substr(0, 3)=="div") IsMe = true;
+    	if (Options.AllianceLeaders.indexOf(suid) >= 0 || IsMe) element_class = 'ptChatOfficers';
+    }
+	IsMe = false;
+	if (scripters.indexOf(uW.tvuid) >= 0 && suid.substr(0, 3)=="div") IsMe = true;
+	if (scripters.indexOf(suid) >= 0 || IsMe) element_class = 'ptChatScripter';
+	
        msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
            	       
      var m = /(Lord|Lady) (.*?)</im.exec(msg);
@@ -690,6 +711,8 @@ Tabs.Wilds = {
       var cWilds = Seed.wilderness['city'+city.id];
       t.wildList[c] = []; 
       var castle = parseInt(Seed.buildings['city'+ city.id].pos0[1]);
+      if(castle == 11) castle = 12;
+      if(castle == 12) castle = 14;
       var totw = 0;
       if (matTypeof(cWilds)=='object'){
         for (var k in cWilds)
@@ -1870,6 +1893,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     var t = Tabs.AllianceList;
     t.cont = div;
     uW.PTgetMembers = t.eventGetMembers;
+    uW.PTPaintMembers = t.GetDataForMap;
     uW.PTpd = t.clickedPlayerDetail;
     uW.PTpl = t.clickedPlayerLeaderboard;
     uW.PTpl2 = t.clickedPlayerLeaderboard2;
@@ -2180,7 +2204,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     }
     var m = '<DIV class=ptstat>'+uW.g_js_strings.commonstr.alliances+'<B>"'+ t.aName +'"</b></div>\
     <TABLE><TR style="font-weight:bold"><TD class=xtab>'+uW.g_js_strings.commonstr.alliance+'</td><TD class=xtab>'+uW.g_js_strings.commonstr.rank+'</td><TD class=xtab>'+uW.g_js_strings.commonstr.members+'</td>\
-        <TD align=right class=xtab>'+uW.g_js_strings.commonstr.might+'</td><TD class=xtab>'+uW.g_js_strings.getAllianceSearchResults.currdiplo+'</td><TD class=xtab></td></tr>';
+        <TD align=right class=xtab>'+uW.g_js_strings.commonstr.might+'</td><TD class=xtab>'+uW.g_js_strings.getAllianceSearchResults.currdiplo+'</td><TD class=xtab></td><TD class=xtab></td></tr>';
     for (k in rslt.alliancesMatched){
       var all = rslt.alliancesMatched[k];
       var dip = '';
@@ -2190,7 +2214,8 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
         dip = uW.g_js_strings.commonstr.hostile;
       m += '<TR><TD class=xtab>'+ all.allianceName +'</td><TD align=right class=xtab>'+ all.ranking +'</td><TD align=right class=xtab>'+ all.membersCount +'</td>\
        <TD align=right class=xtab>'+ addCommasInt(all.might) +'</td><TD class=xtab>'+ dip +'</td>\
-       <TD class=xtab><a onclick="PTgetMembers('+ all.allianceId +')">'+uW.g_js_strings.commonstr.members+'</a></td></tr>';
+       <TD class=xtab><a onclick="PTgetMembers('+ all.allianceId +')">'+uW.g_js_strings.commonstr.members+'</a></td>\
+        <TD class=xtab><a onclick="PTPaintMembers('+ all.allianceId +')">'+uW.g_js_strings.commonstr.viewmap+'</a></td></tr>';
     }
     document.getElementById('allListOut').innerHTML = m;
   },
@@ -2201,7 +2226,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     var myA = getMyAlliance ();
     document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>'+uW.g_js_strings.commonstr.loadingddd+'</center>';
     if (myA[0]!=0  ) {
-       t.eventGetMembers(myA[0]);
+       t.eventGetMembers(myA[0],false);
     }
     else {
        document.getElementById('allListOut').innerHTML = uW.g_js_strings.membersInfo.youmustbelong;
@@ -2254,7 +2279,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
 
     var m = '<div style="overflow:auto; height:556px;width:564px;"><TABLE><thead><TR style="font-weight:bold"> \
         <th class=xtab>'+uW.g_js_strings.modaltitles.alliance+'</th><th class=xtab>'+uW.g_js_strings.commonstr.rank+'</th><th class=xtab>'+uW.g_js_strings.commonstr.members+'</th>\
-        <th align=right class=xtab>'+uW.g_js_strings.commonstr.might+'</th><th class=xtab>'+uW.g_js_strings.getAllianceSearchResults.currdiplo+'</th><th class=xtab></th></tr></thead><tbody>';
+        <th align=right class=xtab>'+uW.g_js_strings.commonstr.might+'</th><th class=xtab>'+uW.g_js_strings.getAllianceSearchResults.currdiplo+'</th><th class=xtab></th><th class=xtab></th></tr></thead><tbody>';
     document.getElementById('allListOut').innerHTML = m;
 
     for (var i=0; i<rslt.otherAlliances.length; i++) {
@@ -2264,7 +2289,8 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
 
       m += '<TR class="'+ dip + '"><TD class=xtab>' + alliance.name +'</td><TD align=right class=xtab>'+ alliance.ranking +'</td><TD align=right class=xtab>'+ alliance.membersCount +'</td>\
        <TD align=right class=xtab>'+ addCommasInt(alliance.might) +'</td><TD class=xtab>'+ dip +'</td>\
-       <TD class=xtab><a onclick="PTgetMembers('+ alliance.allianceId +')">'+uW.g_js_strings.commonstr.members+'</a></td></tr>';
+       <TD class=xtab><a onclick="PTgetMembers('+ alliance.allianceId +')">'+uW.g_js_strings.commonstr.members+'</a></td>\
+       <TD class=xtab><a onclick="PTPaintMembers('+ alliance.allianceId +')">'+uW.g_js_strings.commonstr.viewmap+'</a></td></tr>';
     }
     m += '</tbody></TABLE><div style="font-weight:bold"; height:20px;width:560px; ><span> <a onclick="PTalClickPrev(-1)"> [|<] </a><a onclick="PTalClickPrev(10)"> [-10] </a><a onclick="PTalClickPrev(5)"> [-5] </a><a onclick="PTalClickPrev(1)"> [<] </a> \
           <a onclick="PTalClickNext(1)"> [>] </a><a onclick="PTalClickNext(5)"> [+5] </a><a onclick="PTalClickNext(10)"> [+10] </a><a onclick="PTalClickNext(9999)"> [>|] </a> </span></div>';
@@ -2537,6 +2563,84 @@ return 0;
     });
   },
 
+  GetDataForMap : function (allianceId) {
+    var t = Tabs.AllianceList;
+    var params = uW.Object.clone(uW.g_ajaxparams);
+    var Data=[];
+    params.perPage = 100;
+    params.allianceId = allianceId;
+    
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/getUserLeaderboard.php" + uW.g_ajaxsuffix, {
+      method: "post",
+      parameters: params,
+      onSuccess: function (rslt) {
+      	var city = '';
+      	for (var i=0; i<rslt.results.length; i++) {
+      		//alert(rslt.results[i].toSource());
+      	    if (rslt.results[i]['userId'] !=0){
+	      	    player = rslt.results[i]['cities'];
+	      	    for (var ii=0; ii<player.length; ii++) 
+	      			Data.push ({X:player[ii]['xCoord'],Y:player[ii]['yCoord']});
+	    	}  	
+        }
+        if (Data != []) t.PaintDataOnMap(Data);
+      },
+      onFailure: function (rslt) {
+        notify ({errorMsg:'AJAX error'});
+      },
+    });
+  },
+  
+  PaintDataOnMap : function(Data){
+  		var provMapCoordsA = {imgWidth:710, imgHeight:708, mapWidth:670, mapHeight:670, leftMargin:31, topMargin:19};  
+  		var map = '<DIV id=ptAlliProvMap style="height:'+ provMapCoordsA.imgHeight +'px; width:'+ provMapCoordsA.imgWidth +'px; background-repeat:no-repeat; background-image:url(\''+ URL_PROVINCE_MAP +'\')"></div>';
+  	    
+		//Data = [{X:"700", Y:"700"}, {X:"600", Y:"600"}, {X:"500", Y:"500"},{X:"400", Y:"400"},{X:"300", Y:"300"},{X:"200", Y:"200"},{X:"100", Y:"100"},{X:"0", Y:"0"},{X:"750", Y:"750"}, {X:"650", Y:"650"}, {X:"550", Y:"550"},{X:"450", Y:"450"},{X:"350", Y:"350"},{X:"250", Y:"250"},{X:"150", Y:"150"},{X:"50", Y:"50"}];
+  	    			
+		document.getElementById('allListOut').innerHTML = map;
+		var eMap =  document.getElementById('ptAlliProvMap');
+		
+		for (var cc=0; cc<Seed.cities.length; cc++) {
+		    var city = Seed.cities;
+		    var Xplot = parseInt((provMapCoordsA.mapWidth * parseInt(city[cc][2])) / 750);
+		    var Yplot = parseInt((provMapCoordsA.mapHeight * parseInt(city[cc][3])) / 750);
+		    var cf = document.createElement ('div');
+		    cf.style.background = 'black';
+		    cf.style.opacity = '1.0';
+		    cf.style.position='relative';
+		    cf.style.display='block';
+		    cf.style.width='14px';
+		    cf.style.height='16px';
+		    cf.style.border='1px solid #fff';
+		    cf.style.color = 'white';
+		    cf.style.textAlign = 'center';
+		    cf.style.top = (Yplot+provMapCoordsA.topMargin-(cc*16)-8) +'px';      
+		    cf.style.left = (Xplot+provMapCoordsA.leftMargin-7) +'px';
+		    cf.innerHTML = (cc+1) +'';
+		    eMap.appendChild(cf);
+		    
+		}
+
+		for (var i=0;i<Data.length;i++) {
+			var x = parseInt(Data[i]['X']);
+			var y = parseInt(Data[i]['Y']);
+  	        var xplot = parseInt((provMapCoordsA.mapWidth * x) / 750);
+  	        var yplot = parseInt((provMapCoordsA.mapHeight * y) / 750);
+  	    	var ce= document.createElement ('div');
+  	    		ce.style.background = 'red';
+  	    		ce.style.opacity = '1.0';
+  	    		ce.style.position='relative';
+  	    		ce.style.display='block';
+  	    		ce.style.width='4px';
+  	    		ce.style.height='4px';
+  	    	ce.style.top = (yplot+provMapCoordsA.topMargin -(4*i)-((Seed.cities.length)*18)) +'px';      
+  	    	ce.style.left = (xplot+provMapCoordsA.leftMargin -2) +'px';
+  	        eMap.appendChild(ce);
+  	   }
+  	   
+  	   
+  },
+  
   fetchLeaderboard : function (uid, notify) {
     var t = Tabs.AllianceList;
     var params = uW.Object.clone(uW.g_ajaxparams);
@@ -2580,6 +2684,7 @@ return 0;
       onSuccess: function (rslt) {
         if (myAid!=null && myAid>0)
           t.fetchMyAllianceInfo  (function (r){ combineResults (rslt, r, notify)});
+
         else
           notify (rslt);
       },
@@ -2936,8 +3041,9 @@ Tabs.Info = {
     
     var m = '<DIV class=ptstat>PROVINCE MAP</div><DIV id=ptProvMap style="height:'+ provMapCoords.imgHeight +'px; width:'+ provMapCoords.imgWidth +'px; background-repeat:no-repeat; background-image:url(\''+ URL_PROVINCE_MAP +'\')"></div>';
     m+= '<BR><DIV class=ptstat>DISTANCE CALCULATOR</div><DIV class=ptentry><TABLE align=center cellpadding=1 cellspacing=0>\
-      <TR><TD class=xtab align=right><B>First Location: </b></td><TD  class=xtab> X: <INPUT id=calcX type=text\> Y: <INPUT id=calcY type=text\> Or, choose city: <SPAN id=ptloc1></span></td></tr>\
-      <TR><TD class=xtab><B>Second Location: </b></td><TD class=xtab> X: <INPUT id=calcX2 type=text\> Y: <INPUT id=calcY2 type=text\> Or, choose city: <SPAN id=ptloc2></span></td></tr></table>\
+      <TR><TD class=xtab align=left><INPUT id=plot type=checkbox>Plot coords on map.</td></tr>\
+      <TR><TD class=xtab align=left><B>First Location: </b></td><TD  class=xtab> X: <INPUT id=calcX type=text\> Y: <INPUT id=calcY type=text\> Or, choose city: <SPAN id=ptloc1></span></td></tr>\
+      <TR><TD class=xtab align=left><B>Second Location: </b></td><TD class=xtab> X: <INPUT id=calcX2 type=text\> Y: <INPUT id=calcY2 type=text\> Or, choose city: <SPAN id=ptloc2></span></td></tr></table>\
       <CENTER><DIV style="width:60%; font-size:14px; border: 1px solid; background-color:white; margin:20px 3px 3px 0px; padding:4px" id=ptdistout></div></div>\
       <BR></center>';
     t.cont.innerHTML = m +'</div>';
@@ -2947,6 +3053,10 @@ Tabs.Info = {
 	new CdispCityPicker ('ptloc1', document.getElementById('ptloc1'), true, t.eventLocChanged, 0).bindToXYboxes(document.getElementById('calcX'), document.getElementById('calcY'));
     new CdispCityPicker ('ptloc2', document.getElementById('ptloc2'), true, t.eventLocChanged, 0).bindToXYboxes(document.getElementById('calcX2'), document.getElementById('calcY2'));
     t.eventLocChanged(Cities.cities[0], Cities.cities[0].x, Cities.cities[0].y);
+    document.getElementById('plot').addEventListener('change', function(){
+       t.plotCityImg(0, document.getElementById('ptProvMap'), document.getElementById('calcX').value, document.getElementById('calcY').value);
+	     t.plotCityImg(1, document.getElementById('ptProvMap'), document.getElementById('calcX2').value, document.getElementById('calcY2').value);
+    }, false);
   },
 
   hide : function (){
@@ -3015,8 +3125,10 @@ Tabs.Info = {
     var y2 = parseInt(document.getElementById('calcY2').value);
     var m = 'The distance from '+ x1 +','+ y1 +' to '+ x2 +','+ y2 +' is: &nbsp;<B>'+ distance (x1, y1, x2, y2).toFixed(2) +'</b>';
     document.getElementById('ptdistout').innerHTML = m;
-	t.plotCityImg(0, document.getElementById('ptProvMap'), x1, y1);
-	t.plotCityImg(1, document.getElementById('ptProvMap'), x2, y2);
+    if (document.getElementById('plot').checked){
+	       t.plotCityImg(0, document.getElementById('ptProvMap'), x1, y1);
+	       t.plotCityImg(1, document.getElementById('ptProvMap'), x2, y2);
+	  }
   },
 }
 
@@ -3048,7 +3160,8 @@ Tabs.Options = {
         <TR><TD><INPUT id=togChatGlobal type=checkbox /></td><TD>Enable Global background color.</td></tr>\
 	<TR><TD><INPUT id=togChatWhisper type=checkbox /></td><TD>Enable Whisper in Red Font.</td></tr>\
 	<TR><TD><INPUT id=togChatBold type=checkbox /></td><TD>Enable Chat in Bold Font.</td></tr>\
-	<TR><TD><INPUT id=togChatAttack type=checkbox /></td><TD>Enable Red background on tower alert.<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
+	<TR><TD><INPUT id=togChatAttack type=checkbox /></td><TD>Enable Red background on tower alert.</td></tr>\
+	<TR><TD><INPUT id=togChatLead type=checkbox /></td><TD>Enable grey background for alliance Leaders.<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
 	<TR><TD colspan=2><B>KofC Features:</b></td></tr>\
         <TR><TD><INPUT id=togMsgCountFix type=checkbox /></td><TD>Change message icons place(Msg/Reports) and allign them.</td></tr>';
       m += '<TR><TD><INPUT id=togAllRpts type=checkbox /></td><TD>Enable enhanced Alliance Reports.</td></tr>\
@@ -3089,6 +3202,7 @@ Tabs.Options = {
       t.togOpt ('togChatWhisper', 'chatwhisper');	
       t.togOpt ('togChatBold', 'chatbold');
       t.togOpt ('togChatAttack', 'chatAttack');
+      t.togOpt ('togChatLead', 'chatLeaders');
       t.togOpt ('togKnightSelect', 'fixKnightSelect', AttackDialog.setEnable, AttackDialog.isKnightSelectAvailable);
       t.togOpt ('togAttackPicker', 'attackCityPicker', AttackDialog.setEnable, AttackDialog.isCityPickerAvailable);
       t.togOpt ('togEnhanceMsging', 'enhanceMsging', messageNav.setEnable, messageNav.isAvailable);
@@ -4139,7 +4253,13 @@ Tabs.OverView = {
         clearTimeout (t.displayTimer);	
          var z = "<DIV id=overMain><TABLE class=ptTabOverview cellpadding=0 cellspacing=0><TR valign=top align=right><TD style='background: #FFFFFF; border:none;'></td>";
               for(i=0; i<Cities.numCities; i++) {
-                z += "<TD width=81 style='background: #FFFFFF'><B>"+ Cities.cities[i].name.substring(0,11) +'</b><BR>'+ coordLink (Cities.cities[i].x, Cities.cities[i].y) +"<BR>"+ uW.provincenames['p'+ Cities.cities[i].provId] +"</td>";
+                z += "<TD width=81 style='background: #FFFFFF'><B>"+ Cities.cities[i].name.substring(0,11) +'</b><BR>'+ coordLink (Cities.cities[i].x, Cities.cities[i].y) +"<BR>"+ uW.provincenames['p'+ Cities.cities[i].provId];
+                cityID = 'city'+Cities.cities[i].id;
+                Gate = parseInt(Seed.citystats[cityID].gate);
+                if(Gate == 0)
+                  z+= '<BR>Hiding</td>';
+                else
+                  z+= '<BR><SPAN class=boldRed>Defending</span></td>';
               }
         	  for (a=1;a<=4;a++){
         	  		var total = 0;
@@ -4228,6 +4348,7 @@ Tabs.OverView = {
         		    			++totWilds;
         			 var castle = parseInt(Seed.buildings['city'+ Seed.cities[b][0]].pos0[1]);
         			 if(castle == 11) castle = 12;
+        			 if(castle == 12) castle = 14;
         			 if (totWilds < castle)
         		  	z+=  '<TD align=right style="background: #F0F0F0"><FONT COLOR=RED>'+ totWilds +'/'+ castle +'</font></span>';
         			else
@@ -4296,7 +4417,7 @@ Tabs.OverView = {
       t.Overv.innerHTML =null;
       t.Overv.style.maxHeight = '700px';
       t.Overv.style.overflowY = 'scroll';
-      var n = "<TABLE class=ptTabOverview cellpadding=0 cellspacing=0><TR valign=top align=right><TD style='background: #FFFFFF; border:none;'></td><TD style='background: #FFFFFF; border:none;'></td>";
+      var n = "<TABLE class=ptTabOverview cellpadding=0 cellspacing=0><TR valign=top align=right></td><TD colspan='2' id=update align=center style='background: #FFFFFF; border:none; vertical-align:middle'><INPUT id=TEST type=submit value="+uW.g_js_strings.modal_progress_actions.updatestatus+"></td></td>";
            for(i=0; i<Cities.numCities; i++) {
              n += "<TD width=81 style='background: #FFFFFF'><B>"+ Cities.cities[i].name.substring(0,11) +'</b><BR>'+ coordLink (Cities.cities[i].x, Cities.cities[i].y) +"<BR>"+ uW.provincenames['p'+ Cities.cities[i].provId] +"</td>";
            }
@@ -4387,6 +4508,35 @@ Tabs.OverView = {
       
    	  n+='</tr></table>';
    	  t.Overv.innerHTML = n;
+   	  
+   	  document.getElementById('TEST').addEventListener('click', function(){
+   	  		var params = uW.Object.clone(uW.g_ajaxparams);
+   	    			new AjaxRequest(uW.g_ajaxpath + "/fb/e2/src/main_src.php?g=&y=0&n=nan001&l=nl_NL&messagebox=&standalone=0&res=1&iframe=1&lang=en&ts=1304248288.7067&s=250&appBar=" + uW.g_ajaxsuffix, {
+   	    			    method: "POST",
+   	    			    parameters: params,
+   	    			    onSuccess: function (rslt) {
+   	    			        var mainSrcHTMLCode = rslt.responseText;
+   	    			    	var myregexp = /var seed=\{.*?\};/;
+   	    			    	var match = myregexp.exec(mainSrcHTMLCode);
+   	    			    	if (match != null) {
+   	    			    		result = match[0];
+   	    			    		result = result.substr(4);
+   	    			    		var seed = eval(result);
+   	  	  			    		uW.document.seed = seed;
+   	  	  			    		Seed = seed;
+   	  	  			    		uW.seed = seed;
+   	  	  			    		document.getElementById('update').style.background ='#99FF99';
+   	  	  			    		setTimeout(function(){ (document.getElementById('update').style.background ='#FFFFF'); }, 1000);
+   	    			    	}
+   	    			    },
+   	    			    onFailure: function () {
+   	    			      if (notify != null)
+   	    			        notify(rslt.errorMsg);
+   	    			    },
+   	    			});
+   	  	
+   	  }, false);
+   	    	
       t.displayTimer = setTimeout (t.showTroops, 1000);  
     },
 	
@@ -4793,16 +4943,21 @@ Tabs.OverView = {
 	  				
 	  u+='<DIV class=ptstat>CREST INFO</div><DIV id=ptLinks><TABLE align=center cellpadding=1 cellspacing=0><TR>';
 	  for (city in crestreq){
-	  		u+='<TR><TD width=75px>'+uW.g_js_strings.commonstr.city+' '+city+'</td><TD>';
+	  		deed = 'q800' + city;
+        if (Seed.quests[deed] ==1) u+='<TD width=75px style="background:#CCFFCC">';
+        else  u+='<TD width=75px style="background:#F0F0F0">';
+        u+= uW.g_js_strings.commonstr.city+' '+city+'</td>';
 	  		for (crest in crestreq[city]){
 	  			owned = Seed.items['i'+crest];
+	  			if (Seed.quests[deed] ==1) u+='<TD 200px style="background:#CCFFCC">';
+          else  u+='<TD 200px style="background:#F0F0F0">';
 	  			if (owned == undefined) owned=0;
-	  			if (owned < crestreq[city][crest]) u+='<TD width=200px><FONT color=red>'+owned+'/'+crestreq[city][crest]+'</font> '+uW.itemlist['i'+crest]['name']+'</td>';
-	  				else  u+='<TD width=200px><FONT color=green>'+owned+'/'+crestreq[city][crest]+'</font> '+uW.itemlist['i'+crest]['name']+'</td>'; 
+	  			if (owned < crestreq[city][crest]) u+='<FONT color=red>'+owned+'/'+crestreq[city][crest]+'</font> '+uW.itemlist['i'+crest]['name']+'</td>';
+	  				else  u+='<FONT color=green>'+owned+'/'+crestreq[city][crest]+'</font> '+uW.itemlist['i'+crest]['name']+'</td>'; 
 	  		}
 	  		u+='</tr>';
 	  }
-	  u+='</table></div><BR>';
+	  u+='</table><BR>';
 	  fortmight = {
 	        u53: "4",
 	        u55: "7",
@@ -4937,7 +5092,7 @@ Tabs.OverView = {
     if(Gate == 0)
       str += '<TD>Hiding</td>';
     else
-      str += '<TD><SPAN class=boldRed><blink>Defending</blink></span></td>';
+      str += '<TD><SPAN class=boldRed>Defending</span></td>';
     }
 
       rows = [];
@@ -5035,6 +5190,8 @@ Tabs.OverView = {
           for (k in dat)
             ++totWilds;
         var castle = parseInt(Seed.buildings['city'+ Cities.cities[i].id].pos0[1]);
+        if(castle == 11) castle = 12;
+        if(castle == 12) castle = 14;
         if (totWilds < castle)
           row[i] = '<SPAN class=boldRed><B>'+ totWilds +'/'+ castle +'</b></span>';
         else
@@ -6195,14 +6352,14 @@ Tabs.Marches = {
     uW.cancelMarch = t.butcancelmarch;
     
     t.cont = div;
-    var main = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubA type=submit value='+uW.g_js_strings.attack_viewimpending_view.incomingtroops+'></td>';
+    var main = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubN type=submit value='+uW.g_js_strings.attack_viewimpending_view.incomingtroops+'></td>';
     main +='<TD><INPUT class=pbSubtab ID=ptmrchSubM type=submit value='+uW.g_js_strings.commonstr.marching+'></td>';
     main +='<TD><INPUT class=pbSubtab ID=ptmrchSubR type=submit value='+uW.g_js_strings.commonstr.reinforced+'></td></tr></table><HR class=ptThin>';
     main +='<DIV id=ptMarchOutput style="margin-top:10px; background-color:white; height:680px; overflow:scroll;"></div>';
     
     t.cont.innerHTML = main;       
     t.marchDiv = document.getElementById('ptMarchOutput');
-    document.getElementById('ptmrchSubA').addEventListener('click', e_butSubtab, false);
+    document.getElementById('ptmrchSubN').addEventListener('click', e_butSubtab, false);
     document.getElementById('ptmrchSubR').addEventListener('click', e_butSubtab, false);
     document.getElementById('ptmrchSubM').addEventListener('click', e_butSubtab, false);
     changeSubtab (document.getElementById('ptmrchSub'+Options.curMarchTab));
@@ -6239,7 +6396,7 @@ Tabs.Marches = {
       t.showReinforcements();
     else if (t.curTabName == 'M')
       t.showMarches();
-    else if (t.curTabName == 'A')
+    else 
       t.showIncoming();
   },
   
@@ -6349,9 +6506,8 @@ Tabs.Marches = {
      
      var  m = '<TABLE id=pdmarches cellSpacing=10 width=200px height=0% class=pbTab>';
      if (t.widescreen) m += '<TR><TD><INPUT id=Wide type=checkbox checked=true>Widescreen</td>';
-     else  m += '<TR><TD><INPUT id=Wide type=checkbox unchecked=true>Widescreen</td>';
-     m += '<TD colspan=4><INPUT id=TEST type=submit value='+uW.g_js_strings.modal_progress_actions.updatestatus+'></td></tr>';
-     m+='</table><TABLE id=pdmarches cellSpacing=10 width=100% height=0% class=pbTab>';
+     else  m += '<TR><TD><INPUT id=Wide type=checkbox unchecked=true>Widescreen</td></tr></table>';
+     m+='<TABLE id=pdmarches cellSpacing=10 width=100% height=0% class=pbTab>';
      for (var c=0; c< Seed.cities.length;c++) {
      		cityname = Seed.cities[c][1];
      		cityID = 'city' + Seed.cities[c][0];    
@@ -6497,37 +6653,6 @@ Tabs.Marches = {
   		t.widescreen=document.getElementById('Wide').checked;	
   	}, false);
   	
-  	
-  	document.getElementById('TEST').addEventListener('click', function(){
-		var params = uW.Object.clone(uW.g_ajaxparams);
-  			new AjaxRequest(uW.g_ajaxpath + "/fb/e2/src/main_src.php?g=&y=0&n=nan001&l=nl_NL&messagebox=&standalone=0&res=1&iframe=1&lang=en&ts=1304248288.7067&s=250&appBar=" + uW.g_ajaxsuffix, {
-  			    method: "POST",
-  			    parameters: params,
-  			    onSuccess: function (rslt) {
-  			        //rslt = eval("(" + message + ")");
-  			        var mainSrcHTMLCode = rslt.responseText;
-  			    	//var mainSrcHTMLCode; // get and set this by pulling in the main_src.php file via AJAX
-  			    	var myregexp = /var seed=\{.*?\};/;
-  			    	var match = myregexp.exec(mainSrcHTMLCode);
-  			    	
-  			    	if (match != null) {
-  			    	result = match[0];
-  			    	result = result.substr(4);
-  			    	var seed = eval(result);
-	  			    //WinLog.write ("seed @ "+ unixTime()  +" ("+ now +")\n\n"+ inspect (seed, 8, 1));
-	  			    uW.document.seed = seed;
-	  			    Seed = seed;
-	  			    uW.seed = seed;
-  			    	}
-  			    },
-  			    onFailure: function () {
-  			      if (notify != null)
-  			        notify(rslt.errorMsg);
-  			    },
-  			});
-	
-  	}, false);
-  		     
     t.displayTimer = setTimeout (t.showMarches, 500);  
     },
 	
@@ -7113,7 +7238,10 @@ var MessageCounts = {
 }
 
 function ShowExtraInfo(){
-	document.getElementById('kocmain_bottom').innerHTML = 'test'; 
+  alert('ineter');
+  content = document.getElementById('mod_citylist').innerHTML
+  content += "O";
+	document.getElementById('mod_citylist').innerHTML = content; 
 }
 
 var WarnZeroAttack = {
@@ -8920,70 +9048,27 @@ t.state = null;
   },
 };
 
-
-function CmatSimpleSound (playerUrl, container, attrs, onLoad, flashVars) {
-  var self = this;
-  this.player = null;
-  this.volume = 100;
-  this.isLoaded = false;
-  this.onSwfLoaded = null;
-  
-  var div = document.createElement ('div');
-  this.onSwfLoaded = onLoad;
-  if (navigator.appName.toLowerCase().indexOf('microsoft')+1) {
-    div.innerHTML = '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0"><param name="movie" value="'+playerUrl+'"><param name="quality" value="high"></object>';
-    this.player = div.getElementsByTagName('object')[0];
-  } else {
-    div.innerHTML = '<embed src="'+playerUrl+'"  bgcolor="#eeeeee" allowfullscreen=false FlashVars="'+ flashVars +'" quality="high" allowscriptaccess="always" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" ></embed>';
-    this.player = div.getElementsByTagName('embed')[0].wrappedJSObject;
-  }
-  if (container)
-    container.appendChild (div);
-  else 
-    document.body.appendChild (div);
-  for (k in attrs)
-    this.player.setAttribute(k, attrs[k]); 
-       
-  this.setVolume = function (chanNum, vol){
-    if (!self.isLoaded)
-      return;
-    self.player.jsSetVolume (chanNum, vol);
-    volume = vol; 
-  }
-  
-  this.load = function (chanNum, url, bStream, bAutoplay, bUsePolicyFile){   // loop ?
-    self.player.jsLoad (chanNum, url, bStream, bAutoplay, bUsePolicyFile);
-  }
-  
-  this.play = function (chanNum, position){
-    self.player.jsPlay (chanNum, position);
-  }
-    
-  this.stop = function (chanNum){
-    self.player.jsStop (chanNum);
-  }
-    
-  this.getStatus = function (chanNum){           // returns null if sound channel is 'empty'
-    return self.player.jsGetStatus (chanNum);
-  }
-  
-  this.debugFunc = function (msg){  // overload to use
-  }
-      
-  this.swfDebug = function (msg){    // called by plugin
-    self.debugFunc('SWF: '+ msg);
-  }
-  this.swfLoaded = function (){    // called by plugin when ready to go!
-    self.isLoaded = true;
-    self.debugFunc ('playerIsReady'); 
-    if (self.onSwfLoaded)
-      self.onSwfLoaded();
-  }
-  this.swfPlayComplete = function (chanNum){    // called by plugin when a sound finishes playing (overload to be notified)
-  }
-  this.swfLoadComplete = function (chanNum, isError){    // called by plugin when a sound finishes loading  (overload to be notified)
-  }
-}
+function getAllianceLeaders (){
+    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetLeaders.php" + unsafeWindow.g_ajaxsuffix, {
+		 method: "post",
+		 parameters: params,
+		 loading: true,
+		 onSuccess: function (rslt) {
+		 rslt = eval("(" + rslt.responseText + ")");
+		 if (rslt.officers) {
+			 Options.AllianceLeaders = [];
+       for (add in rslt.officers) {
+          Options.AllianceLeaders.push(rslt.officers[add]['userId']);
+       }
+     } 
+     else {
+			  setTimeout(function(){getAllianceLeaders;}, 1500);
+		  }
+		},
+		onFailure: function () {}
+  		});
+};
 
 
 ptStartup ();
