@@ -4,7 +4,7 @@
 
 ==Getting Started==
 
-http://code.google.com/p/koc-power-tools/downloads/detail?name=KOC%20Overview%20resources%20header%20pic.jpg&can=2&q=
+http://koc-power-tools.googlecode.com/files/KOC%20Overview%20resources%20header%20pic.jpg
 
 Click Tools
 Click Overview.
