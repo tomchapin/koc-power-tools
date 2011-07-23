@@ -4,10 +4,26 @@
 
 ==Getting Started==
 
-http://koc-power-tools.googlecode.com/files/KOC%20Overview%20resources%20header%20pic.jpg
-
 Click Tools
 Click Overview.
+
+http://koc-power-tools.googlecode.com/files/KOC%20Overview%20resources%20header%20pic.jpg
+
+Click Tools Click Overview. 
+The buttons appearing at the top show different aspects of the Overview.   Clicking on the buttons will change the view in the drop down menu to “Maximum”  
+ * Resources – Shows an overview of resources in your city 
+  * The resources “Food, wood, stone, ore, and gold” appear on the left side of the screen.  Each section has separate information fields; Capacity Limit, Hourly Production,  Upkeep (for food only)
+  * The Cities listed along the top of the window have clickable coordinates.  
+  * The Conquered wilds section at the bottom of the window show  the amount of wilds across the top and the type of wilds on the left side.  Red numbers indicate wild slots for that city able to be filled.  
+  * Troops – Shows an overall of troops idle, training and marching in a similar format to resources. The picture of the troop type is on the left, and the city along the top.  Knight numbers are found along the bottom of the screen.
+ * Building – A grid format with the cities along the top  and the sections, Building / Research builds, Defenses information,  Field/City information and spaces, and Research levels.  This is used for a quick view designed for city planning.
+ * Info – replaced the Info tab in previous versions of TOOLS.  This screen is divided into 3 sections: 
+  * Useful Links – links in pop up tab to KOC related links
+  * Crest Info – Completed cities highlighted in green with (owned crests)/(needed crest) listed.
+  * Unit Information – The Grid shows stats for all types of troops and defenses. You do not necessarily have all these troops in your cities. This is FYI only.
+  * Map – shows a map of the domain and your cities.
+The Normal selection from the dropdown menu  shows the original overview. 
+
 
 Notice your cities are listed in columns and your resources and troops in rows.  The first row is the totals of all you have and the last row is what is marching.
 
