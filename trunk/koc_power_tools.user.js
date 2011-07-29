@@ -6,7 +6,7 @@
 // @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110721a';
+var Version = '20110729a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -82,6 +82,17 @@ var Options = {
   //alertConfig  : {aChat:false, aPrefix:'** I\'m being attacked! **', scouting:false, wilds:false, minTroops:10000, spamLimit:10 },
 };
 
+var Colors ={
+	DarkRow : "#eee",
+	ButtonSelected : "#444444",
+	TabClicked : "#EED",
+	Tabs : "#1E66BD",
+    MainTitle  : "#357",
+    ChatLeaders: "#B8B8B8",
+    ChatGlobal :  "#CCCCFF",
+    OverviewDarkRow : "#f0f0f0",
+};
+
 var JSON;if(!JSON){JSON={};}(function(){"use strict";function f(n){return n<10?'0'+n:n;}if(typeof Date.prototype.toJSON!=='function'){Date.prototype.toJSON=function(key){return isFinite(this.valueOf())?this.getUTCFullYear()+'-'+f(this.getUTCMonth()+1)+'-'+f(this.getUTCDate())+'T'+f(this.getUTCHours())+':'+f(this.getUTCMinutes())+':'+f(this.getUTCSeconds())+'Z':null;};String.prototype.toJSON=Number.prototype.toJSON=Boolean.prototype.toJSON=function(key){return this.valueOf();};}var cx=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,escapable=/[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,gap,indent,meta={'\b':'\\b','\t':'\\t','\n':'\\n','\f':'\\f','\r':'\\r','"':'\\"','\\':'\\\\'},rep;function quote(string){escapable.lastIndex=0;return escapable.test(string)?'"'+string.replace(escapable,function(a){var c=meta[a];return typeof c==='string'?c:'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4);})+'"':'"'+string+'"';}function str(key,holder){var i,k,v,length,mind=gap,partial,value=holder[key];if(value&&typeof value==='object'&&typeof value.toJSON==='function'){value=value.toJSON(key);}if(typeof rep==='function'){value=rep.call(holder,key,value);}switch(typeof value){case'string':return quote(value);case'number':return isFinite(value)?String(value):'null';case'boolean':case'null':return String(value);case'object':if(!value){return'null';}gap+=indent;partial=[];if(Object.prototype.toString.apply(value)==='[object Array]'){length=value.length;for(i=0;i<length;i+=1){partial[i]=str(i,value)||'null';}v=partial.length===0?'[]':gap?'[\n'+gap+partial.join(',\n'+gap)+'\n'+mind+']':'['+partial.join(',')+']';gap=mind;return v;}if(rep&&typeof rep==='object'){length=rep.length;for(i=0;i<length;i+=1){k=rep[i];if(typeof k==='string'){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v);}}}}else{for(k in value){if(Object.hasOwnProperty.call(value,k)){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v);}}}}v=partial.length===0?'{}':gap?'{\n'+gap+partial.join(',\n'+gap)+'\n'+mind+'}':'{'+partial.join(',')+'}';gap=mind;return v;}}if(typeof JSON.stringify!=='function'){JSON.stringify=function(value,replacer,space){var i;gap='';indent='';if(typeof space==='number'){for(i=0;i<space;i+=1){indent+=' ';}}else if(typeof space==='string'){indent=space;}rep=replacer;if(replacer&&typeof replacer!=='function'&&(typeof replacer!=='object'||typeof replacer.length!=='number')){throw new Error('JSON.stringify');}return str('',{'':value});};}if(typeof JSON.parse!=='function'){JSON.parse=function(text,reviver){var j;function walk(holder,key){var k,v,value=holder[key];if(value&&typeof value==='object'){for(k in value){if(Object.hasOwnProperty.call(value,k)){v=walk(value,k);if(v!==undefined){value[k]=v;}else{delete value[k];}}}}return reviver.call(holder,key,value);}text=String(text);cx.lastIndex=0;if(cx.test(text)){text=text.replace(cx,function(a){return'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4);});}if(/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,'@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']').replace(/(?:^|:|,)(?:\s*\[)+/g,''))){j=eval('('+text+')');return typeof reviver==='function'?walk({'':j},''):j;}throw new SyntaxError('JSON.parse');};}}());
 var JSON2 = JSON; 
 
@@ -94,6 +105,7 @@ var CPopUpTopClass = 'ptPopTop';
 var KOCversion = null;
 var ptStartupTimer = null;
 var uW = unsafeWindow;
+var ResetColors = false;
 
 function ptStartup (){
   clearTimeout (ptStartupTimer);
@@ -109,7 +121,8 @@ function ptStartup (){
   logit ("KofC client version: "+ KOCversion);
   
   readOptions();
-
+  readColors();
+  
 //logit ('g_timeoff: '+ uW.g_timeoff);
   Seed = uW.seed;
   var gmstyles = '\
@@ -121,29 +134,30 @@ function ptStartup (){
   
   var styles = '.xtab {padding-right: 5px; border:none; background:none; white-space:nowrap}\
     .xtabBR {padding-right: 5px; border:none; background:none;}\
-    div.ptDiv {background-color:#f0f0f0;}\
+    div.ptDiv {background-color:'+Colors.OverviewDarkRow+';}\
     table.ptTab tr td {border:none; background:none; white-space:nowrap;}\
     table.ptTabPad tr td {border:none; background:none; white-space:nowrap; padding: 2px 4px 2px 4px;}\
     table.ptTabBR tr td {border:none; background:none;}\
     table.ptTabLined tr td {border:1px none none solid none;}\
-    table.ptTabOverview tr td {border-left:1px solid #ccc; white-space:nowrap; padding: 1px;}\
-    table.ptTabPad tr td.ptentry {background-color:#ffeecc; padding-left: 8px;}\
+    table.ptTabOverview tr td {border-left:1px solid #ccc; white-space:nowrap; padding: 1px; background-color:'+Colors.OverviewDarkRow+';}\
+    table.ptTabPad tr td.ptentry {background-color:#FFEECC ; padding-left: 8px;}\
     table.ptNoPad tr td {border:none; background:none; white-space:nowrap; padding:0px}\
     table.ptPlayers tr td {background-color:none; padding-left:5px; padding-right:5px;}\
-    .ptOddrow {background-color:#eee}\
-    .ptstat {border:1px solid; border-color:#ffffff; font-weight:bold; padding-top:2px; padding-bottom:2px; text-align:center; color:#ffffff; background-color:#357}\
+    .ptOddrow {background-color:'+Colors.DarkRow+'}\
+    .ptstat {border:1px solid; border-color:#ffffff; font-weight:bold; padding-top:2px; padding-bottom:2px; text-align:center; color:#ffffff;\
+     background-color:'+Colors.MainTitle+'}\
     .ptStatLight {color:#ddd}\
-    .ptentry {padding: 7px; border:1px solid; border-color:#000000; background-color:#ffeecc; white-space:nowrap;}\
+    .ptentry {padding: 7px; border:1px solid; border-color:#000000; background-color:#FFEECC; white-space:nowrap;}\
     .ptErrText {font-weight:bold; color:#600000}\
     button::-moz-focus-inner, input[type="submit"]::-moz-focus-inner { border: none; }\
     .ptChatAttack {color: #000; font-weight:bold; background-color: #FF4D4D; }\
     .ptChatWhisper {font-weight:bold;color:#FF0000}\
     .ptChatAlliance {font-weight:bold}\
-	  .ptChatScripter {color:#A56631; font-weight:bold; background-color:#CCFFCC;}\
-	  .ptChatOfficers {color:#000; background-color:#E0E0E0;}\
-    .ptChatGlobal {background-color: #CCCCFF;}\
+	.ptChatScripter {color:#A56631; font-weight:bold; background-color:'+Colors.ChatLeaders+';}\
+	.ptChatOfficers {color:#000; background-color:'+Colors.ChatLeaders+';}\
+    .ptChatGlobal {background-color:'+Colors.ChatGlobal+';}\
     .ptChatGlobalBold {font-weight:bold}\
-    .ptChatGlobalAll {font-weight:bold;background-color: #CCCCFF;}\
+    .ptChatGlobalAll {font-weight:bold;background-color:'+Colors.ChatGlobal+';}\
     .ptChatIcon {border: 1px inset black}\
     span.whiteOnRed {padding-left:3px; padding-right:3px; background-color:#700; color:white; font-weight:bold}\
     span.boldRed {color:#800; font-weight:bold}\
@@ -151,14 +165,14 @@ function ptStartup (){
     a.ptButton20 {color:#ffff80}\
     hr.ptThin {padding:0px; margin:0px}\
     input.pbSubtab {cursor:pointer; width:10em; margin-right:15px;}\
-    input.pbSubtabSel {background-color:#444; color:white; font-weight:bold; cursor:none !important}\
+    input.pbSubtabSel {background-color:'+Colors.ButtonSelected+'; color:white; font-weight:bold; cursor:none !important}\
     table.ptMainTab {empty-cells:show; margin-top:5px }\
     table.ptMainTab tr td a {color:inherit }\
     table.ptMainTab tr td   {height:60%; empty-cells:show; padding: 0px 5px 0px 5px;  margin-top:5px; white-space:nowrap; border: 1px solid; border-style: none none solid none; }\
     table.ptMainTab tr td.spacer {padding: 0px 1.5px;}\
-    table.ptMainTab tr td.sel    {font-weight:bold; font-size:13px; border: 1px solid; border-style: solid solid none solid; background-color:#eed;}\
-    table.ptMainTab tr td.notSel {font-weight:bold; font-size:13px; border: 1px solid; border-style: solid solid none solid; background-color:#1e66bd; color:white; border-color:black;}\
-    tr.ptPopTop td { background-color:#dde; border:none; height: 21px;  padding:0px; }\
+    table.ptMainTab tr td.sel {font-weight:bold; font-size:13px; border: 1px solid; border-style: solid solid none solid; background-color:'+Colors.TabClicked+';}\
+    table.ptMainTab tr td.notSel {font-weight:bold; font-size:13px; border: 1px solid; border-style: solid solid none solid; background-color:'+Colors.Tabs+';\ color:white; border-color:black;}\
+    tr.ptPopTop td { background-color:dde; border:none; height: 21px;  padding:0px; }\
     tr.ptretry_ptPopTop td { background-color:#a00; color:#fff; border:none; height: 21px; padding:0px; }\
     input.ptButCancel {background-color:#a00; font-weight:bold; color:#fff}\
     .CPopup .CPopMain { background-color:#f8f8f8; padding:6px;}\
@@ -214,9 +228,7 @@ if (TEST_WIDE){
   GMTclock.init ();
   tabManager.init (mainPop.getMainDiv());
   
-  title = uW.document.getElementById('comm_tabs').innerHTML;
-  title += '<DIV><BR><FONT color=white><B>&nbsp;&nbsp;&nbsp;&nbsp;'+ getMyAlliance()[1] + ' (' + GetServerId() +')</b></font></div>';
-  uW.document.getElementById('comm_tabs').innerHTML = title ; 
+
   
   if (Options.ptWinIsOpen){
     mainPop.show (true);
@@ -238,6 +250,7 @@ TestSomething.init ();
 function onUnload (){
   Options.ptWinPos = mainPop.getLocation();
   saveOptions();
+  if (!ResetColors) saveColors();
 }
 
 
@@ -505,12 +518,12 @@ var ChatStuff = {
     uW.chatDivContent_hook = t.chatDivContentHook;
     uW.ptChatIconClicked = t.e_iconClicked;
     t.setEnable (Options.chatEnhance);
-    
-   // alert(uW.Chat.Methods.changeTab);
-   // uW.Chat.Methods.changeTab = t.Myadd;
-   uW.Chat.Methods.changeTab = 'Chat.changeTab function (a) {$("mod_comm_list" + this.chatType).hide();$("mod_comm_list" + a).show();$("comm_tabs").className = "comm_tabs seltab" + a;if ( a == 1) $("mod_comm_inpot").style.background = "E080808";this.chatType = a})';  
-      //       alert(uW.Chat.Methods.changeTab);
-          
+   
+   setInterval ( function(){
+   			if ( document.getElementById('comm_tabs').className == 'comm_tabs seltab1') document.getElementById("mod_comm_input").style.background = Colors.ChatGlobal;
+   			else document.getElementById("mod_comm_input").style.background ="";
+   },1500);
+             
   },
   
   isAvailable : function (){
@@ -539,6 +552,8 @@ var ChatStuff = {
        if (m == null)
          return msg;
        var whisp = m[0];
+       
+       
        if (m[0].indexOf('whispers') >= 0) {
    	if (Options.chatwhisper) {
    		if (whisp.indexOf('says to the alliance') <0) element_class = 'ptChatWhisper';
@@ -552,6 +567,8 @@ var ChatStuff = {
            } 
        else {
    	element_class = '';
+   	
+   	
    	if (Options.chatbold)
    		element_class = 'ptChatGlobalBold';
    	if (Options.chatglobal){
@@ -564,7 +581,7 @@ var ChatStuff = {
      	element_class = 'ptChatAttack';
     if (m[0].indexOf('My wilderness at') >= 0 && Options.chatAttack)
        	element_class = 'ptChatAttack';
-
+	
 	var scripters = ["7552815","10681588","1747877","2865067","10153485","15182839","1550996","1617431819","9688786"];
 	var suid = m[0].substring(m[0].indexOf('Chat.viewProfile(this,')+22,m[0].indexOf(',false);return false;'));
     var IsMe = false;
@@ -712,7 +729,7 @@ Tabs.Wilds = {
       t.wildList[c] = []; 
       var castle = parseInt(Seed.buildings['city'+ city.id].pos0[1]);
       if(castle == 11) castle = 12;
-      if(castle == 12) castle = 14;
+      else if(castle == 12) castle = 14;
       var totw = 0;
       if (matTypeof(cWilds)=='object'){
         for (var k in cWilds)
@@ -1892,6 +1909,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
    init : function (div){
     var t = Tabs.AllianceList;
     t.cont = div;
+
     uW.PTgetMembers = t.eventGetMembers;
     uW.PTPaintMembers = t.GetDataForMap;
     uW.PTpd = t.clickedPlayerDetail;
@@ -2204,7 +2222,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     }
     var m = '<DIV class=ptstat>'+uW.g_js_strings.commonstr.alliances+'<B>"'+ t.aName +'"</b></div>\
     <TABLE><TR style="font-weight:bold"><TD class=xtab>'+uW.g_js_strings.commonstr.alliance+'</td><TD class=xtab>'+uW.g_js_strings.commonstr.rank+'</td><TD class=xtab>'+uW.g_js_strings.commonstr.members+'</td>\
-        <TD align=right class=xtab>'+uW.g_js_strings.commonstr.might+'</td><TD class=xtab>'+uW.g_js_strings.getAllianceSearchResults.currdiplo+'</td><TD class=xtab></td><TD class=xtab></td></tr>';
+        <TD align=right class=xtab>'+uW.g_js_strings.commonstr.might+'</td><TD class=xtab>'+uW.g_js_strings.getAllianceSearchResults.currdiplo+'</td><TD class=xtab>'+uW.g_js_strings.commonstr.members+'</td><TD class=xtab>'+uW.g_js_strings.commonstr.viewmap+'</td></tr>';
     for (k in rslt.alliancesMatched){
       var all = rslt.alliancesMatched[k];
       var dip = '';
@@ -2277,9 +2295,9 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     t.MaxPage=rslt.noOfPages;
     //document.getElementById('idMaxPageNum').innerHTML = 'of ' + t.MaxPage;
 
-    var m = '<div style="overflow:auto; height:556px;width:564px;"><TABLE><thead><TR style="font-weight:bold"> \
+    var m = '<div style="overflow:auto; height:556px;width:650px;"><TABLE><thead><TR style="font-weight:bold"> \
         <th class=xtab>'+uW.g_js_strings.modaltitles.alliance+'</th><th class=xtab>'+uW.g_js_strings.commonstr.rank+'</th><th class=xtab>'+uW.g_js_strings.commonstr.members+'</th>\
-        <th align=right class=xtab>'+uW.g_js_strings.commonstr.might+'</th><th class=xtab>'+uW.g_js_strings.getAllianceSearchResults.currdiplo+'</th><th class=xtab></th><th class=xtab></th></tr></thead><tbody>';
+        <th align=right class=xtab>'+uW.g_js_strings.commonstr.might+'</th><th class=xtab>'+uW.g_js_strings.getAllianceSearchResults.currdiplo+'</th><th class=xtab>'+uW.g_js_strings.commonstr.members+'</th><th class=xtab>'+uW.g_js_strings.commonstr.viewmap+'</th></tr></thead><tbody>';
     document.getElementById('allListOut').innerHTML = m;
 
     for (var i=0; i<rslt.otherAlliances.length; i++) {
@@ -2290,7 +2308,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       m += '<TR class="'+ dip + '"><TD class=xtab>' + alliance.name +'</td><TD align=right class=xtab>'+ alliance.ranking +'</td><TD align=right class=xtab>'+ alliance.membersCount +'</td>\
        <TD align=right class=xtab>'+ addCommasInt(alliance.might) +'</td><TD class=xtab>'+ dip +'</td>\
        <TD class=xtab><a onclick="PTgetMembers('+ alliance.allianceId +')">'+uW.g_js_strings.commonstr.members+'</a></td>\
-       <TD class=xtab><a onclick="PTPaintMembers('+ alliance.allianceId +')">'+uW.g_js_strings.commonstr.viewmap+'</a></td></tr>';
+	       <TD class=xtab><a onclick="PTPaintMembers('+ alliance.allianceId +')">'+uW.g_js_strings.commonstr.viewmap+'</a></td></tr>';
     }
     m += '</tbody></TABLE><div style="font-weight:bold"; height:20px;width:560px; ><span> <a onclick="PTalClickPrev(-1)"> [|<] </a><a onclick="PTalClickPrev(10)"> [-10] </a><a onclick="PTalClickPrev(5)"> [-5] </a><a onclick="PTalClickPrev(1)"> [<] </a> \
           <a onclick="PTalClickNext(1)"> [>] </a><a onclick="PTalClickNext(5)"> [+5] </a><a onclick="PTalClickNext(10)"> [+10] </a><a onclick="PTalClickNext(9999)"> [>|] </a> </span></div>';
@@ -2595,10 +2613,15 @@ return 0;
   		var provMapCoordsA = {imgWidth:710, imgHeight:708, mapWidth:670, mapHeight:670, leftMargin:31, topMargin:19};  
   		var map = '<DIV id=ptAlliProvMap style="height:'+ provMapCoordsA.imgHeight +'px; width:'+ provMapCoordsA.imgWidth +'px; background-repeat:no-repeat; background-image:url(\''+ URL_PROVINCE_MAP +'\')"></div>';
   	    
+		//alert(Data.toSource());
 		//Data = [{X:"700", Y:"700"}, {X:"600", Y:"600"}, {X:"500", Y:"500"},{X:"400", Y:"400"},{X:"300", Y:"300"},{X:"200", Y:"200"},{X:"100", Y:"100"},{X:"0", Y:"0"},{X:"750", Y:"750"}, {X:"650", Y:"650"}, {X:"550", Y:"550"},{X:"450", Y:"450"},{X:"350", Y:"350"},{X:"250", Y:"250"},{X:"150", Y:"150"},{X:"50", Y:"50"}];
   	    			
 		document.getElementById('allListOut').innerHTML = map;
 		var eMap =  document.getElementById('ptAlliProvMap');
+		
+		
+		
+		
 		
 		for (var cc=0; cc<Seed.cities.length; cc++) {
 		    var city = Seed.cities;
@@ -2633,8 +2656,12 @@ return 0;
   	    		ce.style.display='block';
   	    		ce.style.width='4px';
   	    		ce.style.height='4px';
+  	    		ce.style.color = 'white';
+  	    		ce.style.textAlign = 'center';
   	    	ce.style.top = (yplot+provMapCoordsA.topMargin -(4*i)-((Seed.cities.length)*18)) +'px';      
   	    	ce.style.left = (xplot+provMapCoordsA.leftMargin -2) +'px';
+  	    	//ce.innerHTML = '<span onmouseover="this.innerText='+x+','+y+'" onclick="">A</span>';
+  	    	ce.innerHTML = '<DIV onclick="ptGotoMap('+ x +','+ y +')">&nbsp;</div>';
   	        eMap.appendChild(ce);
   	   }
   	   
@@ -2942,8 +2969,8 @@ Tabs.Test = {
   },
 
   reloadKOC : function (){
-    var goto = 'http://apps.facebook.com/kingdomsofcamelot/?s='+getServerId();
-    var t = '<FORM target="_top" action="'+ goto +'" method=post><INPUT id=xxptButReload type=submit value=RELOAD><INPUT type=hidden name=s value="'+ getServerId() +'"</form>';
+    var goto = 'http://apps.facebook.com/kingdomsofcamelot/?s='+GetServerId();
+    var t = '<FORM target="_top" action="'+ goto +'" method=post><INPUT id=xxptButReload type=submit value=RELOAD><INPUT type=hidden name=s value="'+ GetServerId() +'"</form>';
     var e = document.createElement ('div');
     e.innerHTML = t;
     document.body.appendChild (e);
@@ -3139,48 +3166,78 @@ Tabs.Options = {
   tabOrder : 40,
   tabLabel : 'Options',
   cont : null,
+  curTabBut : null,
+  curTabName : null,
   fixAvailable : {},
 
   init : function (div){
     var t = Tabs.Options;
     t.cont = div;
     
+    var main = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubU type=submit value="Options"></td>';
+    main +='<TD><INPUT class=pbSubtab ID=ptmrchSubV type=submit value="Layout"></td></tr></table><HR class=ptThin>';
+    main +='<DIV id=ptOptOutput style="margin-top:10px; background-color:white; height:680px; overflow:scroll;"></div>';
+
+    t.cont.innerHTML = main;
+    t.Overv = document.getElementById('ptOptOutput');
+    
+    document.getElementById('ptmrchSubU').addEventListener('click', e_butSubtab, false);
+    document.getElementById('ptmrchSubV').addEventListener('click', e_butSubtab, false);
+
+    
+    changeSubtab (document.getElementById('ptmrchSubU'));
+    
+    function e_butSubtab (evt){            
+      changeSubtab (evt.target);   
+    }
+
+    function changeSubtab (but){
+      if (but == t.curTabBut)
+        return;
+      if (t.curTabBut){
+        t.curTabBut.className='pbSubtab'; 
+        t.curTabBut.disabled=false;
+      }
+      t.curTabBut = but;
+      but.className='pbSubtab pbSubtabSel'; 
+      but.disabled=true;
+      t.curTabName = but.id.substr(9);
+      Options.curMarchTab = t.curTabName;
+      t.show ();
+    }
+    },
+    
+    Options : function (){ 
+    var t = Tabs.Options; 
     try {      
-      m = '<TABLE class=ptTab>\
-        <TR><TD colspan=2><B>Config:</b></td></tr>\
-        <TR><TD><INPUT id=ptAllowWinMove type=checkbox /></td><TD>Enable window drag (move window by dragging top bar with mouse)</td></tr>\
-        <TR><TD><INPUT id=ptHideOnGoto type=checkbox /></td><TD>Hide window when clicking on map coordinates.</td></tr>\
-        <TR><TD><INPUT id=ptEnableFoodWarn type=checkbox /></td><TD>Show \'food left\' in RED if food will run out in less than \
-            <INPUT id=optFoodHours type=text size=3 value="'+ Options.foodWarnHours +'"> hours, does NOT affect the food alert anymore!</td></tr>\
-        <TR><TD><INPUT id=ptEnableFoodTower type=checkbox /></td><TD>Enable Tower food alert. (Warning set to 6 hours, checked every 30min.)</td></tr>\
-        <TR><TD><INPUT id=ptEnableWisperAlert type=checkbox /></td><TD>Enable sound alert on whisper<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
-        <TR><TD><INPUT id=ptEnableTowerAlert type=checkbox /></td><TD>Enable sound alert on tower alert in chat<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
-	<TR><TD colspan=2><B>Chat Layout:</b></td></tr>\
-	<TR><TD><INPUT id=togChatStuff type=checkbox /></td><TD>Enable Chat Enable Chat enhancements (clickable coords, click on icon to whisper, colors).</td></tr>\
-        <TR><TD><INPUT id=togChatGlobal type=checkbox /></td><TD>Enable Global background color.</td></tr>\
-	<TR><TD><INPUT id=togChatWhisper type=checkbox /></td><TD>Enable Whisper in Red Font.</td></tr>\
-	<TR><TD><INPUT id=togChatBold type=checkbox /></td><TD>Enable Chat in Bold Font.</td></tr>\
-	<TR><TD><INPUT id=togChatAttack type=checkbox /></td><TD>Enable Red background on tower alert.</td></tr>\
-	<TR><TD><INPUT id=togChatLead type=checkbox /></td><TD>Enable grey background for alliance Leaders.<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>\
-	<TR><TD colspan=2><B>KofC Features:</b></td></tr>\
-        <TR><TD><INPUT id=togMsgCountFix type=checkbox /></td><TD>Change message icons place(Msg/Reports) and allign them.</td></tr>';
-      m += '<TR><TD><INPUT id=togAllRpts type=checkbox /></td><TD>Enable enhanced Alliance Reports.</td></tr>\
-        <TR><TD><INPUT id=togAllowAlter type=checkbox /></td><TD>Allow other scripts to change format of Alliance Reports.</td></tr>\
-        <TR><TD><INPUT id=togEnhanceMsging type=checkbox /></td><TD>Enable enhanced messaging ("forward" and "all officers" buttons).</td></tr>\
-        <TR><TD><INPUT id=togPageNav type=checkbox /></td><TD>Enhanced page navigation for messages and reports.</td></tr>\
-        <TR><TD><INPUT id=togWarnZero type=checkbox /></td><TD>Warn if attempting to march to location 0,0.</td></tr>\
-        <TR><TD><INPUT id=togGmtClock type=checkbox /></td><TD>Enable GMT clock next to "Camelot Time" </td></tr>\
-        <TR><TD><INPUT id=togAttackPicker type=checkbox /></td><TD>Enable target city picker in attack dialog (reinforce, reassign and transport)</td></tr>\
-        <TR><TD><INPUT id=togBatRounds type=checkbox /></td><TD>Display # of rounds in battle reports</td></tr>\
-        <TR><TD><INPUT id=togAtkDelete type=checkbox /></td><TD>Enable delete button when displaying battle report</td></tr>\
-        <TR><TD colspan=2><BR><BR><B>KofC Bug Fixes:</b></td></tr>\
-        <TR><TD><INPUT id=togTowerFix type=checkbox /></td><TD>Fix tower report to show exact target (city, wild or invalid)</td></tr>\
-        <TR><TD><INPUT id=togMapDistFix type=checkbox /></td><TD>Fix map to show distances from currently selected city, instead of always the first city.</td></tr>\
-        <TR><TD><INPUT id=togTowerFix2 type=checkbox /></td><TD>Fix false attack alerts created from scouting missions.</td></tr>\
-        <TR><TD><INPUT id=togKnightSelect type=checkbox /></td><TD>Do not automatically select a knight when changing march type to scout, transport or reassign</td></tr>\
-        <TR><TD><INPUT id=togCoordBox type=checkbox /></td><TD>Keep map coordinate box/bookmarks on top of troop activity</td></tr>\
-        </table><BR><BR><HR>Note that if a checkbox is greyed out there has probably been a change of KofC\'s code, rendering the option inoperable.';
-      t.cont.innerHTML = m;
+      m = '<TABLE class=ptTab>';
+	  m+='<TR><TD colspan=2><B>Config:</b></td></tr>';
+	  m+='<TR><TD><INPUT id=ptAllowWinMove type=checkbox /></td><TD>Enable window drag (move window by dragging top bar with mouse)</td></tr>';
+	  m+='<TR><TD><INPUT id=ptHideOnGoto type=checkbox /></td><TD>Hide window when clicking on map coordinates.</td></tr>';
+	  m+='<TR><TD><INPUT id=ptEnableFoodWarn type=checkbox /></td><TD>Show \'food left\' in RED if food will run out in less than';
+	  m+='<INPUT id=optFoodHours type=text size=3 value="'+ Options.foodWarnHours +'"> hours, does NOT affect the food alert anymore!</td></tr>';
+	  m+='<TR><TD><INPUT id=ptEnableFoodTower type=checkbox /></td><TD>Enable Tower food alert. (Warning set to 6 hours, checked every 30min.)</td></tr>';
+	  m+='<TR><TD><INPUT id=ptEnableWisperAlert type=checkbox /></td><TD>Enable sound alert on whisper<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>';
+	  m+='<TR><TD><INPUT id=ptEnableTowerAlert type=checkbox /></td><TD>Enable sound alert on tower alert in chat<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>';
+	  m+='<TR><TD colspan=2><B>KofC Features:</b></td></tr>';
+	  m+='<TR><TD><INPUT id=togMsgCountFix type=checkbox /></td><TD>Change message icons place(Msg/Reports) and allign them.</td></tr>';
+	  m+='<TR><TD><INPUT id=togAllRpts type=checkbox /></td><TD>Enable enhanced Alliance Reports.</td></tr>';
+	  m+='<TR><TD><INPUT id=togAllowAlter type=checkbox /></td><TD>Allow other scripts to change format of Alliance Reports.</td></tr>';
+	  m+='<TR><TD><INPUT id=togEnhanceMsging type=checkbox /></td><TD>Enable enhanced messaging ("forward" and "all officers" buttons).</td></tr>';
+	  m+='<TR><TD><INPUT id=togPageNav type=checkbox /></td><TD>Enhanced page navigation for messages and reports.</td></tr>';
+	  m+='<TR><TD><INPUT id=togWarnZero type=checkbox /></td><TD>Warn if attempting to march to location 0,0.</td></tr>';
+	  m+='<TR><TD><INPUT id=togGmtClock type=checkbox /></td><TD>Enable GMT clock next to "Camelot Time" </td></tr>';
+	  m+='<TR><TD><INPUT id=togAttackPicker type=checkbox /></td><TD>Enable target city picker in attack dialog (reinforce, reassign and transport)</td></tr>';
+	  m+='<TR><TD><INPUT id=togBatRounds type=checkbox /></td><TD>Display # of rounds in battle reports</td></tr>';
+	  m+='<TR><TD><INPUT id=togAtkDelete type=checkbox /></td><TD>Enable delete button when displaying battle report</td></tr>';
+	  m+='<TR><TD colspan=2><BR><BR><B>KofC Bug Fixes:</b></td></tr>';
+	  m+='<TR><TD><INPUT id=togTowerFix type=checkbox /></td><TD>Fix tower report to show exact target (city, wild or invalid)</td></tr>';
+	  m+='<TR><TD><INPUT id=togMapDistFix type=checkbox /></td><TD>Fix map to show distances from currently selected city, instead of always the first city.</td></tr>';
+	  m+='<TR><TD><INPUT id=togTowerFix2 type=checkbox /></td><TD>Fix false attack alerts created from scouting missions.</td></tr>';
+	  m+='<TR><TD><INPUT id=togKnightSelect type=checkbox /></td><TD>Do not automatically select a knight when changing march type to scout, transport or reassign</td></tr>';
+	  m+='<TR><TD><INPUT id=togCoordBox type=checkbox /></td><TD>Keep map coordinate box/bookmarks on top of troop activity</td></tr>';
+	  m+='</table><BR><BR><HR>Note that if a checkbox is greyed out there has probably been a change of KofC\'s code, rendering the option inoperable.';
+      t.Overv.innerHTML = m;
       
       t.togOpt ('ptEnableFoodWarn', 'enableFoodWarn');
       t.togOpt ('ptEnableFoodTower', 'enableFoodTower');
@@ -3197,12 +3254,6 @@ Tabs.Options = {
       t.togOpt ('togWarnZero', 'fixWarnZero', WarnZeroAttack.setEnable, WarnZeroAttack.isAvailable);
       t.togOpt ('togPageNav', 'fixPageNav', PageNavigator.enable, PageNavigator.isAvailable);
       t.togOpt ('togGmtClock', 'gmtClock', GMTclock.setEnable);
-      t.togOpt ('togChatStuff', 'chatEnhance', ChatStuff.setEnable, ChatStuff.isAvailable);
-      t.togOpt ('togChatGlobal', 'chatglobal');
-      t.togOpt ('togChatWhisper', 'chatwhisper');	
-      t.togOpt ('togChatBold', 'chatbold');
-      t.togOpt ('togChatAttack', 'chatAttack');
-      t.togOpt ('togChatLead', 'chatLeaders');
       t.togOpt ('togKnightSelect', 'fixKnightSelect', AttackDialog.setEnable, AttackDialog.isKnightSelectAvailable);
       t.togOpt ('togAttackPicker', 'attackCityPicker', AttackDialog.setEnable, AttackDialog.isCityPickerAvailable);
       t.togOpt ('togEnhanceMsging', 'enhanceMsging', messageNav.setEnable, messageNav.isAvailable);
@@ -3226,15 +3277,76 @@ Tabs.Options = {
        checkbox.addEventListener ('change', function() {Options.enhanceARpts=document.getElementById('togAllRpts').checked; saveOptions(); AllianceReports.enable(Options.enhanceARpts);}, false);
       
     } catch (e) {
+      t.Overv.innerHTML = '<PRE>'+ e.name +' : '+ e.message +'</pre>';  
+    }
+  },
+  
+  Layout :function (){
+    var t = Tabs.Options;  
+    try {      
+      m= '<TABLE class=ptTab>';
+	  m+='<TR><TD colspan=2><U><B>Chat Layout:</b></u></td></tr>';
+	  m+='<TR><TD><INPUT id=togChatStuff type=checkbox /></td><TD>Enable Chat Enable Chat enhancements (clickable coords, click on icon to whisper, colors).</td></tr>';
+      m+='<TR><TD><INPUT id=togChatGlobal type=checkbox /></td><TD>Enable Global background color.</td></tr>';
+	  m+='<TR><TD><INPUT id=togChatWhisper type=checkbox /></td><TD>Enable Whisper in Red Font.</td></tr>';
+	  m+='<TR><TD><INPUT id=togChatBold type=checkbox /></td><TD>Enable Chat in Bold Font.</td></tr>';
+	  m+='<TR><TD><INPUT id=togChatAttack type=checkbox /></td><TD>Enable Red background on tower alert.</td></tr>';
+	  m+='<TR><TD><INPUT id=togChatLead type=checkbox /></td><TD>Enable background for alliance Leaders.<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr></table>';
+	  
+	  m+='<TABLE class=ptTab><BR><TR><TD colspan=2><U><B>Colors:</b></u></td></tr>';
+      m+='<TR><TD>Chat Color - Global: </td><TD><INPUT id=togGlobal type=text size=7 maxlength=7 value="'+Colors.ChatGlobal+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatGlobal+'" width=30px>&nbsp;</td></tr>';
+      m+='<TR><TD>Chat Color - Leaders: </td><TD><INPUT id=togChatLeaders type=text size=7 maxlength=7 value="'+Colors.ChatLeaders+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatLeaders+'" width=30px>&nbsp;</td></tr>';
+      m+='<TR><TD>General - Title: </td><TD><INPUT id=togChatMainTiltle type=text size=7 maxlength=7 value="'+Colors.MainTitle+'"></td>&nbsp;<TD style="background-color:'+Colors.MainTitle+'" width=30px>&nbsp;</td></tr>';
+      m+='<TR><TD>General - Dark Row: </td><TD><INPUT id=togDarkRow type=text size=7 maxlength=7 value="'+Colors.DarkRow+'"></td>&nbsp;<TD style="background-color:'+Colors.DarkRow+'" width=30px>&nbsp;</td></tr>';
+      m+='<TR><TD>General - Button Selected: </td><TD><INPUT id=togButClick type=text size=7 maxlength=7 value="'+Colors.ButtonSelected+'"></td>&nbsp;<TD style="background-color:'+Colors.ButtonSelected+'" width=30px>&nbsp;</td></tr>';
+      m+='<TR><TD>General - Tab Clicked: </td><TD><INPUT id=togTabClick type=text size=7 maxlength=7 value="'+Colors.TabClicked+'"></td>&nbsp;<TD style="background-color:'+Colors.TabClicked+'" width=30px>&nbsp;</td></tr>';
+      m+='<TR><TD>General - Tabs: </td><TD><INPUT id=togTab type=text size=7 maxlength=7 value="'+Colors.Tabs+'"></td>&nbsp;<TD style="background-color:'+Colors.Tabs+'" width=30px>&nbsp;</td></tr>';
+      m+='<TR><TD>Overview - Dark Rows:</td><TD><INPUT id=togOverDarkRow type=text size=7 maxlength=7 value="'+Colors.OverviewDarkRow+'"></td>&nbsp;<TD style="background-color:'+Colors.OverviewDarkRow+'" width=30px>&nbsp;</td></tr>';
+      m+='</table><BR><BR><HR>To apply colors you need to REFRESH!<BR>';
+      m+= strButton20('Reset Colors', 'id=ResetALL');
+      t.Overv.innerHTML = m;
+            
+      t.togOpt ('togChatStuff', 'chatEnhance', ChatStuff.setEnable, ChatStuff.isAvailable);
+      t.togOpt ('togChatGlobal', 'chatglobal');
+      t.togOpt ('togChatWhisper', 'chatwhisper');	
+      t.togOpt ('togChatBold', 'chatbold');
+      t.togOpt ('togChatAttack', 'chatAttack');
+      t.togOpt ('togChatLead', 'chatLeaders');
+      
+      document.getElementById('togGlobal').addEventListener('change', function(){Colors.ChatGlobal = document.getElementById('togGlobal').value;t.Layout()}, false);
+      document.getElementById('togChatLeaders').addEventListener('change', function(){Colors.ChatLeaders = document.getElementById('togChatLeaders').value;t.Layout()}, false);
+      document.getElementById('togChatMainTiltle').addEventListener('change', function(){Colors.MainTitle = document.getElementById('togChatMainTiltle').value;t.Layout()}, false);
+      document.getElementById('togDarkRow').addEventListener('change', function(){Colors.DarkRow = document.getElementById('togDarkRow').value;t.Layout()}, false);
+      document.getElementById('togButClick').addEventListener('change', function(){Colors.ButtonSelected = document.getElementById('togButClick').value;t.Layout()}, false);
+      document.getElementById('togTabClick').addEventListener('change', function(){Colors.TabClicked = document.getElementById('togTabClick').value;t.Layout()}, false);
+      document.getElementById('togTab').addEventListener('change', function(){Colors.Tabs = document.getElementById('togTab').value;t.Layout()}, false);
+      document.getElementById('togOverDarkRow').addEventListener('change', function(){Colors.OverviewDarkRow = document.getElementById('togOverDarkRow').value;t.Layout()}, false);
+      
+      document.getElementById('ResetALL').addEventListener ('click', function(){
+      		RemoveList = (GM_listValues());
+      		for (i=0;i<RemoveList.length;i++){
+      			if (RemoveList[i] == "Colors") GM_deleteValue(RemoveList[i]);
+      		}
+      		ResetColors=true;
+      		reloadKOC();
+      },false);	
+      
+    } catch (e) {
       t.cont.innerHTML = '<PRE>'+ e.name +' : '+ e.message +'</pre>';  
     }
   },
+  
 
   
   hide : function (){
   },
 
   show : function (){
+        var t = Tabs.Options;
+    if (t.curTabName == 'U') 
+         t.Options();
+    else if (t.curTabName == 'V')
+      t.Layout();
   },
   
   togOpt : function (checkboxId, optionName, callEnable, callIsAvailable){
@@ -4265,8 +4377,8 @@ Tabs.OverView = {
         	  		var total = 0;
         	  		z+='<TR><TD colspan="8" style="background: #FFFFFF"><B>'+uW.resourceinfo['rec'+a]+': </b></td></tr><TR>';
         	  		for(b=0; b<Cities.numCities; b++) total += parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]/3600);
-        	  		z+='<TD style="background: #F0F0F0">'+ addCommas(total) +'</td>';
-        	  		for(b=0; b<Cities.numCities; b++) z+='<TD align=right style="background: #F0F0F0">'+ addCommas( parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]/3600)) +'</font></td>';
+        	  		z+='<TD>'+ addCommas(total) +'</td>';
+        	  		for(b=0; b<Cities.numCities; b++) z+='<TD align=right ">'+ addCommas( parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]/3600)) +'</font></td>';
         	  		z+='</tr><TR><TD style="background: #FFFFFF"><FONT COLOR="686868">'+uW.g_js_strings.showResourceTooltip.caplimit+':</font></td>';
         	  		for(b=0; b<Cities.numCities; b++) {
         	  			    z+='<TD align=right style="background: #FFFFFF">';
@@ -4319,9 +4431,9 @@ Tabs.OverView = {
         	  z+='</tr><TR><TD colspan="8" style="background: #FFFFFF; border:none">&nbsp;</td><TR><TD colspan="8" style="background: #FFFFFF"><B>'+uW.g_js_strings.commonstr.gold+':</b></td></tr><TR>';
         	  var goldtotal = 0;
         	  for(b=0; b<Cities.numCities; b++) goldtotal += parseInt(Seed.citystats["city" + Seed.cities[b][0]]['gold'][0]);
-        	  z+='<TD style="background: #F0F0F0">'+addCommas(goldtotal)+'</td>';
+        	  z+='<TD>'+addCommas(goldtotal)+'</td>';
         	  for(b=0; b<Cities.numCities; b++) {
-        	  		z+='<TD align=right style="background: #F0F0F0">'+ addCommas(Seed.citystats["city" + Seed.cities[b][0]]['gold'][0])  +'</td>';
+        	  		z+='<TD align=right >'+ addCommas(Seed.citystats["city" + Seed.cities[b][0]]['gold'][0])  +'</td>';
         	  }
         	  z+='<TR><TD style="background: #FFFFFF"><FONT COLOR="686868">'+uW.g_js_strings.showGoldTooltip.netincome+':</font></td>';
         	  for(b=0; b<Cities.numCities; b++) {
@@ -4348,11 +4460,11 @@ Tabs.OverView = {
         		    			++totWilds;
         			 var castle = parseInt(Seed.buildings['city'+ Seed.cities[b][0]].pos0[1]);
         			 if(castle == 11) castle = 12;
-        			 if(castle == 12) castle = 14;
+        			 else if(castle == 12) castle = 14;
         			 if (totWilds < castle)
-        		  	z+=  '<TD align=right style="background: #F0F0F0"><FONT COLOR=RED>'+ totWilds +'/'+ castle +'</font></span>';
+        		  	z+=  '<TD align=right "><FONT COLOR=RED>'+ totWilds +'/'+ castle +'</font></span>';
         			else
-        		  		z+=  '<TD align=right style="background: #F0F0F0">'+ totWilds +'/'+ castle +'</span>';
+        		  		z+=  '<TD align=right>'+ totWilds +'/'+ castle +'</span>';
         		}
         		z+='</tr>';
               for (c in uW.cm.WILDERNESS_TYPES){
@@ -4435,11 +4547,11 @@ Tabs.OverView = {
    	        else var rowsp = 2; 
    	        n+='<TR><TD rowspan="'+rowsp+'" style="background: #FFFFFF; vertical-align:top;"><img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_'+a+'_30.jpg></td>';
    	        for(b=0; b<Cities.numCities; b++) total += parseInt(Seed.units['city' + Seed.cities[b][0]]['unt'+a]);
-   	        if (total >0) n+='<TD align=right style="background: #F0F0F0">'+addCommas(total)+'</td>';
-   	        else n+='<TD align=right style="background: #F0F0F0">&nbsp;</td>';
+   	        if (total >0) n+='<TD align=right >'+addCommas(total)+'</td>';
+   	        else n+='<TD align=right >&nbsp;</td>';
    	        for(b=0; b<Cities.numCities; b++) {
-   	        	if (Seed.units['city' + Seed.cities[b][0]]['unt'+a] > 0) n+= '<TD align=right style="background: #F0F0F0">'+addCommas(Seed.units['city' + Seed.cities[b][0]]['unt'+a])+'</td>';
-   	        	else n+='<TD style="background: #F0F0F0"></td>';
+   	        	if (Seed.units['city' + Seed.cities[b][0]]['unt'+a] > 0) n+= '<TD align=right >'+addCommas(Seed.units['city' + Seed.cities[b][0]]['unt'+a])+'</td>';
+   	        	else n+='<TD ></td>';
    	        }
    	        n+='</tr><TR><TD style="background: #FFFFFF"><FONT COLOR="686868">'+uW.g_js_strings.commonstr.marching+'</font></td>';
    	        for(b=0; b<Cities.numCities; b++) {
@@ -4475,14 +4587,14 @@ Tabs.OverView = {
    	  	}
    	  }
    	  n+='<TR><TD colspan="8" style="background: #FFFFFF; border:none;">&nbsp;</td> </tr>';
-      n+='<TR><TD colspan="2" style="background: #F0F0F0 ; border=solid">'+uW.g_js_strings.openKnights.myknights+':</td>';
+      n+='<TR><TD colspan="2" style="border=solid">'+uW.g_js_strings.openKnights.myknights+':</td>';
       for(b=0; b<Cities.numCities; b++) {
            var knights=0;
            var knightscity = Seed.knights['city' + Seed.cities[b][0]];
            if (knightscity != []) for (c in knightscity) if (knightscity[c]['knightId'] > 0) knights++;
-        	 n+= '<TD align=right style="background: #F0F0F0">'+knights+'</td>';	
+        	 n+= '<TD align=right >'+knights+'</td>';	
       }
-      n+='</tr><TR><TD colspan="2" style="background: #FFFFFF">'+uW.g_js_strings.commonstr.combat+':</td>';
+      n+='</tr><TR><TD colspan="2" >'+uW.g_js_strings.commonstr.combat+':</td>';
       for(b=0; b<Cities.numCities; b++) {
            var combat=0;
            var knightscity = Seed.knights['city' + Seed.cities[b][0]];
@@ -4492,7 +4604,7 @@ Tabs.OverView = {
       }
       
       n+='<TR><TD colspan="8" style="background: #FFFFFF; border:none;">&nbsp;</td> </tr>';
-      n+='<TR><TD colspan="2" style="background: #F0F0F0 ; border=solid">'+uW.g_js_strings.modal_barracks_trainingtab.totaltraintime+':</td>';
+      n+='<TR><TD colspan="2" style="border=solid">'+uW.g_js_strings.modal_barracks_trainingtab.totaltraintime+':</td>';
       for(b=0; b<Cities.numCities; b++) {
            var time=0;
            now = unixTime();
@@ -4500,8 +4612,8 @@ Tabs.OverView = {
            //alert(unt.length);
            if (unt != null && unt.length > 0) time = (unt[unt.length-1][3] - now);
            if (time < 0) time=0;
-           if (time < 3600) n+= '<TD align=right style="background: #F0F0F0"><FONT COLOR=red>'+timestr(time)+'</font></td>';	
-           else n+= '<TD align=right style="background: #F0F0F0">'+timestr(time)+'</td>';	
+           if (time < 3600) n+= '<TD align=right ><FONT COLOR=red>'+timestr(time)+'</font></td>';	
+           else n+= '<TD align=right >'+timestr(time)+'</td>';	
       }
       
       
@@ -4593,12 +4705,12 @@ Tabs.OverView = {
     healingpotions = Seed.tech['tch15'];
     giantsstrength = Seed.tech['tch16'];			  		       
     
-    var m = '<DIV id=BuildsDiv style="font-size:12px"><TABLE class=ptBuilds cellpadding=5 cellspacing=0 border="1" style="border: 1px solid; border-style: none none none none;"><TR valign=top align=right>';
-    m += "<TD align=left width=85 style='background:#F0F0F0'><INPUT id=showReq type=checkbox " + (t.showReq?'CHECKED ':'') +">Show missing req.</td>";
+    var m = '<DIV id=BuildsDiv style="font-size:12px"><TABLE cellpadding=5 cellspacing=0 border="1" style="border: 1px solid; border-style: none none none none;"><TR valign=top align=right>';
+    m += "<TD align=left width=85 style='background-color:"+Colors.OverviewDarkRow+";'><INPUT id=showReq type=checkbox " + (t.showReq?'CHECKED ':'') +">Show missing req.</td>";
     for(i=0; i<Cities.numCities; i++) {
-      m += "<TD width=79 style='background:#F0F0F0'><B>"+ Cities.cities[i].name.substring(0,11) +"</b><BR>"+ coordLink(Cities.cities[i].x, Cities.cities[i].y) +"<BR></td>";
+      m += "<TD width=79 style='background-color:"+Colors.OverviewDarkRow+"'><B>"+ Cities.cities[i].name.substring(0,11) +"</b><BR>"+ coordLink(Cities.cities[i].x, Cities.cities[i].y) +"<BR></td>";
     }
-    m+='<TR valign=top align=right><TD width=85 style="background:#F0F0F0">Building</td>';	
+    m+='<TR valign=top align=right><TD width=85 style="background-color:'+Colors.OverviewDarkRow+';">Building</td>';	
     for(i=0; i<Seed.cities.length; i++) {
     	city = 'city'+Seed.cities[i][0];
     	m+='<TD width=79 style="background:#FFFFFF">';
@@ -4610,7 +4722,7 @@ Tabs.OverView = {
     	m+='</td>';	
     }
     m+='</tr>';
-    m+='<TR valign=top align=right><TD width=85 style="background:#F0F0F0">Researching</td>';	
+    m+='<TR valign=top align=right><TD width=85 style="background-color:'+Colors.OverviewDarkRow+';">Researching</td>';	
     for(i=0; i<Seed.cities.length; i++) {
     	city = 'city'+Seed.cities[i][0];
     	m+='<TD width=79 style="background:#FFFFFF">';
@@ -4622,7 +4734,7 @@ Tabs.OverView = {
     	m+='</td>';		
     }
     m+='</tr><TR><TD colspan="8" style="background: #FFFFFF; border:none">&nbsp;</td></tr>';
-    m+='<TR valign=top align=right><TD width=85 style="background:#F0F0F0">'+uW.fortcost['frt53'][0]+'</td>';
+    m+='<TR valign=top align=right><TD width=85 style="background-color:'+Colors.OverviewDarkRow+';">'+uW.fortcost['frt53'][0]+'</td>';
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
@@ -4639,7 +4751,7 @@ Tabs.OverView = {
     			m+='</td>';
     		} 		
     }
-    m+='</tr><TR valign=top align=right><TD width=85 style="background:#F0F0F0">'+uW.fortcost['frt55'][0]+'</td>';
+    m+='</tr><TR valign=top align=right><TD width=85 style="background-color:'+Colors.OverviewDarkRow+';">'+uW.fortcost['frt55'][0]+'</td>';
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
@@ -4657,7 +4769,7 @@ Tabs.OverView = {
     			m+='</td>';
     	} 	
     }
-    m+='<TR valign=top align=right><TD width=85 style="background:#F0F0F0">Wall defences</td>';
+    m+='<TR valign=top align=right><TD width=85 style="background-color:'+Colors.OverviewDarkRow+';">Wall defences</td>';
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
@@ -4670,7 +4782,7 @@ Tabs.OverView = {
     	m+= build+'</font>';
     	m+= '/' + max +'</td>';
     }
-    m+='</tr><TR valign=top align=right><TD width=85 style="background:#F0F0F0">'+uW.fortcost['frt60'][0]+'</td>';
+    m+='</tr><TR valign=top align=right><TD width=85 style="background-color:'+Colors.OverviewDarkRow+';">'+uW.fortcost['frt60'][0]+'</td>';
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
@@ -4687,7 +4799,7 @@ Tabs.OverView = {
     			m+='</td>';
     	} 	
     }
-    m+='</tr><TR valign=top align=right><TD width=85 style="background:#F0F0F0">'+uW.fortcost['frt61'][0]+'</td>';
+    m+='</tr><TR valign=top align=right><TD width=85 style="background-color:'+Colors.OverviewDarkRow+';">'+uW.fortcost['frt61'][0]+'</td>';
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
@@ -4703,7 +4815,7 @@ Tabs.OverView = {
     			m+='</td>';
     	} 	
     }
-    m+='</tr><TR valign=top align=right><TD style="background:#F0F0F0">'+uW.fortcost['frt62'][0]+'</td>';
+    m+='</tr><TR valign=top align=right><TD style="background-color:'+Colors.OverviewDarkRow+';">'+uW.fortcost['frt62'][0]+'</td>';
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
@@ -4720,7 +4832,7 @@ Tabs.OverView = {
     			m+='</td>';
     	} 	
     }
-    m+='<TR valign=top align=right><TD width=85 style="background:#F0F0F0">Field defences</td>';
+    m+='<TR valign=top align=right><TD width=85 style="background-color:'+Colors.OverviewDarkRow+';">Field defences</td>';
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
@@ -4734,7 +4846,7 @@ Tabs.OverView = {
     	m+= '/' + max +'</td>';
     }
     m+='</tr><TR><TD colspan="8" style="background: #FFFFFF; border:none">&nbsp;</td></tr>';
-    m+='<TR valign=top align=right><TD width=85 style="background:#F0F0F0">City space</td>';
+    m+='<TR valign=top align=right><TD width=85 style="background-color:'+Colors.OverviewDarkRow+';">City space</td>';
     
     for(i=0; i<Seed.cities.length; i++) {
     	var count=0;
@@ -4747,7 +4859,7 @@ Tabs.OverView = {
     	m+= count + '</font> (31)</td>';
     }
     m+='</tr>';
-    m+='<TR valign=top align=right><TD width=85 style="background:#F0F0F0">Field space</td>';
+    m+='<TR valign=top align=right><TD width=85 style="background-color:'+Colors.OverviewDarkRow+';">Field space</td>';
     
     for(i=0; i<Seed.cities.length; i++) {
     	var count=0;
@@ -4763,7 +4875,7 @@ Tabs.OverView = {
     }
     m+='</tr>';
     for (b=0;b<20;b++){
-    	m+='<TR valign=top align=right><TD width=85 style="background:#F0F0F0">'+uW.buildingcost['bdg' + b][0]+'</td>';
+    	m+='<TR valign=top align=right><TD width=85 style="background-color:'+Colors.OverviewDarkRow+';">'+uW.buildingcost['bdg' + b][0]+'</td>';
         for (c=0;c<Seed.cities.length;c++){
         	m+='<TD style="width:79px; max-width:79px; word-wrap: break-word; background:#FFFFFF">';
         		city= 'city'+Seed.cities[c][0];
@@ -4788,7 +4900,7 @@ Tabs.OverView = {
     m+='</tr><TR><TD colspan="8" style="background: #FFFFFF; border:none">&nbsp;</td></tr>';
     for(i=0; i<Cities.numCities; i++) {
     }
-    m+='<TR valign=top align=right><TD width=85 style="background:#F0F0F0">Guardians</td>';
+    m+='<TR valign=top align=right><TD width=85 style="background-color:'+Colors.OverviewDarkRow+';">Guardians</td>';
     for(i=0; i<Seed.cities.length; i++) {
      	for(g=0;g<Seed.guardian.length;g++) {
      		if (Seed.guardian[g]['cityId'] == Seed.cities[i][0] && Seed.guardian[g]['level']!=0) {
@@ -4921,17 +5033,17 @@ Tabs.OverView = {
       clearTimeout (t.displayTimer);	
       
 	  var u='<DIV class=ptstat>USEFULL LINKS</div><DIV id=ptLinks><TABLE align=center cellpadding=1 cellspacing=0><TR>';
-	  u+='<TD width="300px" style="background:#F0F0F0; border:none">Scripts</td><TD width="300px" style="background:#F0F0F0; border:none">Information sites</td></tr>';
-	  u+='<TR><TD width="300px" style="background:#F0F0F0; border:none"><a href="http://userscripts.org/scripts/show/103659" target="_blank">Power Tools (Koc Scripters)</a></td>';
-	  u+='<TD width="300px" style="background:#F0F0F0; border:none"><a href="http://koctools.com/index.php?pageid=servers" target="_blank">KOCTools</a></td></tr>';
-	  u+='<TR><TD width="100px" style="background:#F0F0F0; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/Home?tm=6" target="_blank">Power Tools WIKI</a></td>';
-	  u+='<TD width="300px" style="background:#F0F0F0; border:none"><a href="http://koc.dunno.com/index.sjs?f=ListServers" target="_blank">KOC Mapper</a></td></tr>';
-	  u+='<TR><TD width="100px" style="background:#F0F0F0; border:none"><a href="http://userscripts.org/scripts/show/101052" target="_blank">Power Bot (Koc Scripters)</a></td>';
-	  u+='<TD width="300px" style="background:#F0F0F0; border:none"><a href="http://kocmon.com/" target="_blank">KoC Monitor</a></td></tr>';
-	  u+='<TR><TD width="100px" style="background:#F0F0F0; border:none"><a href="http://code.google.com/p/koc-power-bot/wiki/Home?tm=6" target="_blank">Power Bot WIKI</a></td>';
-	  u+='<TD width="300px" style="background:#F0F0F0; border:none"><a href="http://koc.wikia.com/wiki/" target="_blank">Koc Wikia</a></td></tr>';
-	  u+='<TR><TD width="100px" style="background:#F0F0F0; border:none"><a href="https://addons.mozilla.org/en/firefox/addon/greasemonkey/" target="_blank">Greasemonkey</a></td><TD width="100px" style="background:#F0F0F0; border:none"></td>';
-	  u+='<TR><TD width="100px" style="background:#F0F0F0; border:none"><a href="https://addons.mozilla.org/en/firefox/addon/scriptish/" target="_blank">Scriptish</a></td><TD width="100px" style="background:#F0F0F0; border:none"></td>';
+	  u+='<TD width="300px" ; border:none">Scripts</td><TD width="300px" ; border:none">Information sites</td></tr>';
+	  u+='<TR><TD width="300px" ; border:none"><a href="http://userscripts.org/scripts/show/103659" target="_blank">Power Tools (Koc Scripters)</a></td>';
+	  u+='<TD width="300px" ; border:none"><a href="http://koctools.com/index.php?pageid=servers" target="_blank">KOCTools</a></td></tr>';
+	  u+='<TR><TD width="100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/Home?tm=6" target="_blank">Power Tools WIKI</a></td>';
+	  u+='<TD width="300px" ; border:none"><a href="http://koc.dunno.com/index.sjs?f=ListServers" target="_blank">KOC Mapper</a></td></tr>';
+	  u+='<TR><TD width="100px" ; border:none"><a href="http://userscripts.org/scripts/show/101052" target="_blank">Power Bot (Koc Scripters)</a></td>';
+	  u+='<TD width="300px" ; border:none"><a href="http://kocmon.com/" target="_blank">KoC Monitor</a></td></tr>';
+	  u+='<TR><TD width="100px" ; border:none"><a href="http://code.google.com/p/koc-power-bot/wiki/Home?tm=6" target="_blank">Power Bot WIKI</a></td>';
+	  u+='<TD width="300px" ; border:none"><a href="http://koc.wikia.com/wiki/" target="_blank">Koc Wikia</a></td></tr>';
+	  u+='<TR><TD width="100px" ; border:none"><a href="https://addons.mozilla.org/en/firefox/addon/greasemonkey/" target="_blank">Greasemonkey</a></td><TD width="100px" ; border:none"></td>';
+	  u+='<TR><TD width="100px" ; border:none"><a href="https://addons.mozilla.org/en/firefox/addon/scriptish/" target="_blank">Scriptish</a></td><TD width="100px" ; border:none"></td>';
 	  u+='</tr></table></div><BR>';
 	  
 	  var crestreq = { 3:{1101:4, 1102:2, 1103:1},
@@ -4945,12 +5057,12 @@ Tabs.OverView = {
 	  for (city in crestreq){
 	  		deed = 'q800' + city;
         if (Seed.quests[deed] ==1) u+='<TD width=75px style="background:#CCFFCC">';
-        else  u+='<TD width=75px style="background:#F0F0F0">';
+        else  u+='<TD width=75px ">';
         u+= uW.g_js_strings.commonstr.city+' '+city+'</td>';
 	  		for (crest in crestreq[city]){
 	  			owned = Seed.items['i'+crest];
 	  			if (Seed.quests[deed] ==1) u+='<TD 200px style="background:#CCFFCC">';
-          else  u+='<TD 200px style="background:#F0F0F0">';
+          else  u+='<TD 200px ">';
 	  			if (owned == undefined) owned=0;
 	  			if (owned < crestreq[city][crest]) u+='<FONT color=red>'+owned+'/'+crestreq[city][crest]+'</font> '+uW.itemlist['i'+crest]['name']+'</td>';
 	  				else  u+='<FONT color=green>'+owned+'/'+crestreq[city][crest]+'</font> '+uW.itemlist['i'+crest]['name']+'</td>'; 
@@ -5012,8 +5124,8 @@ Tabs.OverView = {
 	      u += '<TR class=xtabLine><TD colspan=14 class=xtabLine></td></tr>';
 	      u += '</table></div><BR>';
 	      
-	      u += '<DIV class=ptstat>MISC INFO</div><TABLE><TD width="200px" style="background:#F0F0F0; border:none">KofC client version: '+ KOCversion +'</td>';
-	      u += '<TD style="background:#F0F0F0; border:none"><INPUT id=ptButDebug type=submit name="SEED" value="DEBUG"></td></table></div>';
+	      u += '<DIV class=ptstat>MISC INFO</div><TABLE><TD width="200px" style="background-color:#FFFFFF; border:none">KofC client version: '+ KOCversion +'</td>';
+	      u += '<TD style="background-color:#FFFFFF; border:none"><INPUT id=ptButDebug type=submit name="SEED" value="DEBUG"></td></table></div>';
       
       t.Overv.innerHTML = u;   
       document.getElementById('ptButDebug').addEventListener('click', function (){debugWin.doit()}, false);  
@@ -5190,8 +5302,8 @@ Tabs.OverView = {
           for (k in dat)
             ++totWilds;
         var castle = parseInt(Seed.buildings['city'+ Cities.cities[i].id].pos0[1]);
-        if(castle == 11) castle = 12;
-        if(castle == 12) castle = 14;
+       if(castle == 11) castle = 12;
+       else if(castle == 12) castle = 14;
         if (totWilds < castle)
           row[i] = '<SPAN class=boldRed><B>'+ totWilds +'/'+ castle +'</b></span>';
         else
@@ -5288,408 +5400,6 @@ Tabs.OverView = {
   },
 };
 
-
-
-
-
-/********************************* BUILDS TAB ************************************
-Tabs.Builds = {
-  tabOrder : 2,
-  tabLabel : 'Builds',
-  showReq : false,
-  	
-  init : function (div){
-    var t = Tabs.Builds;
-    t.cont=div;
-	},
-	
-	paint : function ()	{
-	var t = Tabs.Builds;
-	var wall=0;
-	var blacksmith=0;
-	var fletching=0;
-	var geometry = 0;
-	var metalalloys = 0;
-	var logging = 0;
-	var poisonededge = 0;
-	var WallSpace = {1:1000,
-				  2:3000,
-				  3:6000,
-				  4:10000,
-				  5:15000,
-				  6:21000,
-				  7:28000,
-				  8:36000,
-				  9:45000,
-				  10:55000,
-				  11:66000};
-	var FieldSpace = {1:13,
-				  2:16,
-				  3:19,
-				  4:22,
-				  5:25,
-				  6:28,
-				  7:31,
-				  8:34,
-				  9:37,
-				  10:40,
-				  11:40};
-				  		   
-	fertilizer = Seed.tech['tch1'];
-	logging = Seed.tech['tch2'];
-	stoneworking = Seed.tech['tch3'];
-	mining = Seed.tech['tch4'];
-	geometry = Seed.tech['tch5'];
-	eagleeyes = Seed.tech['tch6'];
-	poisonededge = Seed.tech['tch8'];
-	metalalloys = Seed.tech['tch9'];
-	featherweightpowder = Seed.tech['tch10'];
-	magicalmapping = Seed.tech['tch11'];
-	alloyhorseshoes = Seed.tech['tch12'];
-	fletching = Seed.tech['tch13'];
-	shrinkingpowder = Seed.tech['tch14'];
-	healingpotions = Seed.tech['tch15'];
-	giantsstrength = Seed.tech['tch16'];			  		       
-    
-    var m = '<DIV class=ptstat>Building and Research overview</div>';
-    m += "<DIV id=BuildsDiv style='font-size:12px'><TABLE class=ptBuilds border=1px cellpadding=5 cellspacing=0><TR valign=top align=right>";
-    m += "<TD align=left width=85><INPUT id=showReq type=checkbox " + (t.showReq?'CHECKED ':'') +">Show missing req.</td>";
-    for(i=0; i<Cities.numCities; i++) {
-      m += "<TD width=79><B>"+ Cities.cities[i].name.substring(0,11) +"</b><BR>"+ coordLink(Cities.cities[i].x, Cities.cities[i].y) +"<BR></td>";
-    }
-    m+='<TR valign=top align=right><TD width=85>Building</td>';	
-    for(i=0; i<Seed.cities.length; i++) {
-    	city = 'city'+Seed.cities[i][0];
-    	m+='<TD width=79>';
-    	if (Seed.queue_con[city][0] != undefined) {
-    		m+=uW.buildingcost['bdg' + Seed.queue_con[city][0][0]][0];
-    		m+=' ('+Seed.queue_con[city][0][1]+')';
-    		m+='<br>'+ timestr((Seed.queue_con[city][0][4] - unixTime()),true);
-    	}
-    	m+='</td>';	
-    }
-    m+='</tr>';
-    m+='<TR valign=top align=right><TD width=85>Researching</td>';	
-    for(i=0; i<Seed.cities.length; i++) {
-    	city = 'city'+Seed.cities[i][0];
-    	m+='<TD width=79>';
-    	if (Seed.queue_tch[city][0] != undefined) {
-    		m+=uW.techcost['tch' + Seed.queue_tch[city][0][0]][0];
-    		m+=' ('+Seed.queue_tch[city][0][1]+')';
-    		m+='<br>'+ timestr((Seed.queue_tch[city][0][3] - unixTime()),true);
-    	}
-    	m+='</td>';		
-    }
-    m+='</tr></table><BR><TABLE class=ptBuilds border=1px cellpadding=5 cellspacing=0>';
-    m+='<TR valign=top align=right><TD width=85>'+uW.fortcost['frt53'][0]+'</td>';
-    for (i=0;i<Seed.cities.length;i++){
-    	city = 'city'+Seed.cities[i][0];
-    	for (y in Seed.buildings[city]) {
-    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
-    		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
-    	}
-    	max = WallSpace[wall]/2/2 - parseInt(Seed.fortifications[city]["fort53"]) - parseInt(Seed.fortifications[city]["fort55"]);
-    	m+= '<TD width=79>' + Seed.fortifications[city]["fort53"];
-    	if (wall >=6 && blacksmith >=6 && fletching >=5 && max > 0) m+= '<br>Left: ' + max +'</td>';
-    	else if (t.showReq){
-   			if (wall < 6) m+= '<br><FONT COLOR= "CC0000">Wall: ' + wall + '(6)</font>';
-   			if (blacksmith < 6) m+= '<br><FONT COLOR= "CC0000">BlackS.: ' + blacksmith + '(6)</font>';
-   			if (fletching < 5) m+= '<br><FONT COLOR= "CC0000">Fletch.: ' + fletching + '(5)</font>';
-   			m+='</td>';
-   		} 		
-    }
-    m+='</tr><TR valign=top align=right><TD width=85>'+uW.fortcost['frt55'][0]+'</td>';
-    for (i=0;i<Seed.cities.length;i++){
-    	city = 'city'+Seed.cities[i][0];
-    	for (y in Seed.buildings[city]) {
-    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
-    		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
-    	}
-    	max = WallSpace[wall]/2/4 - parseInt(Seed.fortifications[city]["fort53"]) - parseInt(Seed.fortifications[city]["fort55"]);
-    	m+=  '<TD width=79>' +Seed.fortifications[city]["fort55"];
-    	if (wall >=8 && blacksmith >=8 && fletching >=7 && geometry>=7 && max > 0) m+= '<br>Left: ' + max+'</td>';
-    	else if (t.showReq){
-    			if (wall < 8) m+= '<br><FONT COLOR= "CC0000">Wall: ' + wall + '(8)</font>';
-    			if (blacksmith < 8) m+= '<br><FONT COLOR= "CC0000">BlackS.: ' + blacksmith + '(8)</font>';
-    			if (fletching < 7) m+= '<br><FONT COLOR= "CC0000">Fletch.: ' + fletching + '(7)</font>';
-    			if (geometry < 7) m+= '<br><FONT COLOR= "CC0000">Geomet.: ' + geometry + '(7)</font>';
-    			m+='</td>';
-    	} 	
-    }
-    m+='<TR valign=top align=right><TD width=85>Wall defences</td>';
-    for (i=0;i<Seed.cities.length;i++){
-    	city = 'city'+Seed.cities[i][0];
-    	for (y in Seed.buildings[city]) {
-    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
-    	}
-    	build = (parseInt(Seed.fortifications[city]["fort53"])*2)+ (parseInt(Seed.fortifications[city]["fort55"])*4);
-    	max = WallSpace[wall]/2;
-    	if (build < max) m+='<TD width=79><FONT COLOR= "CC0000">';
-    	else m+='<TD width=79><FONT COLOR= "669900">';
-    	m+= build+'</font>';
-    	m+= '/' + max +'</td>';
-    }
-    m+='</tr><TR valign=top align=right><TD width=85>'+uW.fortcost['frt60'][0]+'</td>';
-    for (i=0;i<Seed.cities.length;i++){
-    	city = 'city'+Seed.cities[i][0];
-    	for (y in Seed.buildings[city]) {
-    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
-    		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
-    	}
-    	max = WallSpace[wall]/2/4 - (parseInt(Seed.fortifications[city]["fort60"])*4) - (parseInt(Seed.fortifications[city]["fort61"])*1) - (parseInt(Seed.fortifications[city]["fort62"])*3);
-    	m+=  '<TD width=79>'+Seed.fortifications[city]["fort60"];
-    	if (wall >=4 && blacksmith >=4 && poisonededge>=4 && max>0) m+= '<br>Left: ' + max+'</td>';
-    	else if (t.showReq){
-    			if (wall < 4) m+= '<br><FONT COLOR= "CC0000">Wall: ' + wall + '(4)</font>';
-    			if (blacksmith < 4) m+= '<br><FONT COLOR= "CC0000">BlackS.: ' + blacksmith + '(4)</font>';
-    			if (poisonededge < 4) m+= '<br><FONT COLOR= "CC0000">Poison.: ' + poisonededge + '(4)</font>';
-    			m+='</td>';
-    	} 	
-    }
-    m+='</tr><TR valign=top align=right><TD width=85>'+uW.fortcost['frt61'][0]+'</td>';
-    for (i=0;i<Seed.cities.length;i++){
-    	city = 'city'+Seed.cities[i][0];
-    	for (y in Seed.buildings[city]) {
-    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
-    		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
-    	}
-    	max = WallSpace[wall]/2/1 - (parseInt(Seed.fortifications[city]["fort60"])*4) - (parseInt(Seed.fortifications[city]["fort61"])*1) - (parseInt(Seed.fortifications[city]["fort62"])*3);
-    	m+= '<TD width=79>'+Seed.fortifications[city]["fort61"];
-    	if (wall >=1 && metalalloys >=1 && max>0) m+= '<br>Left: ' + max+'</td>';
-    	else if (t.showReq){
-    			if (wall < 1) m+= '<br><FONT COLOR= "CC0000">Wall: ' + wall + '(1)</font>';
-    			if (metalalloys < 1) m+= '<br><FONT COLOR= "CC0000">Metal.: ' + metalalloys + '(1)</font>';
-    			m+='</td>';
-    	} 	
-    }
-    m+='</tr><TR valign=top align=right><TD>'+uW.fortcost['frt62'][0]+'</td>';
-    for (i=0;i<Seed.cities.length;i++){
-    	city = 'city'+Seed.cities[i][0];
-    	for (y in Seed.buildings[city]) {
-    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
-    		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
-    	}
-    	max = (WallSpace[wall]/2/3).toFixed(0) - (parseInt(Seed.fortifications[city]["fort60"])*4) - (parseInt(Seed.fortifications[city]["fort61"])*1) - (parseInt(Seed.fortifications[city]["fort62"])*3);
-    	m+=  '<TD width=79>'+Seed.fortifications[city]["fort62"];
-    	if (wall >=2 && blacksmith>=2 && logging>=2 && max>0) m+= '<br>Left: ' + max+'</td>';
-    	else if (t.showReq){
-    			if (wall < 2) m+= '<br><FONT COLOR= "CC0000">Wall: ' + wall + '(2)</font>';
-    			if (blacksmith < 2) m+= '<br><FONT COLOR= "CC0000">BlackS.: ' + blacksmith + '(2)</font>';
-    			if (logging < 2) m+= '<br><FONT COLOR= "CC0000">Logg.: ' + logging + '(2)</font>';
-    			m+='</td>';
-    	} 	
-    }
-    m+='<TR valign=top align=right><TD width=85>Field defences</td>';
-    for (i=0;i<Seed.cities.length;i++){
-    	city = 'city'+Seed.cities[i][0];
-    	for (y in Seed.buildings[city]) {
-    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
-    	}
-    	build = (parseInt(Seed.fortifications[city]["fort60"])*4)+ (parseInt(Seed.fortifications[city]["fort61"])*1) + (parseInt(Seed.fortifications[city]["fort62"])*3);
-    	max = WallSpace[wall]/2;
-    	if (build < max) m+='<TD width=79><FONT COLOR= "CC0000">';
-    	else m+='<TD width=79><FONT COLOR= "669900">';
-    	m+= build+'</font>';
-    	m+= '/' + max +'</td>';
-    }
-    m+='</tr></table><BR><TABLE class=ptBuilds border=1px cellpadding=5 cellspacing=0>';
-    
-    m+='<TR valign=top align=right><TD width=85>City space</td>';
-    
-    for(i=0; i<Seed.cities.length; i++) {
-    	var count=0;
-    	city = 'city'+Seed.cities[i][0];
-    	for (y in Seed.buildings[city]) {
-    		if (Seed.buildings[city][y][0] >=5 && Seed.buildings[city][y][0] <19) count++;
-    	}
-    	if (count == 31) m+='<TD width=79><FONT COLOR= "669900">';
-    	else m+='<TD width=79><FONT COLOR= "CC0000">';
-    	m+= count + '</font> (31)</td>';
-    }
-    m+='</tr>';
-    m+='<TR valign=top align=right><TD width=85>Field space</td>';
-    
-    for(i=0; i<Seed.cities.length; i++) {
-    	var count=0;
-    	var castle=0;
-    	city = 'city'+Seed.cities[i][0];
-    	for (y in Seed.buildings[city]) {
-    		if (Seed.buildings[city][y][0] == 0) castle = Seed.buildings[city][y][1];
-    		if (Seed.buildings[city][y][0] >=1 && Seed.buildings[city][y][0] <=4) count++;
-    	}
-    	if (count == FieldSpace[castle]) m+='<TD width=79><FONT COLOR= "669900">';
-    	else m+='<TD width=79><FONT COLOR= "CC0000">';
-    	m+= count + '</font> ('+FieldSpace[castle]+')</td>';
-    }
-    m+='</tr>';
-    for (b=0;b<20;b++){
-    	m+='<TR valign=top align=right><TD width=85>'+uW.buildingcost['bdg' + b][0]+'</td>';
-	    for (c=0;c<Seed.cities.length;c++){
-	    	m+='<TD style="width:79px; max-width:79px; word-wrap: break-word;">';
-	    		city= 'city'+Seed.cities[c][0];
-	    		var count =0;
-	    		for (y in Seed.buildings[city]) {
-	    			if (Seed.buildings[city][y][0] == b) {
-	    				count++;
-	    				if (count > 1) m+=",";
-	    				if (Seed.buildings[city][y][1] >= 9) m+='<FONT COLOR= "669900">';
-	    				m+=Seed.buildings[city][y][1];
-	    				if (Seed.buildings[city][y][1] >= 9) m+='</font>';
-	    				
-	    			}
-	    		}
-	    		if (count == 0) {
-	    			m+='<FONT COLOR= "CC0000">0</font>';
-	    		}
-	    	m+='</td>';		
-	    }
-	    m+='</tr>';
-	} 
-	m+='</tr></table><BR><TABLE class=ptBuilds  border=1px cellpadding=5 cellspacing=0>';
-	for(i=0; i<Cities.numCities; i++) {
-	}
-	m+='<TR valign=top align=right><TD width=85>Guardians</td>';
-	for(i=0; i<Seed.cities.length; i++) {
-	 	for(g=0;g<Seed.guardian.length;g++) {
-	 		if (Seed.guardian[g]['cityId'] == Seed.cities[i][0] && Seed.guardian[g]['level']!=0) {
-	 			m += '<TD width=79>';
-	 			if (Seed.guardian[g]['level'] >=9) m+='<FONT COLOR= "669900">'; 
-	 			m+=Seed.guardian[g]['level']+"("+Seed.guardian[g]['type']+")</td>";
-	 			if (Seed.guardian[g]['level'] >=9) m+='</font>'; 
-	 		}
-	 		else {if (Seed.guardian[g]['cityId'] == Seed.cities[i][0] && Seed.guardian[g]['level']==0) m += '<TD width=79><FONT COLOR= "CC0000">0</font></td>'};
-		}
-	}
-	
-    m+='</tr></table><BR></table><BR><TABLE class=ptBuilds  border=1px cellpadding=2 cellspacing=0><TR valign=top align=left>';
-    for (i in uW.techcost) {
-    	m+='<TD border=1px style="width:150px;">'+uW.techcost[i][0]+'</td><TD align=center style="width:50px max-width:150px;">';
-    	if (Seed.tech[i] >=9) m+='<FONT COLOR= "669900">';
-    	if (Seed.tech[i] ==0) m+='<FONT COLOR= "CC0000">';
-    	m+=Seed.tech[i];
-    	if (Seed.tech[i] >=9 || Seed.tech[i] ==0) m+='</font>';
-    	if (t.showReq) {
-    		for(z=0; z<Seed.cities.length; z++) {
-	    		city = 'city'+Seed.cities[z][0];
-	    		for (y in Seed.buildings[city]) {
-	    			var farm,sawmill,quarry,mine,alchemylab,workshop,blacksmith,stable,storehouse,barracks = 0;
-	    			if (Seed.buildings[city][y][0] == 1 && Seed.buildings[city][y][0] > farm) farm = Seed.buildings[city][y][1]; 
-	    			if (Seed.buildings[city][y][0] == 2 && Seed.buildings[city][y][0] > sawmill) sawmill = Seed.buildings[city][y][1];
-	    			if (Seed.buildings[city][y][0] == 3 && Seed.buildings[city][y][0] > quarry) quarry = Seed.buildings[city][y][1]; 
-	    			if (Seed.buildings[city][y][0] == 4 && Seed.buildings[city][y][0] > mine) mine = Seed.buildings[city][y][1];
-	    			if (Seed.buildings[city][y][0] == 9) storehouse = Seed.buildings[city][y][1];
-	    			if (Seed.buildings[city][y][0] == 11) alchemylab = Seed.buildings[city][y][1];
-	    			if (Seed.buildings[city][y][0] == 13 && Seed.buildings[city][y][0] > barracks) barracks = Seed.buildings[city][y][1];
-	    			if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1];
-	    			if (Seed.buildings[city][y][0] == 16) workshop = Seed.buildings[city][y][1];
-	    			if (Seed.buildings[city][y][0] == 17) stable = Seed.buildings[city][y][1];
-	    		}
-	    	}
-	    	m+='<FONT COLOR= "CC0000">';
-    		switch (i) {
-    			case '1': 
-    				if (alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab+ '('+ (Seed.tech[i]) +')';
-    				if (farm < Seed.tech[i]) m+='<BR>Farm '+ farm +'('+ (Seed.tech[i]+1) +')</td>';
-    				break;
-    			case '2': 
-    				if (alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab+ '('+ (Seed.tech[i]) +')';
-    				if (sawmill < Seed.tech[i]) m+='<BR>Sawmill '+ sawmill +'('+ (Seed.tech[i]) +')';
-    				break;
-    			case '3': 
-    				if (alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab+ '('+ (Seed.tech[i]) +')';
-    				if (quarry < Seed.tech[i]) m+='<BR>Quarry '+ quarry +'('+ (Seed.tech[i]) +')</td>';
-    				break;
-    			case '4': 
-    				if (alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab+ '('+ (Seed.tech[i]) +')';
-    				if (mine < Seed.tech[i]) m+='<BR>Mine '+ mine +'('+ (Seed.tech[i]) +')';
-    				break;
-    			case '5': 
-    				if (alchemylab < 3) m+='<BR>Alchemy Lab '+ alchemylab +'(3)';
-    				if (alchemylab >= 3 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
-    				if (workshop < Seed.tech[i]) m+='<BR>Workshop ' + workshop +'('+ (Seed.tech[i]) +')';
-    				if (stoneworking < 2) m+='<BR>Stoneworking '+ stoneworking +'(2)';
-    				break;
-    			case '6': 
-    				if (alchemylab < 3) m+='<BR>Alchemy Lab '+ alchemylab +'(3)';
-    				if (alchemylab >= 3 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
-    				break;	
-    			case '8': 
-    				if (alchemylab < 2) m+='<BR>Alchemy Lab '+ alchemylab +'(2)';
-    				if (alchemylab >= 2 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
-    				if (barracks < 2) m+='<BR>Barracks '+ barracks +'(2)';
-    				break;		
-    			case '9': 
-    				if (alchemylab < 3) m+='<BR>Alchemy Lab '+ alchemylab +'(3)';
-    				if (alchemylab >= 3 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
-    				if (blacksmith < Seed.tech[i]) m+='<BR>Blacksmith '+ blacksmith+'('+ (Seed.tech[i]) +')';
-    				if (mining < Seed.tech[i]) m+='<BR>Mining '+ mining +'('+ (Seed.tech[i]) +')';
-    				break;
-    			case '10': 
-    				if (alchemylab < 4) m+='<BR>Alchemy Lab '+ alchemylab +'(4)';
-    				if (alchemylab >= 4 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
-    				break;
-    			case '11': 
-    				if (alchemylab < 4) m+='<BR>Alchemy Lab '+ alchemylab +'(4)';
-    				if (alchemylab >= 4 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
-    				break;
-    			case '12': 
-    				if (alchemylab < 5) m+='<BR>Alchemy Lab '+ alchemylab +'(5)';
-    				if (alchemylab >= 5 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
-    				if (stable < Seed.tech[i]) m+='<BR>Stable '+ stable +'('+ (Seed.tech[i]+1) +')';
-    				if (metalalloys < Seed.tech[i]) m+='<BR>Metal Alloys '+ metalalloys +'('+ (Seed.tech[i]+1) +')';
-    				break;
-    			case '13': 
-    				if (alchemylab < 4) m+='<BR>Alchemy Lab '+ alchemylab +'(4)';
-    				if (alchemylab >= 4 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
-    				if (logging < 4) m+='<BR>Logging '+ logging +'(4)';
-    				break;
-    			case '14': 
-    				if (alchemylab < 6) m+='<BR>Alchemy Lab '+ alchemylab +'(6)';
-    				if (alchemylab >= 6 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
-    				if (storehouse < Seed.tech[i]) m+='<BR>Storehouse '+ storehouse +'('+ (Seed.tech[i]) +')';
-    				if (logging < 3) m+='<BR>Logging '+ logging+'(3)';
-    				break;
-    			case '15': 
-    				if (alchemylab < 6) m+='<BR>Alchemy Lab '+ alchemylab +'(6)';
-    				if (alchemylab >= 6 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
-    				if (featherweightpowder  < 3) m+='<BR>Featherweight Powder  '+ featherweightpowder +'(3)';
-    				break;
-    			case '16': 
-    				if (alchemylab < 5) m+='<BR>Alchemy Lab '+ alchemylab +'(5)';
-    				if (alchemylab >= 5 && alchemylab < Seed.tech[i]) m+='<BR>Alchemy Lab '+ alchemylab +'('+ (Seed.tech[i]) +')';
-    				if (logging  < 5) m+='<BR>Logging '+ logging +'(5)';
-    				if (geometry  < 2) m+='<BR>Geometry  '+ geometry +'(2)';
-    				break;
-    		}
-    		m+='</font>';
-    	}
-    	m+='</td></tr>';
-    }	
-    m+='</table></div>';
-    
-    t.cont.style.maxHeight = '750px';
-    t.cont.style.overflowY = 'scroll';
-    t.cont.innerHTML = m;
-    
-    document.getElementById('showReq').addEventListener ('change', function (){
-    	t.showReq = document.getElementById('showReq').checked;
-    	t.paint();
-    },false);	
-    
-    t.displayTimer = setTimeout (t.paint, 1000);  
-  },
-
- 
-  show : function (){
-  var t = Tabs.Builds;
-  t.paint();
-  },
-
-  hide : function (){
-  },
-};
-
-*/
 
 /********************************* Messages Tab *************************************/
 Tabs.msg = {
@@ -8067,6 +7777,21 @@ function readOptions (){
   }
 }
 
+function saveColors (){
+  var serverID = GetServerId();
+  GM_setValue ('Colors', JSON2.stringify(Colors));
+}
+
+function readColors (){
+  var serverID = GetServerId();
+  s = GM_getValue ('Colors');
+  if (s != null){
+    opts = JSON2.parse (s);
+    for (k in opts)
+      Colors[k] = opts[k];
+  }
+}
+
 
 /***
 ***/
@@ -9048,6 +8773,18 @@ t.state = null;
   },
 };
 
+function reloadKOC (){
+  var serverId = GetServerId();
+  if(serverId == '??') window.location.reload(true);
+  var goto = 'http://apps.facebook.com/kingdomsofcamelot/?s='+serverId;
+  var t = '<FORM target="_top" action="'+ goto +'" method=post><INPUT id=xxpbButReload type=submit value=RELOAD><INPUT type=hidden name=s value="'+ serverId +'"</form>';
+  var e = document.createElement ('div');
+  e.innerHTML = t;
+  document.body.appendChild (e);
+  setTimeout (function (){document.getElementById('xxpbButReload').click();}, 0);
+}
+
+
 function getAllianceLeaders (){
     var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
     new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetLeaders.php" + unsafeWindow.g_ajaxsuffix, {
@@ -9058,9 +8795,8 @@ function getAllianceLeaders (){
 		 rslt = eval("(" + rslt.responseText + ")");
 		 if (rslt.officers) {
 			 Options.AllianceLeaders = [];
-       for (add in rslt.officers) {
-          Options.AllianceLeaders.push(rslt.officers[add]['userId']);
-       }
+      		 for (add in rslt.officers) Options.AllianceLeaders.push(rslt.officers[add]['userId']);
+       
      } 
      else {
 			  setTimeout(function(){getAllianceLeaders;}, 1500);
