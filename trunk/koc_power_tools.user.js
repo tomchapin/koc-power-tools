@@ -525,7 +525,7 @@ var ChatStuff = {
   
   e_iconClicked : function (name){
     var e = document.getElementById('mod_comm_input');
-    name = name.replace(/????/g,"'");
+    name = name.replace(/°°/g,"'");
     e.value = '@'+ name +' ';
   },
 
@@ -581,7 +581,7 @@ var ChatStuff = {
            	       
      var m = /(Lord|Lady) (.*?)</im.exec(msg);
      if (m != null)
-       m[2] = m[2].replace(/\'/g,"????");
+       m[2] = m[2].replace(/\'/g,"°°");
        msg = msg.replace (/<img (.*?>)/img, '<A onclick=\"ptChatIconClicked(\''+ m[2] +'\')\"><img class=\"ptChatIcon\" $1</a>');
      
      if (whisp.indexOf('whispers to you') >= 0 && Options.enableWhisperAlert) {
