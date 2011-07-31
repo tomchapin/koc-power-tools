@@ -517,7 +517,7 @@ var ChatStuff = {
     t.chatDivContentFunc = new CalterUwFunc ('Chat.chatDivContent', [['return e.join("");', 'var msg = e.join("");\n msg=chatDivContent_hook(msg);\n return msg;']]);
     uW.chatDivContent_hook = t.chatDivContentHook;
     uW.ptChatIconClicked = t.e_iconClicked;
-    uW.ptChatReportClicked = Tabs.msg.getReportBody;
+    uW.ptChatReportClicked = t.e_getReportBody;
     t.setEnable (Options.chatEnhance);
    
    setInterval ( function(){
@@ -542,7 +542,28 @@ var ChatStuff = {
     name = name.replace(/°°/g,"'");
     e.value = '@'+ name +' ';
   },
-
+ e_getReportBody : function(ID,side,TileId){
+    var t = ChatStuff; 
+    var params = uW.Object.clone(uW.g_ajaxparams);
+    params.pf=0;
+    params.rid=ID;
+    params.side=side;
+     
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/fetchReport.php" + uW.g_ajaxsuffix, {
+      method: "post",
+      parameters: params,
+      onSuccess: function (rslt) {
+		  if (rslt.ok == false) {
+			side = side+1;
+			t.e_getReportBody(ID,side,TileId);
+		  } else {
+          	Tabs.msg.showReportBody(rslt,TileId);
+		}
+      },
+      onFailure: function () {
+		  },
+    }, false);
+  },
 // "Report No: 5867445"  --->  see uW.modal_alliance_report_view()
       
  chatDivContentHook : function (msg){
@@ -597,7 +618,7 @@ var ChatStuff = {
 		element_class = 'ptChatScripter';
 	}
        msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
-		msg = msg.replace (/(\bReport\sNo\:\s([0-9]+))/g, '<a onclick=\'ptChatReportClicked($2,1)\'>$1</a>');
+		msg = msg.replace (/(\bReport\sNo\:\s([0-9]+))/g, '<a onclick=\'ptChatReportClicked($2,0,51)\'>$1</a>');
      var m = /(Lord|Lady) (.*?)</im.exec(msg);
      if (m != null)
        m[2] = m[2].replace(/\'/g,"°°");
@@ -5627,7 +5648,7 @@ Tabs.msg = {
   	m+='<TABLE class=ptTab>';
   	if (TileId < 51) m+='<TD><FONT size="3px">Wild Lvl.'+ rslt['tileLevel'] +'</font></td>';
   	if (rslt['conquered']==1) m+='<TD><FONT color="#CC0000" size="3px">Conquered</font></td></tr>';
-
+alert(rslt['winner']);
   	if (rslt['winner']==1) m+='<TR><TD><FONT color="#CC0000" size="3px">Defeat</font></td></tr><TR><TD></TD></TR><TR><TD></TD></TR><TR><TD></TD></TR></table>';
   	if (rslt['winner']==0) m+='<TR><TD><FONT color="#66CC33" size="3px">Victory</font></td></tr><TR><TD></TD></TR><TR><TD></TD></TR><TR><TD></TD></TR></table>';
   	
