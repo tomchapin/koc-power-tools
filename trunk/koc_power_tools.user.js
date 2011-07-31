@@ -592,8 +592,10 @@ var ChatStuff = {
     }
 	IsMe = false;
 	if (scripters.indexOf(uW.tvuid) >= 0 && suid.substr(0, 3)=="div") IsMe = true;
-	if (scripters.indexOf(suid) >= 0 || IsMe) element_class = 'ptChatScripter';
-	
+	if (scripters.indexOf(suid) >= 0 || IsMe) {
+		msg = msg.replace (/\bhttp\:\/\/[-a-z].*jpg/i, 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAIAAABLixI0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAASYSURBVEhLlVRvUFRVFL9vd3nP3WWX3W0Q2EhdAjOhwBybzEJNoQgUkMkx0QqnSesDNvYhBnQYnXQmacrKqclpkmGmETHHwAmFmpRkJChrGRJYVBZYZEVRlt237L7/nfveYwEzms6H9+5975zf+Z3fuedq0X+ZIdqENDqSoniOndtXO/fvN8sPdUxE6ZOXT5ri8/NyXX/8Oof/XFg5r719uqN3Q0k5bXzSp13g6mnLWJZ+69pfq9bnePwcMlqWpKaNjXgi6MS/5Sk5cOT49z8Vbt91vkcfCgexGz2IBprSH0vqdLkRxEkIP6+cjSA8mFfBnoO1TZeKtr5+7po1xPCI0CGJR6QFUaZRt9Ma9/DGkgqzY9XwyDCyxiJvnwL3AF4Zr+529vUfPlrzwYk+v39CTSuGkSQgkYOtw8K5x8L4e2gY3fw9P8lQf+ok7DT31WhevQWAyquqy77pCdCT+C/UgoGmHEXGfU9EkjT9ZerPLCwA8tPBkrIvD9VcETlaklmoBgUoWwWUIJB0/xFR9XohZ6M7ZjFFkvlvHfi2uX8qQg4TGXkrIZHHZRKijAj1SnjtGyL8o0o3Ma9oi62PsJnNppffqKhruYm4O7uf11XmxZkNWpyckJmIsAAIdvUivjI/iSIpvNVQ0I1xSxJpNGGsKIqKfjrX7liStW1f7QU3SLMuRfpkx1r32CQXGkPMLcTcxk9uHAmgt+YOa12TumDo8yKZq4TiM0a5aHLZSzAaxP5jJ75uarekFXVd9+K2aqnKF/Vr0lPXfvhb8XLdVzvXRxTjBbG6dfDd461RrJc5XaHZ/JnKF173hrJTbZoNmSs8Aze6zh5GE06cByfH2iKB0Wk1Biqq+peBqh9cR865zAaqNHvxmdJnOF6WDBfOIXYCDV5CgcF3XsnRZK54ykJqdDotYsEDmi2mJNqDLI/Xcs+++NG1/7vOvXXOqvp22OavXApNBFMbyoMnejQxoTgvW0MH/L62eoc9Tu4Olx4fKs5cerChF6suCTgG+igECN7HhvFx8wUZRJpZXsh6wq6yk9CN+mNBOqCLyIFbLrDn9272jtNtPcO4TDiPktRcngWRdquZjNLSYa6wqhGJwscN7Q1lBfotVVgWpdGzzz2wlRJ2nUywRj/3uA0PoGx2m3nRfCsAwXrbp40tVz2IC7xfuDJuh6y9nFKxGbwgA1Aj0JnL3XuykluvQluxpb13qtujrpEIgvL4rCHkn2Rkf+ClYs2YIZAGMUhiOgdGLDFWPINIkEWESDk5QMBxl6lgHQWZOA9ToYLNnEeF69TQYge5X9B4QIGnBJ8E6I/NSKpMZIKRgZvGIgTgjGNqWrrXpiZc2JfX7HQTmz7qHr6rsgOCIrd9Xfrd2sqLXf3qbGupCC+VXkrBzusThBTziHJbOmKNC+NsbS4vAwdNccGXDC7QMT9mYfxDF//sxXSAtT4R9Tcqt6uKlbG11Nl/m0jeJLE+lT/+qcHTCygzTZFMNmJerORpMrCjk61101jP5hZd9rJIb/nn7TgLaOZGEYulHdqgu+PnaSxYGU3mYEgZxv9h8ygyHKSVgL8BxwEUOe4NZoMAAAAASUVORK5CYII=');
+		element_class = 'ptChatScripter';
+	}
        msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
            	       
      var m = /(Lord|Lady) (.*?)</im.exec(msg);
