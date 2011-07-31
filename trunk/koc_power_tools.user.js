@@ -6,7 +6,7 @@
 // @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110729a';
+var Version = '20110731a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -517,6 +517,7 @@ var ChatStuff = {
     t.chatDivContentFunc = new CalterUwFunc ('Chat.chatDivContent', [['return e.join("");', 'var msg = e.join("");\n msg=chatDivContent_hook(msg);\n return msg;']]);
     uW.chatDivContent_hook = t.chatDivContentHook;
     uW.ptChatIconClicked = t.e_iconClicked;
+    uW.ptChatReportClicked = t.e_displayreports;
     t.setEnable (Options.chatEnhance);
    
    setInterval ( function(){
@@ -541,6 +542,29 @@ var ChatStuff = {
     name = name.replace(/°°/g,"'");
     e.value = '@'+ name +' ';
   },
+  e_displayreports : function(rptid, side){
+	  //FIX ME
+  var params = uW.Object.clone(uW.g_ajaxparams);
+    params.rid = rptid;
+    params.side = side;
+  new MyAjaxRequest(uW.g_ajaxpath + "ajax/fetchReport.php" + uW.g_ajaxsuffix, {
+        method: "post",
+        parameters: params,
+        onSuccess: function (message) {
+            var rslt = eval("(" + message + ")");
+            alert(rslt);
+            if (rslt.ok == false) {
+                Modal.showAlert(printLocalError((rslt.error_code || null), (rslt.msg || null), (rslt.feedback || null)))
+            } else {
+				alert('ok');
+                var msghtml = new Array();
+                msghtml.push("<div class='reportdetail clearfix'><a  class='button20' onclick='loadPage_pagination(\"modal_report_list_pagination\",\"" + currpg + '","allianceReports",' + tpgs + ");return false;'><span>" + g_js_strings.commonstr.back + "</span></a></div>");
+                $("modal_alliance_reports_tablediv").innerHTML = getReportDisplay(args, rslt) + msghtml.join("")
+            }
+        },
+        onFailure: function () {}
+    })
+},
 
   
 // "Report No: 5867445"  --->  see uW.modal_alliance_report_view()
@@ -597,12 +621,11 @@ var ChatStuff = {
 		element_class = 'ptChatScripter';
 	}
        msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
-           	       
+		msg = msg.replace (/(\bReport\sNo\:\s([0-9]+))/g, '<a onclick=\'ptChatReportClicked($2,1)\'>$1</a>');
      var m = /(Lord|Lady) (.*?)</im.exec(msg);
      if (m != null)
        m[2] = m[2].replace(/\'/g,"°°");
        msg = msg.replace (/<img (.*?>)/img, '<A onclick=\"ptChatIconClicked(\''+ m[2] +'\')\"><img class=\"ptChatIcon\" $1</a>');
-     
      if (whisp.indexOf('whispers to you') >= 0 && Options.enableWhisperAlert) {
      	if (whisp.indexOf('says to the alliance') < 0) msg +='<span id="dummy"><iframe src="http://koc.god-like.info/doorbell.html" height="0" width="0"></iframe></span>';
      } 
@@ -616,7 +639,6 @@ var ChatStuff = {
      return msg;
    },
  }
-
 // useless :( ......
 /***/
 
@@ -655,27 +677,8 @@ RSLT:
 
   (string) errorMsg = Something has gone wrong! Please try again, or refresh if this message reappear
 ***/
-/***/
-function displayReport (rptid, side){
-  var params = uW.Object.clone(uW.g_ajaxparams);
-  params.rid = rptid;
-  params.side = side;
-  
-  new MyAjaxRequest(uW.g_ajaxpath + "ajax/fetchReport.php" + uW.g_ajaxsuffix, {
-    method: "post",
-    parameters: params,
-    onSuccess: function (rslt) {
-logit (inspect (rslt, 5, 1));      
-      if (notify)
-        notify (rslt.errorMsg);
-    },
-    onFailure: function () {
-      if (notify)
-        notify ('AJAX ERROR');
-    },
-  });
-} 
-/***/
+
+
 /*************** WILDS TAB *********************/
 
 var wildNames = {
