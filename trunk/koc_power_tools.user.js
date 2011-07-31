@@ -5648,7 +5648,6 @@ Tabs.msg = {
   	m+='<TABLE class=ptTab>';
   	if (TileId < 51) m+='<TD><FONT size="3px">Wild Lvl.'+ rslt['tileLevel'] +'</font></td>';
   	if (rslt['conquered']==1) m+='<TD><FONT color="#CC0000" size="3px">Conquered</font></td></tr>';
-alert(rslt['winner']);
   	if (rslt['winner']==1) m+='<TR><TD><FONT color="#CC0000" size="3px">Defeat</font></td></tr><TR><TD></TD></TR><TR><TD></TD></TR><TR><TD></TD></TR></table>';
   	if (rslt['winner']==0) m+='<TR><TD><FONT color="#66CC33" size="3px">Victory</font></td></tr><TR><TD></TD></TR><TR><TD></TD></TR><TR><TD></TD></TR></table>';
   	
