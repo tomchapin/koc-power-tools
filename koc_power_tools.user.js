@@ -517,9 +517,8 @@ var ChatStuff = {
     t.chatDivContentFunc = new CalterUwFunc ('Chat.chatDivContent', [['return e.join("");', 'var msg = e.join("");\n msg=chatDivContent_hook(msg);\n return msg;']]);
     uW.chatDivContent_hook = t.chatDivContentHook;
     uW.ptChatIconClicked = t.e_iconClicked;
-    uW.ptChatReportClicked = t.e_getReportBody;
+    uW.ptChatReportClicked = t.e_searchreports;
     t.setEnable (Options.chatEnhance);
-   
    setInterval ( function(){
    			if ( document.getElementById('comm_tabs').className == 'comm_tabs seltab1') document.getElementById("mod_comm_input").style.background = Colors.ChatGlobal;
    			else document.getElementById("mod_comm_input").style.background ="";
@@ -542,28 +541,120 @@ var ChatStuff = {
     name = name.replace(/°°/g,"'");
     e.value = '@'+ name +' ';
   },
- e_getReportBody : function(ID,side,TileId){
-    var t = ChatStuff; 
-    var params = uW.Object.clone(uW.g_ajaxparams);
-    params.pf=0;
-    params.rid=ID;
-    params.side=side;
-     
-    new MyAjaxRequest(uW.g_ajaxpath + "ajax/fetchReport.php" + uW.g_ajaxsuffix, {
-      method: "post",
-      parameters: params,
-      onSuccess: function (rslt) {
-		  if (rslt.ok == false) {
-			side = side+1;
-			t.e_getReportBody(ID,side,TileId);
-		  } else {
-          	Tabs.msg.showReportBody(rslt,TileId);
-		}
-      },
-      onFailure: function () {
-		  },
-    }, false);
-  },
+	e_getReport : function(ID,side,tileId){
+		var t = ChatStuff; 
+		var params = uW.Object.clone(uW.g_ajaxparams);
+		params.pf=0;
+		params.rid=ID;
+		params.side=side;
+		new MyAjaxRequest(uW.g_ajaxpath + "ajax/fetchReport.php" + uW.g_ajaxsuffix, {
+			method: "post",
+			parameters: params,
+			onSuccess: function (rslt) {
+				if (rslt.ok)
+				alert(titleId, rslt);
+					Tabs.msg.showReportBody(rslt, tileId);
+			},
+			onFailure: function () {
+			},
+		}, false);
+	},
+	e_searchreports : function(rpId) {
+		var t = ChatStuff; 
+		var totalPages = 0;
+		var fixrpId = '0r' + rpId;
+		var pageNum = 0;
+		var side = 0;
+		var player0N = 'Enemy';
+		var player0G = 'M';
+		var player1N;
+		var player1G;
+		var CreportStatus = 0;
+		var idvrpt = [];
+		//GET NUMBER OF PAGES
+		if (totalPages==0){
+			var params = uW.Object.clone(uW.g_ajaxparams);
+				params.pf=0;
+				params.group="a";
+				params.pageNo = 1;
+  		         
+				new MyAjaxRequest(uW.g_ajaxpath + "ajax/listReports.php" + uW.g_ajaxsuffix, {
+					method: "post",
+					parameters: params,
+					onSuccess: function (rslt) {
+						if (rslt.ok)
+							totalPages = parseInt(rslt['totalPages']);
+						},
+					onFailure: function () {
+					},
+				}, false);
+		};
+		//FIND REPORT
+		while (pageNum<=totalPages) {
+			var params = uW.Object.clone(uW.g_ajaxparams);
+			params.pf=0;
+			params.group="a";
+			params.pageNo = pageNum;
+			new MyAjaxRequest(uW.g_ajaxpath + "ajax/listReports.php" + uW.g_ajaxsuffix, {
+				method: "post",
+				parameters: params,
+				onSuccess: function (rslt) {
+						if (rslt.arReports[fixrpId]) {
+							idvrpt = rslt.arReports[fixrpId];
+							if (parseInt(idvrpt.side0PlayerId) != 0) {
+								player0N = rslt.arPlayerNames["p" + idvrpt.side0PlayerId];
+								player0G = rslt.arPlayerNames["g" + idvrpt.side0PlayerId];
+							}
+							if (parseInt(idvrpt.side1PlayerId) > 0)
+								player1N = rslt.arPlayerNames["p" + idvrpt.side1PlayerId];
+							if (parseInt(idvrpt.side1PlayerId) != 0)
+								player1G = rslt.arPlayerNames["g" + idvrpt.side1PlayerId];
+							if (parseInt(idvrpt.reportStatus) == 2)
+								CreportStatus = 1;
+							if (parseInt(idvrpt.side1AllianceId) == parseInt(uW.seed.allianceDiplomacies.allianceId)) {
+								side = 1;
+							} else { side = 0; };
+							t.e_getReport(idvrpt.reportId, side, idvrpt.side0TileType);
+//FIGURE THIS OUT
+//uW.modal_alliance_report_view(idvrpt.reportId, side, idvrpt.side0TileType, idvrpt.side0TileLevel, idvrpt.side0PlayerId, player0N, player0G, player1N, player1G, idvrpt.marchType, idvrpt.side0XCoord, idvrpt.side0YCoord, idvrpt.reportUnixTime, CreportStatus, idvrpt.side1XCoord, idvrpt.side1YCoord);
+							pageNum = totalPages;
+						}
+				},
+				onFailure: function () {
+					alert('something went wrong');
+				},
+			}, false);
+			pageNum++;
+		};
+		
+		//FAILURE CHECK
+		if (!idvrpt) alert('failed to locate report');
+		
+
+
+},
+/****************************************
+		unction modal_alliance_report_view(rptid, side, tiletype, tilelv, defid, defnm, defgen, atknm, atkgen, 
+		marchtype, xcoord, ycoord, timestamp, unread, atkxcoord, atkycoord) {
+  
+							uW.modal_alliance();
+							t.pause(4000);
+							uW.modal_alliance_changetab(4);
+								uW.ctrlPagination("modal_report_list_pagination", rslt.totalPages, "allianceReports", pageNum);
+		uW.modal_alliance_report_view(idvrpt.reportId, side, idvrpt.side0TileType, idvrpt.side0TileLevel, idvrpt.side0PlayerId, player0N, player0G, player1N, player1G, idvrpt.marchType, idvrpt.side0XCoord, idvrpt.side0YCoord, idvrpt.reportUnixTime, CreportStatus, idvrpt.side1XCoord, idvrpt.side1YCoord);
+		* 
+		* 
+		* return false;
+		* 
+		* 
+		* 
+		* 
+		* CmarchType
+		
+		);
+
+
+  ****/
 // "Report No: 5867445"  --->  see uW.modal_alliance_report_view()
       
  chatDivContentHook : function (msg){
@@ -618,7 +709,7 @@ var ChatStuff = {
 		element_class = 'ptChatScripter';
 	}
        msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
-		msg = msg.replace (/(\bReport\sNo\:\s([0-9]+))/g, '<a onclick=\'ptChatReportClicked($2,0,51)\'>$1</a>');
+		msg = msg.replace (/(\bReport\sNo\:\s([0-9]+))/g, '<a onclick=\'ptChatReportClicked($2)\'>$1</a>');
      var m = /(Lord|Lady) (.*?)</im.exec(msg);
      if (m != null)
        m[2] = m[2].replace(/\'/g,"°°");
