@@ -19,3 +19,12 @@
   * *A*: Many of my members have this issue, most of the time it is as simple as having a different Tools installed such as POC3.  If you have a different script installed that is similar to BOT or tools, sometimes a conflict occurs and neither script is visible.  Go to your toolbar tools, options, greasemonkey, manage userscripts, see what scripts are enabled.  Uninstall all scripts that pertain to KOC.  Install http://userscripts.org/scripts/source/103659.user.js and http://userscripts.org/scripts/source/101052.user.js  This may solve your issue.  
 
   * Other times when FF gets updated sometimes somthing goes haywire.  A last resort is to uninstall and reinstall FF5, GM, and the scripts.  This can be a pain at times as you will have to reset all your settings.  But odds are, this will fix your issue.
+
+
+----
+
+<wiki:comment>
+Following block is for the quick navigation links on the Bottom of the page.
+</wiki:comment>
+
+<p align="center"><a href="http://code.google.com/p/koc-power-tools/wiki/Tabs">Tabs</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToOverview">Overview</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToMarches">Marches</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToTrain">Train</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowtoInfo">Info</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToPlayers">Players</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToKnights">Knights</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToWilds">Wilds</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToOptions">Options</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToMessages">Messages</a> http://koc-power-bot.googlecode.com/files/0009_round%20cyan.png <a href="http://code.google.com/p/koc-power-tools/wiki/HowToAlliance">Alliance</a>
