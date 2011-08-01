@@ -551,8 +551,6 @@ var ChatStuff = {
 			method: "post",
 			parameters: params,
 			onSuccess: function (rslt) {
-				if (rslt.ok)
-				alert(titleId, rslt);
 					Tabs.msg.showReportBody(rslt, tileId);
 			},
 			onFailure: function () {
