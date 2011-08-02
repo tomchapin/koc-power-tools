@@ -5,6 +5,7 @@
 for a MS Power Point walk through with pictures click here: 
 
 http://koc-power-tools.googlecode.com/files/KOC%20Scripters%20player.ppsx
+
 Get the free Power point viewer here http://www.microsoft.com/download/en/details.aspx?id=6
 
 Click TOOLS, Click Players
