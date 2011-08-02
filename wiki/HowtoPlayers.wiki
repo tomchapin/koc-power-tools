@@ -2,6 +2,9 @@
 
 <h2>Players Tab</h2>
 
+for a walk through with pictures click here: 
+
+http://koc-power-tools.googlecode.com/files/KOC%20Scripters%20player.ppsx
 
 Click TOOLS, Click Players
 <h4>Searching a Player</h4>
