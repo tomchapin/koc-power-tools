@@ -517,7 +517,7 @@ var ChatStuff = {
     t.chatDivContentFunc = new CalterUwFunc ('Chat.chatDivContent', [['return e.join("");', 'var msg = e.join("");\n msg=chatDivContent_hook(msg);\n return msg;']]);
     uW.chatDivContent_hook = t.chatDivContentHook;
     uW.ptChatIconClicked = t.e_iconClicked;
-    uW.ptChatReportClicked = t.e_searchreports;
+    uW.ptChatReportClicked = Rpt.FindReport;
     t.setEnable (Options.chatEnhance);
    setInterval ( function(){
    			if ( document.getElementById('comm_tabs').className == 'comm_tabs seltab1') document.getElementById("mod_comm_input").style.background = Colors.ChatGlobal;
@@ -541,120 +541,10 @@ var ChatStuff = {
     name = name.replace(/°°/g,"'");
     e.value = '@'+ name +' ';
   },
-	e_getReport : function(ID,side,tileId){
-		var t = ChatStuff; 
-		var params = uW.Object.clone(uW.g_ajaxparams);
-		params.pf=0;
-		params.rid=ID;
-		params.side=side;
-		new MyAjaxRequest(uW.g_ajaxpath + "ajax/fetchReport.php" + uW.g_ajaxsuffix, {
-			method: "post",
-			parameters: params,
-			onSuccess: function (rslt) {
-					Tabs.msg.showReportBody(rslt, tileId);
-			},
-			onFailure: function () {
-			},
-		}, false);
-	},
-	e_searchreports : function(rpId) {
-		var t = ChatStuff; 
-		var totalPages = 0;
-		var fixrpId = '0r' + rpId;
-		var pageNum = 0;
-		var side = 0;
-		var player0N = 'Enemy';
-		var player0G = 'M';
-		var player1N;
-		var player1G;
-		var CreportStatus = 0;
-		var idvrpt = [];
-		//GET NUMBER OF PAGES
-		if (totalPages==0){
-			var params = uW.Object.clone(uW.g_ajaxparams);
-				params.pf=0;
-				params.group="a";
-				params.pageNo = 1;
-  		         
-				new MyAjaxRequest(uW.g_ajaxpath + "ajax/listReports.php" + uW.g_ajaxsuffix, {
-					method: "post",
-					parameters: params,
-					onSuccess: function (rslt) {
-						if (rslt.ok)
-							totalPages = parseInt(rslt['totalPages']);
-						},
-					onFailure: function () {
-					},
-				}, false);
-		};
-		//FIND REPORT
-		while (pageNum<=totalPages) {
-			var params = uW.Object.clone(uW.g_ajaxparams);
-			params.pf=0;
-			params.group="a";
-			params.pageNo = pageNum;
-			new MyAjaxRequest(uW.g_ajaxpath + "ajax/listReports.php" + uW.g_ajaxsuffix, {
-				method: "post",
-				parameters: params,
-				onSuccess: function (rslt) {
-						if (rslt.arReports[fixrpId]) {
-							idvrpt = rslt.arReports[fixrpId];
-							if (parseInt(idvrpt.side0PlayerId) != 0) {
-								player0N = rslt.arPlayerNames["p" + idvrpt.side0PlayerId];
-								player0G = rslt.arPlayerNames["g" + idvrpt.side0PlayerId];
-							}
-							if (parseInt(idvrpt.side1PlayerId) > 0)
-								player1N = rslt.arPlayerNames["p" + idvrpt.side1PlayerId];
-							if (parseInt(idvrpt.side1PlayerId) != 0)
-								player1G = rslt.arPlayerNames["g" + idvrpt.side1PlayerId];
-							if (parseInt(idvrpt.reportStatus) == 2)
-								CreportStatus = 1;
-							if (parseInt(idvrpt.side1AllianceId) == parseInt(uW.seed.allianceDiplomacies.allianceId)) {
-								side = 1;
-							} else { side = 0; };
-							t.e_getReport(idvrpt.reportId, side, idvrpt.side0TileType);
-//FIGURE THIS OUT
-//uW.modal_alliance_report_view(idvrpt.reportId, side, idvrpt.side0TileType, idvrpt.side0TileLevel, idvrpt.side0PlayerId, player0N, player0G, player1N, player1G, idvrpt.marchType, idvrpt.side0XCoord, idvrpt.side0YCoord, idvrpt.reportUnixTime, CreportStatus, idvrpt.side1XCoord, idvrpt.side1YCoord);
-							pageNum = totalPages;
-						}
-				},
-				onFailure: function () {
-					alert('something went wrong');
-				},
-			}, false);
-			pageNum++;
-		};
-		
-		//FAILURE CHECK
-		if (!idvrpt) alert('failed to locate report');
-		
 
 
-},
-/****************************************
-		unction modal_alliance_report_view(rptid, side, tiletype, tilelv, defid, defnm, defgen, atknm, atkgen, 
-		marchtype, xcoord, ycoord, timestamp, unread, atkxcoord, atkycoord) {
-  
-							uW.modal_alliance();
-							t.pause(4000);
-							uW.modal_alliance_changetab(4);
-								uW.ctrlPagination("modal_report_list_pagination", rslt.totalPages, "allianceReports", pageNum);
-		uW.modal_alliance_report_view(idvrpt.reportId, side, idvrpt.side0TileType, idvrpt.side0TileLevel, idvrpt.side0PlayerId, player0N, player0G, player1N, player1G, idvrpt.marchType, idvrpt.side0XCoord, idvrpt.side0YCoord, idvrpt.reportUnixTime, CreportStatus, idvrpt.side1XCoord, idvrpt.side1YCoord);
-		* 
-		* 
-		* return false;
-		* 
-		* 
-		* 
-		* 
-		* CmarchType
-		
-		);
 
 
-  ****/
-// "Report No: 5867445"  --->  see uW.modal_alliance_report_view()
-      
  chatDivContentHook : function (msg){
        var t = ChatStuff; 
        var element_class = '';
@@ -707,7 +597,7 @@ var ChatStuff = {
 		element_class = 'ptChatScripter';
 	}
        msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
-		msg = msg.replace (/(\bReport\sNo\:\s([0-9]+))/g, '<a onclick=\'ptChatReportClicked($2)\'>$1</a>');
+		msg = msg.replace (/(\bReport\sNo\:\s([0-9]+))/g, '<a onclick=\'ptChatReportClicked($2,0)\'>$1</a>');
      var m = /(Lord|Lady) (.*?)</im.exec(msg);
      if (m != null)
        m[2] = m[2].replace(/\'/g,"°°");
@@ -725,45 +615,449 @@ var ChatStuff = {
      return msg;
    },
  }
-// useless :( ......
-/***/
 
-/***
-RSLT:
-  (string) s0Kid = 57526
-  (string) s1Kid = 35216
-  (string) s1KLv = 1
-  (number) s0KCombatLv = 0
-  (string) s1KCombatLv = Higher
-  (object) fght = [object Object]
-    (object) s1 = [object Object]
-      (array) u2 = 89000,89000
-        (string) 0 = 89000
-        (number) 1 = 89000
+  
+var Rpt = {
+	
 
-      (array) u9 = 1000,1000
-        (string) 0 = 1000
-        (number) 1 = 1000
+	
+	
+	FindReport : function(rpId, pageNum) {
+		var t = Rpt; 
+		var fixrpId = '0r' + rpId;
+		var params = uW.Object.clone(uW.g_ajaxparams);
+			params.pf=0;
+			params.group="a";
+			params.pageNo = pageNum;
+			new MyAjaxRequest(uW.g_ajaxpath + "ajax/listReports.php" + uW.g_ajaxsuffix, {
+				method: "post",
+				parameters: params,
+				onSuccess: function (rslt) {
+					if (rslt.ok) {
+						if(parseInt(pageNum) >= parseInt(rslt['totalPages'])) { 
+							alert('could not locate report'); 
+						};
+						
+						if(rslt.arReports[fixrpId]) {
+							t.GetReport(rpId, rslt.arReports[fixrpId]);
+						} else {
+							pageNum = parseInt(pageNum+1);
+							t.FindReport(rpId, pageNum);
+						};
+					}
+				},
+				onFailure: function () {
+					alert('kabam is having issues');
+				},
+			}, false);
+	},
 
 
-  (number) rnds = 3
-  (number) winner = 1
-  (number) wall = 100
-  (number) s0atkBoost = 0
-  (number) s0defBoost = 0
-  (number) s1atkBoost = 0
-  (number) s1defBoost = 0.2
-  (boolean) conquered = false
-  (array) loot = 111139,763000,643000,78000,138000
-    (number) 0 = 111139
-    (number) 1 = 763000
-    (number) 2 = 643000
-    (number) 3 = 78000
-    (number) 4 = 138000
+	GetReport: function(rpId, rpt){
+		var t = Rpt;
+		var params = uW.Object.clone(uW.g_ajaxparams);
+		if (parseInt(rpt.side1AllianceId) == parseInt(uW.seed.allianceDiplomacies.allianceId)) {
+			params.side = 1;
+		} else {
+			params.side = 0;
+		}
+		params.pf=0;
+		params.rid=rpId;
+			new MyAjaxRequest(uW.g_ajaxpath + "ajax/fetchReport.php" + uW.g_ajaxsuffix, {
+				method: "post",
+				parameters: params,
+				onSuccess: function (rslt) {
+					t.ReportPopup(rslt, rpt, rpId);
+				},
+				onFailure: function (rslt) {
+					alert('found report but kabam would not let me see it');
+					},
+			}, false);
+	},
+	//ripped off from anime tools
+	ReportPopup: function (rslt, rpt, reportId) {
+		var t = Rpt;
+		var popReport = null;
+		//need the info from the list query
+		var m = '';
+		var unitImg = [];
+		for (var i=1;i<13;i++)
+			unitImg[i] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_'+i+'_30.png></TD><TD>' + uW.unitcost['unt'+i][0];
+		unitImg[53] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_53_30.png></TD><TD>Crossbows';
+		unitImg[55] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_55_30.png></TD><TD>Trebuchet';
+		unitImg[60] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_60_30.png></TD><TD>Trap';
+		unitImg[61] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_61_30.png></TD><TD>Caltrops';
+		unitImg[62] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_62_30.png></TD><TD>Spiked Barrier';
+		goldImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/gold_30.png></TD><TD>Gold';
+		foodImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/food_30.png></TD><TD>Food';
+		woodImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/wood_30.png></TD><TD>Wood';
+		stoneImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/stone_30.png></TD><TD>Stone';
+		oreImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/iron_30.png></TD><TD>Ore';
 
-  (string) errorMsg = Something has gone wrong! Please try again, or refresh if this message reappear
-***/
+		function buildHeader () {
+			var h='<TABLE class=ptTab width=100%>';
+			h+='<TR valign=top><TD align=left width=10%><B>';
+			if (rpt.marchName == 'Anti-Scout' || rpt.marchName == 'Scout')
+				h+=rpt.marchName+'ing at';
+			else if (rpt.marchName == 'Attack' || rpt.marchName == 'Defend')
+				h+='Battle at ';
+			else if (rpt.marchName == 'Reinforce' || rpt.marchName == 'Transport')
+				h+=rpt.marchName+' from<BR />'+rpt.marchName+' to</B>';
 
+			if (rpt.side0TileTypeText == 'Barb')
+				h+=' Barbarian Camp Level ' + rpt.side0TileLevel;
+			else if (rpt.side0TileTypeText != 'City')
+				h+=' '+rpt.side0TileTypeText+' Level '+ rpt.side0TileLevel+' ';
+			h+='</B></TD>';
+
+			if (rpt.marchName == 'Reinforce' || rpt.marchName == 'Transport') {
+				h+='<TD align=left width=1%>';
+				if (Seed.player.name != rpt.side1Name)
+					h+=rpt.side1Name;
+				if (Seed.player.name != rpt.side0Name)
+					h+='<BR />'+rpt.side0Name;
+				h+='</TD>';
+			}
+			h+='<TD align=left width=5%>';
+
+			if (rpt.marchName == 'Reinforce' || rpt.marchName == 'Transport')
+				h+='(<A onclick="ptGotoMap('+ rpt.side1XCoord +','+ rpt.side1YCoord +')">'+ rpt.side1XCoord +','+ rpt.side1YCoord +'</a>)<BR />';
+			h+='(<A onclick="ptGotoMap('+ rpt.side0XCoord +','+ rpt.side0YCoord +')">'+ rpt.side0XCoord +','+ rpt.side0YCoord +'</a>)</TD>';
+
+			if (rpt.side0TileTypeText != 'City' && rpt.side0TileTypeText != 'Barb' && rpt.marchName == 'Attack') {
+				if (rslt['conquered']==1)
+					h+='<TD><FONT color="#CC0000"><B>Conquered</B></font></td>';
+				else if (rslt['conquered']==0)
+					h+='<TD><FONT color="#66CC33"><B>Secured</B></font></td>';
+			} else if (rpt.marchName == 'Reinforce' || rpt.marchName == 'Transport') {
+				h+='<TD align=left width=5%>'+rpt.side1CityName+'<BR />';
+				if (rpt.side0CityName != '')
+					h+=rpt.side0CityName+'</TD>';
+				else
+					h+=rpt.side0TileTypeText+' Level '+ rpt.side0TileLevel+'</TD>';
+			}
+
+			h+='<TD align=right>' + formatUnixTime(rpt.reportUnixTime,'24hour') + '<BR />Report No: ' + reportId + '</TD></TR></TABLE>';
+			return h;
+		}
+
+		function handleunts () { // Troops sent to Reinforce or troops found on a Scout
+			var hunts = '', th = '', tc = '', tf = '';
+			if (rslt['unts'] != undefined) {
+				if (rpt.marchName == 'Reinforce')
+					th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Troops Reinforced</TH></TR>';
+				else if (rslt['unts']['u1'] != undefined || rslt['unts']['u2'] != undefined || rslt['unts']['u3'] != undefined || rslt['unts']['u4'] != undefined || rslt['unts']['u5'] != undefined || rslt['unts']['u6'] != undefined || rslt['unts']['u7'] != undefined || rslt['unts']['u8'] != undefined || rslt['unts']['u9'] != undefined || rslt['unts']['u10'] != undefined || rslt['unts']['u11'] != undefined || rslt['unts']['u12'] != undefined)
+					th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Troops Found</TH></TR>';
+				for (var i=1;i<13;i++)
+					if (rslt['unts']['u'+i] != undefined)
+						tc+='<TR><TD>' + unitImg[i] + '</TD><TD align=right>'+addCommas(rslt['unts']['u'+i])+'</TD></TR>';
+				tf='</TABLE>';
+			}
+			if (tc != '')
+				hunts = th + tc + tf;
+			return hunts;
+		}
+
+		function handlersc () { // Resources brought with reinforcements or found on a Scout
+			var hrsc = '', th = '', tc = '', tf = '';
+			if (rslt['rsc'] != undefined) {
+				if (rslt['rsc']['r1'] > 0 || rslt['rsc']['r2'] > 0 || rslt['rsc']['r3'] > 0 || rslt['rsc']['r4'] > 0) {
+					if (rpt.marchName == 'Reinforce')
+						th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Goodies Brought</TH></TR>';
+					else {
+						th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Goodies Found</TH></TR>';
+						if (rslt['gld'] > 0)
+							tc+='<TR><TD>'+goldImg+'</TD><TD align=right>'+addCommasInt(rslt['gld'])+'</TD></TR>';
+					}
+					if (rslt['rsc']['r1'] > 0)
+						tc+='<TR><TD>'+foodImg+'</TD><TD align=right>'+addCommasInt(rslt['rsc']['r1'])+'</TD></TR>';
+					if (rslt['rsc']['r2'] > 0)
+						tc+='<TR><TD>'+woodImg+'</TD><TD align=right>'+addCommasInt(rslt['rsc']['r2'])+'</TD></TR>';
+					if (rslt['rsc']['r3'] > 0)
+						tc+='<TR><TD>'+stoneImg+'</TD><TD align=right>'+addCommasInt(rslt['rsc']['r3'])+'</TD></TR>';
+					if (rslt['rsc']['r4'] > 0)
+						tc+='<TR><TD>'+oreImg+'</TD><TD align=right>'+addCommasInt(rslt['rsc']['r4'])+'</TD></TR>';
+					tf='</TABLE>';
+				}
+			}
+			if (tc != '')
+				hrsc = th + tc + tf;
+			return hrsc;
+		}
+
+		function handlefrt () { // Fortifications found on a Scout
+			var hfrt = '', th = '', tc = '', tf = '';
+			if (rslt['frt'] != 'undefined') {
+				if (rslt['frt']['f53'] != undefined || rslt['frt']['f55'] != undefined || rslt['frt']['f60'] != undefined || rslt['frt']['f61'] != undefined || rslt['frt']['f62'] != undefined) {
+					th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Defenses Found</TH></TR>';
+					if (rslt['frt']['f53'] != undefined)
+						tc+='<TR><TD>' + unitImg[53] + '</TD><TD align=right>'+addCommas(rslt['frt']['f53'])+'</TD></TR>';
+					if (rslt['frt']['f55'] != undefined)
+						tc+='<TR><TD>' + unitImg[55] + '</TD><TD align=right>'+addCommas(rslt['frt']['f55'])+'</TD></TR>';
+					if (rslt['frt']['f60'] != undefined)
+						tc+='<TR><TD>' + unitImg[60] + '</TD><TD align=right>'+addCommas(rslt['frt']['f60'])+'</TD></TR>';
+					if (rslt['frt']['f61'] != undefined)
+						tc+='<TR><TD>' + unitImg[61] + '</TD><TD align=right>'+addCommas(rslt['frt']['f61'])+'</TD></TR>';
+					if (rslt['frt']['f62'] != undefined)
+						tc+='<TR><TD>' + unitImg[62] + '</TD><TD align=right>'+addCommas(rslt['frt']['f62'])+'</TD></TR>';
+					tf='</TABLE>';
+				}
+			}
+			if (tc != '')
+				hfrt = th + tc + tf;
+			return hfrt;
+		}
+
+		function handleblds (bType) {
+			var blds = rslt['blds']['b'+bType]; b = '<TR><TD>'; arField = [], firstbld = true;
+			if (bType == 1)
+				b+='Farm';
+			else if (bType == 2)
+				b+='Sawmill';
+			else if (bType == 3)
+				b+='Quarry';
+			else if (bType == 4)
+				b+='Mine';
+			b+='</TD><TD>';
+			for (var i=1; i<12; i++)
+				arField[i]=0;
+			for (var i=0; i < blds.length; i++)
+				arField[blds[i]]++
+			for (var i=11; i>0; i--) {
+				if (arField[i] > 0) {
+					if (firstbld)
+						firstbld = false;
+					else
+						b+=', ';
+					if (arField[i] > 1)
+						b+=arField[i] + ' x ';
+					b+=' ' + i;
+				}
+			}
+			b+='</TD></TR>';
+			return b;
+		}
+
+		if (rpt.marchName == 'Reinforce') {
+			t.popReport = new CPopup('pbShowRein', 0, 0, 525, 340, true, function() {clearTimeout (1000);});
+			m+= '<DIV style="height:285px">';
+		} else if (rpt.marchName == 'Transport') {
+			t.popReport = new CPopup('pbShowTrans', 0, 0, 525, 240, true, function() {clearTimeout (1000);});
+			m+= '<DIV style="height:185px">';
+		} else if (rpt.marchName == 'Scout' && rslt['winner']==1 && rpt.sideId==1){
+			t.popReport = new CPopup('pbShowOther', 0, 0, 550, 740, true, function() {clearTimeout (1000);});
+			m+= '<DIV style="max-height:705px; height:705px; overflow-y:scroll">';
+		} else {
+			t.popReport = new CPopup('pbShowOther', 0, 0, 550, 680, true, function() {clearTimeout (1000);});
+			m+= '<DIV style="max-height:645px; height:645px; overflow-y:scroll">';
+		}
+		t.popReport.centerMe (mainPop.getMainDiv());
+
+		m+=buildHeader();
+
+		if (rpt.marchName == 'Transport') { // Transport
+			m+='<TABLE class=ptTab>'; // Only transports have these in rslt, so handle them here
+			if (parseInt(rslt['gold']) > 0)
+				m+='<TR><TD>'+goldImg+'</TD><TD align=right>'+addCommas(rslt['gold'])+'</TD></TR>';
+			if (parseInt(rslt['resource1']) > 0)
+				m+='<TR><TD>'+foodImg+'</TD><TD align=right>'+addCommas(rslt['resource1'])+'</TD></TR>';
+			if (parseInt(rslt['resource2']) > 0)
+				m+='<TR><TD>'+woodImg+'</TD><TD align=right>'+addCommas(rslt['resource2'])+'</TD></TR>';
+			if (parseInt(rslt['resource3']) > 0)
+				m+='<TR><TD>'+stoneImg+'</TD><TD align=right>'+addCommas(rslt['resource3'])+'</TD></TR>';
+			if (parseInt(rslt['resource4']) > 0)
+				m+='<TR><TD>'+oreImg+'</TD><TD align=right>'+addCommas(rslt['resource4'])+'</TD></TR>';
+			m+='</TABLE>';
+		}
+
+		m+='<TABLE class=ptTab>';
+		if ((rslt['winner']==1 && rpt.sideId==0) || (rslt['winner']==0 && rpt.sideId==1)) {
+			if (rpt.marchName == 'Scout')
+				m+='<TR><TD><FONT color="#CC0000"><B>Scouting Failed</B></font></TD></TR>';
+			else
+				m+='<TR><TD><FONT color="#CC0000"><B>You were defeated</B></font></TD></TR>';
+		}
+		if (rslt['winner']==0 && rpt.sideId==0)
+			m+='<TR><TD><FONT color="#66CC33"><B>You defended successfully!</B></font></TD></TR>';
+		if (rslt['winner']==1 && rpt.sideId==1) {
+			if (rpt.marchName == 'Scout')
+				m+='<TR><TD><FONT color="#66CC33"><B>Scouting Report</B></font></TD></TR>';
+			else
+				m+='<TR><TD><FONT color="#66CC33"><B>You were victorious!</B></font></TD></TR>';
+		}
+
+		if (rslt['wall'] != undefined) {
+			if (rslt['wall'] == 100)
+				m+='<TR><TD>Attackers breached the walls.</TD></TR>';
+			else
+				m+='<TR><TD>Attackers did not breach the walls. The walls are '+rslt['wall']+'% damaged</TD></TR>';
+		}
+		m+= '</TABLE><BR />';
+
+		if (rslt['loot'] != undefined) {
+			m+='<TABLE class=ptTab>';
+			if (rslt['loot'][0] > 0)
+				m+='<TR><TD>'+goldImg+'</TD><TD align=right>'+addCommas(rslt['loot'][0])+'</TD></TR>';
+			if (rslt['loot'][1] > 0)
+				m+='<TR><TD>'+foodImg+'</TD><TD align=right>'+addCommas(rslt['loot'][1])+'</TD></TR>';
+			if (rslt['loot'][2] > 0)
+				m+='<TR><TD>'+woodImg+'</TD><TD align=right>'+addCommas(rslt['loot'][2])+'</TD></TR>';
+			if (rslt['loot'][3] > 0)
+				m+='<TR><TD>'+stoneImg+'</TD><TD align=right>'+addCommas(rslt['loot'][3])+'</TD></TR>';
+			if (rslt['loot'][4] > 0)
+				m+='<TR><TD>'+oreImg+'</TD><TD align=right>'+addCommas(rslt['loot'][4])+'</TD></TR>';
+			if (rslt['loot'][5] != undefined) {
+				for (var crest=1101; crest < 1116; crest++) {
+					if (rslt['loot'][5][crest] == 1)
+						m+='<TR><TD><img width=30 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/' + crest + '.png></TD><TD colspan=2>' + crestname[crest] + '</TD></TR>';
+				}
+			}
+			m+='</TABLE><BR />';
+		}
+
+		if (rpt.marchName == 'Reinforce') {
+			m+=handleunts();
+			m+=handlersc();
+		}
+
+		if (rpt.marchName == 'Scout' && rslt['winner']==1) {
+			m+='<TABLE class=ptTab width=100%><TR><TD width=50% align=left valign=top>';
+			m+=handleunts();
+			m+=handlefrt();
+			m+=handlersc();
+			m+='</TD><TD width=50% align=left valign=top>';
+			m+='<TABLE class=ptTab width=100%>';
+			if (rslt['lstlgn'] != undefined) {
+				if (!rslt['lstlgn'])
+					m+='<TR><TD>Last Login: Not recorded</TD></TR>';
+				else
+					m+='<TR><TD>Last Login: ' + formatUnixTime(rslt['lstlgn']) + '</TD></TR>';
+			}
+			m+='<TR><TD>Marshall Combat: ';
+			if (rslt['knt'] != undefined)
+				m+=rslt['knt']['cbt'];
+			else
+				m+='None';
+			m+='</TD></TR>';
+			if (rslt['pop'] != undefined)
+				m+='<TR><TD>Population: ' + addCommas(rslt['pop']) + '</TD></TR>';
+			if (rslt['hap'] != undefined)
+				m+='<TR><TD>Happiness: ' + addCommas(rslt['hap']) + '</TD></TR></TABLE>';
+			if (rslt['blds']['b1'] != undefined || rslt['blds']['b2'] != undefined || rslt['blds']['b3'] != undefined || rslt['blds']['b4'] != undefined) {
+				m+='<TABLE class=ptTab><TR><TH colspan=2 align=left>Fields</TH></TR>';
+				for (var i=1; i<5; i++)
+					if (rslt['blds']['b'+i] != undefined)
+						m+=handleblds(i);
+				m+='</TABLE>';
+			}
+			if (rslt['tch'] != undefined) {
+				m+='<TABLE class=ptTab><TR><TH colspan=2 align=left>Research</TH></TR>';
+				for (var tl=1; tl < 17; tl++)
+					if (tl != 7)
+						m+='</TD></TR><TR><TD>'+researchLevels[tl].Name+'</TD><TD align=right>' + rslt['tch']['t'+tl] + '</TD></TR>';
+				m+='</TABLE>';
+			}
+			m+='</TD></TR></TABLE>';
+		}
+
+		if (rslt['fght'] != undefined){ // not Reinforce or Transport, so we have a table with 2 columns: 1 for Attackers, 1 for Defenders
+			m+='<TABLE class=ptTab width=100%><TR><TD width=50% align=left valign=top>';
+			m+='<TABLE class=ptTab width=100%>';
+			m+='<TR><TD colspan=4><B>Attackers</B> ('+rpt.side1Name+')';
+			if (rslt['winner']==1)
+				m+='<FONT color="#CC0000"><B> Winner</B></FONT>';
+			m+='</TD></TR>';
+			if (rpt.marchName == 'Attack' || rpt.marchName == 'Defend')
+				m+='<TR><TD colspan=4>Knight Combat Skill: ' + rslt['s1KCombatLv'] + '</TD></TR>';
+			m+='<TR><TD colspan=4>Attack Boosted: ' + 100*rslt['s1atkBoost'] + '%</TD></TR>';
+			m+='<TR><TD colspan=4>Defense Boosted: ' + 100*rslt['s1defBoost'] + '%</TD></TR>';
+			m+='<TR><TD colspan=4>(<A onclick="ptGotoMap('+ rpt.side1XCoord +','+ rpt.side1YCoord +')">'+ rpt.side1XCoord +','+ rpt.side1YCoord +'</a>) ' + rpt.side1CityName + '</TD></TR>';
+			if (rslt['fght']["s1"] != undefined) {
+				m+='<TR><TH></TH><TH align=left>Troops</TH><TH align=right>Fought</TH><TH align=right>Survived</TH></TR>';
+				for (var i=1;i<13;i++) {
+					if (rslt['fght']["s1"]['u'+i] != undefined) {
+						if (rslt['fght']["s1"]['u'+i][0] > rslt['fght']["s1"]['u'+i][1]) {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s1"]['u'+i][0])+'</td>';
+							m+='<TD align=right><FONT color="#CC0000">'+addCommas(rslt['fght']["s1"]['u'+i][1])+'</FONT></td></tr>';
+						} else {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s1"]['u'+i][0])+'</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s1"]['u'+i][1])+'</td></tr>';
+						}
+					}
+				}
+			}
+			m+='</TABLE></TD><TD width=50% align=right valign=top>';
+			m+='<TABLE class=ptTab width=100%>';
+			m+='<TR><TD colspan=4><B>Defenders</B> ('+rpt.side0Name+')';
+			if (rslt['winner']==0)
+				m+='<FONT color="#CC0000"><B> Winner</B></FONT>';
+			m+='</TD></TR>';
+			if (rpt.marchName == 'Attack' || rpt.marchName == 'Defend')
+				m+='<TR><TD colspan=4>Knight Combat Skill: ' + rslt['s0KCombatLv'] + '</TD></TR>';
+			if (rslt['s0atkBoost'] != undefined)
+				m+='<TR><TD colspan=4>Attack Boosted: ' + 100*rslt['s0atkBoost'] + '%</TD></TR>';
+			else
+				m+='<TR><TD colspan=4>&nbsp;</TD></TR>';
+			if (rslt['s0defBoost'] != undefined)
+				m+='<TR><TD colspan=4>Defense Boosted: ' + 100*rslt['s0defBoost'] + '%</TD></TR>';
+			else
+				m+='<TR><TD colspan=4>&nbsp;</TD></TR>';
+			m+='<TR><TD colspan=4>Rounds: ' + rslt['rnds'] + '</TD></TR>';
+			if (rslt['fght']["s0"] != undefined) {
+				m+='<TR><TH></TH><TH align=left>Troops</TH><TH align=right>Fought</TH><TH align=right>Survived</TH></TR>';
+				for (var i=1;i<13;i++) {
+					if (rslt['fght']["s0"]['u'+i] != undefined) {
+						if (rslt['fght']["s0"]['u'+i][0] > rslt['fght']["s0"]['u'+i][1]) {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['u'+i][0])+'</td>';
+							m+='<TD align=right><FONT color="#CC0000">'+addCommas(rslt['fght']["s0"]['u'+i][1])+'</FONT></td></tr>';
+						} else {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['u'+i][0])+'</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['u'+i][1])+'</td></tr>';
+						}
+					}
+				}
+				for (var i=53;i<=55;i++) {
+					if (rslt['fght']["s0"]['f'+i] != undefined) {
+						if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
+							m+='<TD align=right><FONT color="#CC0000">'+addCommas(rslt['fght']["s0"]['f'+i][1])+'</font></td></tr>';
+						} else {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][1])+'</td></tr>';
+						}
+					}
+				}
+				for (var i=60;i<=63;i++) {
+					if (rslt['fght']["s0"]['f'+i] != undefined) {
+						if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
+							m+='<TD align=right><FONT color="#CC0000">'+addCommas(rslt['fght']["s0"]['f'+i][1])+'</font></td></tr>';
+						} else {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][1])+'</td></tr>';
+						}
+					}
+				}
+			} else
+				m+='<TR><TD>No Troops Defended</TD></TR>';
+			m+='</TABLE></TD></TR></TABLE>';
+		}
+
+		m+='</DIV>';
+		t.popReport.getMainDiv().innerHTML = m;
+		t.popReport.getTopDiv().innerHTML = '<DIV align=center><B>'+rpt.marchName+' Report</B></DIV>';
+		t.popReport.show(true);
+	},
+	
+};
 
 /*************** WILDS TAB *********************/
 
@@ -5184,10 +5478,10 @@ Tabs.OverView = {
 	          rsty = '';
 	        else
 	          rsty = ' style="background: #e8e8e8" ';
-	        cost = unsafeWindow.unitcost['unt'+ui];     //  NAME, Food, Wood, Stone, Ore, ?, IdlePop, Time
-	        stats = unsafeWindow.unitstats['unt'+ui];   //  Life, Attack, Defense, Speed, Range, Load
-	        food = unsafeWindow.unitupkeeps[ui];
-	        might = unsafeWindow.unitmight['u'+ui];
+	        cost = uW.unitcost['unt'+ui];     //  NAME, Food, Wood, Stone, Ore, ?, IdlePop, Time
+	        stats = uW.unitstats['unt'+ui];   //  Life, Attack, Defense, Speed, Range, Load
+	        food = uW.unitupkeeps[ui];
+	        might = uW.unitmight['u'+ui];
 	        u += '<TR '+ rsty +'align=right><TD class=xtab align=left><B>'+ cost[0].substr(0,16) +'</b></td><TD class=xtabL>'+ cost[1] +'</td><TD class=xtab>'+ cost[2] +'</td>\
 	            <TD class=xtab>'+ cost[3] +'</td><TD class=xtab>'+ cost[4] +'</td><TD class=xtab>'+ cost[6] +'</td><TD class=xtabL>'+ might +'</td>\
 	            <TD class=xtab>'+ stats[0] +'</td><TD class=xtab>'+ stats[1] +'</td><TD class=xtab>'+ stats[2] +'</td><TD class=xtab>'+ stats[3] +'</td>\
@@ -5195,7 +5489,7 @@ Tabs.OverView = {
 	  
 	      }
 	      u += '<TR class=xtabLine><TD colspan=14 class=xtabLine></td></tr>';
-	      for (k in unsafeWindow.fortcost){
+	      for (k in uW.fortcost){
 	        if (++rownum % 2)
 	          rsty = '';
 	        else
@@ -8873,7 +9167,16 @@ function reloadKOC (){
   document.body.appendChild (e);
   setTimeout (function (){document.getElementById('xxpbButReload').click();}, 0);
 }
-
+function formatUnixTime (unixTimeString,format){
+	var rtn = unsafeWindow.formatDateByUnixTime (unixTimeString);
+/*if (format=='24hour') {
+		if (rtn.substr(14,2)=='AM')
+			rtn = rtn.substr(0,13);
+		else
+			rtn = rtn.substr(8,2)+' '+rtn.substr(0,8)+(parseInt(rtn.substr(8,2))+12)+rtn.substr(10,3);
+	} */
+	return rtn;
+}
 
 function getAllianceLeaders (){
     var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
