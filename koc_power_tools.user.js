@@ -6,7 +6,7 @@
 // @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110804a';
+var Version = '20110804b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -333,10 +333,12 @@ var battleReports = {
     t.renderBattleReportFunc = new CalterUwFunc ('MarchReport.prototype.renderBattleReport', [['return k.join("")', 'var themsg=k.join(""); themsg=renderBattleReport_hook(themsg, this.rslt); return themsg']]);
     uW.renderBattleReport_hook = t.hook2;
     t.renderBattleReportFunc.setEnable (true);
-    t.renderButtonsFunc = new CalterUwFunc ('MarchReport.prototype.generateBackButton', [[/return \"(.*)\"/i, 'var msg="$1"; return battleReports_hook3(msg, this.rptid);']]);
-    uW.battleReports_hook3 = t.generateBackButtonHook;
+    t.renderButtonsFunc = new CalterUwFunc ('MarchReport.prototype.generateBackButton', [[/return \"(.*)\"/i, 'var msg="$1"; return battleReports_hook3(msg, this.rptid,this.side,this);']]);
+    uW.battleReports_hook3 = t.generateBackButtonHook ;
     t.renderButtonsFunc.setEnable (true);
     uW.deleteAreport = t.e_deleteReport;
+    uW.MoreReport = t.e_MoreReport;
+    uW.PostReport = t.e_PostReport;
 //setTimeout (function(){logit('MarchReport.prototype.generateBackButton:\n'+ uW.MarchReport.prototype.generateBackButton.toString(), 3, 1)}, 100);
   },
 
@@ -350,31 +352,55 @@ var battleReports = {
   },
   
     
-  generateBackButtonHook : function (msg, rptid){
+  generateBackButtonHook : function (msg, rptid, side, test){
     if (!Options.reportDeleteButton)
       return msg;
+    //alert(test.toSource());
     var delBut = msg.replace ('onclick=\'', 'onclick=\'deleteAreport('+ rptid +',false); ');
     delBut = delBut.replace (/<span>(.*)<\/span>/, '<span>'+ uW.g_js_strings.commonstr.deletetx +'</span>');
+    
+    var MoreBut = msg.replace ('onclick=\'', 'onclick=\'MoreReport('+ rptid+','+side +',false); ');
+    MoreBut = MoreBut.replace (/<span>(.*)<\/span>/, '<span>'+ 'More' +'</span>');
+    
+    var PostBut = msg.replace ('onclick=\'', 'onclick=\'PostReport('+ rptid +',false); ');
+    PostBut = PostBut.replace (/<span>(.*)<\/span>/, '<span>'+ 'Post To Chat' +'</span>');
+
+     var send = delBut + MoreBut + PostBut;
 //logit ('DELBUT: '+ delBut);    
-    return msg + delBut;
+    return msg + send;
   },
+
   
   generateMoreButtonHook : function (msg, rptid){
     //if (!Options.reportDeleteButton)
     //  return msg;
-    var MoreBut = msg.replace ('onclick=\'', 'onclick=\'deleteAreport('+ rptid +',false); ');
-    MoreBut = MoreBut.replace (/<span>(.*)<\/span>/, '<span>'+ uW.g_js_strings.commonstr.deletetx +'</span>');
+    var MoreBut = msg.replace ('onclick=\'', 'onclick=\'MoreReport('+ rptid +',false); ');                 
+    MoreBut = MoreBut.replace (/<span>(.*)<\/span>/, '<span>'+ 'More'+'</span>');
 //logit ('DELBUT: '+ delBut);    
     return msg + delBut;
   },
   
-    
-
   e_deleteReport : function (rptid){
     var t = battleReports; 
     t.ajaxDeleteMyReport (rptid);
   },
-    
+  
+  e_MoreReport : function (rptid,side){
+    var t = battleReports; 
+    alert('WIP ;)');
+  },
+  
+  e_PostReport : function (rptid){
+      var msg = 'Report No: ' + rptid; 
+      sendChat ("/a "+  msg);
+  },
+  
+  SendChat:function(name,mess) {
+    	var inp=document.getElementById('mod_comm_input');
+    	inp.value="@"+name+' '+mess;
+    	unsafeWindow.Chat.sendChat();
+  },
+      
   ajaxDeleteMyReport : function (rptid, isUnread, side, isCityReport, notify){
     var params = uW.Object.clone(uW.g_ajaxparams);
     params.s0rids = rptid;
@@ -3829,7 +3855,7 @@ if (DEBUG_TRACE) logit (" 2 Map.request  Map = "+ inspect (Map, 2, 1, 2));
 
 Tabs.Train = {
   tabOrder : 15,
-  tabLabal : uW.g_js_strings.commonstr.train,
+  tabLabel : uW.g_js_strings.commonstr.train,
   cont : null,
   timer : null,
   stats : {},
@@ -5054,17 +5080,7 @@ Tabs.OverView = {
     var metalalloys = 0;
     var logging = 0;
     var poisonededge = 0;
-    var WallSpace = {1:1000,
-    			  2:3000,
-    			  3:6000,
-    			  4:10000,
-    			  5:15000,
-    			  6:21000,
-    			  7:28000,
-    			  8:36000,
-    			  9:45000,
-    			  10:55000,
-    			  11:66000};
+
     var FieldSpace = {1:13,
     			  2:16,
     			  3:19,
@@ -5075,7 +5091,8 @@ Tabs.OverView = {
     			  8:34,
     			  9:37,
     			  10:40,
-    			  11:40};
+    			  11:40,
+    			  12:40};
     			  		   
     fertilizer = Seed.tech['tch1'];
     logging = Seed.tech['tch2'];
@@ -5126,10 +5143,12 @@ Tabs.OverView = {
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
-    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
     		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
     	}
-    	max = WallSpace[wall]/2/2 - parseInt(Seed.fortifications[city]["fort53"]) - parseInt(Seed.fortifications[city]["fort55"]);
+    	wall = parseInt(Seed.buildings[city].pos1[1]);
+    	var WallSpace = 0;
+    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 1000)};
+    	max = WallSpace/2/2 - parseInt(Seed.fortifications[city]["fort53"]) - parseInt(Seed.fortifications[city]["fort55"]);
     	m+= '<TD width=79 style="background:#FFFFFF">' + Seed.fortifications[city]["fort53"];
     	if (wall >=6 && blacksmith >=6 && fletching >=5 && max > 0) m+= '<br>Left: ' + max +'</td>';
     	else if (t.showReq){
@@ -5143,10 +5162,12 @@ Tabs.OverView = {
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
-    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
     		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
     	}
-    	max = WallSpace[wall]/2/4 - parseInt(Seed.fortifications[city]["fort53"]) - parseInt(Seed.fortifications[city]["fort55"]);
+    	wall = parseInt(Seed.buildings[city].pos1[1]);
+    	var WallSpace = 0;
+    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 1000)};
+    	max = WallSpace/2/4 - parseInt(Seed.fortifications[city]["fort53"]) - parseInt(Seed.fortifications[city]["fort55"]);
     	m+=  '<TD width=79 style="background:#FFFFFF">' +Seed.fortifications[city]["fort55"];
     	if (wall >=8 && blacksmith >=8 && fletching >=7 && geometry>=7 && max > 0) m+= '<br>Left: ' + max+'</td>';
     	else if (t.showReq){
@@ -5160,11 +5181,11 @@ Tabs.OverView = {
     m+='<TR valign=top align=right><TD width=85 style="background-color:'+Colors.OverviewDarkRow+';">Wall defences</td>';
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
-    	for (y in Seed.buildings[city]) {
-    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
-    	}
+    	wall = parseInt(Seed.buildings[city].pos1[1]);
     	build = (parseInt(Seed.fortifications[city]["fort53"])*2)+ (parseInt(Seed.fortifications[city]["fort55"])*4);
-    	max = WallSpace[wall]/2;
+    	var WallSpace = 0;
+    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 1000)};
+    	max = WallSpace/2;
     	if (build < max) m+='<TD width=79 style="background:#FFFFFF"><FONT COLOR= "CC0000">';
     	else m+='<TD width=79 style="background:#FFFFFF"><FONT COLOR= "669900">';
     	m+= build+'</font>';
@@ -5174,10 +5195,12 @@ Tabs.OverView = {
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
-    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
     		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
     	}
-    	max = WallSpace[wall]/2/4 - (parseInt(Seed.fortifications[city]["fort60"])*4) - (parseInt(Seed.fortifications[city]["fort61"])*1) - (parseInt(Seed.fortifications[city]["fort62"])*3);
+    	wall = parseInt(Seed.buildings[city].pos1[1]);
+    	var WallSpace = 0;
+    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 1000)};
+    	max = WallSpace/2/4 - (parseInt(Seed.fortifications[city]["fort60"])*4) - (parseInt(Seed.fortifications[city]["fort61"])*1) - (parseInt(Seed.fortifications[city]["fort62"])*3);
     	m+=  '<TD width=79 style="background:#FFFFFF">'+Seed.fortifications[city]["fort60"];
     	if (wall >=4 && blacksmith >=4 && poisonededge>=4 && max>0) m+= '<br>Left: ' + max+'</td>';
     	else if (t.showReq){
@@ -5191,10 +5214,12 @@ Tabs.OverView = {
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
-    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
     		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
     	}
-    	max = WallSpace[wall]/2/1 - (parseInt(Seed.fortifications[city]["fort60"])*4) - (parseInt(Seed.fortifications[city]["fort61"])*1) - (parseInt(Seed.fortifications[city]["fort62"])*3);
+    	wall = parseInt(Seed.buildings[city].pos1[1]);
+    	var WallSpace = 0;
+    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 1000)};
+    	max = WallSpace/2/1 - (parseInt(Seed.fortifications[city]["fort60"])*4) - (parseInt(Seed.fortifications[city]["fort61"])*1) - (parseInt(Seed.fortifications[city]["fort62"])*3);
     	m+= '<TD width=79 style="background:#FFFFFF">'+Seed.fortifications[city]["fort61"];
     	if (wall >=1 && metalalloys >=1 && max>0) m+= '<br>Left: ' + max+'</td>';
     	else if (t.showReq){
@@ -5207,10 +5232,12 @@ Tabs.OverView = {
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
-    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
     		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
     	}
-    	max = (WallSpace[wall]/2/3).toFixed(0) - (parseInt(Seed.fortifications[city]["fort60"])*4) - (parseInt(Seed.fortifications[city]["fort61"])*1) - (parseInt(Seed.fortifications[city]["fort62"])*3);
+    	wall = parseInt(Seed.buildings[city].pos1[1]);
+    	var WallSpace = 0;
+    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 1000)};
+    	max = (WallSpace/2/3).toFixed(0) - (parseInt(Seed.fortifications[city]["fort60"])*4) - (parseInt(Seed.fortifications[city]["fort61"])*1) - (parseInt(Seed.fortifications[city]["fort62"])*3);
     	m+=  '<TD width=79 style="background:#FFFFFF">'+Seed.fortifications[city]["fort62"];
     	if (wall >=2 && blacksmith>=2 && logging>=2 && max>0) m+= '<br>Left: ' + max+'</td>';
     	else if (t.showReq){
@@ -5223,11 +5250,11 @@ Tabs.OverView = {
     m+='<TR valign=top align=right><TD width=85 style="background-color:'+Colors.OverviewDarkRow+';">Field defences</td>';
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
-    	for (y in Seed.buildings[city]) {
-    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
-    	}
+    	wall = parseInt(Seed.buildings[city].pos1[1]);
     	build = (parseInt(Seed.fortifications[city]["fort60"])*4)+ (parseInt(Seed.fortifications[city]["fort61"])*1) + (parseInt(Seed.fortifications[city]["fort62"])*3);
-    	max = WallSpace[wall]/2;
+    	var WallSpace = 0;
+    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 1000)};
+    	max = WallSpace/2;
     	if (build < max) m+='<TD width=79 style="background:#FFFFFF"><FONT COLOR= "CC0000">';
     	else m+='<TD width=79 style="background:#FFFFFF"><FONT COLOR= "669900">';
     	m+= build+'</font>';
