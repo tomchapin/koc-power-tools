@@ -6,7 +6,7 @@
 // @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110802a';
+var Version = '20110804a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -555,10 +555,10 @@ var ChatStuff = {
        
        
        if (m[0].indexOf('whispers') >= 0) {
-   	if (Options.chatwhisper) {
-   		if (whisp.indexOf('says to the alliance') <0) element_class = 'ptChatWhisper';
-   	}
-   	else element_class = '';
+           	if (Options.chatwhisper) {
+           		if (whisp.indexOf('says to the alliance') <0) element_class = 'ptChatWhisper';
+           	}
+           	else element_class = '';
      }
        else if (m[0].indexOf('to the alliance') >= 0){
    	if (Options.chatbold)
@@ -3687,7 +3687,10 @@ Tabs.Options = {
       m+='<TR><TD>General - Tab Clicked: </td><TD><INPUT id=togTabClick type=text size=7 maxlength=7 value="'+Colors.TabClicked+'"></td>&nbsp;<TD style="background-color:'+Colors.TabClicked+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>General - Tabs: </td><TD><INPUT id=togTab type=text size=7 maxlength=7 value="'+Colors.Tabs+'"></td>&nbsp;<TD style="background-color:'+Colors.Tabs+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>Overview - Dark Rows:</td><TD><INPUT id=togOverDarkRow type=text size=7 maxlength=7 value="'+Colors.OverviewDarkRow+'"></td>&nbsp;<TD style="background-color:'+Colors.OverviewDarkRow+'" width=30px>&nbsp;</td></tr>';
-      m+='</table><BR><BR><HR>To apply colors you need to REFRESH!<BR>';
+      m+='</table><BR><BR><DIV>HTML colors:&nbsp;&nbsp;&nbsp;';
+      m+='<a href="http://www.colorpicker.com/" target="_blank">Color Picker</a>&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;';
+      m+='<a href="http://www.w3schools.com/html/html_colors.asp" target="_blank">Colors</a>';
+      m+='<HR>To apply colors you need to REFRESH!<BR>';
       m+= strButton20('Reset Colors', 'id=ResetALL');
       t.Overv.innerHTML = m;
             
