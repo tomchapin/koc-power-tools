@@ -1,6 +1,6 @@
 #summary Allows you to search KOC player information and alliance information.  All info is taken from the Leader board and could be up to 24 hours old.
 
-<h2>Players Tab</h2>
+*Players Tab*
 
 for a MS Power Point walk through with pictures click here: 
 
@@ -9,10 +9,10 @@ http://koc-power-tools.googlecode.com/files/KOC%20Scripters%20player.ppsx
 Get the free Power point viewer here http://www.microsoft.com/download/en/details.aspx?id=6
 
 Click TOOLS, Click Players
-<h4>Searching a Player</h4>
+*Searching a Player*
 Type the name of a person’s KOC name in the “Enter all or part of a player name:” Field
 
-•	You need to enter at least three characters of the individuals KOC name.
+ * You need to enter at least three characters of the individuals KOC name.
 
 
 Click “Find Player”
