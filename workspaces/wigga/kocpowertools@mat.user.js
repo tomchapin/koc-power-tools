@@ -6,7 +6,7 @@
 // @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110804b';
+var Version = '20110815a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
