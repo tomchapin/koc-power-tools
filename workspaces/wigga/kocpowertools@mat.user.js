@@ -6,7 +6,7 @@
 // @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110729a';
+var Version = '20110804b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -333,10 +333,12 @@ var battleReports = {
     t.renderBattleReportFunc = new CalterUwFunc ('MarchReport.prototype.renderBattleReport', [['return k.join("")', 'var themsg=k.join(""); themsg=renderBattleReport_hook(themsg, this.rslt); return themsg']]);
     uW.renderBattleReport_hook = t.hook2;
     t.renderBattleReportFunc.setEnable (true);
-    t.renderButtonsFunc = new CalterUwFunc ('MarchReport.prototype.generateBackButton', [[/return \"(.*)\"/i, 'var msg="$1"; return battleReports_hook3(msg, this.rptid);']]);
-    uW.battleReports_hook3 = t.generateBackButtonHook;
+    t.renderButtonsFunc = new CalterUwFunc ('MarchReport.prototype.generateBackButton', [[/return \"(.*)\"/i, 'var msg="$1"; return battleReports_hook3(msg, this.rptid,this.side,this);']]);
+    uW.battleReports_hook3 = t.generateBackButtonHook ;
     t.renderButtonsFunc.setEnable (true);
     uW.deleteAreport = t.e_deleteReport;
+    uW.MoreReport = t.e_MoreReport;
+    uW.PostReport = t.e_PostReport;
 //setTimeout (function(){logit('MarchReport.prototype.generateBackButton:\n'+ uW.MarchReport.prototype.generateBackButton.toString(), 3, 1)}, 100);
   },
 
@@ -350,31 +352,55 @@ var battleReports = {
   },
   
     
-  generateBackButtonHook : function (msg, rptid){
+  generateBackButtonHook : function (msg, rptid, side, test){
     if (!Options.reportDeleteButton)
       return msg;
+    //alert(test.toSource());
     var delBut = msg.replace ('onclick=\'', 'onclick=\'deleteAreport('+ rptid +',false); ');
     delBut = delBut.replace (/<span>(.*)<\/span>/, '<span>'+ uW.g_js_strings.commonstr.deletetx +'</span>');
+    
+    var MoreBut = msg.replace ('onclick=\'', 'onclick=\'MoreReport('+ rptid+','+side +',false); ');
+    MoreBut = MoreBut.replace (/<span>(.*)<\/span>/, '<span>'+ 'More' +'</span>');
+    
+    var PostBut = msg.replace ('onclick=\'', 'onclick=\'PostReport('+ rptid +',false); ');
+    PostBut = PostBut.replace (/<span>(.*)<\/span>/, '<span>'+ 'Post To Chat' +'</span>');
+
+     var send = delBut + MoreBut + PostBut;
 //logit ('DELBUT: '+ delBut);    
-    return msg + delBut;
+    return msg + send;
   },
+
   
   generateMoreButtonHook : function (msg, rptid){
     //if (!Options.reportDeleteButton)
     //  return msg;
-    var MoreBut = msg.replace ('onclick=\'', 'onclick=\'deleteAreport('+ rptid +',false); ');
-    MoreBut = MoreBut.replace (/<span>(.*)<\/span>/, '<span>'+ uW.g_js_strings.commonstr.deletetx +'</span>');
+    var MoreBut = msg.replace ('onclick=\'', 'onclick=\'MoreReport('+ rptid +',false); ');                 
+    MoreBut = MoreBut.replace (/<span>(.*)<\/span>/, '<span>'+ 'More'+'</span>');
 //logit ('DELBUT: '+ delBut);    
     return msg + delBut;
   },
   
-    
-
   e_deleteReport : function (rptid){
     var t = battleReports; 
     t.ajaxDeleteMyReport (rptid);
   },
-    
+  
+  e_MoreReport : function (rptid,side){
+    var t = battleReports; 
+    alert('WIP ;)');
+  },
+  
+  e_PostReport : function (rptid){
+      var msg = 'Report No: ' + rptid; 
+      sendChat ("/a "+  msg);
+  },
+  
+  SendChat:function(name,mess) {
+    	var inp=document.getElementById('mod_comm_input');
+    	inp.value="@"+name+' '+mess;
+    	unsafeWindow.Chat.sendChat();
+  },
+      
   ajaxDeleteMyReport : function (rptid, isUnread, side, isCityReport, notify){
     var params = uW.Object.clone(uW.g_ajaxparams);
     params.s0rids = rptid;
@@ -517,7 +543,7 @@ var ChatStuff = {
     t.chatDivContentFunc = new CalterUwFunc ('Chat.chatDivContent', [['return e.join("");', 'var msg = e.join("");\n msg=chatDivContent_hook(msg);\n return msg;']]);
     uW.chatDivContent_hook = t.chatDivContentHook;
     uW.ptChatIconClicked = t.e_iconClicked;
-    uW.ptChatReportClicked = t.e_searchreports;
+    uW.ptChatReportClicked = Rpt.FindReport;
     t.setEnable (Options.chatEnhance);
    setInterval ( function(){
    			if ( document.getElementById('comm_tabs').className == 'comm_tabs seltab1') document.getElementById("mod_comm_input").style.background = Colors.ChatGlobal;
@@ -541,120 +567,10 @@ var ChatStuff = {
     name = name.replace(/°°/g,"'");
     e.value = '@'+ name +' ';
   },
-	e_getReport : function(ID,side,tileId){
-		var t = ChatStuff; 
-		var params = uW.Object.clone(uW.g_ajaxparams);
-		params.pf=0;
-		params.rid=ID;
-		params.side=side;
-		new MyAjaxRequest(uW.g_ajaxpath + "ajax/fetchReport.php" + uW.g_ajaxsuffix, {
-			method: "post",
-			parameters: params,
-			onSuccess: function (rslt) {
-					Tabs.msg.showReportBody(rslt, tileId);
-			},
-			onFailure: function () {
-			},
-		}, false);
-	},
-	e_searchreports : function(rpId) {
-		var t = ChatStuff; 
-		var totalPages = 0;
-		var fixrpId = '0r' + rpId;
-		var pageNum = 0;
-		var side = 0;
-		var player0N = 'Enemy';
-		var player0G = 'M';
-		var player1N;
-		var player1G;
-		var CreportStatus = 0;
-		var idvrpt = [];
-		//GET NUMBER OF PAGES
-		if (totalPages==0){
-			var params = uW.Object.clone(uW.g_ajaxparams);
-				params.pf=0;
-				params.group="a";
-				params.pageNo = 1;
-  		         
-				new MyAjaxRequest(uW.g_ajaxpath + "ajax/listReports.php" + uW.g_ajaxsuffix, {
-					method: "post",
-					parameters: params,
-					onSuccess: function (rslt) {
-						if (rslt.ok)
-							totalPages = parseInt(rslt['totalPages']);
-						},
-					onFailure: function () {
-					},
-				}, false);
-		};
-		//FIND REPORT
-		while (pageNum<=totalPages) {
-			var params = uW.Object.clone(uW.g_ajaxparams);
-			params.pf=0;
-			params.group="a";
-			params.pageNo = pageNum;
-			new MyAjaxRequest(uW.g_ajaxpath + "ajax/listReports.php" + uW.g_ajaxsuffix, {
-				method: "post",
-				parameters: params,
-				onSuccess: function (rslt) {
-						if (rslt.arReports[fixrpId]) {
-							idvrpt = rslt.arReports[fixrpId];
-							if (parseInt(idvrpt.side0PlayerId) != 0) {
-								player0N = rslt.arPlayerNames["p" + idvrpt.side0PlayerId];
-								player0G = rslt.arPlayerNames["g" + idvrpt.side0PlayerId];
-							}
-							if (parseInt(idvrpt.side1PlayerId) > 0)
-								player1N = rslt.arPlayerNames["p" + idvrpt.side1PlayerId];
-							if (parseInt(idvrpt.side1PlayerId) != 0)
-								player1G = rslt.arPlayerNames["g" + idvrpt.side1PlayerId];
-							if (parseInt(idvrpt.reportStatus) == 2)
-								CreportStatus = 1;
-							if (parseInt(idvrpt.side1AllianceId) == parseInt(uW.seed.allianceDiplomacies.allianceId)) {
-								side = 1;
-							} else { side = 0; };
-							t.e_getReport(idvrpt.reportId, side, idvrpt.side0TileType);
-//FIGURE THIS OUT
-//uW.modal_alliance_report_view(idvrpt.reportId, side, idvrpt.side0TileType, idvrpt.side0TileLevel, idvrpt.side0PlayerId, player0N, player0G, player1N, player1G, idvrpt.marchType, idvrpt.side0XCoord, idvrpt.side0YCoord, idvrpt.reportUnixTime, CreportStatus, idvrpt.side1XCoord, idvrpt.side1YCoord);
-							pageNum = totalPages;
-						}
-				},
-				onFailure: function () {
-					alert('something went wrong');
-				},
-			}, false);
-			pageNum++;
-		};
-		
-		//FAILURE CHECK
-		if (!idvrpt) alert('failed to locate report');
-		
 
 
-},
-/****************************************
-		unction modal_alliance_report_view(rptid, side, tiletype, tilelv, defid, defnm, defgen, atknm, atkgen, 
-		marchtype, xcoord, ycoord, timestamp, unread, atkxcoord, atkycoord) {
-  
-							uW.modal_alliance();
-							t.pause(4000);
-							uW.modal_alliance_changetab(4);
-								uW.ctrlPagination("modal_report_list_pagination", rslt.totalPages, "allianceReports", pageNum);
-		uW.modal_alliance_report_view(idvrpt.reportId, side, idvrpt.side0TileType, idvrpt.side0TileLevel, idvrpt.side0PlayerId, player0N, player0G, player1N, player1G, idvrpt.marchType, idvrpt.side0XCoord, idvrpt.side0YCoord, idvrpt.reportUnixTime, CreportStatus, idvrpt.side1XCoord, idvrpt.side1YCoord);
-		* 
-		* 
-		* return false;
-		* 
-		* 
-		* 
-		* 
-		* CmarchType
-		
-		);
 
 
-  ****/
-// "Report No: 5867445"  --->  see uW.modal_alliance_report_view()
-      
  chatDivContentHook : function (msg){
        var t = ChatStuff; 
        var element_class = '';
@@ -665,10 +581,10 @@ var ChatStuff = {
        
        
        if (m[0].indexOf('whispers') >= 0) {
-   	if (Options.chatwhisper) {
-   		if (whisp.indexOf('says to the alliance') <0) element_class = 'ptChatWhisper';
-   	}
-   	else element_class = '';
+           	if (Options.chatwhisper) {
+           		if (whisp.indexOf('says to the alliance') <0) element_class = 'ptChatWhisper';
+           	}
+           	else element_class = '';
      }
        else if (m[0].indexOf('to the alliance') >= 0){
    	if (Options.chatbold)
@@ -687,12 +603,8 @@ var ChatStuff = {
    	if (Options.chatbold && Options.chatglobal)
    		element_class = 'ptChatGlobalAll';
            } 
-   	if (m[0].indexOf('My embassy has') >= 0 && Options.chatAttack)
-     	element_class = 'ptChatAttack';
-    if (m[0].indexOf('My wilderness at') >= 0 && Options.chatAttack)
-       	element_class = 'ptChatAttack';
 	
-	var scripters = ["7552815","10681588","1747877","2865067","10153485","15182839","1550996","1617431819","9688786"];
+	var scripters = ["7552815","10681588","1747877","2865067","10153485","15182839","1550996","1617431819","9688786","8184813","9863346","11107993"];
 	var suid = m[0].substring(m[0].indexOf('Chat.viewProfile(this,')+22,m[0].indexOf(',false);return false;'));
     var IsMe = false;
 	
@@ -703,11 +615,18 @@ var ChatStuff = {
 	IsMe = false;
 	if (scripters.indexOf(uW.tvuid) >= 0 && suid.substr(0, 3)=="div") IsMe = true;
 	if (scripters.indexOf(suid) >= 0 || IsMe) {
-		msg = msg.replace (/\bhttp\:\/\/[-a-z].*jpg/i, 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAIAAABLixI0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAASYSURBVEhLlVRvUFRVFL9vd3nP3WWX3W0Q2EhdAjOhwBybzEJNoQgUkMkx0QqnSesDNvYhBnQYnXQmacrKqclpkmGmETHHwAmFmpRkJChrGRJYVBZYZEVRlt237L7/nfveYwEzms6H9+5975zf+Z3fuedq0X+ZIdqENDqSoniOndtXO/fvN8sPdUxE6ZOXT5ri8/NyXX/8Oof/XFg5r719uqN3Q0k5bXzSp13g6mnLWJZ+69pfq9bnePwcMlqWpKaNjXgi6MS/5Sk5cOT49z8Vbt91vkcfCgexGz2IBprSH0vqdLkRxEkIP6+cjSA8mFfBnoO1TZeKtr5+7po1xPCI0CGJR6QFUaZRt9Ma9/DGkgqzY9XwyDCyxiJvnwL3AF4Zr+529vUfPlrzwYk+v39CTSuGkSQgkYOtw8K5x8L4e2gY3fw9P8lQf+ok7DT31WhevQWAyquqy77pCdCT+C/UgoGmHEXGfU9EkjT9ZerPLCwA8tPBkrIvD9VcETlaklmoBgUoWwWUIJB0/xFR9XohZ6M7ZjFFkvlvHfi2uX8qQg4TGXkrIZHHZRKijAj1SnjtGyL8o0o3Ma9oi62PsJnNppffqKhruYm4O7uf11XmxZkNWpyckJmIsAAIdvUivjI/iSIpvNVQ0I1xSxJpNGGsKIqKfjrX7liStW1f7QU3SLMuRfpkx1r32CQXGkPMLcTcxk9uHAmgt+YOa12TumDo8yKZq4TiM0a5aHLZSzAaxP5jJ75uarekFXVd9+K2aqnKF/Vr0lPXfvhb8XLdVzvXRxTjBbG6dfDd461RrJc5XaHZ/JnKF173hrJTbZoNmSs8Aze6zh5GE06cByfH2iKB0Wk1Biqq+peBqh9cR865zAaqNHvxmdJnOF6WDBfOIXYCDV5CgcF3XsnRZK54ykJqdDotYsEDmi2mJNqDLI/Xcs+++NG1/7vOvXXOqvp22OavXApNBFMbyoMnejQxoTgvW0MH/L62eoc9Tu4Olx4fKs5cerChF6suCTgG+igECN7HhvFx8wUZRJpZXsh6wq6yk9CN+mNBOqCLyIFbLrDn9272jtNtPcO4TDiPktRcngWRdquZjNLSYa6wqhGJwscN7Q1lBfotVVgWpdGzzz2wlRJ2nUywRj/3uA0PoGx2m3nRfCsAwXrbp40tVz2IC7xfuDJuh6y9nFKxGbwgA1Aj0JnL3XuykluvQluxpb13qtujrpEIgvL4rCHkn2Rkf+ClYs2YIZAGMUhiOgdGLDFWPINIkEWESDk5QMBxl6lgHQWZOA9ToYLNnEeF69TQYge5X9B4QIGnBJ8E6I/NSKpMZIKRgZvGIgTgjGNqWrrXpiZc2JfX7HQTmz7qHr6rsgOCIrd9Xfrd2sqLXf3qbGupCC+VXkrBzusThBTziHJbOmKNC+NsbS4vAwdNccGXDC7QMT9mYfxDF//sxXSAtT4R9Tcqt6uKlbG11Nl/m0jeJLE+lT/+qcHTCygzTZFMNmJerORpMrCjk61101jP5hZd9rJIb/nn7TgLaOZGEYulHdqgu+PnaSxYGU3mYEgZxv9h8ygyHKSVgL8BxwEUOe4NZoMAAAAASUVORK5CYII=');
+
+msg = msg.replace (/\bhttp\:\/\/[-a-z].*jpg/i, 'data:image/png;base64,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');
+//Phouse msg = msg.replace (/\bhttp\:\/\/[-a-z].*jpg/i, 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAIAAABLixI0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAASYSURBVEhLlVRvUFRVFL9vd3nP3WWX3W0Q2EhdAjOhwBybzEJNoQgUkMkx0QqnSesDNvYhBnQYnXQmacrKqclpkmGmETHHwAmFmpRkJChrGRJYVBZYZEVRlt237L7/nfveYwEzms6H9+5975zf+Z3fuedq0X+ZIdqENDqSoniOndtXO/fvN8sPdUxE6ZOXT5ri8/NyXX/8Oof/XFg5r719uqN3Q0k5bXzSp13g6mnLWJZ+69pfq9bnePwcMlqWpKaNjXgi6MS/5Sk5cOT49z8Vbt91vkcfCgexGz2IBprSH0vqdLkRxEkIP6+cjSA8mFfBnoO1TZeKtr5+7po1xPCI0CGJR6QFUaZRt9Ma9/DGkgqzY9XwyDCyxiJvnwL3AF4Zr+529vUfPlrzwYk+v39CTSuGkSQgkYOtw8K5x8L4e2gY3fw9P8lQf+ok7DT31WhevQWAyquqy77pCdCT+C/UgoGmHEXGfU9EkjT9ZerPLCwA8tPBkrIvD9VcETlaklmoBgUoWwWUIJB0/xFR9XohZ6M7ZjFFkvlvHfi2uX8qQg4TGXkrIZHHZRKijAj1SnjtGyL8o0o3Ma9oi62PsJnNppffqKhruYm4O7uf11XmxZkNWpyckJmIsAAIdvUivjI/iSIpvNVQ0I1xSxJpNGGsKIqKfjrX7liStW1f7QU3SLMuRfpkx1r32CQXGkPMLcTcxk9uHAmgt+YOa12TumDo8yKZq4TiM0a5aHLZSzAaxP5jJ75uarekFXVd9+K2aqnKF/Vr0lPXfvhb8XLdVzvXRxTjBbG6dfDd461RrJc5XaHZ/JnKF173hrJTbZoNmSs8Aze6zh5GE06cByfH2iKB0Wk1Biqq+peBqh9cR865zAaqNHvxmdJnOF6WDBfOIXYCDV5CgcF3XsnRZK54ykJqdDotYsEDmi2mJNqDLI/Xcs+++NG1/7vOvXXOqvp22OavXApNBFMbyoMnejQxoTgvW0MH/L62eoc9Tu4Olx4fKs5cerChF6suCTgG+igECN7HhvFx8wUZRJpZXsh6wq6yk9CN+mNBOqCLyIFbLrDn9272jtNtPcO4TDiPktRcngWRdquZjNLSYa6wqhGJwscN7Q1lBfotVVgWpdGzzz2wlRJ2nUywRj/3uA0PoGx2m3nRfCsAwXrbp40tVz2IC7xfuDJuh6y9nFKxGbwgA1Aj0JnL3XuykluvQluxpb13qtujrpEIgvL4rCHkn2Rkf+ClYs2YIZAGMUhiOgdGLDFWPINIkEWESDk5QMBxl6lgHQWZOA9ToYLNnEeF69TQYge5X9B4QIGnBJ8E6I/NSKpMZIKRgZvGIgTgjGNqWrrXpiZc2JfX7HQTmz7qHr6rsgOCIrd9Xfrd2sqLXf3qbGupCC+VXkrBzusThBTziHJbOmKNC+NsbS4vAwdNccGXDC7QMT9mYfxDF//sxXSAtT4R9Tcqt6uKlbG11Nl/m0jeJLE+lT/+qcHTCygzTZFMNmJerORpMrCjk61101jP5hZd9rJIb/nn7TgLaOZGEYulHdqgu+PnaSxYGU3mYEgZxv9h8ygyHKSVgL8BxwEUOe4NZoMAAAAASUVORK5CYII=');
+
 		element_class = 'ptChatScripter';
 	}
+   	if (m[0].indexOf('My embassy has') >= 0 && Options.chatAttack)
+     	element_class = 'ptChatAttack';
+    if (m[0].indexOf('My wilderness at') >= 0 && Options.chatAttack)
+       	element_class = 'ptChatAttack';
        msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
-		msg = msg.replace (/(\bReport\sNo\:\s([0-9]+))/g, '<a onclick=\'ptChatReportClicked($2)\'>$1</a>');
+		msg = msg.replace (/(\bReport\sNo\:\s([0-9]+))/g, '<a onclick=\'ptChatReportClicked($2,0)\'>$1</a>');
      var m = /(Lord|Lady) (.*?)</im.exec(msg);
      if (m != null)
        m[2] = m[2].replace(/\'/g,"°°");
@@ -725,45 +644,449 @@ var ChatStuff = {
      return msg;
    },
  }
-// useless :( ......
-/***/
 
-/***
-RSLT:
-  (string) s0Kid = 57526
-  (string) s1Kid = 35216
-  (string) s1KLv = 1
-  (number) s0KCombatLv = 0
-  (string) s1KCombatLv = Higher
-  (object) fght = [object Object]
-    (object) s1 = [object Object]
-      (array) u2 = 89000,89000
-        (string) 0 = 89000
-        (number) 1 = 89000
+  
+var Rpt = {
+	
 
-      (array) u9 = 1000,1000
-        (string) 0 = 1000
-        (number) 1 = 1000
+	
+	
+	FindReport : function(rpId, pageNum) {
+		var t = Rpt; 
+		var fixrpId = '0r' + rpId;
+		var params = uW.Object.clone(uW.g_ajaxparams);
+			params.pf=0;
+			params.group="a";
+			params.pageNo = pageNum;
+			new MyAjaxRequest(uW.g_ajaxpath + "ajax/listReports.php" + uW.g_ajaxsuffix, {
+				method: "post",
+				parameters: params,
+				onSuccess: function (rslt) {
+					if (rslt.ok) {
+						if(parseInt(pageNum) >= parseInt(rslt['totalPages'])) { 
+							alert('could not locate report'); 
+						};
+						
+						if(rslt.arReports[fixrpId]) {
+							t.GetReport(rpId, rslt.arReports[fixrpId]);
+						} else {
+							pageNum = parseInt(pageNum+1);
+							t.FindReport(rpId, pageNum);
+						};
+					}
+				},
+				onFailure: function () {
+					alert('kabam is having issues');
+				},
+			}, false);
+	},
 
 
-  (number) rnds = 3
-  (number) winner = 1
-  (number) wall = 100
-  (number) s0atkBoost = 0
-  (number) s0defBoost = 0
-  (number) s1atkBoost = 0
-  (number) s1defBoost = 0.2
-  (boolean) conquered = false
-  (array) loot = 111139,763000,643000,78000,138000
-    (number) 0 = 111139
-    (number) 1 = 763000
-    (number) 2 = 643000
-    (number) 3 = 78000
-    (number) 4 = 138000
+	GetReport: function(rpId, rpt){
+		var t = Rpt;
+		var params = uW.Object.clone(uW.g_ajaxparams);
+		if (parseInt(rpt.side1AllianceId) == parseInt(uW.seed.allianceDiplomacies.allianceId)) {
+			params.side = 1;
+		} else {
+			params.side = 0;
+		}
+		params.pf=0;
+		params.rid=rpId;
+			new MyAjaxRequest(uW.g_ajaxpath + "ajax/fetchReport.php" + uW.g_ajaxsuffix, {
+				method: "post",
+				parameters: params,
+				onSuccess: function (rslt) {
+					t.ReportPopup(rslt, rpt, rpId);
+				},
+				onFailure: function (rslt) {
+					alert('found report but kabam would not let me see it');
+					},
+			}, false);
+	},
+	//ripped off from anime tools
+	ReportPopup: function (rslt, rpt, reportId) {
+		var t = Rpt;
+		var popReport = null;
+		//need the info from the list query
+		var m = '';
+		var unitImg = [];
+		for (var i=1;i<13;i++)
+			unitImg[i] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_'+i+'_30.png></TD><TD>' + uW.unitcost['unt'+i][0];
+		unitImg[53] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_53_30.png></TD><TD>Crossbows';
+		unitImg[55] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_55_30.png></TD><TD>Trebuchet';
+		unitImg[60] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_60_30.png></TD><TD>Trap';
+		unitImg[61] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_61_30.png></TD><TD>Caltrops';
+		unitImg[62] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_62_30.png></TD><TD>Spiked Barrier';
+		goldImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/gold_30.png></TD><TD>Gold';
+		foodImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/food_30.png></TD><TD>Food';
+		woodImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/wood_30.png></TD><TD>Wood';
+		stoneImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/stone_30.png></TD><TD>Stone';
+		oreImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/iron_30.png></TD><TD>Ore';
 
-  (string) errorMsg = Something has gone wrong! Please try again, or refresh if this message reappear
-***/
+		function buildHeader () {
+			var h='<TABLE class=ptTab width=100%>';
+			h+='<TR valign=top><TD align=left width=10%><B>';
+			if (rpt.marchName == 'Anti-Scout' || rpt.marchName == 'Scout')
+				h+=rpt.marchName+'ing at';
+			else if (rpt.marchName == 'Attack' || rpt.marchName == 'Defend')
+				h+='Battle at ';
+			else if (rpt.marchName == 'Reinforce' || rpt.marchName == 'Transport')
+				h+=rpt.marchName+' from<BR />'+rpt.marchName+' to</B>';
 
+			if (rpt.side0TileTypeText == 'Barb')
+				h+=' Barbarian Camp Level ' + rpt.side0TileLevel;
+			else if (rpt.side0TileTypeText != 'City')
+				h+=' '+rpt.side0TileTypeText+' Level '+ rpt.side0TileLevel+' ';
+			h+='</B></TD>';
+
+			if (rpt.marchName == 'Reinforce' || rpt.marchName == 'Transport') {
+				h+='<TD align=left width=1%>';
+				if (Seed.player.name != rpt.side1Name)
+					h+=rpt.side1Name;
+				if (Seed.player.name != rpt.side0Name)
+					h+='<BR />'+rpt.side0Name;
+				h+='</TD>';
+			}
+			h+='<TD align=left width=5%>';
+
+			if (rpt.marchName == 'Reinforce' || rpt.marchName == 'Transport')
+				h+='(<A onclick="ptGotoMap('+ rpt.side1XCoord +','+ rpt.side1YCoord +')">'+ rpt.side1XCoord +','+ rpt.side1YCoord +'</a>)<BR />';
+			h+='(<A onclick="ptGotoMap('+ rpt.side0XCoord +','+ rpt.side0YCoord +')">'+ rpt.side0XCoord +','+ rpt.side0YCoord +'</a>)</TD>';
+
+			if (rpt.side0TileTypeText != 'City' && rpt.side0TileTypeText != 'Barb' && rpt.marchName == 'Attack') {
+				if (rslt['conquered']==1)
+					h+='<TD><FONT color="#CC0000"><B>Conquered</B></font></td>';
+				else if (rslt['conquered']==0)
+					h+='<TD><FONT color="#66CC33"><B>Secured</B></font></td>';
+			} else if (rpt.marchName == 'Reinforce' || rpt.marchName == 'Transport') {
+				h+='<TD align=left width=5%>'+rpt.side1CityName+'<BR />';
+				if (rpt.side0CityName != '')
+					h+=rpt.side0CityName+'</TD>';
+				else
+					h+=rpt.side0TileTypeText+' Level '+ rpt.side0TileLevel+'</TD>';
+			}
+
+			h+='<TD align=right>' + formatUnixTime(rpt.reportUnixTime,'24hour') + '<BR />Report No: ' + reportId + '</TD></TR></TABLE>';
+			return h;
+		}
+
+		function handleunts () { // Troops sent to Reinforce or troops found on a Scout
+			var hunts = '', th = '', tc = '', tf = '';
+			if (rslt['unts'] != undefined) {
+				if (rpt.marchName == 'Reinforce')
+					th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Troops Reinforced</TH></TR>';
+				else if (rslt['unts']['u1'] != undefined || rslt['unts']['u2'] != undefined || rslt['unts']['u3'] != undefined || rslt['unts']['u4'] != undefined || rslt['unts']['u5'] != undefined || rslt['unts']['u6'] != undefined || rslt['unts']['u7'] != undefined || rslt['unts']['u8'] != undefined || rslt['unts']['u9'] != undefined || rslt['unts']['u10'] != undefined || rslt['unts']['u11'] != undefined || rslt['unts']['u12'] != undefined)
+					th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Troops Found</TH></TR>';
+				for (var i=1;i<13;i++)
+					if (rslt['unts']['u'+i] != undefined)
+						tc+='<TR><TD>' + unitImg[i] + '</TD><TD align=right>'+addCommas(rslt['unts']['u'+i])+'</TD></TR>';
+				tf='</TABLE>';
+			}
+			if (tc != '')
+				hunts = th + tc + tf;
+			return hunts;
+		}
+
+		function handlersc () { // Resources brought with reinforcements or found on a Scout
+			var hrsc = '', th = '', tc = '', tf = '';
+			if (rslt['rsc'] != undefined) {
+				if (rslt['rsc']['r1'] > 0 || rslt['rsc']['r2'] > 0 || rslt['rsc']['r3'] > 0 || rslt['rsc']['r4'] > 0) {
+					if (rpt.marchName == 'Reinforce')
+						th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Goodies Brought</TH></TR>';
+					else {
+						th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Goodies Found</TH></TR>';
+						if (rslt['gld'] > 0)
+							tc+='<TR><TD>'+goldImg+'</TD><TD align=right>'+addCommasInt(rslt['gld'])+'</TD></TR>';
+					}
+					if (rslt['rsc']['r1'] > 0)
+						tc+='<TR><TD>'+foodImg+'</TD><TD align=right>'+addCommasInt(rslt['rsc']['r1'])+'</TD></TR>';
+					if (rslt['rsc']['r2'] > 0)
+						tc+='<TR><TD>'+woodImg+'</TD><TD align=right>'+addCommasInt(rslt['rsc']['r2'])+'</TD></TR>';
+					if (rslt['rsc']['r3'] > 0)
+						tc+='<TR><TD>'+stoneImg+'</TD><TD align=right>'+addCommasInt(rslt['rsc']['r3'])+'</TD></TR>';
+					if (rslt['rsc']['r4'] > 0)
+						tc+='<TR><TD>'+oreImg+'</TD><TD align=right>'+addCommasInt(rslt['rsc']['r4'])+'</TD></TR>';
+					tf='</TABLE>';
+				}
+			}
+			if (tc != '')
+				hrsc = th + tc + tf;
+			return hrsc;
+		}
+
+		function handlefrt () { // Fortifications found on a Scout
+			var hfrt = '', th = '', tc = '', tf = '';
+			if (rslt['frt'] != 'undefined') {
+				if (rslt['frt']['f53'] != undefined || rslt['frt']['f55'] != undefined || rslt['frt']['f60'] != undefined || rslt['frt']['f61'] != undefined || rslt['frt']['f62'] != undefined) {
+					th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Defenses Found</TH></TR>';
+					if (rslt['frt']['f53'] != undefined)
+						tc+='<TR><TD>' + unitImg[53] + '</TD><TD align=right>'+addCommas(rslt['frt']['f53'])+'</TD></TR>';
+					if (rslt['frt']['f55'] != undefined)
+						tc+='<TR><TD>' + unitImg[55] + '</TD><TD align=right>'+addCommas(rslt['frt']['f55'])+'</TD></TR>';
+					if (rslt['frt']['f60'] != undefined)
+						tc+='<TR><TD>' + unitImg[60] + '</TD><TD align=right>'+addCommas(rslt['frt']['f60'])+'</TD></TR>';
+					if (rslt['frt']['f61'] != undefined)
+						tc+='<TR><TD>' + unitImg[61] + '</TD><TD align=right>'+addCommas(rslt['frt']['f61'])+'</TD></TR>';
+					if (rslt['frt']['f62'] != undefined)
+						tc+='<TR><TD>' + unitImg[62] + '</TD><TD align=right>'+addCommas(rslt['frt']['f62'])+'</TD></TR>';
+					tf='</TABLE>';
+				}
+			}
+			if (tc != '')
+				hfrt = th + tc + tf;
+			return hfrt;
+		}
+
+		function handleblds (bType) {
+			var blds = rslt['blds']['b'+bType]; b = '<TR><TD>'; arField = [], firstbld = true;
+			if (bType == 1)
+				b+='Farm';
+			else if (bType == 2)
+				b+='Sawmill';
+			else if (bType == 3)
+				b+='Quarry';
+			else if (bType == 4)
+				b+='Mine';
+			b+='</TD><TD>';
+			for (var i=1; i<12; i++)
+				arField[i]=0;
+			for (var i=0; i < blds.length; i++)
+				arField[blds[i]]++
+			for (var i=11; i>0; i--) {
+				if (arField[i] > 0) {
+					if (firstbld)
+						firstbld = false;
+					else
+						b+=', ';
+					if (arField[i] > 1)
+						b+=arField[i] + ' x ';
+					b+=' ' + i;
+				}
+			}
+			b+='</TD></TR>';
+			return b;
+		}
+
+		if (rpt.marchName == 'Reinforce') {
+			t.popReport = new CPopup('pbShowRein', 0, 0, 525, 340, true, function() {clearTimeout (1000);});
+			m+= '<DIV style="height:285px">';
+		} else if (rpt.marchName == 'Transport') {
+			t.popReport = new CPopup('pbShowTrans', 0, 0, 525, 240, true, function() {clearTimeout (1000);});
+			m+= '<DIV style="height:185px">';
+		} else if (rpt.marchName == 'Scout' && rslt['winner']==1 && rpt.sideId==1){
+			t.popReport = new CPopup('pbShowOther', 0, 0, 550, 740, true, function() {clearTimeout (1000);});
+			m+= '<DIV style="max-height:705px; height:705px; overflow-y:scroll">';
+		} else {
+			t.popReport = new CPopup('pbShowOther', 0, 0, 550, 680, true, function() {clearTimeout (1000);});
+			m+= '<DIV style="max-height:645px; height:645px; overflow-y:scroll">';
+		}
+		t.popReport.centerMe (mainPop.getMainDiv());
+
+		m+=buildHeader();
+
+		if (rpt.marchName == 'Transport') { // Transport
+			m+='<TABLE class=ptTab>'; // Only transports have these in rslt, so handle them here
+			if (parseInt(rslt['gold']) > 0)
+				m+='<TR><TD>'+goldImg+'</TD><TD align=right>'+addCommas(rslt['gold'])+'</TD></TR>';
+			if (parseInt(rslt['resource1']) > 0)
+				m+='<TR><TD>'+foodImg+'</TD><TD align=right>'+addCommas(rslt['resource1'])+'</TD></TR>';
+			if (parseInt(rslt['resource2']) > 0)
+				m+='<TR><TD>'+woodImg+'</TD><TD align=right>'+addCommas(rslt['resource2'])+'</TD></TR>';
+			if (parseInt(rslt['resource3']) > 0)
+				m+='<TR><TD>'+stoneImg+'</TD><TD align=right>'+addCommas(rslt['resource3'])+'</TD></TR>';
+			if (parseInt(rslt['resource4']) > 0)
+				m+='<TR><TD>'+oreImg+'</TD><TD align=right>'+addCommas(rslt['resource4'])+'</TD></TR>';
+			m+='</TABLE>';
+		}
+
+		m+='<TABLE class=ptTab>';
+		if ((rslt['winner']==1 && rpt.sideId==0) || (rslt['winner']==0 && rpt.sideId==1)) {
+			if (rpt.marchName == 'Scout')
+				m+='<TR><TD><FONT color="#CC0000"><B>Scouting Failed</B></font></TD></TR>';
+			else
+				m+='<TR><TD><FONT color="#CC0000"><B>You were defeated</B></font></TD></TR>';
+		}
+		if (rslt['winner']==0 && rpt.sideId==0)
+			m+='<TR><TD><FONT color="#66CC33"><B>You defended successfully!</B></font></TD></TR>';
+		if (rslt['winner']==1 && rpt.sideId==1) {
+			if (rpt.marchName == 'Scout')
+				m+='<TR><TD><FONT color="#66CC33"><B>Scouting Report</B></font></TD></TR>';
+			else
+				m+='<TR><TD><FONT color="#66CC33"><B>You were victorious!</B></font></TD></TR>';
+		}
+
+		if (rslt['wall'] != undefined) {
+			if (rslt['wall'] == 100)
+				m+='<TR><TD>Attackers breached the walls.</TD></TR>';
+			else
+				m+='<TR><TD>Attackers did not breach the walls. The walls are '+rslt['wall']+'% damaged</TD></TR>';
+		}
+		m+= '</TABLE><BR />';
+
+		if (rslt['loot'] != undefined) {
+			m+='<TABLE class=ptTab>';
+			if (rslt['loot'][0] > 0)
+				m+='<TR><TD>'+goldImg+'</TD><TD align=right>'+addCommas(rslt['loot'][0])+'</TD></TR>';
+			if (rslt['loot'][1] > 0)
+				m+='<TR><TD>'+foodImg+'</TD><TD align=right>'+addCommas(rslt['loot'][1])+'</TD></TR>';
+			if (rslt['loot'][2] > 0)
+				m+='<TR><TD>'+woodImg+'</TD><TD align=right>'+addCommas(rslt['loot'][2])+'</TD></TR>';
+			if (rslt['loot'][3] > 0)
+				m+='<TR><TD>'+stoneImg+'</TD><TD align=right>'+addCommas(rslt['loot'][3])+'</TD></TR>';
+			if (rslt['loot'][4] > 0)
+				m+='<TR><TD>'+oreImg+'</TD><TD align=right>'+addCommas(rslt['loot'][4])+'</TD></TR>';
+			if (rslt['loot'][5] != undefined) {
+				for (var crest=1101; crest < 1116; crest++) {
+					if (rslt['loot'][5][crest] == 1)
+						m+='<TR><TD><img width=30 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/' + crest + '.png></TD><TD colspan=2>' + crestname[crest] + '</TD></TR>';
+				}
+			}
+			m+='</TABLE><BR />';
+		}
+
+		if (rpt.marchName == 'Reinforce') {
+			m+=handleunts();
+			m+=handlersc();
+		}
+
+		if (rpt.marchName == 'Scout' && rslt['winner']==1) {
+			m+='<TABLE class=ptTab width=100%><TR><TD width=50% align=left valign=top>';
+			m+=handleunts();
+			m+=handlefrt();
+			m+=handlersc();
+			m+='</TD><TD width=50% align=left valign=top>';
+			m+='<TABLE class=ptTab width=100%>';
+			if (rslt['lstlgn'] != undefined) {
+				if (!rslt['lstlgn'])
+					m+='<TR><TD>Last Login: Not recorded</TD></TR>';
+				else
+					m+='<TR><TD>Last Login: ' + formatUnixTime(rslt['lstlgn']) + '</TD></TR>';
+			}
+			m+='<TR><TD>Marshall Combat: ';
+			if (rslt['knt'] != undefined)
+				m+=rslt['knt']['cbt'];
+			else
+				m+='None';
+			m+='</TD></TR>';
+			if (rslt['pop'] != undefined)
+				m+='<TR><TD>Population: ' + addCommas(rslt['pop']) + '</TD></TR>';
+			if (rslt['hap'] != undefined)
+				m+='<TR><TD>Happiness: ' + addCommas(rslt['hap']) + '</TD></TR></TABLE>';
+			if (rslt['blds']['b1'] != undefined || rslt['blds']['b2'] != undefined || rslt['blds']['b3'] != undefined || rslt['blds']['b4'] != undefined) {
+				m+='<TABLE class=ptTab><TR><TH colspan=2 align=left>Fields</TH></TR>';
+				for (var i=1; i<5; i++)
+					if (rslt['blds']['b'+i] != undefined)
+						m+=handleblds(i);
+				m+='</TABLE>';
+			}
+			if (rslt['tch'] != undefined) {
+				m+='<TABLE class=ptTab><TR><TH colspan=2 align=left>Research</TH></TR>';
+				for (var tl=1; tl < 17; tl++)
+					if (tl != 7)
+						m+='</TD></TR><TR><TD>'+researchLevels[tl].Name+'</TD><TD align=right>' + rslt['tch']['t'+tl] + '</TD></TR>';
+				m+='</TABLE>';
+			}
+			m+='</TD></TR></TABLE>';
+		}
+
+		if (rslt['fght'] != undefined){ // not Reinforce or Transport, so we have a table with 2 columns: 1 for Attackers, 1 for Defenders
+			m+='<TABLE class=ptTab width=100%><TR><TD width=50% align=left valign=top>';
+			m+='<TABLE class=ptTab width=100%>';
+			m+='<TR><TD colspan=4><B>Attackers</B> ('+rpt.side1Name+')';
+			if (rslt['winner']==1)
+				m+='<FONT color="#CC0000"><B> Winner</B></FONT>';
+			m+='</TD></TR>';
+			if (rpt.marchName == 'Attack' || rpt.marchName == 'Defend')
+				m+='<TR><TD colspan=4>Knight Combat Skill: ' + rslt['s1KCombatLv'] + '</TD></TR>';
+			m+='<TR><TD colspan=4>Attack Boosted: ' + 100*rslt['s1atkBoost'] + '%</TD></TR>';
+			m+='<TR><TD colspan=4>Defense Boosted: ' + 100*rslt['s1defBoost'] + '%</TD></TR>';
+			m+='<TR><TD colspan=4>(<A onclick="ptGotoMap('+ rpt.side1XCoord +','+ rpt.side1YCoord +')">'+ rpt.side1XCoord +','+ rpt.side1YCoord +'</a>) ' + rpt.side1CityName + '</TD></TR>';
+			if (rslt['fght']["s1"] != undefined) {
+				m+='<TR><TH></TH><TH align=left>Troops</TH><TH align=right>Fought</TH><TH align=right>Survived</TH></TR>';
+				for (var i=1;i<13;i++) {
+					if (rslt['fght']["s1"]['u'+i] != undefined) {
+						if (rslt['fght']["s1"]['u'+i][0] > rslt['fght']["s1"]['u'+i][1]) {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s1"]['u'+i][0])+'</td>';
+							m+='<TD align=right><FONT color="#CC0000">'+addCommas(rslt['fght']["s1"]['u'+i][1])+'</FONT></td></tr>';
+						} else {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s1"]['u'+i][0])+'</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s1"]['u'+i][1])+'</td></tr>';
+						}
+					}
+				}
+			}
+			m+='</TABLE></TD><TD width=50% align=right valign=top>';
+			m+='<TABLE class=ptTab width=100%>';
+			m+='<TR><TD colspan=4><B>Defenders</B> ('+rpt.side0Name+')';
+			if (rslt['winner']==0)
+				m+='<FONT color="#CC0000"><B> Winner</B></FONT>';
+			m+='</TD></TR>';
+			if (rpt.marchName == 'Attack' || rpt.marchName == 'Defend')
+				m+='<TR><TD colspan=4>Knight Combat Skill: ' + rslt['s0KCombatLv'] + '</TD></TR>';
+			if (rslt['s0atkBoost'] != undefined)
+				m+='<TR><TD colspan=4>Attack Boosted: ' + 100*rslt['s0atkBoost'] + '%</TD></TR>';
+			else
+				m+='<TR><TD colspan=4>&nbsp;</TD></TR>';
+			if (rslt['s0defBoost'] != undefined)
+				m+='<TR><TD colspan=4>Defense Boosted: ' + 100*rslt['s0defBoost'] + '%</TD></TR>';
+			else
+				m+='<TR><TD colspan=4>&nbsp;</TD></TR>';
+			m+='<TR><TD colspan=4>Rounds: ' + rslt['rnds'] + '</TD></TR>';
+			if (rslt['fght']["s0"] != undefined) {
+				m+='<TR><TH></TH><TH align=left>Troops</TH><TH align=right>Fought</TH><TH align=right>Survived</TH></TR>';
+				for (var i=1;i<13;i++) {
+					if (rslt['fght']["s0"]['u'+i] != undefined) {
+						if (rslt['fght']["s0"]['u'+i][0] > rslt['fght']["s0"]['u'+i][1]) {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['u'+i][0])+'</td>';
+							m+='<TD align=right><FONT color="#CC0000">'+addCommas(rslt['fght']["s0"]['u'+i][1])+'</FONT></td></tr>';
+						} else {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['u'+i][0])+'</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['u'+i][1])+'</td></tr>';
+						}
+					}
+				}
+				for (var i=53;i<=55;i++) {
+					if (rslt['fght']["s0"]['f'+i] != undefined) {
+						if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
+							m+='<TD align=right><FONT color="#CC0000">'+addCommas(rslt['fght']["s0"]['f'+i][1])+'</font></td></tr>';
+						} else {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][1])+'</td></tr>';
+						}
+					}
+				}
+				for (var i=60;i<=63;i++) {
+					if (rslt['fght']["s0"]['f'+i] != undefined) {
+						if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
+							m+='<TD align=right><FONT color="#CC0000">'+addCommas(rslt['fght']["s0"]['f'+i][1])+'</font></td></tr>';
+						} else {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][1])+'</td></tr>';
+						}
+					}
+				}
+			} else
+				m+='<TR><TD>No Troops Defended</TD></TR>';
+			m+='</TABLE></TD></TR></TABLE>';
+		}
+
+		m+='</DIV>';
+		t.popReport.getMainDiv().innerHTML = m;
+		t.popReport.getTopDiv().innerHTML = '<DIV align=center><B>'+rpt.marchName+' Report</B></DIV>';
+		t.popReport.show(true);
+	},
+	
+};
 
 /*************** WILDS TAB *********************/
 
@@ -3393,7 +3716,10 @@ Tabs.Options = {
       m+='<TR><TD>General - Tab Clicked: </td><TD><INPUT id=togTabClick type=text size=7 maxlength=7 value="'+Colors.TabClicked+'"></td>&nbsp;<TD style="background-color:'+Colors.TabClicked+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>General - Tabs: </td><TD><INPUT id=togTab type=text size=7 maxlength=7 value="'+Colors.Tabs+'"></td>&nbsp;<TD style="background-color:'+Colors.Tabs+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>Overview - Dark Rows:</td><TD><INPUT id=togOverDarkRow type=text size=7 maxlength=7 value="'+Colors.OverviewDarkRow+'"></td>&nbsp;<TD style="background-color:'+Colors.OverviewDarkRow+'" width=30px>&nbsp;</td></tr>';
-      m+='</table><BR><BR><HR>To apply colors you need to REFRESH!<BR>';
+      m+='</table><BR><BR><DIV>HTML colors:&nbsp;&nbsp;&nbsp;';
+      m+='<a href="http://www.colorpicker.com/" target="_blank">Color Picker</a>&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;';
+      m+='<a href="http://www.w3schools.com/html/html_colors.asp" target="_blank">Colors</a>';
+      m+='<HR>To apply colors you need to REFRESH!<BR>';
       m+= strButton20('Reset Colors', 'id=ResetALL');
       t.Overv.innerHTML = m;
             
@@ -3532,7 +3858,7 @@ if (DEBUG_TRACE) logit (" 2 Map.request  Map = "+ inspect (Map, 2, 1, 2));
 
 Tabs.Train = {
   tabOrder : 15,
-  tabLabal : uW.g_js_strings.commonstr.train,
+  tabLabel : uW.g_js_strings.commonstr.train,
   cont : null,
   timer : null,
   stats : {},
@@ -4291,7 +4617,7 @@ var GMTclock = {
   everySecond : function (){
     var now = new Date();  
     now.setTime(now.getTime() + (now.getTimezoneOffset()*60000));
-    GMTclock.span.innerHTML = ' &nbsp; ('+ now.toLocaleFormat('%H:%M') +')';
+    GMTclock.span.innerHTML = ' &nbsp; ('+ now.toLocaleFormat('%H:%M:%S') +' GMT)';
   },
 }
 
@@ -4757,17 +5083,7 @@ Tabs.OverView = {
     var metalalloys = 0;
     var logging = 0;
     var poisonededge = 0;
-    var WallSpace = {1:1000,
-    			  2:3000,
-    			  3:6000,
-    			  4:10000,
-    			  5:15000,
-    			  6:21000,
-    			  7:28000,
-    			  8:36000,
-    			  9:45000,
-    			  10:55000,
-    			  11:66000};
+
     var FieldSpace = {1:13,
     			  2:16,
     			  3:19,
@@ -4778,7 +5094,8 @@ Tabs.OverView = {
     			  8:34,
     			  9:37,
     			  10:40,
-    			  11:40};
+    			  11:40,
+    			  12:40};
     			  		   
     fertilizer = Seed.tech['tch1'];
     logging = Seed.tech['tch2'];
@@ -4829,10 +5146,12 @@ Tabs.OverView = {
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
-    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
     		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
     	}
-    	max = WallSpace[wall]/2/2 - parseInt(Seed.fortifications[city]["fort53"]) - parseInt(Seed.fortifications[city]["fort55"]);
+    	wall = parseInt(Seed.buildings[city].pos1[1]);
+    	var WallSpace = 0;
+    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 1000)};
+    	max = WallSpace/2/2 - parseInt(Seed.fortifications[city]["fort53"]) - parseInt(Seed.fortifications[city]["fort55"]);
     	m+= '<TD width=79 style="background:#FFFFFF">' + Seed.fortifications[city]["fort53"];
     	if (wall >=6 && blacksmith >=6 && fletching >=5 && max > 0) m+= '<br>Left: ' + max +'</td>';
     	else if (t.showReq){
@@ -4846,10 +5165,12 @@ Tabs.OverView = {
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
-    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
     		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
     	}
-    	max = WallSpace[wall]/2/4 - parseInt(Seed.fortifications[city]["fort53"]) - parseInt(Seed.fortifications[city]["fort55"]);
+    	wall = parseInt(Seed.buildings[city].pos1[1]);
+    	var WallSpace = 0;
+    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 1000)};
+    	max = WallSpace/2/4 - parseInt(Seed.fortifications[city]["fort53"]) - parseInt(Seed.fortifications[city]["fort55"]);
     	m+=  '<TD width=79 style="background:#FFFFFF">' +Seed.fortifications[city]["fort55"];
     	if (wall >=8 && blacksmith >=8 && fletching >=7 && geometry>=7 && max > 0) m+= '<br>Left: ' + max+'</td>';
     	else if (t.showReq){
@@ -4863,11 +5184,11 @@ Tabs.OverView = {
     m+='<TR valign=top align=right><TD width=85 style="background-color:'+Colors.OverviewDarkRow+';">Wall defences</td>';
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
-    	for (y in Seed.buildings[city]) {
-    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
-    	}
+    	wall = parseInt(Seed.buildings[city].pos1[1]);
     	build = (parseInt(Seed.fortifications[city]["fort53"])*2)+ (parseInt(Seed.fortifications[city]["fort55"])*4);
-    	max = WallSpace[wall]/2;
+    	var WallSpace = 0;
+    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 1000)};
+    	max = WallSpace/2;
     	if (build < max) m+='<TD width=79 style="background:#FFFFFF"><FONT COLOR= "CC0000">';
     	else m+='<TD width=79 style="background:#FFFFFF"><FONT COLOR= "669900">';
     	m+= build+'</font>';
@@ -4877,10 +5198,12 @@ Tabs.OverView = {
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
-    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
     		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
     	}
-    	max = WallSpace[wall]/2/4 - (parseInt(Seed.fortifications[city]["fort60"])*4) - (parseInt(Seed.fortifications[city]["fort61"])*1) - (parseInt(Seed.fortifications[city]["fort62"])*3);
+    	wall = parseInt(Seed.buildings[city].pos1[1]);
+    	var WallSpace = 0;
+    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 1000)};
+    	max = WallSpace/2/4 - (parseInt(Seed.fortifications[city]["fort60"])*4) - (parseInt(Seed.fortifications[city]["fort61"])*1) - (parseInt(Seed.fortifications[city]["fort62"])*3);
     	m+=  '<TD width=79 style="background:#FFFFFF">'+Seed.fortifications[city]["fort60"];
     	if (wall >=4 && blacksmith >=4 && poisonededge>=4 && max>0) m+= '<br>Left: ' + max+'</td>';
     	else if (t.showReq){
@@ -4894,10 +5217,12 @@ Tabs.OverView = {
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
-    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
     		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
     	}
-    	max = WallSpace[wall]/2/1 - (parseInt(Seed.fortifications[city]["fort60"])*4) - (parseInt(Seed.fortifications[city]["fort61"])*1) - (parseInt(Seed.fortifications[city]["fort62"])*3);
+    	wall = parseInt(Seed.buildings[city].pos1[1]);
+    	var WallSpace = 0;
+    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 1000)};
+    	max = WallSpace/2/1 - (parseInt(Seed.fortifications[city]["fort60"])*4) - (parseInt(Seed.fortifications[city]["fort61"])*1) - (parseInt(Seed.fortifications[city]["fort62"])*3);
     	m+= '<TD width=79 style="background:#FFFFFF">'+Seed.fortifications[city]["fort61"];
     	if (wall >=1 && metalalloys >=1 && max>0) m+= '<br>Left: ' + max+'</td>';
     	else if (t.showReq){
@@ -4910,10 +5235,12 @@ Tabs.OverView = {
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
-    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
     		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
     	}
-    	max = (WallSpace[wall]/2/3).toFixed(0) - (parseInt(Seed.fortifications[city]["fort60"])*4) - (parseInt(Seed.fortifications[city]["fort61"])*1) - (parseInt(Seed.fortifications[city]["fort62"])*3);
+    	wall = parseInt(Seed.buildings[city].pos1[1]);
+    	var WallSpace = 0;
+    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 1000)};
+    	max = (WallSpace/2/3).toFixed(0) - (parseInt(Seed.fortifications[city]["fort60"])*4) - (parseInt(Seed.fortifications[city]["fort61"])*1) - (parseInt(Seed.fortifications[city]["fort62"])*3);
     	m+=  '<TD width=79 style="background:#FFFFFF">'+Seed.fortifications[city]["fort62"];
     	if (wall >=2 && blacksmith>=2 && logging>=2 && max>0) m+= '<br>Left: ' + max+'</td>';
     	else if (t.showReq){
@@ -4926,11 +5253,11 @@ Tabs.OverView = {
     m+='<TR valign=top align=right><TD width=85 style="background-color:'+Colors.OverviewDarkRow+';">Field defences</td>';
     for (i=0;i<Seed.cities.length;i++){
     	city = 'city'+Seed.cities[i][0];
-    	for (y in Seed.buildings[city]) {
-    		if (Seed.buildings[city][y][0] == 19) wall = Seed.buildings[city][y][1];
-    	}
+    	wall = parseInt(Seed.buildings[city].pos1[1]);
     	build = (parseInt(Seed.fortifications[city]["fort60"])*4)+ (parseInt(Seed.fortifications[city]["fort61"])*1) + (parseInt(Seed.fortifications[city]["fort62"])*3);
-    	max = WallSpace[wall]/2;
+    	var WallSpace = 0;
+    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 1000)};
+    	max = WallSpace/2;
     	if (build < max) m+='<TD width=79 style="background:#FFFFFF"><FONT COLOR= "CC0000">';
     	else m+='<TD width=79 style="background:#FFFFFF"><FONT COLOR= "669900">';
     	m+= build+'</font>';
@@ -5184,10 +5511,10 @@ Tabs.OverView = {
 	          rsty = '';
 	        else
 	          rsty = ' style="background: #e8e8e8" ';
-	        cost = unsafeWindow.unitcost['unt'+ui];     //  NAME, Food, Wood, Stone, Ore, ?, IdlePop, Time
-	        stats = unsafeWindow.unitstats['unt'+ui];   //  Life, Attack, Defense, Speed, Range, Load
-	        food = unsafeWindow.unitupkeeps[ui];
-	        might = unsafeWindow.unitmight['u'+ui];
+	        cost = uW.unitcost['unt'+ui];     //  NAME, Food, Wood, Stone, Ore, ?, IdlePop, Time
+	        stats = uW.unitstats['unt'+ui];   //  Life, Attack, Defense, Speed, Range, Load
+	        food = uW.unitupkeeps[ui];
+	        might = uW.unitmight['u'+ui];
 	        u += '<TR '+ rsty +'align=right><TD class=xtab align=left><B>'+ cost[0].substr(0,16) +'</b></td><TD class=xtabL>'+ cost[1] +'</td><TD class=xtab>'+ cost[2] +'</td>\
 	            <TD class=xtab>'+ cost[3] +'</td><TD class=xtab>'+ cost[4] +'</td><TD class=xtab>'+ cost[6] +'</td><TD class=xtabL>'+ might +'</td>\
 	            <TD class=xtab>'+ stats[0] +'</td><TD class=xtab>'+ stats[1] +'</td><TD class=xtab>'+ stats[2] +'</td><TD class=xtab>'+ stats[3] +'</td>\
@@ -5195,7 +5522,7 @@ Tabs.OverView = {
 	  
 	      }
 	      u += '<TR class=xtabLine><TD colspan=14 class=xtabLine></td></tr>';
-	      for (k in unsafeWindow.fortcost){
+	      for (k in uW.fortcost){
 	        if (++rownum % 2)
 	          rsty = '';
 	        else
@@ -8873,7 +9200,16 @@ function reloadKOC (){
   document.body.appendChild (e);
   setTimeout (function (){document.getElementById('xxpbButReload').click();}, 0);
 }
-
+function formatUnixTime (unixTimeString,format){
+	var rtn = unsafeWindow.formatDateByUnixTime (unixTimeString);
+/*if (format=='24hour') {
+		if (rtn.substr(14,2)=='AM')
+			rtn = rtn.substr(0,13);
+		else
+			rtn = rtn.substr(8,2)+' '+rtn.substr(0,8)+(parseInt(rtn.substr(8,2))+12)+rtn.substr(10,3);
+	} */
+	return rtn;
+}
 
 function getAllianceLeaders (){
     var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
