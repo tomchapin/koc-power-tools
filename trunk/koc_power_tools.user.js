@@ -901,6 +901,7 @@ var Rpt = {
 		}
 
 		function handleblds (bType) {
+			if(rslt['blds']){
 			var blds = rslt['blds']['b'+bType]; b = '<TR><TD>'; arField = [], firstbld = true;
 			if (bType == 1)
 				b+='Farm';
@@ -928,6 +929,7 @@ var Rpt = {
 			}
 			b+='</TD></TR>';
 			return b;
+			}
 		}
 
 		if (rpt.marchName == 'Reinforce') {
@@ -978,7 +980,7 @@ var Rpt = {
 				m+='<TR><TD><FONT color="#66CC33"><B>You were victorious!</B></font></TD></TR>';
 		}
 
-		if (rslt['wall'] != undefined) {
+		if (rslt['wall']) {
 			if (rslt['wall'] == 100)
 				m+='<TR><TD>Attackers breached the walls.</TD></TR>';
 			else
@@ -986,7 +988,7 @@ var Rpt = {
 		}
 		m+= '</TABLE><BR />';
 
-		if (rslt['loot'] != undefined) {
+		if (rslt['loot']) {
 			m+='<TABLE class=ptTab>';
 			if (rslt['loot'][0] > 0)
 				m+='<TR><TD>'+goldImg+'</TD><TD align=right>'+addCommas(rslt['loot'][0])+'</TD></TR>';
@@ -998,7 +1000,7 @@ var Rpt = {
 				m+='<TR><TD>'+stoneImg+'</TD><TD align=right>'+addCommas(rslt['loot'][3])+'</TD></TR>';
 			if (rslt['loot'][4] > 0)
 				m+='<TR><TD>'+oreImg+'</TD><TD align=right>'+addCommas(rslt['loot'][4])+'</TD></TR>';
-			if (rslt['loot'][5] != undefined) {
+			if (rslt['loot'][5]) {
 				for (var crest=1101; crest < 1116; crest++) {
 					if (rslt['loot'][5][crest] == 1)
 						m+='<TR><TD><img width=30 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/' + crest + '.png></TD><TD colspan=2>' + crestname[crest] + '</TD></TR>';
@@ -1019,28 +1021,30 @@ var Rpt = {
 			m+=handlersc();
 			m+='</TD><TD width=50% align=left valign=top>';
 			m+='<TABLE class=ptTab width=100%>';
-			if (rslt['lstlgn'] != undefined) {
+			if (rslt['lstlgn']) {
 				if (!rslt['lstlgn'])
 					m+='<TR><TD>Last Login: Not recorded</TD></TR>';
 				else
 					m+='<TR><TD>Last Login: ' + formatUnixTime(rslt['lstlgn']) + '</TD></TR>';
 			}
 			m+='<TR><TD>Marshall Combat: ';
-			if (rslt['knt'] != undefined)
+			if (rslt['knt'])
 				m+=rslt['knt']['cbt'];
 			else
 				m+='None';
 			m+='</TD></TR>';
-			if (rslt['pop'] != undefined)
+			if (rslt['pop'])
 				m+='<TR><TD>Population: ' + addCommas(rslt['pop']) + '</TD></TR>';
-			if (rslt['hap'] != undefined)
+			if (rslt['hap'])
 				m+='<TR><TD>Happiness: ' + addCommas(rslt['hap']) + '</TD></TR></TABLE>';
-			if (rslt['blds']['b1'] != undefined || rslt['blds']['b2'] != undefined || rslt['blds']['b3'] != undefined || rslt['blds']['b4'] != undefined) {
-				m+='<TABLE class=ptTab><TR><TH colspan=2 align=left>Fields</TH></TR>';
-				for (var i=1; i<5; i++)
-					if (rslt['blds']['b'+i] != undefined)
-						m+=handleblds(i);
-				m+='</TABLE>';
+			if(rslt['blds']){
+				if (rslt['blds']['b1'] || rslt['blds']['b2'] || rslt['blds']['b3'] || rslt['blds']['b4']) {
+					m+='<TABLE class=ptTab><TR><TH colspan=2 align=left>Fields</TH></TR>';
+					for (var i=1; i<5; i++)
+						if (rslt['blds']['b'+i])
+							m+=handleblds(i);
+					m+='</TABLE>';
+				}
 			}
 			if (rslt['tch']) {
 				m+='<TABLE class=ptTab><TR><TH colspan=2 align=left>Research</TH></TR>';
@@ -1052,7 +1056,7 @@ var Rpt = {
 			m+='</TD></TR></TABLE>';
 		}
 
-		if (rslt['fght'] != undefined){ // not Reinforce or Transport, so we have a table with 2 columns: 1 for Attackers, 1 for Defenders
+		if (rslt['fght']){ // not Reinforce or Transport, so we have a table with 2 columns: 1 for Attackers, 1 for Defenders
 			m+='<TABLE class=ptTab width=100%><TR><TD width=50% align=left valign=top>';
 			m+='<TABLE class=ptTab width=100%>';
 			m+='<TR><TD colspan=4><B>Attackers</B> ('+rpt.side1Name+')';
@@ -1064,10 +1068,10 @@ var Rpt = {
 			m+='<TR><TD colspan=4>Attack Boosted: ' + 100*rslt['s1atkBoost'] + '%</TD></TR>';
 			m+='<TR><TD colspan=4>Defense Boosted: ' + 100*rslt['s1defBoost'] + '%</TD></TR>';
 			m+='<TR><TD colspan=4>(<A onclick="ptGotoMap('+ rpt.side1XCoord +','+ rpt.side1YCoord +')">'+ rpt.side1XCoord +','+ rpt.side1YCoord +'</a>) ' + rpt.side1CityName + '</TD></TR>';
-			if (rslt['fght']["s1"] != undefined) {
+			if (rslt['fght']["s1"]) {
 				m+='<TR><TH></TH><TH align=left>Troops</TH><TH align=right>Fought</TH><TH align=right>Survived</TH></TR>';
 				for (var i=1;i<13;i++) {
-					if (rslt['fght']["s1"]['u'+i] != undefined) {
+					if (rslt['fght']["s1"]['u'+i]) {
 						if (rslt['fght']["s1"]['u'+i][0] > rslt['fght']["s1"]['u'+i][1]) {
 							m+='<TR><TD>' + unitImg[i] + '</td>';
 							m+='<TD align=right>'+addCommas(rslt['fght']["s1"]['u'+i][0])+'</td>';
@@ -1088,19 +1092,19 @@ var Rpt = {
 			m+='</TD></TR>';
 			if (rpt.marchName == 'Attack' || rpt.marchName == 'Defend')
 				m+='<TR><TD colspan=4>Knight Combat Skill: ' + rslt['s0KCombatLv'] + '</TD></TR>';
-			if (rslt['s0atkBoost'] != undefined)
+			if (rslt['s0atkBoost'])
 				m+='<TR><TD colspan=4>Attack Boosted: ' + 100*rslt['s0atkBoost'] + '%</TD></TR>';
 			else
 				m+='<TR><TD colspan=4>&nbsp;</TD></TR>';
-			if (rslt['s0defBoost'] != undefined)
+			if (rslt['s0defBoost'])
 				m+='<TR><TD colspan=4>Defense Boosted: ' + 100*rslt['s0defBoost'] + '%</TD></TR>';
 			else
 				m+='<TR><TD colspan=4>&nbsp;</TD></TR>';
 			m+='<TR><TD colspan=4>Rounds: ' + rslt['rnds'] + '</TD></TR>';
-			if (rslt['fght']["s0"] != undefined) {
+			if (rslt['fght']["s0"]) {
 				m+='<TR><TH></TH><TH align=left>Troops</TH><TH align=right>Fought</TH><TH align=right>Survived</TH></TR>';
 				for (var i=1;i<13;i++) {
-					if (rslt['fght']["s0"]['u'+i] != undefined) {
+					if (rslt['fght']["s0"]['u'+i]) {
 						if (rslt['fght']["s0"]['u'+i][0] > rslt['fght']["s0"]['u'+i][1]) {
 							m+='<TR><TD>' + unitImg[i] + '</td>';
 							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['u'+i][0])+'</td>';
@@ -1113,7 +1117,7 @@ var Rpt = {
 					}
 				}
 				for (var i=53;i<=55;i++) {
-					if (rslt['fght']["s0"]['f'+i] != undefined) {
+					if (rslt['fght']["s0"]['f'+i]) {
 						if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) {
 							m+='<TR><TD>' + unitImg[i] + '</td>';
 							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
@@ -1126,7 +1130,7 @@ var Rpt = {
 					}
 				}
 				for (var i=60;i<=63;i++) {
-					if (rslt['fght']["s0"]['f'+i] != undefined) {
+					if (rslt['fght']["s0"]['f'+i]) {
 						if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) {
 							m+='<TR><TD>' + unitImg[i] + '</td>';
 							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
@@ -6477,13 +6481,13 @@ Tabs.Rpt = {
 
 		function handleunts () { // Troops sent to Reinforce or troops found on a Scout
 			var hunts = '', th = '', tc = '', tf = '';
-			if (rslt['unts'] != undefined) {
+			if (rslt['unts']) {
 				if (rpt.marchName == 'Reinforce')
 					th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Troops Reinforced</TH></TR>';
-				else if (rslt['unts']['u1'] != undefined || rslt['unts']['u2'] != undefined || rslt['unts']['u3'] != undefined || rslt['unts']['u4'] != undefined || rslt['unts']['u5'] != undefined || rslt['unts']['u6'] != undefined || rslt['unts']['u7'] != undefined || rslt['unts']['u8'] != undefined || rslt['unts']['u9'] != undefined || rslt['unts']['u10'] != undefined || rslt['unts']['u11'] != undefined || rslt['unts']['u12'] != undefined)
+				else if (rslt['unts'])
 					th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Troops Found</TH></TR>';
 				for (var i=1;i<13;i++)
-					if (rslt['unts']['u'+i] != undefined)
+					if (rslt['unts']['u'+i])
 						tc+='<TR><TD>' + unitImg[i] + '</TD><TD align=right>'+addCommas(rslt['unts']['u'+i])+'</TD></TR>';
 				tf='</TABLE>';
 			}
@@ -6494,7 +6498,7 @@ Tabs.Rpt = {
 
 		function handlersc () { // Resources brought with reinforcements or found on a Scout
 			var hrsc = '', th = '', tc = '', tf = '';
-			if (rslt['rsc'] != undefined) {
+			if (rslt['rsc']) {
 				if (rslt['rsc']['r1'] > 0 || rslt['rsc']['r2'] > 0 || rslt['rsc']['r3'] > 0 || rslt['rsc']['r4'] > 0) {
 					if (rpt.marchName == 'Reinforce')
 						th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Goodies Brought</TH></TR>';
@@ -6522,17 +6526,17 @@ Tabs.Rpt = {
 		function handlefrt () { // Fortifications found on a Scout
 			var hfrt = '', th = '', tc = '', tf = '';
 			if (rslt['frt']) {
-				if (rslt['frt']['f53'] != undefined || rslt['frt']['f55'] != undefined || rslt['frt']['f60'] != undefined || rslt['frt']['f61'] != undefined || rslt['frt']['f62'] != undefined) {
+				if (rslt['frt']) {
 					th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Defenses Found</TH></TR>';
-					if (rslt['frt']['f53'] != undefined)
+					if (rslt['frt']['f53'])
 						tc+='<TR><TD>' + unitImg[53] + '</TD><TD align=right>'+addCommas(rslt['frt']['f53'])+'</TD></TR>';
-					if (rslt['frt']['f55'] != undefined)
+					if (rslt['frt']['f55'])
 						tc+='<TR><TD>' + unitImg[55] + '</TD><TD align=right>'+addCommas(rslt['frt']['f55'])+'</TD></TR>';
-					if (rslt['frt']['f60'] != undefined)
+					if (rslt['frt']['f60'])
 						tc+='<TR><TD>' + unitImg[60] + '</TD><TD align=right>'+addCommas(rslt['frt']['f60'])+'</TD></TR>';
-					if (rslt['frt']['f61'] != undefined)
+					if (rslt['frt']['f61'])
 						tc+='<TR><TD>' + unitImg[61] + '</TD><TD align=right>'+addCommas(rslt['frt']['f61'])+'</TD></TR>';
-					if (rslt['frt']['f62'] != undefined)
+					if (rslt['frt']['f62'])
 						tc+='<TR><TD>' + unitImg[62] + '</TD><TD align=right>'+addCommas(rslt['frt']['f62'])+'</TD></TR>';
 					tf='</TABLE>';
 				}
@@ -6543,6 +6547,7 @@ Tabs.Rpt = {
 		}
 
 		function handleblds (bType) {
+		  if(rslt['blds']){
 			var blds = rslt['blds']['b'+bType]; b = '<TR><TD>'; arField = [], firstbld = true;
 			if (bType == 1)
 				b+='Farm';
@@ -6570,6 +6575,7 @@ Tabs.Rpt = {
 			}
 			b+='</TD></TR>';
 			return b;
+		  }
 		}
 
 		if (rpt.marchName == 'Reinforce') {
@@ -6620,7 +6626,7 @@ Tabs.Rpt = {
 				m+='<TR><TD><FONT color="#66CC33"><B>You were victorious!</B></font></TD></TR>';
 		}
 
-		if (rslt['wall'] != undefined) {
+		if (rslt['wall']) {
 			if (rslt['wall'] == 100)
 				m+='<TR><TD>Attackers breached the walls.</TD></TR>';
 			else
@@ -6628,7 +6634,7 @@ Tabs.Rpt = {
 		}
 		m+= '</TABLE><BR />';
 
-		if (rslt['loot'] != undefined) {
+		if (rslt['loot']) {
 			m+='<TABLE class=ptTab>';
 			if (rslt['loot'][0] > 0)
 				m+='<TR><TD>'+goldImg+'</TD><TD align=right>'+addCommas(rslt['loot'][0])+'</TD></TR>';
@@ -6640,7 +6646,7 @@ Tabs.Rpt = {
 				m+='<TR><TD>'+stoneImg+'</TD><TD align=right>'+addCommas(rslt['loot'][3])+'</TD></TR>';
 			if (rslt['loot'][4] > 0)
 				m+='<TR><TD>'+oreImg+'</TD><TD align=right>'+addCommas(rslt['loot'][4])+'</TD></TR>';
-			if (rslt['loot'][5] != undefined) {
+			if (rslt['loot'][5]) {
 				for (var crest=1101; crest < 1116; crest++) {
 					if (rslt['loot'][5][crest] == 1)
 						m+='<TR><TD><img width=30 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/' + crest + '.png></TD><TD colspan=2>' + crestname[crest] + '</TD></TR>';
@@ -6661,26 +6667,26 @@ Tabs.Rpt = {
 			m+=handlersc();
 			m+='</TD><TD width=50% align=left valign=top>';
 			m+='<TABLE class=ptTab width=100%>';
-			if (rslt['lstlgn'] != undefined) {
+			if (rslt['lstlgn']) {
 				if (!rslt['lstlgn'])
 					m+='<TR><TD>Last Login: Not recorded</TD></TR>';
 				else
 					m+='<TR><TD>Last Login: ' + formatUnixTime(rslt['lstlgn']) + '</TD></TR>';
 			}
 			m+='<TR><TD>Marshall Combat: ';
-			if (rslt['knt'] != undefined)
+			if (rslt['knt'])
 				m+=rslt['knt']['cbt'];
 			else
 				m+='None';
 			m+='</TD></TR>';
-			if (rslt['pop'] != undefined)
+			if (rslt['pop'])
 				m+='<TR><TD>Population: ' + addCommas(rslt['pop']) + '</TD></TR>';
-			if (rslt['hap'] != undefined)
+			if (rslt['hap'])
 				m+='<TR><TD>Happiness: ' + addCommas(rslt['hap']) + '</TD></TR></TABLE>';
-			if (rslt['blds']['b1'] != undefined || rslt['blds']['b2'] != undefined || rslt['blds']['b3'] != undefined || rslt['blds']['b4'] != undefined) {
+			if (rslt['blds']['b1'] || rslt['blds']['b2'] || rslt['blds']['b3'] || rslt['blds']['b4']) {
 				m+='<TABLE class=ptTab><TR><TH colspan=2 align=left>Fields</TH></TR>';
 				for (var i=1; i<5; i++)
-					if (rslt['blds']['b'+i] != undefined)
+					if (rslt['blds']['b'+i])
 						m+=handleblds(i);
 				m+='</TABLE>';
 			}
@@ -6694,7 +6700,7 @@ Tabs.Rpt = {
 			m+='</TD></TR></TABLE>';
 		}
 
-		if (rslt['fght'] != undefined){ // not Reinforce or Transport, so we have a table with 2 columns: 1 for Attackers, 1 for Defenders
+		if (rslt['fght']){ // not Reinforce or Transport, so we have a table with 2 columns: 1 for Attackers, 1 for Defenders
 			m+='<TABLE class=ptTab width=100%><TR><TD width=50% align=left valign=top>';
 			m+='<TABLE class=ptTab width=100%>';
 			m+='<TR><TD colspan=4><B>Attackers</B> ('+rpt.side1Name+')';
