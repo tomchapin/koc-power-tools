@@ -879,7 +879,7 @@ var Rpt = {
 
 		function handlefrt () { // Fortifications found on a Scout
 			var hfrt = '', th = '', tc = '', tf = '';
-			if (rslt['frt'] != 'undefined') {
+			if (rslt['frt']) {
 				if (rslt['frt']['f53'] != undefined || rslt['frt']['f55'] != undefined || rslt['frt']['f60'] != undefined || rslt['frt']['f61'] != undefined || rslt['frt']['f62'] != undefined) {
 					th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Defenses Found</TH></TR>';
 					if (rslt['frt']['f53'] != undefined)
