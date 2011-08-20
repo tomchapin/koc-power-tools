@@ -6,7 +6,7 @@
 // @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110819b';
+var Version = '20110819c';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -1042,11 +1042,11 @@ var Rpt = {
 						m+=handleblds(i);
 				m+='</TABLE>';
 			}
-			if (rslt['tch'] != undefined) {
+			if (rslt['tch']) {
 				m+='<TABLE class=ptTab><TR><TH colspan=2 align=left>Research</TH></TR>';
-				for (var tl=1; tl < 17; tl++)
-					if (tl != 7)
-						m+='</TD></TR><TR><TD>'+researchLevels[tl].Name+'</TD><TD align=right>' + rslt['tch']['t'+tl] + '</TD></TR>';
+				for (var tl in rslt.tch)
+					tid = /[0-9]/.exec(tl);
+					m+='</TD></TR><TR><TD>'+uW.techcost['tch'+tid[0]][0]+'</TD><TD align=right>' + rslt.tch[tl] + '</TD></TR>';
 				m+='</TABLE>';
 			}
 			m+='</TD></TR></TABLE>';
@@ -4171,7 +4171,6 @@ if (t.limitingFactor){
     t.updateTopTroops();
   },
 
-    
   clickTroopDo : function (){
     var t = Tabs.Train;
     var cityId = t.selectedCity.id;
@@ -6522,7 +6521,7 @@ Tabs.Rpt = {
 
 		function handlefrt () { // Fortifications found on a Scout
 			var hfrt = '', th = '', tc = '', tf = '';
-			if (rslt['frt'] != 'undefined') {
+			if (rslt['frt']) {
 				if (rslt['frt']['f53'] != undefined || rslt['frt']['f55'] != undefined || rslt['frt']['f60'] != undefined || rslt['frt']['f61'] != undefined || rslt['frt']['f62'] != undefined) {
 					th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Defenses Found</TH></TR>';
 					if (rslt['frt']['f53'] != undefined)
@@ -6685,11 +6684,11 @@ Tabs.Rpt = {
 						m+=handleblds(i);
 				m+='</TABLE>';
 			}
-			if (rslt['tch'] != undefined) {
+			if (rslt['tch']) {
 				m+='<TABLE class=ptTab><TR><TH colspan=2 align=left>Research</TH></TR>';
-				for (var tl=1; tl < 17; tl++)
-					if (tl != 7)
-						m+='</TD></TR><TR><TD>'+researchLevels[tl].Name+'</TD><TD align=right>' + rslt['tch']['t'+tl] + '</TD></TR>';
+				for (var tl in rslt.tch)
+					tid = /[0-9]/.exec(tl);
+					m+='</TD></TR><TR><TD>'+uW.techcost['tch'+tid[0]][0]+'</TD><TD align=right>' + rslt.tch[tl] + '</TD></TR>';
 				m+='</TABLE>';
 			}
 			m+='</TD></TR></TABLE>';
