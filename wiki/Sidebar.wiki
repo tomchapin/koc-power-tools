@@ -10,7 +10,7 @@
   * [HowToKnights Knights]
   * [HowToWilds Wilds]
   * [HowToOptions Options]
-  * [HowToMessagesOrReports Messages]
+  * [HowToMessages MessagesOrReports]
   * [HowToAlliance Alliance]
 
  * [FAQ Frequently Asked Questions]
