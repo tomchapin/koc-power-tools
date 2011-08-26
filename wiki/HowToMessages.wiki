@@ -6,7 +6,7 @@ This option allows you to query messages stored in your inbox or out box
 
 
 
-To view a power point of this wiki click <a href="https://docs.google.com/leaf?id=0B_3QTcmnOd_BMzUwY zZjNjAtMWVjMS00NTIxLWE2YWMtNjhlNmNmN2M0MGJj&hl=en_US"> here<a/>
+To view a power point of this wiki click <a href="https://docs.google.com/uc?id=0B_3QTcmnOd_BMzUwYzZjNjAtMWVjMS00NTIxLWE2YWMtNjhlNmNmN2M0MGJj&export=download&hl=en_US"> here<a/>
 
 For a free Power Point viewer: <a href="http://www.microsoft.com/download/en/details.aspx?displaylang=en&id=13" id="redirect"> here<a/>
 
