@@ -4,6 +4,12 @@
 Click TOOLS, Click Messages
 This option allows you to query messages stored in your inbox or out box
 
+
+
+To view a power point of this wiki click <a href="https://docs.google.com/leaf?id=0B_3QTcmnOd_BMzUwY zZjNjAtMWVjMS00NTIxLWE2YWMtNjhlNmNmN2M0MGJj&hl=en_US"> here<a/>
+
+For a free Power Point viewer: <a href="http://www.microsoft.com/download/en/details.aspx?displaylang=en&id=13" id="redirect"> here<a/>
+
 Select “Inbox” or “outbox” in the “Search in:” field.
 Select the amount of pages you wish to search in the “Pages” field.
 “Search in:” allows you to query the name of the receiver or you can search by date
