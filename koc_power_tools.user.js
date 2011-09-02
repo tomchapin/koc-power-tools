@@ -6,7 +6,7 @@
 // @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110819c';
+var Version = '20110902a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -450,7 +450,7 @@ var anticd = {
   init: function (){
     if (this.isInited)
       return this.KOCversion;
-    uW.cm.cheatDetector.detect = eval ('function (){}');
+    uW.cm.cheatDetector.detect = eval ('function a (){}');
     var scripts = document.getElementsByTagName('script');
     for (var i=0; i<scripts.length; i++){
       if (scripts[i].src.indexOf('camelotmain') >=0){
