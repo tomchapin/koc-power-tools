@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @include        http://*.kingdomsofcamelot.com/*main_src.php*
+// @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110902a';
+var Version = '20110903a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -73,7 +73,9 @@ var Options = {
   reportDeleteButton : true,
   overviewFontSize : 12,
   overviewAllowOverflow : false,
-  curMarchTab : 'A',
+  curOverTab : 'A',
+  curMarchTab : 'N',
+  curOptTab : 'U',
   playersNoCities : false,
   enableWhisperAlert : true,
   enableTowerAlert : true,
@@ -220,7 +222,6 @@ if (TEST_WIDE){
   getAllianceLeaders();
   FoodAlerts.init();
   TowerAlerts.init();
-  MessageCounts.init ();
   MapDistanceFix.init ();
   WarnZeroAttack.init ();
   AllianceReports.init ();
@@ -332,10 +333,10 @@ setTimeout ( function(){
 var battleReports = {
   init : function (){
     var t = battleReports; 
-    t.getReportDisplayFunc = new CalterUwFunc ('getReportDisplay', [['return s.join("")', 'var themsg=s.join(""); themsg=getReportDisplay_hook(themsg, arguments[1]); return themsg']]);
+    t.getReportDisplayFunc = new CalterUwFunc ('getReportDisplay', [['return p.join("")', 'var themsg=p.join(""); themsg=getReportDisplay_hook(themsg, arguments[1]); return themsg']]);
     uW.getReportDisplay_hook = t.hook;
     t.getReportDisplayFunc.setEnable (true);
-    t.renderBattleReportFunc = new CalterUwFunc ('MarchReport.prototype.renderBattleReport', [['return k.join("")', 'var themsg=k.join(""); themsg=renderBattleReport_hook(themsg, this.rslt); return themsg']]);
+    t.renderBattleReportFunc = new CalterUwFunc ('MarchReport.prototype.renderBattleReport', [['return d.join("")', 'var themsg=d.join(""); themsg=renderBattleReport_hook(themsg, this.rslt); return themsg']]);
     uW.renderBattleReport_hook = t.hook2;
     t.renderBattleReportFunc.setEnable (true);
     t.renderButtonsFunc = new CalterUwFunc ('MarchReport.prototype.generateBackButton', [[/return \"(.*)\"/i, 'var msg="$1"; return battleReports_hook3(msg, this.rptid,this.side,this);']]);
@@ -571,9 +572,6 @@ var ChatStuff = {
     name = name.replace(/°°/g,"'");
     e.value = '@'+ name +' ';
   },
-
-
-
 
  chatDivContentHook : function (msg){
        var t = ChatStuff; 
@@ -1684,7 +1682,8 @@ var messageNav = {
 
   isAvailable : function (){
     t = messageNav;
-    return t.mmFunc.isAvailable();
+    //return t.mmFunc.isAvailable();
+	return false;
   },
   
   hook : function (){
@@ -3660,7 +3659,7 @@ Tabs.Options = {
     document.getElementById('ptmrchSubV').addEventListener('click', e_butSubtab, false);
 
     
-    changeSubtab (document.getElementById('ptmrchSubU'));
+    changeSubtab (document.getElementById('ptmrchSub'+Options.curOptTab));
     
     function e_butSubtab (evt){            
       changeSubtab (evt.target);   
@@ -3677,7 +3676,7 @@ Tabs.Options = {
       but.className='pbSubtab pbSubtabSel'; 
       but.disabled=true;
       t.curTabName = but.id.substr(9);
-      Options.curMarchTab = t.curTabName;
+	  Options.curOptTab = t.curTabName;
       t.show ();
     }
     },
@@ -3695,7 +3694,6 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=ptEnableWisperAlert type=checkbox /></td><TD>Enable sound alert on whisper<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>';
 	  m+='<TR><TD><INPUT id=ptEnableTowerAlert type=checkbox /></td><TD>Enable sound alert on tower alert in chat<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>';
 	  m+='<TR><TD colspan=2><B>KofC Features:</b></td></tr>';
-	  m+='<TR><TD><INPUT id=togMsgCountFix type=checkbox /></td><TD>Change message icons place(Msg/Reports) and allign them.</td></tr>';
 	  m+='<TR><TD><INPUT id=togAllRpts type=checkbox /></td><TD>Enable enhanced Alliance Reports.</td></tr>';
 	  m+='<TR><TD><INPUT id=togAllowAlter type=checkbox /></td><TD>Allow other scripts to change format of Alliance Reports.</td></tr>';
 	  m+='<TR><TD><INPUT id=togEnhanceMsging type=checkbox /></td><TD>Enable enhanced messaging ("forward" and "all officers" buttons).</td></tr>';
@@ -3724,7 +3722,6 @@ Tabs.Options = {
       t.togOpt ('togAllowAlter', 'allowAlterAR');
       t.togOpt ('togTowerFix', 'fixTower', TowerAlerts.enableFixTarget, TowerAlerts.isFixTargetAvailable);
       t.togOpt ('togTowerFix2', 'fixTower2', TowerAlerts.enableFixFalseReports, TowerAlerts.isFixFalseReportsAvailable);
-      t.togOpt ('togMsgCountFix', 'fixMsgCount', MessageCounts.init);
       t.togOpt ('togMapDistFix', 'fixMapDistance', MapDistanceFix.enable, MapDistanceFix.isAvailable);
       t.togOpt ('togWarnZero', 'fixWarnZero', WarnZeroAttack.setEnable, WarnZeroAttack.isAvailable);
       t.togOpt ('togPageNav', 'fixPageNav', PageNavigator.enable, PageNavigator.isAvailable);
@@ -4793,7 +4790,7 @@ Tabs.OverView = {
            clearTimeout (t.displayTimer);
            t.init(div); 
     }, false);
-    changeSubtab (document.getElementById('ptmrchSubA'));
+    changeSubtab (document.getElementById('ptmrchSub'+Options.curOverTab));
     
     function e_butSubtab (evt){            
       changeSubtab (evt.target);   
@@ -4809,8 +4806,8 @@ Tabs.OverView = {
       t.curTabBut = but;
       but.className='pbSubtab pbSubtabSel'; 
       but.disabled=true;
-      t.curTabName = but.id.substr(9);
-      Options.curMarchTab = t.curTabName;
+      t.curTabName = but.id.substr(-1);
+	  Options.curOverTab = t.curTabName;
       t.show ();
     }    
   },
@@ -7116,6 +7113,7 @@ Tabs.Marches = {
       but.disabled=true;
       t.curTabName = but.id.substr(9);
       Options.curMarchTab = t.curTabName;
+	  saveOptions();
       t.show ();
     }    
   },
@@ -7958,19 +7956,6 @@ uW.uwuwuwFunc(funcName +' = '+ t.funcNew);
   }
 };
 
-
-var MessageCounts = {
-  messagesNotifyFunc : null,
-  
-  init : function (){ 
-	var t = MessageCounts; 
-	if (Options.fixMsgCount){ 
-		document.getElementById('chrome_messages_report').style.margin = '10px 0 0 65px'; 
-		document.getElementById('chrome_messages_notify').style.margin = '10px 0 0 10px'; 		
-	}
-  },
-}
-
 function ShowExtraInfo(){
   alert('ineter');
   content = document.getElementById('mod_citylist').innerHTML
@@ -8044,7 +8029,8 @@ var MapDistanceFix = {
   },
   isAvailable : function (){
     var t = MapDistanceFix;
-    return t.popSlotsFunc.isAvailable();
+    //return t.popSlotsFunc.isAvailable();
+	return false;
   },
 }
 
