@@ -90,14 +90,31 @@ var Options = {
 };
 
 var Colors ={
-	DarkRow : "#eee",
-	ButtonSelected : "#444444",
-	TabClicked : "#EED",
-	Tabs : "#1E66BD",
-    MainTitle  : "#357",
-    ChatLeaders: "#B8B8B8",
-    ChatGlobal :  "#CCCCFF",
-    OverviewDarkRow : "#f0f0f0",
+	DarkRow : '#eee',
+	ButtonSelected : '#444444',
+	TabClicked : '#EED',
+	Tabs : '#1E66BD',
+    MainTitle  : '#357',
+    ChatLeaders: '#B8B8B8',
+    ChatGlobal :  '#CCCCFF',
+    OverviewDarkRow : '#f0f0f0',
+	TabFont : '#F8E151',
+	ChatAll : '#99ccff',
+	ChatAtt : '#FF4D4D',
+	ChatWhisper : '#FF4D4D',
+};
+
+var AutoTrainOptions = {
+	intervalSecs:		60,
+	doTraps:			{1:false,2:false,3:false,4:false,5:false,6:false,7:false,8:false},
+	doCalrops:			{1:false,2:false,3:false,4:false,5:false,6:false,7:false,8:false},
+	doSpikes:			{1:false,2:false,3:false,4:false,5:false,6:false,7:false,8:false},
+	doXbows:			{1:false,2:false,3:false,4:false,5:false,6:false,7:false,8:false},
+	troopType:			{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
+	keepFood:				{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
+	keepWood:				{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
+	keepStone:			{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
+	keepOre:				{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
 };
 
 var JSON;if(!JSON){JSON={};}(function(){"use strict";function f(n){return n<10?'0'+n:n;}if(typeof Date.prototype.toJSON!=='function'){Date.prototype.toJSON=function(key){return isFinite(this.valueOf())?this.getUTCFullYear()+'-'+f(this.getUTCMonth()+1)+'-'+f(this.getUTCDate())+'T'+f(this.getUTCHours())+':'+f(this.getUTCMinutes())+':'+f(this.getUTCSeconds())+'Z':null;};String.prototype.toJSON=Number.prototype.toJSON=Boolean.prototype.toJSON=function(key){return this.valueOf();};}var cx=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,escapable=/[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,gap,indent,meta={'\b':'\\b','\t':'\\t','\n':'\\n','\f':'\\f','\r':'\\r','"':'\\"','\\':'\\\\'},rep;function quote(string){escapable.lastIndex=0;return escapable.test(string)?'"'+string.replace(escapable,function(a){var c=meta[a];return typeof c==='string'?c:'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4);})+'"':'"'+string+'"';}function str(key,holder){var i,k,v,length,mind=gap,partial,value=holder[key];if(value&&typeof value==='object'&&typeof value.toJSON==='function'){value=value.toJSON(key);}if(typeof rep==='function'){value=rep.call(holder,key,value);}switch(typeof value){case'string':return quote(value);case'number':return isFinite(value)?String(value):'null';case'boolean':case'null':return String(value);case'object':if(!value){return'null';}gap+=indent;partial=[];if(Object.prototype.toString.apply(value)==='[object Array]'){length=value.length;for(i=0;i<length;i+=1){partial[i]=str(i,value)||'null';}v=partial.length===0?'[]':gap?'[\n'+gap+partial.join(',\n'+gap)+'\n'+mind+']':'['+partial.join(',')+']';gap=mind;return v;}if(rep&&typeof rep==='object'){length=rep.length;for(i=0;i<length;i+=1){k=rep[i];if(typeof k==='string'){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v);}}}}else{for(k in value){if(Object.hasOwnProperty.call(value,k)){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v);}}}}v=partial.length===0?'{}':gap?'{\n'+gap+partial.join(',\n'+gap)+'\n'+mind+'}':'{'+partial.join(',')+'}';gap=mind;return v;}}if(typeof JSON.stringify!=='function'){JSON.stringify=function(value,replacer,space){var i;gap='';indent='';if(typeof space==='number'){for(i=0;i<space;i+=1){indent+=' ';}}else if(typeof space==='string'){indent=space;}rep=replacer;if(replacer&&typeof replacer!=='function'&&(typeof replacer!=='object'||typeof replacer.length!=='number')){throw new Error('JSON.stringify');}return str('',{'':value});};}if(typeof JSON.parse!=='function'){JSON.parse=function(text,reviver){var j;function walk(holder,key){var k,v,value=holder[key];if(value&&typeof value==='object'){for(k in value){if(Object.hasOwnProperty.call(value,k)){v=walk(value,k);if(v!==undefined){value[k]=v;}else{delete value[k];}}}}return reviver.call(holder,key,value);}text=String(text);cx.lastIndex=0;if(cx.test(text)){text=text.replace(cx,function(a){return'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4);});}if(/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,'@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']').replace(/(?:^|:|,)(?:\s*\[)+/g,''))){j=eval('('+text+')');return typeof reviver==='function'?walk({'':j},''):j;}throw new SyntaxError('JSON.parse');};}}());
@@ -157,8 +174,8 @@ function ptStartup (){
     .ptentry {padding: 7px; border:1px solid; border-color:#000000; background-color:#FFEECC; white-space:nowrap;}\
     .ptErrText {font-weight:bold; color:#600000}\
     button::-moz-focus-inner, input[type="submit"]::-moz-focus-inner { border: none; }\
-    .ptChatAttack {color: #000; font-weight:bold; background-color: #FF4D4D; }\
-    .ptChatWhisper {font-weight:bold;color:#FF0000}\
+    .ptChatAttack {color: #000; font-weight:bold; background-color:'+Colors.ChatAtt+'; }\
+    .ptChatWhisper {font-weight:bold; color: '+Colors.ChatWhisper+';}\
     .ptChatAlliance {font-weight:bold}\
 	.ptChatScripter {color:#A56631; font-weight:bold; background-color:'+Colors.ChatLeaders+';}\
 	.ptChatOfficers {color:#000; background-color:'+Colors.ChatLeaders+';}\
@@ -178,7 +195,7 @@ function ptStartup (){
     table.ptMainTab tr td   {height:60%; empty-cells:show; padding: 0px 5px 0px 5px;  margin-top:5px; white-space:nowrap; border: 1px solid; border-style: none none solid none; }\
     table.ptMainTab tr td.spacer {padding: 0px 1.5px;}\
     table.ptMainTab tr td.sel {font-weight:bold; font-size:13px; border: 1px solid; border-style: solid solid none solid; background-color:'+Colors.TabClicked+';}\
-    table.ptMainTab tr td.notSel {font-weight:bold; font-size:13px; border: 1px solid; border-style: solid solid none solid; background-color:'+Colors.Tabs+';\ color:white; border-color:black;}\
+    table.ptMainTab tr td.notSel {font-weight:bold; font-size:13px; border: 1px solid; border-style: solid solid none solid; background-color:'+Colors.Tabs+'; color:'+Colors.TabFont+'; border-color:black;}\
     tr.ptPopTop td { background-color:dde; border:none; height: 21px;  padding:0px; }\
     tr.ptretry_ptPopTop td { background-color:#a00; color:#fff; border:none; height: 21px; padding:0px; }\
     input.ptButCancel {background-color:#a00; font-weight:bold; color:#fff}\
@@ -551,8 +568,8 @@ var ChatStuff = {
     uW.ptChatReportClicked = Rpt.FindReport;
     t.setEnable (Options.chatEnhance);
    setInterval ( function(){
-   			if ( document.getElementById('comm_tabs').className == 'comm_tabs seltab1') document.getElementById("mod_comm_input").style.background = Colors.ChatGlobal;
-   			else document.getElementById("mod_comm_input").style.background ="";
+   			if ( document.getElementById('comm_tabs').className == 'comm_tabs seltab1') document.getElementById("mod_comm_list1").style.background = Colors.ChatGlobal;
+   			else document.getElementById("mod_comm_list2").style.background = Colors.ChatAll;
    },1500);
              
   },
@@ -3522,7 +3539,6 @@ Tabs.Test = {
 }
 
 /*********************************** Info tab ***********************************/
-
 Tabs.Info = {
   tabOrder : 20,
   tabLabel : document.getElementById('mod_views_map').innerHTML,
@@ -3709,6 +3725,8 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=togTowerFix2 type=checkbox /></td><TD>Fix false attack alerts created from scouting missions.</td></tr>';
 	  m+='<TR><TD><INPUT id=togKnightSelect type=checkbox /></td><TD>Do not automatically select a knight when changing march type to scout, transport or reassign</td></tr>';
 	  m+='<TR><TD><INPUT id=togCoordBox type=checkbox /></td><TD>Keep map coordinate box/bookmarks on top of troop activity</td></tr>';
+	  m+='<TR><TD colspan=2><B>Auto Training:</b></td></tr>';
+	  m+='<TR><TD></TD><TD><INPUT id=optAutoTrainMins type=text size=1 value="'+ parseInt(AutoTrainOptions.intervalSecs/60) +'"> minutes between auto-training.</td></tr>';
 	  m+='</table><BR><BR><HR>Note that if a checkbox is greyed out there has probably been a change of KofC\'s code, rendering the option inoperable.';
       t.Overv.innerHTML = m;
       
@@ -3748,7 +3766,12 @@ Tabs.Options = {
          checkbox.checked = true;
        checkbox.addEventListener ('change', function() {Options.enhanceARpts=document.getElementById('togAllRpts').checked; saveOptions(); AllianceReports.enable(Options.enhanceARpts);}, false);
       
-    } catch (e) {
+	document.getElementById('optAutoTrainMins').addEventListener ('change', function () {
+				AutoTrainOptions.intervalSecs = 60 * document.getElementById('optAutoTrainMins').value;
+				saveAutoTrainOptions();
+			}, false);
+
+	} catch (e) {
       t.Overv.innerHTML = '<PRE>'+ e.name +' : '+ e.message +'</pre>';  
     }
   },
@@ -3760,24 +3783,32 @@ Tabs.Options = {
 	  m+='<TR><TD colspan=2><U><B>Chat Layout:</b></u></td></tr>';
 	  m+='<TR><TD><INPUT id=togChatStuff type=checkbox /></td><TD>Enable Chat Enable Chat enhancements (clickable coords, click on icon to whisper, colors).</td></tr>';
       m+='<TR><TD><INPUT id=togChatGlobal type=checkbox /></td><TD>Enable Global background color.</td></tr>';
-	  m+='<TR><TD><INPUT id=togChatWhisper type=checkbox /></td><TD>Enable Whisper in Red Font.</td></tr>';
+	  m+='<TR><TD><INPUT id=togChatWhisper type=checkbox /></td><TD>Enable Whisper in Color Font.</td></tr>';
 	  m+='<TR><TD><INPUT id=togChatBold type=checkbox /></td><TD>Enable Chat in Bold Font.</td></tr>';
-	  m+='<TR><TD><INPUT id=togChatAttack type=checkbox /></td><TD>Enable Red background on tower alert.</td></tr>';
+	  m+='<TR><TD><INPUT id=togChatAttack type=checkbox /></td><TD>Enable background color on tower alert.</td></tr>';
 	  m+='<TR><TD><INPUT id=togChatLead type=checkbox /></td><TD>Enable background for alliance Leaders.<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr></table>';
-	  
+
 	  m+='<TABLE class=ptTab><BR><TR><TD colspan=2><U><B>Colors:</b></u></td></tr>';
       m+='<TR><TD>Chat Color - Global: </td><TD><INPUT id=togGlobal type=text size=7 maxlength=7 value="'+Colors.ChatGlobal+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatGlobal+'" width=30px>&nbsp;</td></tr>';
+	  m+='<TR><TD>Chat Color - Alliance: </td><TD><INPUT id=togAll type=text size=7 maxlength=7 value="'+Colors.ChatAll+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatAll+'" width=30px>&nbsp;</td></tr>';
+      m+='<TR><TD>Chat Color - Tower Alert: </td><TD><INPUT id=togChatAtt type=text size=7 maxlength=7 value="'+Colors.ChatAtt+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatAtt+'" width=30px>&nbsp;</td></tr>';
+      m+='<TR><TD>Chat Color - Whisper Alert: </td><TD><INPUT id=togChatWhisper type=text size=7 maxlength=7 value="'+Colors.ChatWhisper+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatWhisper+'" width=30px>&nbsp;</td></tr>';
+
       m+='<TR><TD>Chat Color - Leaders: </td><TD><INPUT id=togChatLeaders type=text size=7 maxlength=7 value="'+Colors.ChatLeaders+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatLeaders+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>General - Title: </td><TD><INPUT id=togChatMainTiltle type=text size=7 maxlength=7 value="'+Colors.MainTitle+'"></td>&nbsp;<TD style="background-color:'+Colors.MainTitle+'" width=30px>&nbsp;</td></tr>';
+	  
+	  
       m+='<TR><TD>General - Dark Row: </td><TD><INPUT id=togDarkRow type=text size=7 maxlength=7 value="'+Colors.DarkRow+'"></td>&nbsp;<TD style="background-color:'+Colors.DarkRow+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>General - Button Selected: </td><TD><INPUT id=togButClick type=text size=7 maxlength=7 value="'+Colors.ButtonSelected+'"></td>&nbsp;<TD style="background-color:'+Colors.ButtonSelected+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>General - Tab Clicked: </td><TD><INPUT id=togTabClick type=text size=7 maxlength=7 value="'+Colors.TabClicked+'"></td>&nbsp;<TD style="background-color:'+Colors.TabClicked+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>General - Tabs: </td><TD><INPUT id=togTab type=text size=7 maxlength=7 value="'+Colors.Tabs+'"></td>&nbsp;<TD style="background-color:'+Colors.Tabs+'" width=30px>&nbsp;</td></tr>';
+	  m+='<TR><TD>General - Tab Font: </td><TD><INPUT id=togTabFont type=text size=7 maxlength=7 value="'+Colors.TabFont+'"></td>&nbsp;<TD style="background-color:'+Colors.TabFont+'" width=30px>&nbsp;</td></tr>';
+	  
       m+='<TR><TD>Overview - Dark Rows:</td><TD><INPUT id=togOverDarkRow type=text size=7 maxlength=7 value="'+Colors.OverviewDarkRow+'"></td>&nbsp;<TD style="background-color:'+Colors.OverviewDarkRow+'" width=30px>&nbsp;</td></tr>';
       m+='</table><BR><BR><DIV>HTML colors:&nbsp;&nbsp;&nbsp;';
       m+='<a href="http://www.colorpicker.com/" target="_blank">Color Picker</a>&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;';
       m+='<a href="http://www.w3schools.com/html/html_colors.asp" target="_blank">Colors</a>';
-      m+='<HR>To apply colors you need to REFRESH!<BR>';
+      m+='</table><BR><BR><HR>To apply colors you need to REFRESH!<BR>';
       m+= strButton20('Reset Colors', 'id=ResetALL');
       t.Overv.innerHTML = m;
             
@@ -3796,6 +3827,10 @@ Tabs.Options = {
       document.getElementById('togTabClick').addEventListener('change', function(){Colors.TabClicked = document.getElementById('togTabClick').value;t.Layout()}, false);
       document.getElementById('togTab').addEventListener('change', function(){Colors.Tabs = document.getElementById('togTab').value;t.Layout()}, false);
       document.getElementById('togOverDarkRow').addEventListener('change', function(){Colors.OverviewDarkRow = document.getElementById('togOverDarkRow').value;t.Layout()}, false);
+      document.getElementById('togTabFont').addEventListener('change', function(){Colors.TabFont = document.getElementById('togTabFont').value;t.Layout()}, false);
+      document.getElementById('togAll').addEventListener('change', function(){Colors.ChatAll = document.getElementById('togAll').value;t.Layout()}, false);
+      document.getElementById('togChatAtt').addEventListener('change', function(){Colors.ChatAtt = document.getElementById('togChatAtt').value;t.Layout()}, false);
+      document.getElementById('togChatWhisper').addEventListener('change', function(){Colors.ChatWhisper = document.getElementById('togChatWhisper').value;t.Layout()}, false);
       
       document.getElementById('ResetALL').addEventListener ('click', function(){
       		RemoveList = (GM_listValues());
@@ -3923,7 +3958,10 @@ Tabs.Train = {
   selectedCity : {},
   trainTimer : null,
   running : false,
-  
+  nextAuto:				null,
+  defenseOptions:	"<option value='53'>Crossbow</option><option value='55'>Trebuchet</option><option value='60'>Trap</option><option value='61'>Caltrop</option><option value='62'>Spiked Barrier</option>",
+  prevCityNo:			0,
+
   init : function (div){
     var t = Tabs.Train;
     t.cont = div;
@@ -3974,6 +4012,10 @@ Tabs.Train = {
         <TD width=75%><INPUT id='pttdButMaxSlots' type=submit value='"+uW.g_js_strings.commonstr.max+"'\>&nbsp; (\
         "+uW.g_js_strings.commonstr.max+" <span id=pttdSpMaxSlots>1</span>)</td></tr>\
       <TR align=center><TD colspan=3><SPAN id=pttdSpace></span></td></tr>\
+	 <TR><TD align=center colspan=3><INPUT type=CHECKBOX id=chkDoTraps"+ (AutoTrainOptions.doTraps[1]?' CHECKED ':'') +">Auto-train Max Traps (Min=1 Max=5)<SPAN class=boldRed>&nbsp;(NEW)</span></TD></TR>\
+   	 <TR><TD align=center colspan=3><INPUT type=CHECKBOX id=chkDoCaltrops"+ (AutoTrainOptions.doCalrops[1]?' CHECKED ':'') +">Auto-train Max Caltraps (Min=1 Max=5)<SPAN class=boldRed>&nbsp;(NEW)</span></TD></TR>\
+	 <TR><TD align=center colspan=3><INPUT type=CHECKBOX id=chkDoSpikes"+ (AutoTrainOptions.doSpikes[1]?' CHECKED ':'') +">Auto-train Max Spikes (Min=1 Max=5)<SPAN class=boldRed>&nbsp;(NEW)</span></TD></TR>\
+   	 <TR><TD align=center colspan=3><INPUT type=CHECKBOX id=chkDoXbows"+ (AutoTrainOptions.doXbows[1]?' CHECKED ':'') +">Auto-train Max Xbows (Min=1 Max=5)<SPAN class=boldRed>&nbsp;(NEW)</span></TD></TR>\
       <TR><TD colspan=3 align=center><DIV style='height:10px'>\
       <SELECT id=siege>\
       <option value='0'><CENTER>--- "+uW.g_js_strings.commonstr.speedup+" ---</center></option>\
@@ -4023,10 +4065,15 @@ Tabs.Train = {
     t.TDbutMaxPerSlot.addEventListener ('click', t.clickDefMaxPS, false);
     t.TDbutMaxSlots.addEventListener ('click', t.clickDefMaxSlots, false);
     t.TDbutDo.addEventListener ('click', t.clickDefDo, false);
-    
+    document.getElementById ('chkPop').addEventListener ('change', t.clickCheckIdlePop, false);
+    document.getElementById ('chkDoTraps').addEventListener ('change', t.clickCheckDoTraps, false);
+    document.getElementById ('chkDoCaltrops').addEventListener ('change', t.clickCheckDoCaltrops, false);
+    document.getElementById ('chkDoSpikes').addEventListener ('change', t.clickCheckDoSpikes, false);
+    document.getElementById ('chkDoXbows').addEventListener ('change', t.clickCheckDoXbows, false);
     document.getElementById ('chkPop').addEventListener ('change', t.clickCheckIdlePop, false);
     t.changeTroopSelect();
     t.changeDefSelect();
+     t.doAutoTrain(1);
   },
 
 
@@ -4112,6 +4159,39 @@ Tabs.Train = {
     t.displayCityStats ();
     t.changeTroopSelect ();
   },
+
+    	clickCheckDoTraps: function (){
+		var t = Tabs.Train;
+		var cityNo = Cities.byID[t.selectedCity.id].idx + 1;
+		AutoTrainOptions.doTraps[cityNo] = (document.getElementById ('chkDoTraps').checked)
+		saveAutoTrainOptions ();
+		t.displayCityStats ();
+		t.changeDefSelect ();
+	},
+  	clickCheckDoCaltrops: function (){
+		var t = Tabs.Train;
+		var cityNo = Cities.byID[t.selectedCity.id].idx + 1;
+		AutoTrainOptions.doCalrops[cityNo] = (document.getElementById ('chkDoCaltrops').checked)
+		saveAutoTrainOptions ();
+		t.displayCityStats ();
+		t.changeDefSelect ();
+	},
+  	clickCheckDoSpikes: function (){
+		var t = Tabs.Train;
+		var cityNo = Cities.byID[t.selectedCity.id].idx + 1;
+		AutoTrainOptions.doSpikes[cityNo] = (document.getElementById ('chkDoSpikes').checked)
+		saveAutoTrainOptions ();
+		t.displayCityStats ();
+		t.changeDefSelect ();
+	},
+  	clickCheckDoXbows: function (){
+		var t = Tabs.Train;
+		var cityNo = Cities.byID[t.selectedCity.id].idx + 1;
+		AutoTrainOptions.doXbows[cityNo] = (document.getElementById ('chkDoXbows').checked)
+		saveAutoTrainOptions ();
+		t.displayCityStats ();
+		t.changeDefSelect ();
+	},
 
   limitingFactor : null,
     
@@ -4648,7 +4728,238 @@ if (t.limitingFactor){
   },
 }
 
+	doAutoTraps: function (cityNo) {
+		var t = Tabs.Train;
+		wall = {};
+		var cityId = Cities.cities[cityNo - 1].id
+		var cityID = 'city'+ cityId;
+		getWallInfo (cityId, wall);
+		availableSpace = wall.fieldSpace - wall.fieldSpaceUsed;
+		if (availableSpace > 0 && wall.slotsBusy < 3) {
+			var food = parseInt (Seed.resources['city'+cityId].rec1[0]/3600);
+			var wood = parseInt (Seed.resources['city'+cityId].rec2[0]/3600);
+			var stone = parseInt (Seed.resources['city'+cityId].rec3[0]/3600);
+			var ore = parseInt (Seed.resources['city'+cityId].rec4[0]/3600);
+			availableSlots = 3 - wall.slotsBusy;
 
+			var foodRes = AutoTrainOptions.keepFood[cityNo];
+			var woodRes = AutoTrainOptions.keepWood[cityNo];
+			var stoneRes = AutoTrainOptions.keepStone[cityNo];
+			var oreRes = AutoTrainOptions.keepOre[cityNo];
+			var availFood = food - foodRes;
+			var availWood = wood - woodRes;
+			var availStone = stone - stoneRes;
+			var availOre = ore - oreRes;
+	
+		        secsPerTrap = Cities.byID[cityId]['Def60Time'];
+			if (secsPerTrap > 0 && availableSpace > 2 && availableSlots > 0) {
+				if (availFood > 400 && availWood > 800 & availStone > 200 & availOre > 400) {
+					var numberToTrain = 9999999999;
+					if ((availFood / 400) < numberToTrain)
+						numberToTrain = parseInt(availFood / 400);
+					if ((availWood / 800) < numberToTrain)
+						numberToTrain = parseInt(availWood / 800);
+					if ((availStone / 200) < numberToTrain)
+						numberToTrain = parseInt(availStone / 200);
+					if ((availOre / 400) < numberToTrain)
+						numberToTrain = parseInt(availOre / 400);
+					if (numberToTrain > 5)
+						numberToTrain = 5;
+					if (wall.Trap + wall.TrapTraining < 10 || availableSpace < 15) {
+						numberToTrain = 1;
+					actionLog('Building 1 Trap in city ' + Cities.byID[cityId].name);
+					} else
+						actionLog('Building ' + numberToTrain + ' Traps in city ' + Cities.byID[cityId].name);
+					try {
+						doDefTrain (cityId, 60, numberToTrain);
+					} catch (err) {
+						logit (inspect (err, 8, 1));
+					}
+				}
+			}
+		}
+	},
+
+	doAutoCaltrops: function (cityNo) {
+		var t = Tabs.Train;
+		wall = {};
+		var cityId = Cities.cities[cityNo - 1].id
+		var cityID = 'city'+ cityId;
+		getWallInfo (cityId, wall);
+		availableSpace = wall.fieldSpace - wall.fieldSpaceUsed;
+		if (availableSpace > 0 && wall.slotsBusy < 3) {
+			var food = parseInt (Seed.resources['city'+cityId].rec1[0]/3600);
+			var wood = parseInt (Seed.resources['city'+cityId].rec2[0]/3600);
+			var stone = parseInt (Seed.resources['city'+cityId].rec3[0]/3600);
+			var ore = parseInt (Seed.resources['city'+cityId].rec4[0]/3600);
+			availableSlots = 3 - wall.slotsBusy;
+
+			var foodRes = AutoTrainOptions.keepFood[cityNo];
+			var woodRes = AutoTrainOptions.keepWood[cityNo];
+			var stoneRes = AutoTrainOptions.keepStone[cityNo];
+			var oreRes = AutoTrainOptions.keepOre[cityNo];
+			var availFood = food - foodRes;
+			var availWood = wood - woodRes;
+			var availStone = stone - stoneRes;
+			var availOre = ore - oreRes;
+
+			secsPerCaltrop = Cities.byID[cityId]['Def61Time'];
+			if (secsPerCaltrop > 0 && availableSpace > 2 && availableSlots > 0) {
+				if (availFood > 100 && availWood > 400) {
+					var numberToTrain = 9999999999;
+					if ((availFood / 100) < numberToTrain)
+						numberToTrain = parseInt(availFood / 100);
+					if ((availWood / 400) < numberToTrain)
+						numberToTrain = parseInt(availWood / 400);
+					if (numberToTrain > 5)
+						numberToTrain = 5;
+					if (wall.Caltrops + wall.CaltropsTraining < 10 || availableSpace < 15) {
+						numberToTrain = 1;
+						actionLog('Building 1 Caltrop in city ' + Cities.byID[cityId].name);
+					} else
+						actionLog('Building ' + numberToTrain + ' Caltrops in city ' + Cities.byID[cityId].name);
+					try {
+						doDefTrain (cityId, 61, numberToTrain);
+					} catch (err) {
+						logit (inspect (err, 8, 1));
+					}
+				}
+			}
+		}
+	},
+
+	doAutoSpikes: function (cityNo) {
+		var t = Tabs.Train;
+		wall = {};
+		var cityId = Cities.cities[cityNo - 1].id
+		var cityID = 'city'+ cityId;
+		getWallInfo (cityId, wall);
+		availableSpace = wall.fieldSpace - wall.fieldSpaceUsed;
+		if (availableSpace > 0 && wall.slotsBusy < 3) {
+			var food = parseInt (Seed.resources['city'+cityId].rec1[0]/3600);
+			var wood = parseInt (Seed.resources['city'+cityId].rec2[0]/3600);
+			var stone = parseInt (Seed.resources['city'+cityId].rec3[0]/3600);
+			var ore = parseInt (Seed.resources['city'+cityId].rec4[0]/3600);
+			availableSlots = 3 - wall.slotsBusy;
+
+			var foodRes = AutoTrainOptions.keepFood[cityNo];
+			var woodRes = AutoTrainOptions.keepWood[cityNo];
+			var stoneRes = AutoTrainOptions.keepStone[cityNo];
+			var oreRes = AutoTrainOptions.keepOre[cityNo];
+			var availFood = food - foodRes;
+			var availWood = wood - woodRes;
+			var availStone = stone - stoneRes;
+			var availOre = ore - oreRes;
+
+			secsPerSpike = Cities.byID[cityId]['Def62Time'];
+			if (secsPerSpike > 0 && availableSpace > 2 && availableSlots > 0) {
+				if (availFood > 150 && availWood > 750 & availStone > 50) {
+					var numberToTrain = 9999999999;
+					if ((availFood / 150) < numberToTrain)
+						numberToTrain = parseInt(availFood / 150);
+					if ((availWood / 750) < numberToTrain)
+						numberToTrain = parseInt(availWood / 750);
+					if ((availStone / 50) < numberToTrain)
+						numberToTrain = parseInt(availStone / 50);
+					if (numberToTrain > 5)
+						numberToTrain = 5;
+					if (wall.SpikedBarrier + wall.SpikedBarrierTraining < 10 || availableSpace < 15) {
+						numberToTrain = 1;
+						actionLog('Building 1 Spike in city ' + Cities.byID[cityId].name);
+					} else
+						actionLog('Building ' + numberToTrain + ' Spikes in city ' + Cities.byID[cityId].name);
+					try {
+						doDefTrain (cityId, 62, numberToTrain);
+					} catch (err) {
+						logit (inspect (err, 8, 1));
+					}
+				}
+			}
+		}
+	},
+
+	doAutoCrossbows: function (cityNo) {
+		var t = Tabs.Train;
+		wall = {};
+		var cityId = Cities.cities[cityNo - 1].id
+		var cityID = 'city'+ cityId;
+		getWallInfo (cityId, wall);
+		availableSpace = wall.wallSpace - wall.wallSpaceUsed;
+		if (availableSpace > 0 && wall.slotsBusy < 2) {
+			var food = parseInt (Seed.resources['city'+cityId].rec1[0]/3600);
+			var wood = parseInt (Seed.resources['city'+cityId].rec2[0]/3600);
+			var stone = parseInt (Seed.resources['city'+cityId].rec3[0]/3600);
+			var ore = parseInt (Seed.resources['city'+cityId].rec4[0]/3600);
+			availableSlots = 2 - wall.slotsBusy;
+
+			var foodRes = AutoTrainOptions.keepFood[cityNo];
+			var woodRes = AutoTrainOptions.keepWood[cityNo];
+			var stoneRes = AutoTrainOptions.keepStone[cityNo];
+			var oreRes = AutoTrainOptions.keepOre[cityNo];
+			var availFood = food - foodRes;
+			var availWood = wood - woodRes;
+			var availStone = stone - stoneRes;
+			var availOre = ore - oreRes;
+
+	secsPerXbow = Cities.byID[cityId]['Def53Time'];
+			if (secsPerXbow > 0 && availableSpace > 2 && availableSlots > 0) {
+				if (availFood > 250 && availWood > 2000 & availStone > 750 & availOre > 500) {
+					var numberToTrain = 9999999999;
+					if ((availFood / 250) < numberToTrain)
+						numberToTrain = parseInt(availFood / 250);
+					if ((availWood / 2000) < numberToTrain)
+						numberToTrain = parseInt(availWood / 2000);
+					if ((availStone / 750) < numberToTrain)
+						numberToTrain = parseInt(availStone / 750);
+					if ((availOre / 500) < numberToTrain)
+						numberToTrain = parseInt(availOre / 500);
+					if (numberToTrain > 5)
+						numberToTrain = 5;
+					if (wall.Crossbows + wall.CrossbowsTraining < 10 || availableSpace < 15) {
+						numberToTrain = 1;
+					actionLog('Building 1 Crossbow in city ' + Cities.byID[cityId].name);
+					} else
+						actionLog('Building ' + numberToTrain + ' Crossbows in city ' + Cities.byID[cityId].name);
+					try {
+						doDefTrain (cityId, 53, numberToTrain);
+					} catch (err) {
+						logit (inspect (err, 8, 1));
+					}
+				}
+			}
+		}
+	},
+
+	doAutoTrain: function (cityNo) {
+		var t = Tabs.Train;
+		clearTimeout (t.nextAuto);
+		var cityId = Cities.cities[cityNo - 1].id
+		var cityID = 'city'+ cityId;
+		var troopType = AutoTrainOptions.troopType[cityNo];
+		if (troopType > 0) {
+			var unitQ = Seed.queue_unt['city'+cityId];
+			var queued=0;
+			if (unitQ!=null && unitQ.length>0 )
+				queued = unitQ.length;
+			var slots = Cities.byID[cityId].numBarracks - queued;
+			secsPerTroop = Cities.byID[cityId]['Troop'+troopType+'Time'];
+			if (slots > 0 && secsPerTroop > 0)
+				t.doAutoTroopTrain(cityNo);
+		}
+		if (AutoTrainOptions.doTraps[cityNo])
+			t.doAutoTraps(cityNo);
+		if (AutoTrainOptions.doCalrops[cityNo])
+			t.doAutoCaltrops(cityNo);
+		if (AutoTrainOptions.doSpikes[cityNo])
+			t.doAutoSpikes(cityNo);
+		if (AutoTrainOptions.doXbows[cityNo])
+			t.doAutoCrossbows(cityNo);
+		if (cityNo == Cities.numCities)
+			t.nextAuto = setTimeout(function(){ t.doAutoTrain(1);}, (AutoTrainOptions.intervalSecs*1000));
+		else
+			t.nextAuto = setTimeout(function(){ t.doAutoTrain(cityNo+1);}, 7000);
+	},
+}
 /*************************************** OVERVIEW TAB ************************************************/
 var GMTclock = {
   span : null,
