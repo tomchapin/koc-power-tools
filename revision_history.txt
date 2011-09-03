@@ -1,6 +1,11 @@
 REVISION HISTORY:
 ----------------
 
+20110903a
+   *Fixed bugs with firefox 7
+   *Fixed subtabs not saving
+   *Fixed display #of rounds
+   *Removed outdated koc bug fixes
 20110527a
    *Attempted to fix issue with missing "Tools" tab
 
