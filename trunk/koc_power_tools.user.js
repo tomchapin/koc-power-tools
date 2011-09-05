@@ -146,7 +146,11 @@ function ptStartup (){
   
   readOptions();
   readColors();
-  
+   readAutoTrainOptions();
+	if (AutoTrainOptions.intervalSecs < 60)
+		AutoTrainOptions.intervalSecs = 60;
+	saveAutoTrainOptions();
+
 //logit ('g_timeoff: '+ uW.g_timeoff);
   Seed = uW.seed;
   var gmstyles = '\
