@@ -6,7 +6,7 @@
 // @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110903a';
+var Version = '20110905a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -4730,7 +4730,6 @@ if (t.limitingFactor){
       t.stopTraining  ('<SPAN class=boldRed>'+uW.g_js_strings.barbarian.erroroccured +' '+ err.message +'</span>');
     }
   },
-}
 
 	doAutoTraps: function (cityNo) {
 		var t = Tabs.Train;
@@ -9116,6 +9115,28 @@ function readColors (){
       Colors[k] = opts[k];
   }
 }
+function readAutoTrainOptions (){
+  var serverID = GetServerId();
+	s = GM_getValue ('AutoTrainOptions_'+serverID);
+	if (s != null){
+		opts = JSON2.parse (s);
+		for (k in opts){
+			if (AutoTrainOptions[k] != undefined) {
+				if (matTypeof(opts[k]) == 'object') {
+					for (kk in opts[k])
+						if (AutoTrainOptions[k][kk] != undefined)
+							AutoTrainOptions[k][kk] = opts[k][kk];
+				} else
+					AutoTrainOptions[k] = opts[k];
+			}
+		}
+	}
+}
+
+function saveAutoTrainOptions (){
+  var serverID = GetServerId();
+	GM_setValue ('AutoTrainOptions_'+serverID, JSON2.stringify(AutoTrainOptions));
+}
 
 
 /***
@@ -9177,8 +9198,9 @@ function AddMainTabLink(text, eventListener, mouseListener) {
       gmTabs.className='tabs_engagement';
       gmTabs.style.background='#ca5';
       tabs.parentNode.insertBefore (gmTabs, tabs);
-      gmTabs.style.whiteSpace='nowrap';
+      gmTabs.style.whiteSpace='normal';
       gmTabs.style.width='735px';
+	  gmTabs.style.height='60px';
       gmTabs.lang = 'en_PT';
     }
     if (gmTabs.firstChild)
