@@ -1218,7 +1218,7 @@ Tabs.Wilds = {
     var t = Tabs.Wilds;
     clearTimeout (t.upGoldTimer);
   },
-  
+
   show : function (){
     var t = Tabs.Wilds;
     clearTimeout (t.upGoldTimer);
@@ -1236,6 +1236,7 @@ Tabs.Wilds = {
         for (var k in cWilds)
           ++totw;
       }       
+	  m += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToWilds" target="_blank">HELP</a></td></tr>';
       m += '<TR><TD colspan=20><DIV class=ptstat><TABLE class=ptNoPad width=100%><TR><TD width=100></td><TD width=90% align=center>'+ city.name 
         +' &nbsp; ('+ city.x +','+ city.y +')</td><TD width=100 align=right>Wilds: '+ totw +' of '+ castle +' &nbsp; </TD></tr></table></div></td></tr>';
       var row = 0;  
@@ -1516,7 +1517,7 @@ Tabs.Knights = {
 
   show : function (){
     var t = Tabs.Knights;
-    clearTimeout (t.displayTimer);
+	clearTimeout (t.displayTimer);
     
     function _dispKnight (roleId, knight){
       var rid = roleId;
@@ -2435,7 +2436,8 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       }
       
        var m = '<DIV class=ptentry><TABLE width=100% cellpadding=0>';
-       m+='<TR><TD class=xtab align=right></td><TD class=xtab>'+uW.g_js_strings.modal_fow_leaderboard.searchuser+': &nbsp; </td>';
+       m+= '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowtoPlayers" target="_blank">HELP</a></td></tr>';
+	   m+='<TR><TD class=xtab align=right></td><TD class=xtab>'+uW.g_js_strings.modal_fow_leaderboard.searchuser+': &nbsp; </td>';
        m+=' <TD width=80% class=xtab><INPUT id=allPlayName size=20 type=text/> &nbsp;'; 
        m+='<INPUT id=playSubmit type=submit value="'+uW.g_js_strings.modal_fow_leaderboard.finduser+'" /> &nbsp; <INPUT id=ffbuidsubmit type=submit value="UID" /></td>\
             <TD class="xtab ptErrText"><SPAN id=ptplayErr></span></td></tr>\
@@ -3668,10 +3670,11 @@ Tabs.Options = {
     var t = Tabs.Options;
     t.cont = div;
     
-    var main = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubU type=submit value="Options"></td>';
-    main +='<TD><INPUT class=pbSubtab ID=ptmrchSubV type=submit value="Layout"></td></tr></table><HR class=ptThin>';
+    var main = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubU type=submit value="Options"></td>';    
+	main +='<TD><INPUT class=pbSubtab ID=ptmrchSubV type=submit value="Layout"></td></tr></table><HR class=ptThin>';
+    main += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToOptions" target="_blank">HELP</a></td></tr>';
     main +='<DIV id=ptOptOutput style="margin-top:10px; background-color:white; height:680px; overflow:scroll;"></div>';
-
+	
     t.cont.innerHTML = main;
     t.Overv = document.getElementById('ptOptOutput');
     
@@ -3965,7 +3968,7 @@ Tabs.Train = {
   nextAuto:				null,
   defenseOptions:	"<option value='53'>Crossbow</option><option value='55'>Trebuchet</option><option value='60'>Trap</option><option value='61'>Caltrop</option><option value='62'>Spiked Barrier</option>",
   prevCityNo:			0,
-
+  
   init : function (div){
     var t = Tabs.Train;
     t.cont = div;
@@ -3975,7 +3978,7 @@ Tabs.Train = {
       <DIV class=ptstat id=trainheader>"+uW.g_js_strings.modal_openBarracks.trainttl+" & "+uW.g_js_strings.modal_openWalls.builddefenses+"</div>\
       <DIV style='height:5px'></div><DIV class=ptentry>\
       <DIV style='text-align:center; margin-bottom:5px;'>"+uW.g_js_strings.commonstr.city+": &nbsp; <span id=ptspeedcity></span></div>\
-      <TABLE class=ptTab width=100%><TR valign=top><TD width=50%>\
+	  <TABLE class=ptTab width=100%><TR valign=top><TD width=50%>\
       <TABLE align=center><TR><TD align=right>"+uW.g_js_strings.modal_messages_viewdesertionreports.trooptypes+": </td><TD colspan=2>\
       <SELECT id=ptttType>";
      for (i=1;i<=12;i++){
@@ -3997,7 +4000,7 @@ Tabs.Train = {
         <option value='38'>"+ uW.itemlist.i38.name+"</option>\
 		</select>\
 		</td></tr>\
-      <TR><TD colspan=3 align=center><DIV style='height:10px'></div><INPUT id='ptttButDo' type=submit value='"+uW.g_js_strings.modal_openBarracks.trainttl+"'\
+     <TR><TD colspan=3 align=center><DIV style='height:10px'></div><INPUT id='ptttButDo' type=submit value='"+uW.g_js_strings.modal_openBarracks.trainttl+"'\
       ></td></tr>\
       </table></td><TD width=20></td><TD style='border-left:solid 2px;' width=50% align=center>\
       <TABLE align=center><TR><TD align=right>"+uW.g_js_strings.modal_openWalls.builddefenses+": </td><TD colspan=2>\
@@ -5081,7 +5084,8 @@ Tabs.OverView = {
     main +='<TD><SPAN class=ptStatLight>Might:</span> ' + addCommas(Seed.player.might) +'</td>';
     main +='<TD><SPAN class=ptStatLight>Alliance:</span> ' + getMyAlliance()[1] +'</td>';
     main +='<TD align=right><SPAN class=ptStatLight>Domain:</span> ' + uW.domainName +'</td></tr></table></div>';      
-    main +='<TABLE class=ptTab align=left><TR>';
+    main += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToOverview" target="_blank">HELP</a></td></tr>';
+	main +='<TABLE class=ptTab align=left><TR>';
     main +='<TD width=125px><SELECT id="ShowExtra"><option value="maximum">'+uW.g_js_strings.commonstr.maximum+'</options>';
     main +='<option value="normal">'+uW.g_js_strings.commonstr.normal+'</options></select></td>';
     main +='<TD><INPUT class=pbSubtab ID=ptmrchSubA type=submit value='+uW.g_js_strings.commonstr.resources+'></td>';
@@ -6191,6 +6195,8 @@ Tabs.OverView = {
 
 
 /********************************* Messages Tab *************************************/
+/***found and copeid from RrAaFf****/ 
+
 Tabs.Rpt = {
 	tabOrder:    90,
 	tabLabel:    'Reports',
@@ -6212,6 +6218,7 @@ Tabs.Rpt = {
 		unsafeWindow.getReport = t.getReportBody;
 
 		var tc = '<DIV class=ptstat>SEARCH INBOX, OUTBOX, PLAYER AND ALLIANCE REPORTS</DIV><DIV class=ptentry><TABLE><TR align=center valign=center>';
+		tc += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToMessages" target="_blank">HELP</a></td></tr>';
 		tc += '<TD class=xtab align=right>Type:&nbsp;<SELECT id="idRptType">';
 		tc += '<OPTION value="alliance" ' + (Options.rptType=='alliance'?'SELECTED':'') + '>Alliance Reports</OPTION>';
 		tc += '<OPTION value="player" ' + (Options.rptType=='player'?'SELECTED':'') + '>Player Reports</OPTION>';
@@ -7138,6 +7145,7 @@ Tabs.Alliance = {
     
     var m =  '<DIV class=ptstat>ALLIANCE FUNCTIONS</div><TABLE align=center cellpadding=1 cellspacing=0></table>';
     
+	m += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToAlliance" target="_blank">HELP</a></td></tr>';
     m +='<TABLE class=ptTab><TD width=200px>List Alliance Members</td><TD>Sort by: <select id="searchAlli"><option value="name">Name</option>';
     m += '<option value="might">Might</option>';
     m += '<option value="login">'+uW.g_js_strings.modal_messages_viewreports_view.lastlogin+'</option>';
@@ -7400,10 +7408,12 @@ Tabs.Marches = {
     
     t.cont = div;
     var main = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubN type=submit value='+uW.g_js_strings.attack_viewimpending_view.incomingtroops+'></td>';
-    main +='<TD><INPUT class=pbSubtab ID=ptmrchSubM type=submit value='+uW.g_js_strings.commonstr.marching+'></td>';
+	main +='<TD><INPUT class=pbSubtab ID=ptmrchSubM type=submit value='+uW.g_js_strings.commonstr.marching+'></td>';
     main +='<TD><INPUT class=pbSubtab ID=ptmrchSubR type=submit value='+uW.g_js_strings.commonstr.reinforced+'></td></tr></table><HR class=ptThin>';
-    main +='<DIV id=ptMarchOutput style="margin-top:10px; background-color:white; height:680px; overflow:scroll;"></div>';
-    
+    main += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToMarches" target="_blank">HELP</a></td></tr>';
+	main +='<DIV id=ptMarchOutput style="margin-top:10px; background-color:white; height:680px; overflow:scroll;"></div>';
+
+	
     t.cont.innerHTML = main;       
     t.marchDiv = document.getElementById('ptMarchOutput');
     document.getElementById('ptmrchSubN').addEventListener('click', e_butSubtab, false);
