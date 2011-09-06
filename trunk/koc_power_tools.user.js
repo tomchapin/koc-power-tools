@@ -5084,7 +5084,6 @@ Tabs.OverView = {
     main +='<TD><SPAN class=ptStatLight>Might:</span> ' + addCommas(Seed.player.might) +'</td>';
     main +='<TD><SPAN class=ptStatLight>Alliance:</span> ' + getMyAlliance()[1] +'</td>';
     main +='<TD align=right><SPAN class=ptStatLight>Domain:</span> ' + uW.domainName +'</td></tr></table></div>';      
-    main += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToOverview" target="_blank">HELP</a></td></tr>';
 	main +='<TABLE class=ptTab align=left><TR>';
     main +='<TD width=125px><SELECT id="ShowExtra"><option value="maximum">'+uW.g_js_strings.commonstr.maximum+'</options>';
     main +='<option value="normal">'+uW.g_js_strings.commonstr.normal+'</options></select></td>';
@@ -5093,6 +5092,7 @@ Tabs.OverView = {
     main +='<TD><INPUT class=pbSubtab ID=ptmrchSubC type=submit value='+uW.g_js_strings.modaltitles.buildings+'></td>';
     main +='<TD><INPUT class=pbSubtab ID=ptmrchSubD type=submit value='+uW.g_js_strings.commonstr.info+'></td></tr></table><BR><BR>';
     main +='<DIV id=ptOverOutput align=left style="margin-top:10px; background-color:"#F8F8F8"; height:680px; overflow:scroll;"></div>';
+	main += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToOverview" target="_blank">HELP</a></td></tr>';
             
     t.cont.innerHTML = main;
     t.Overv = document.getElementById('ptOverOutput');
