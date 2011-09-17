@@ -6,7 +6,7 @@
 // @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110905a';
+var Version = '20110916a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -80,7 +80,6 @@ var Options = {
   enableWhisperAlert : true,
   enableTowerAlert : true,
   OverViewShowExtra : 'maximum',
-  AllianceLeaders : [],
   //alertConfig  : {aChat:false, aPrefix:'** I\'m being attacked! **', scouting:false, wilds:false, minTroops:10000, spamLimit:10 },
   rptType:'alliance',
   arAttacker:'Them',
@@ -102,6 +101,9 @@ var Colors ={
 	ChatAll : '#99ccff',
 	ChatAtt : '#FF4D4D',
 	ChatWhisper : '#FF4D4D',
+		ChatVC: '#00ff00',
+	ChatChancy: '#F8E151',
+
 };
 
 var AutoTrainOptions = {
@@ -182,11 +184,13 @@ function ptStartup (){
     .ptChatWhisper {font-weight:bold; color: '+Colors.ChatWhisper+';}\
     .ptChatAlliance {font-weight:bold}\
 	.ptChatScripter {color:#A56631; font-weight:bold; background-color:'+Colors.ChatLeaders+';}\
-	.ptChatOfficers {color:#000; background-color:'+Colors.ChatLeaders+';}\
     .ptChatGlobal {background-color:'+Colors.ChatGlobal+';}\
     .ptChatGlobalBold {font-weight:bold}\
     .ptChatGlobalAll {font-weight:bold;background-color:'+Colors.ChatGlobal+';}\
     .ptChatIcon {border: 1px inset black}\
+     .ptChatCHAN {color:#000; background-color:'+Colors.ChatChancy+';}\
+     .ptChatVICE {color:#000; background-color:'+Colors.ChatVC+';}\
+	 .ptChatOFFI {color:#000; background-color:'+Colors.ChatLeaders+';}\
     span.whiteOnRed {padding-left:3px; padding-right:3px; background-color:#700; color:white; font-weight:bold}\
     span.boldRed {color:#800; font-weight:bold}\
     span.boldDarkRed {color:#600; font-weight:bold}\
@@ -240,7 +244,6 @@ if (TEST_WIDE){
 
   GM_addStyle (gmstyles);  
   mainPop.getMainDiv().innerHTML = '<STYLE>'+ styles +'</style>';
-  getAllianceLeaders();
   FoodAlerts.init();
   TowerAlerts.init();
   MapDistanceFix.init ();
@@ -563,19 +566,22 @@ WHISPER (chatDivContentHook) .....
 var ChatStuff = {
   chatDivContentFunc : null,
   getChatFunc : null,
+  leaders : {},
   
   init : function (){
-    var t = ChatStuff; 
+    var t = ChatStuff;
+	if(getMyAlliance()[0] > 0)
+		t.getAllianceLeaders();
     t.chatDivContentFunc = new CalterUwFunc ('Chat.chatDivContent', [['return e.join("");', 'var msg = e.join("");\n msg=chatDivContent_hook(msg);\n return msg;']]);
     uW.chatDivContent_hook = t.chatDivContentHook;
     uW.ptChatIconClicked = t.e_iconClicked;
     uW.ptChatReportClicked = Rpt.FindReport;
-    t.setEnable (Options.chatEnhance);
+    t.setEnable (Colors.chatEnhance);
    setInterval ( function(){
    			if ( document.getElementById('comm_tabs').className == 'comm_tabs seltab1') document.getElementById("mod_comm_list1").style.background = Colors.ChatGlobal;
    			else document.getElementById("mod_comm_list2").style.background = Colors.ChatAll;
    },1500);
-             
+    
   },
   
   isAvailable : function (){
@@ -590,7 +596,7 @@ var ChatStuff = {
   
   e_iconClicked : function (name){
     var e = document.getElementById('mod_comm_input');
-    name = name.replace(/°°/g,"'");
+    name = name.replace(/Â°Â°/g,"'");
     e.value = '@'+ name +' ';
   },
 
@@ -603,41 +609,40 @@ var ChatStuff = {
        var whisp = m[0];
        
        
-       if (m[0].indexOf('whispers') >= 0) {
-           	if (Options.chatwhisper) {
-           		if (whisp.indexOf('says to the alliance') <0) element_class = 'ptChatWhisper';
-           	}
-           	else element_class = '';
-     }
-       else if (m[0].indexOf('to the alliance') >= 0){
-   	if (Options.chatbold)
-   		element_class = 'ptChatAlliance';
-   	else element_class = '';
-           } 
-       else {
-   	element_class = '';
+    if (m[0].indexOf('whispers') >= 0) {
+		if (Colors.chatwhisper) {
+			if (whisp.indexOf('says to the alliance') <0) element_class = 'ptChatWhisper';
+		}
+		else element_class = '';
+    } else if (m[0].indexOf('to the alliance') >= 0){
+		if (Colors.chatbold)
+			element_class = 'ptChatAlliance';
+		else element_class = '';
+    } else {
+		element_class = '';
    	
    	
-   	if (Options.chatbold)
+   	if (Colors.chatbold)
    		element_class = 'ptChatGlobalBold';
-   	if (Options.chatglobal){
+   	if (Colors.chatglobal){
    		 element_class = 'ptChatGlobal';
    		 }
-   	if (Options.chatbold && Options.chatglobal)
+   	if (Colors.chatbold && Colors.chatglobal)
    		element_class = 'ptChatGlobalAll';
            } 
 	
 	var scripters = ["7552815","10681588","1747877","2865067","10153485","15182839","1550996","1617431819","9688786","8184813","9863346","11107993","9751486"];
-	var suid = m[0].substring(m[0].indexOf('Chat.viewProfile(this,')+22,m[0].indexOf(',false);return false;'));
-    var IsMe = false;
+	var suid = /viewProfile\(this,([0-9]+),false/i.exec(m[0]);
+	if(!suid)
+		suid = uW.tvuid;
+	else
+		suid = suid[1];
 	
-	if (Options.chatLeaders) {
-		if (Options.AllianceLeaders.indexOf(uW.tvuid) >= 0 && suid.substr(0, 3)=="div") IsMe = true;
-    	if (Options.AllianceLeaders.indexOf(suid) >= 0 || IsMe) element_class = 'ptChatOfficers';
+	if (Colors.chatLeaders) {
+		if (t.leaders[suid]) element_class = 'ptChat'+t.leaders[suid];
     }
-	IsMe = false;
-	if (scripters.indexOf(uW.tvuid) >= 0 && suid.substr(0, 3)=="div") IsMe = true;
-	if (scripters.indexOf(suid) >= 0 || IsMe) {
+
+	if (scripters.indexOf(suid) >= 0) {
   
 msg = msg.replace (/\bhttp\:\/\/[-a-z].*jpg/i, 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAIAAABLixI0AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9sIDwArAkRAgZ4AAAPXSURBVDjLrVRNSDJdFL4zjpqiWZROlkEtsk20cGPqQkQpKIRykTu37aKgFi1cRxZUixat3BQkRCX9UrsUQ0TEhH6IMBcVbpRB58fRmfsubu+UvV98Hx/vszj3cM55zjn3nnsvlkwmBUGo1+s8z/M8z3Ecy7Isy9I0TdN09TcqlQpSGIahaZrjOI7jeJ6v1+uNRkMQBAghkclk6vU69xssyzIMgzjVapWmaYZhGIaRyIgvCIIgCKAZWDabFQRBFEUIYaPREEVRkoiAXAiiKGIYhvTPFBgGIcQwjDg6OhJFUUqBukV8AMBX+a/AdDod4n9t4Vuu/whZo9Hged5kMg0ODjYajXK5TBCEzWbr7e0VBKFSqfzEtFgsfr9/aGioWCw2ha2vr0MIl5aWAAAHBwcQwufnZwzD/jGLXC6Px+PSIV5cXCA7gRa0TZ7nZ2ZmpqamKIoaHh7+aYPRaNRut7Msu729rdVqSZJscq+trUEIw+EwKtXf34/sGo0mEomwLFur1aLRaEdHh8FgQDEmkwnFtLa2fs8lTTAUCkn2+/t7COHDw0M2m4UQvr29ORwOCGE+n/9xBKiv/f19VHNkZAQAQJIkhLBcLqOYQqEAIfT7/d/ulwRc0iCEiUQCHX8sFjMYDNVqFW1TpVIBANra2gAAV1dX7+/voiimUqmxsTGfz7e1tfW9L1EUFxcXUbQoiq+vrwCAnZ0d+AXn5+cAgIGBAY7jJOPx8fHH/foYJ0EUCoXr6+tCoRCJRBQKRSaT0Wq1y8vL+XxeFMXHx8fNzc35+XkAQKlUCoVCtVqtVqvlcrlwOPz4+Aj+Lj76crvdXq83mUwGAgGbzabRaFwu1+3trdPptNvtZrO5q6vL4/F0d3e73W6ZTOb1ejUazcvLSzAYpCiqWCx+5orFYnNzc4FAgCTJm5ubYDCYTqddLtfk5KTH46nX6xRFLSwsJBIJs9l8eHi4urpqtVqVSqVarU4kEk1vaGJi4unp6eTkhCAIdLPv7u5Iktzd3c3lcmdnZzKZLB6POxyOdDo9OjpKUdTp6SkazsrKStMb8vl8FEVtbGxcXl7GYjG1Wr23t4cqUxQ1Pj4OAFCpVDiOl0qlSqWSSqWMRuP09HQmk7FarU3HptfrDQYDUvr6+jo7OwEARqOxvb0d6cjV0tLS09Oj0+n0er1arVYqlRaL5fP/+isTRD8KNjs7+//I6F+WEgEACKfT+WeFP+MAADiOo2eIYZjklYDjOPZTWRzHcRyXfQFBEJKUy+WSgqBQKDCZTIZqYhiGQgmCkCKUSqVCoUDyKxBZoVAQBCFZfgGv35yL3q6pzwAAAABJRU5ErkJggg==');
  //Phouse msg = msg.replace (/\bhttp\:\/\/[-a-z].*jpg/i, 'data:image/png;base64,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');
@@ -645,15 +650,15 @@ msg = msg.replace (/\bhttp\:\/\/[-a-z].*jpg/i, 'data:image/png;base64,iVBORw0KGg
 
 		element_class = 'ptChatScripter';
 	}
-   	if (m[0].indexOf('My embassy has') >= 0 && Options.chatAttack)
+   	if (m[0].indexOf('My embassy has') >= 0 && Colors.chatAttack)
      	element_class = 'ptChatAttack';
-    if (m[0].indexOf('My wilderness at') >= 0 && Options.chatAttack)
+    if (m[0].indexOf('My wilderness at') >= 0 && Colors.chatAttack)
        	element_class = 'ptChatAttack';
        msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
 		msg = msg.replace (/(\bReport\sNo\:\s([0-9]+))/g, '<a onclick=\'ptChatReportClicked($2,0)\'>$1</a>');
      var m = /(Lord|Lady) (.*?)</im.exec(msg);
      if (m != null)
-       m[2] = m[2].replace(/\'/g,"°°");
+       m[2] = m[2].replace(/\'/g,"Â°Â°");
        msg = msg.replace (/<img (.*?>)/img, '<A onclick=\"ptChatIconClicked(\''+ m[2] +'\')\"><img class=\"ptChatIcon\" $1</a>');
      if (whisp.indexOf('whispers to you') >= 0 && Options.enableWhisperAlert) {
      	if (whisp.indexOf('says to the alliance') < 0) msg +='<span id="dummy"><iframe src="http://koc.god-like.info/doorbell.html" height="0" width="0"></iframe></span>';
@@ -666,6 +671,26 @@ msg = msg.replace (/\bhttp\:\/\/[-a-z].*jpg/i, 'data:image/png;base64,iVBORw0KGg
      }
      return msg;
    },
+   
+   getAllianceLeaders : function (){
+   var t = ChatStuff;
+    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetLeaders.php" + unsafeWindow.g_ajaxsuffix, {
+		 method: "post",
+		 parameters: params,
+		 loading: true,
+		 onSuccess: function (rslt) {
+			 if (rslt.officers) {
+				for (uid in rslt.officers) {
+					var user = rslt.officers[uid];
+					t.leaders[user.userId] = user.type.substr(0,4);
+				}
+			 } 
+		},
+		onFailure: function () {}
+  		});
+	},
+   
  }
 
   
@@ -1174,6 +1199,232 @@ var Rpt = {
 	},
 	
 };
+
+/********************** Tournament Tab *******************************************/
+
+Tabs.Tournament = {
+tabOrder : 100,
+ cont:null,
+ displayTimer : null,
+ 
+init : function (div){
+var t = Tabs.Tournament;
+t.cont = div;
+},
+
+ hide : function (){
+  var t = Tabs.Tournament;
+  clearTimeout (t.displayTimer);
+ },
+ getContent : function (){
+	    var t = Tabs.Tournament;
+	    return t.cont;
+ },
+ show : function () {
+  var t = Tabs.Tournament;
+  
+  clearTimeout (t.displayTimer);
+  t.cont.innerHTML = "<div class='tourny_modal_upsell' align=center >Checking ....</div>";
+  
+  var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+  params.format=2;
+  params.tournyPos=0;
+  new AjaxRequest(unsafeWindow.g_ajaxpath+"ajax/getLeaderboard.php"+unsafeWindow.g_ajaxsuffix, {  method:"post",  parameters:params,
+  
+  onSuccess:function(transport){
+   var rslt=eval("("+transport.responseText+")");
+   if(rslt.ok){
+   
+    if(!rslt.data){
+	   
+	t.cont.innerHTML ="<div class='tourny_modal_upsell'><center>"+unsafeWindow.g_js_strings.modal_tourny_changetab.notourny+"<center></div>";
+	  
+	  
+    }else{ // fin rslt.data
+     var tournyhtml=new Array();
+     
+     if(rslt.name){
+	    tournyhtml.push("<div><center><b><u>"+rslt.name.replace('The Tournament of Might!')+"</u></b></center></div>")
+     }  else{
+	    tournyhtml.push("<div class='tournymodaltitle'><center>"+unsafeWindow.g_js_strings.commonstr.tournament+"<center></div>")
+     }
+	   tournyhtml.push("<div>");
+	   tournyhtml.push("<table class='tourny_list_table' cellpadding='0' cellspacing='0' border='0' align=center>");
+	   tournyhtml.push("<thead>");
+	   tournyhtml.push("<tr>");
+     if(rslt.type==24){
+	    tournyhtml.push("<td class='rankcol' style='background-color:red'>");
+	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.ranking+"</div>");
+	    tournyhtml.push("</td>");
+	    tournyhtml.push("<td  style='background-color:red'>");
+	    tournyhtml.push("<div>unsafeWindow.g_js_strings.modal_tourny_changetab.chancellorname</div>");
+	    tournyhtml.push("</td>");
+	    tournyhtml.push("<td  style='background-color:red'>");
+	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.alliance+"</div>");
+	    tournyhtml.push("</td>");
+	    tournyhtml.push("<td  style='background-color:red'>");
+	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.modal_tourny_changetab.mightgained+"</div>");
+	    tournyhtml.push("</td  style='background-color:red'>");
+	    tournyhtml.push("<td  style='background-color:red'> ");
+	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.modal_tourny_changetab.rewardperplayer+"</div>");
+	    tournyhtml.push("</td>")
+      }else{
+            tournyhtml.push("<td	class='rankcol' style='background-color:red'>");
+	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.ranking+"</div>");
+	    tournyhtml.push("</td>");
+	    tournyhtml.push("<td  style='background-color:red'>");
+	    tournyhtml.push("<div>Name</div>");
+	    tournyhtml.push("</td>");
+	    tournyhtml.push("<td  style='background-color:red'>");
+	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.alliance.replace('Might Change')+"</div>");
+	    tournyhtml.push("</td>");
+	    tournyhtml.push("<td  style='background-color:red'>");
+	    tournyhtml.push("<div>"+rslt.contestcategory+"</div>");
+	    tournyhtml.push("</td>");
+	    tournyhtml.push("<td  style='background-color:red'>");
+	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.reward+"</div>");
+	    tournyhtml.push("</td>")
+     }
+	   tournyhtml.push("</tr>");
+	   tournyhtml.push("</thead>");
+	   tournyhtml.push("</tbody>");
+	   var nb=rslt.data.length;
+	   var votrepuissance = 0;
+	   for(var i=0;i<rslt.data.length;i++){
+	    var row=rslt.data[i];
+	    if (Seed.player.prefix + ' '+ Seed.player.name == row.name ) {
+	      votrepuissance=row.contestValue;
+	      break;
+	    }	    
+	   }
+	   for(var i=0;i<25;i++){
+	    var row=rslt.data[i];
+	    var rewardString=row.itemCount+" ";
+	    if(row.itemType==0){
+	     rewardString+=unsafeWindow.g_js_strings.commonstr.gems;
+	    }else{
+	     rewardString+=unsafeWindow.itemlist["i"+row.itemType].name;
+	    }
+	    var color="";
+	    if (Seed.player.prefix + ' '+ Seed.player.name == row.name ) {
+	     color=" style='background-color:#77FF77' ";
+	    }
+	    if(i%2==1){
+	     tournyhtml.push("<tr>")
+	    }else{
+	     tournyhtml.push("<tr class='stripe'>")
+	    }
+	    tournyhtml.push("<td class='rankcol' "+color+">");
+	    tournyhtml.push("<div><b>"+row.ranking+"</b></div>");
+	    tournyhtml.push("</td>");
+	    tournyhtml.push("<td "+color+">");
+	    tournyhtml.push("<div>"+row.name+"</div>");
+	    tournyhtml.push("</td>");
+	    tournyhtml.push("<td "+color+">");
+	    tournyhtml.push("<div>"+(row.alliance||"----")+"</div>");
+	    tournyhtml.push("</td>");
+	    tournyhtml.push("<td "+color+">");
+	    tournyhtml.push("<div>"+addCommas(row.contestValue));
+	    if (votrepuissance>0) {
+	      var ecartavecvous = parseInt(row.contestValue - votrepuissance);
+	      if (ecartavecvous>0) {
+	       tournyhtml.push("&nbsp;(+ " + addCommas(ecartavecvous) +")");
+	      } 
+	      if (ecartavecvous<0) {
+	       tournyhtml.push("&nbsp;(" + addCommas(ecartavecvous) +")");
+	      }
+	    }
+	    tournyhtml.push("</div>");
+	    tournyhtml.push("</td>");
+	    tournyhtml.push("<td "+color+">");
+	    tournyhtml.push("<div>"+rewardString+"</div>");
+	    tournyhtml.push("</td>");
+	    tournyhtml.push("</tr>")
+	   } // fin du for
+	
+	   
+	    for(var i=25;i<rslt.data.length;i++){
+	   	    var row=rslt.data[i];
+	   	    if (Seed.player.prefix + ' '+ Seed.player.name == row.name ) {
+	   	      var rewardString=row.itemCount+" ";
+	   	     	    if(row.itemType==0){
+	   	     	     rewardString+=unsafeWindow.g_js_strings.commonstr.gems;
+	   	     	    }else{
+	   	     	     rewardString+=unsafeWindow.itemlist["i"+row.itemType].name;
+	   	     	    }
+	   	     	    tournyhtml.push("<tr class='stripe' >")
+	   	     	    tournyhtml.push("<td class='rankcol' style='background-color:#77FF77'>");
+	   	     	    tournyhtml.push("<div><b>"+row.ranking+"</b></div>");
+	   	     	    tournyhtml.push("</td>");
+	   	     	    tournyhtml.push("<td style='background-color:#77FF77'>");
+	   	     	    tournyhtml.push("<div>"+row.name+"</div>");
+	   	     	    tournyhtml.push("</td>");
+	   	     	    tournyhtml.push("<td style='background-color:#77FF77'>");
+	   	     	    tournyhtml.push("<div>"+(row.alliance||"----")+"</div>");
+	   	     	    tournyhtml.push("</td>");
+	   	     	    tournyhtml.push("<td style='background-color:#77FF77'>");
+	   	     	    tournyhtml.push("<div>"+addCommas(row.contestValue)+"</div>");
+	   	     	    tournyhtml.push("</td>");
+	   	     	    tournyhtml.push("<td style='background-color:#77FF77'>");
+	   	     	    tournyhtml	.push("<div>"+rewardString+"</div>");
+	   	     	    tournyhtml.push("</td>");
+	   	            tournyhtml.push("</tr>")
+	   	       }    
+	   }
+	      tournyhtml.push("</tbody>");
+	   	   tournyhtml.push("</table>");
+	   	   tournyhtml.push("</div>");
+	   	   if(rslt.startdate&&rslt.enddate){
+	   	    var startTime=rslt.startdate;
+	   	    var endTime=rslt.enddate;
+	   	    var now=parseInt(new Date().getTime()/1000);
+	   	    /*tournyhtml.push("<div class='timebar'>");
+	   	    tournyhtml.push("<div class='elapsedtime' style='width:");
+	   	    if(endTime<=now){
+	   	     tournyhtml.push("500px;'")
+	   	    }else{
+	   	     var perc=parseInt(((now-startTime)/(endTime-startTime))*100)*5;
+	   	     tournyhtml.push(perc+"px;'")
+	   	    }
+	   	    tournyhtml.push(">");
+	   	    tournyhtml.push("</div>");
+	   	    tournyhtml.push("</div>");*/
+	   	    tournyhtml.push("<br>");
+	   	    tournyhtml.push("<div class='startdate'>");
+	   	    dt = new Date ();
+	               dt.setTime (startTime * 1000);
+	               dtf = new Date ();
+	               dtf.setTime (endTime * 1000);
+	               // "+new Date(startTime*1000).toGMTString())+ " ->> "
+	               // "+new Date(endTime*1000).toGMTString())+ " ->> 
+	   	    tournyhtml.push("Starts: " + dt.toLocaleDateString() + " &@; "+ dt.toLocaleTimeString());
+	   	    tournyhtml.push("</div>");
+	   	    tournyhtml.push("<div	class='enddate'>");
+	   	    tournyhtml.push("Ends: " + dtf.toLocaleDateString()+ " &@; "+ dtf.toLocaleTimeString());
+	   	    tournyhtml.push("</div></div>");
+	   } // fin  startdate
+           t.cont.innerHTML = tournyhtml.join("");
+           
+           
+           
+          } // fin rslt.data
+          
+         } //rslt.ok
+         else {
+            t.cont.innerHTML = "<div class='tourny_modal_upsell'><center>No Tournament<center></div>";
+         }
+        
+       },
+       onFailure:function()  {
+         t.cont.innerHTML = "<div class='tourny_modal_upsell'><center>No Info<center></div>";
+       }
+       });
+       
+       
+      t.displayTimer = setTimeout (t.show, 60000); 
+       
+  }
+},
 
 /*************** WILDS TAB *********************/
 
@@ -3800,6 +4051,9 @@ Tabs.Options = {
 	  m+='<TR><TD>Chat Color - Alliance: </td><TD><INPUT id=togAll type=text size=7 maxlength=7 value="'+Colors.ChatAll+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatAll+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>Chat Color - Tower Alert: </td><TD><INPUT id=togChatAtt type=text size=7 maxlength=7 value="'+Colors.ChatAtt+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatAtt+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>Chat Color - Whisper Alert: </td><TD><INPUT id=togChatWhisper type=text size=7 maxlength=7 value="'+Colors.ChatWhisper+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatWhisper+'" width=30px>&nbsp;</td></tr>';
+      m+='<TR><TD>Chat Color - Chancy: </td><TD><INPUT id=togChatC type=text size=7 maxlength=7 value="'+Colors.ChatChancy+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatChancy+'" width=30px>&nbsp;</td></tr>';
+      m+='<TR><TD>Chat Color - Vice-C: </td><TD><INPUT id=togChatVC type=text size=7 maxlength=7 value="'+Colors.ChatVC+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatVC+'" width=30px>&nbsp;</td></tr>';
+      m+='<TR><TD>Chat Color - Officers: </td><TD><INPUT id=togChatLeaders type=text size=7 maxlength=7 value="'+Colors.ChatLeaders+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatLeaders+'" width=30px>&nbsp;</td></tr>';
 
       m+='<TR><TD>Chat Color - Leaders: </td><TD><INPUT id=togChatLeaders type=text size=7 maxlength=7 value="'+Colors.ChatLeaders+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatLeaders+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>General - Title: </td><TD><INPUT id=togChatMainTiltle type=text size=7 maxlength=7 value="'+Colors.MainTitle+'"></td>&nbsp;<TD style="background-color:'+Colors.MainTitle+'" width=30px>&nbsp;</td></tr>';
@@ -3828,6 +4082,8 @@ Tabs.Options = {
       
       document.getElementById('togGlobal').addEventListener('change', function(){Colors.ChatGlobal = document.getElementById('togGlobal').value;t.Layout()}, false);
       document.getElementById('togChatLeaders').addEventListener('change', function(){Colors.ChatLeaders = document.getElementById('togChatLeaders').value;t.Layout()}, false);
+      document.getElementById('togChatC').addEventListener('change', function(){Colors.ChatChancy = document.getElementById('togChatC').value;t.Layout()}, false);
+      document.getElementById('togChatVC').addEventListener('change', function(){Colors.ChatVC = document.getElementById('togChatVC').value;t.Layout()}, false);
       document.getElementById('togChatMainTiltle').addEventListener('change', function(){Colors.MainTitle = document.getElementById('togChatMainTiltle').value;t.Layout()}, false);
       document.getElementById('togDarkRow').addEventListener('change', function(){Colors.DarkRow = document.getElementById('togDarkRow').value;t.Layout()}, false);
       document.getElementById('togButClick').addEventListener('change', function(){Colors.ButtonSelected = document.getElementById('togButClick').value;t.Layout()}, false);
@@ -10150,27 +10406,6 @@ function formatUnixTime (unixTimeString,format){
 	} */
 	return rtn;
 }
-
-function getAllianceLeaders (){
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-    new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetLeaders.php" + unsafeWindow.g_ajaxsuffix, {
-		 method: "post",
-		 parameters: params,
-		 loading: true,
-		 onSuccess: function (rslt) {
-		 rslt = eval("(" + rslt.responseText + ")");
-		 if (rslt.officers) {
-			 Options.AllianceLeaders = [];
-      		 for (add in rslt.officers) Options.AllianceLeaders.push(rslt.officers[add]['userId']);
-       
-     } 
-     else {
-			  setTimeout(function(){getAllianceLeaders;}, 1500);
-		  }
-		},
-		onFailure: function () {}
-  		});
-};
 
 
 ptStartup ();
