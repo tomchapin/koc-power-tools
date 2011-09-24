@@ -1424,7 +1424,7 @@ t.cont = div;
       t.displayTimer = setTimeout (t.show, 60000); 
        
   }
-},
+}
 
 /*************** WILDS TAB *********************/
 
