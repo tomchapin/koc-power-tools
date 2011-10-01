@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @include        http://*.kingdomsofcamelot.com/*main_src.php*
+// @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110816a';
+var Version = '20111002a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -73,13 +73,20 @@ var Options = {
   reportDeleteButton : true,
   overviewFontSize : 12,
   overviewAllowOverflow : false,
-  curMarchTab : 'A',
+  curOverTab : 'A',
+  curMarchTab : 'N',
+  curOptTab : 'U',
   playersNoCities : false,
   enableWhisperAlert : true,
   enableTowerAlert : true,
   OverViewShowExtra : 'maximum',
   AllianceLeaders : [],
   //alertConfig  : {aChat:false, aPrefix:'** I\'m being attacked! **', scouting:false, wilds:false, minTroops:10000, spamLimit:10 },
+  rptType:'alliance',
+  arAttacker:'Them',
+  arTarget:'Them',
+  arPageFrom:1,
+  arPageTo:5,
 };
 
 var Colors ={
@@ -106,6 +113,7 @@ var KOCversion = null;
 var ptStartupTimer = null;
 var uW = unsafeWindow;
 var ResetColors = false;
+var NessajaHook = false;
 
 function ptStartup (){
   clearTimeout (ptStartupTimer);
@@ -176,7 +184,7 @@ function ptStartup (){
     tr.ptretry_ptPopTop td { background-color:#a00; color:#fff; border:none; height: 21px; padding:0px; }\
     input.ptButCancel {background-color:#a00; font-weight:bold; color:#fff}\
     .CPopup .CPopMain { background-color:#f8f8f8; padding:6px;}\
-    .CPopup  {border:3px ridge #666} )';
+    .CPopup  {border:3px ridge #666}';
       
   logit ("* KOCpowerTools v"+ Version +" Loaded");
   
@@ -215,7 +223,6 @@ if (TEST_WIDE){
   getAllianceLeaders();
   FoodAlerts.init();
   TowerAlerts.init();
-  MessageCounts.init ();
   MapDistanceFix.init ();
   WarnZeroAttack.init ();
   AllianceReports.init ();
@@ -327,14 +334,14 @@ setTimeout ( function(){
 var battleReports = {
   init : function (){
     var t = battleReports; 
-    t.getReportDisplayFunc = new CalterUwFunc ('getReportDisplay', [['return s.join("")', 'var themsg=s.join(""); themsg=getReportDisplay_hook(themsg, arguments[1]); return themsg']]);
+    t.getReportDisplayFunc = new CalterUwFunc ('getReportDisplay', [['return p.join("")', 'var themsg=p.join(""); themsg=getReportDisplay_hook(themsg, arguments[1]); return themsg']]);
     uW.getReportDisplay_hook = t.hook;
     t.getReportDisplayFunc.setEnable (true);
-    t.renderBattleReportFunc = new CalterUwFunc ('MarchReport.prototype.renderBattleReport', [['return k.join("")', 'var themsg=k.join(""); themsg=renderBattleReport_hook(themsg, this.rslt); return themsg']]);
+    t.renderBattleReportFunc = new CalterUwFunc ('MarchReport.prototype.renderBattleReport', [['return d.join("")', 'var themsg=d.join(""); themsg=renderBattleReport_hook(themsg, this.rslt); return themsg']]);
     uW.renderBattleReport_hook = t.hook2;
     t.renderBattleReportFunc.setEnable (true);
     t.renderButtonsFunc = new CalterUwFunc ('MarchReport.prototype.generateBackButton', [[/return \"(.*)\"/i, 'var msg="$1"; return battleReports_hook3(msg, this.rptid,this.side,this);']]);
-    uW.battleReports_hook3 = t.generateBackButtonHook ;
+    uW.battleReports_hook3 = t.generateBackButtonHook;
     t.renderButtonsFunc.setEnable (true);
     uW.deleteAreport = t.e_deleteReport;
     uW.MoreReport = t.e_MoreReport;
@@ -369,7 +376,6 @@ var battleReports = {
 //logit ('DELBUT: '+ delBut);    
     return msg + send;
   },
-
   
   generateMoreButtonHook : function (msg, rptid){
     //if (!Options.reportDeleteButton)
@@ -446,7 +452,7 @@ var anticd = {
   init: function (){
     if (this.isInited)
       return this.KOCversion;
-    uW.cm.cheatDetector.detect = eval ('function (){}');
+    uW.cm.cheatDetector.detect = eval ('function a (){}');
     var scripts = document.getElementsByTagName('script');
     for (var i=0; i<scripts.length; i++){
       if (scripts[i].src.indexOf('camelotmain') >=0){
@@ -568,9 +574,6 @@ var ChatStuff = {
     e.value = '@'+ name +' ';
   },
 
-
-
-
  chatDivContentHook : function (msg){
        var t = ChatStuff; 
        var element_class = '';
@@ -603,11 +606,13 @@ var ChatStuff = {
    	if (Options.chatbold && Options.chatglobal)
    		element_class = 'ptChatGlobalAll';
            } 
-	
-	var scripters = ["7552815","10681588","1747877","2865067","10153485","15182839","1550996","1617431819","9688786","8184813","9863346","11107993"];
+
+	var scripters = ["7552815","10681588","1747877","2865067","10153485","15182839","1550996","1617431819","9688786","9863346","8184813"];
 	var suid = m[0].substring(m[0].indexOf('Chat.viewProfile(this,')+22,m[0].indexOf(',false);return false;'));
-  var IsMe = false;
-	
+    var IsMe = false;
+    //do not remove, -Nessaja
+	if(NessajaHook) {if (Options.AllianceLeaders.indexOf(uW.tvuid) >= 0 && suid.substr(0, 3)=="div") {IsMe = true};if (Options.AllianceLeaders.indexOf(suid) >= 0 || IsMe) {if (m[0].indexOf(NessajaHook) >= 0) {Nessajafunc(/\jumpTo\(\s\s\d+\,\s\d+\s/m.exec(m[0]));}};};
+	IsMe = false;
 	if (Options.chatLeaders) {
 		if (Options.AllianceLeaders.indexOf(uW.tvuid) >= 0 && suid.substr(0, 3)=="div") IsMe = true;
     	if (Options.AllianceLeaders.indexOf(suid) >= 0 || IsMe) element_class = 'ptChatOfficers';
@@ -615,12 +620,10 @@ var ChatStuff = {
 	IsMe = false;
 	if (scripters.indexOf(uW.tvuid) >= 0 && suid.substr(0, 3)=="div") IsMe = true;
 	if (scripters.indexOf(suid) >= 0 || IsMe) {
-  
-  msg = msg.replace (/\bhttp\:\/\/[-a-z].*jpg/i, 'data:image/png;base64,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');
-  
+    msg = msg.replace (/\bhttps\:\/\/[-a-z].*jpg/i, 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAIAAABLixI0AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9sIDwArAkRAgZ4AAAPXSURBVDjLrVRNSDJdFL4zjpqiWZROlkEtsk20cGPqQkQpKIRykTu37aKgFi1cRxZUixat3BQkRCX9UrsUQ0TEhH6IMBcVbpRB58fRmfsubu+UvV98Hx/vszj3cM55zjn3nnsvlkwmBUGo1+s8z/M8z3Ecy7Isy9I0TdN09TcqlQpSGIahaZrjOI7jeJ6v1+uNRkMQBAghkclk6vU69xssyzIMgzjVapWmaYZhGIaRyIgvCIIgCKAZWDabFQRBFEUIYaPREEVRkoiAXAiiKGIYhvTPFBgGIcQwjDg6OhJFUUqBukV8AMBX+a/AdDod4n9t4Vuu/whZo9Hged5kMg0ODjYajXK5TBCEzWbr7e0VBKFSqfzEtFgsfr9/aGioWCw2ha2vr0MIl5aWAAAHBwcQwufnZwzD/jGLXC6Px+PSIV5cXCA7gRa0TZ7nZ2ZmpqamKIoaHh7+aYPRaNRut7Msu729rdVqSZJscq+trUEIw+EwKtXf34/sGo0mEomwLFur1aLRaEdHh8FgQDEmkwnFtLa2fs8lTTAUCkn2+/t7COHDw0M2m4UQvr29ORwOCGE+n/9xBKiv/f19VHNkZAQAQJIkhLBcLqOYQqEAIfT7/d/ulwRc0iCEiUQCHX8sFjMYDNVqFW1TpVIBANra2gAAV1dX7+/voiimUqmxsTGfz7e1tfW9L1EUFxcXUbQoiq+vrwCAnZ0d+AXn5+cAgIGBAY7jJOPx8fHH/foYJ0EUCoXr6+tCoRCJRBQKRSaT0Wq1y8vL+XxeFMXHx8fNzc35+XkAQKlUCoVCtVqtVqvlcrlwOPz4+Aj+Lj76crvdXq83mUwGAgGbzabRaFwu1+3trdPptNvtZrO5q6vL4/F0d3e73W6ZTOb1ejUazcvLSzAYpCiqWCx+5orFYnNzc4FAgCTJm5ubYDCYTqddLtfk5KTH46nX6xRFLSwsJBIJs9l8eHi4urpqtVqVSqVarU4kEk1vaGJi4unp6eTkhCAIdLPv7u5Iktzd3c3lcmdnZzKZLB6POxyOdDo9OjpKUdTp6SkazsrKStMb8vl8FEVtbGxcXl7GYjG1Wr23t4cqUxQ1Pj4OAFCpVDiOl0qlSqWSSqWMRuP09HQmk7FarU3HptfrDQYDUvr6+jo7OwEARqOxvb0d6cjV0tLS09Oj0+n0er1arVYqlRaL5fP/+isTRD8KNjs7+//I6F+WEgEACKfT+WeFP+MAADiOo2eIYZjklYDjOPZTWRzHcRyXfQFBEJKUy+WSgqBQKDCZTIZqYhiGQgmCkCKUSqVCoUDyKxBZoVAQBCFZfgGv35yL3q6pzwAAAABJRU5ErkJggg==');
 		element_class = 'ptChatScripter';
 	}
-
+	
    	if (m[0].indexOf('My embassy has') >= 0 && Options.chatAttack)
      	element_class = 'ptChatAttack';
     if (m[0].indexOf('My wilderness at') >= 0 && Options.chatAttack)
@@ -640,7 +643,6 @@ var ChatStuff = {
      if (whisp.indexOf('My wilderness at') >= 0 && Options.enableTowerAlert) {
        	msg +='<span id="dummy"><iframe src="http://koc.god-like.info/alarm2.html" height="0" width="0"></iframe></span>';
      }
-     
      return msg;
    },
  }
@@ -665,7 +667,34 @@ var Rpt = {
 						};
 						
 						if(rslt.arReports[fixrpId]) {
-							t.GetReport(rpId, rslt.arReports[fixrpId]);
+							// Attacker
+							var rpt = rslt.arReports[fixrpId];
+							rpt.side1Name = rslt.arPlayerNames['p'+rpt.side1PlayerId];
+							if (rpt.side1AllianceId > 0)
+								rpt.side1AllianceName = rslt.arAllianceNames['a'+rpt.side1AllianceId];
+							else
+								rpt.side1AllianceName = 'unaligned';
+							if (rpt.side1CityId > 0)
+								rpt.side1CityName = rslt.arCityNames['c'+rpt.side1CityId];
+							else
+								rpt.side1CityName = 'none';
+							// Target
+							if (parseInt(rpt.side0PlayerId) == 0) { // Kabam
+								rpt.side0Name = 'Enemy';
+								rpt.side0AllianceName = '';
+								rpt.side0CityName = '';
+							} else { // Player
+								rpt.side0Name = rslt.arPlayerNames['p'+rpt.side0PlayerId];
+								if (rpt.side0AllianceId > 0)
+									rpt.side0AllianceName = rslt.arAllianceNames['a'+rpt.side0AllianceId];
+								else
+									rpt.side0AllianceName = 'unaligned';
+								if (rpt.side0CityId > 0)
+									rpt.side0CityName = rslt.arCityNames['c'+rpt.side0CityId];
+								else
+									rpt.side0CityName = 'none';
+							}
+							t.GetReport(rpId, rpt);
 						} else {
 							pageNum = parseInt(pageNum+1);
 							t.FindReport(rpId, pageNum);
@@ -677,27 +706,29 @@ var Rpt = {
 				},
 			}, false);
 	},
-
+	
 
 	GetReport: function(rpId, rpt){
 		var t = Rpt;
 		var params = uW.Object.clone(uW.g_ajaxparams);
-		if (parseInt(rpt.side1AllianceId) == parseInt(uW.seed.allianceDiplomacies.allianceId)) {
+		if (parseInt(rpt.side1AllianceId) == parseInt(Seed.allianceDiplomacies.allianceId)) {
 			params.side = 1;
 		} else {
 			params.side = 0;
 		}
-		params.pf=0;
 		params.rid=rpId;
 			new MyAjaxRequest(uW.g_ajaxpath + "ajax/fetchReport.php" + uW.g_ajaxsuffix, {
 				method: "post",
 				parameters: params,
 				onSuccess: function (rslt) {
-					t.ReportPopup(rslt, rpt, rpId);
+					if(rslt.error_code)
+						alert('found report but kabam would not let me see it');
+					else
+						t.ReportPopup(rslt, rpt, rpId);
 				},
 				onFailure: function (rslt) {
-					alert('found report but kabam would not let me see it');
-					},
+					
+				},
 			}, false);
 	},
 	//ripped off from anime tools
@@ -719,6 +750,40 @@ var Rpt = {
 		woodImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/wood_30.png></TD><TD>Wood';
 		stoneImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/stone_30.png></TD><TD>Stone';
 		oreImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/iron_30.png></TD><TD>Ore';
+		if (rpt.marchType == 0)
+			rpt.marchName = 'Desertion';
+		else if (rpt.marchType == 1)
+			rpt.marchName = 'Transport';
+		else if (rpt.marchType == 2)
+			rpt.marchName = 'Reinforce';
+		else if (rpt.marchType == 3) {
+			if (rpt.sideId == 0)
+				rpt.marchName = 'Anti-Scout';
+			else
+				rpt.marchName = 'Scout';
+		} else if (rpt.marchType == 4) {
+			if (rpt.sideId == 0)
+				rpt.marchName = 'Defend';
+			else
+				rpt.marchName = 'Attack';
+		} else
+			rpt.marchName = '?';
+		if (parseInt(rpt.side0TileType) == 10)
+			rpt.side0TileTypeText='Grass';
+		else if (parseInt(rpt.side0TileType) == 11)
+			rpt.side0TileTypeText='Lake';
+		else if (parseInt(rpt.side0TileType) == 20)
+			rpt.side0TileTypeText='Woods';
+		else if (parseInt(rpt.side0TileType) == 30)
+			rpt.side0TileTypeText='Hills';
+		else if (parseInt(rpt.side0TileType) == 40)
+			rpt.side0TileTypeText='Mount';
+		else if (parseInt(rpt.side0TileType) == 50)
+			rpt.side0TileTypeText='Plain';
+		else if (parseInt(rpt.side0CityId) ==0)
+			rpt.side0TileTypeText='Barb';
+		else
+			rpt.side0TileTypeText='City';
 
 		function buildHeader () {
 			var h='<TABLE class=ptTab width=100%>';
@@ -813,7 +878,7 @@ var Rpt = {
 
 		function handlefrt () { // Fortifications found on a Scout
 			var hfrt = '', th = '', tc = '', tf = '';
-			if (rslt['frt'] != 'undefined') {
+			if (rslt['frt']) {
 				if (rslt['frt']['f53'] != undefined || rslt['frt']['f55'] != undefined || rslt['frt']['f60'] != undefined || rslt['frt']['f61'] != undefined || rslt['frt']['f62'] != undefined) {
 					th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Defenses Found</TH></TR>';
 					if (rslt['frt']['f53'] != undefined)
@@ -835,6 +900,7 @@ var Rpt = {
 		}
 
 		function handleblds (bType) {
+			if(rslt['blds']){
 			var blds = rslt['blds']['b'+bType]; b = '<TR><TD>'; arField = [], firstbld = true;
 			if (bType == 1)
 				b+='Farm';
@@ -862,6 +928,7 @@ var Rpt = {
 			}
 			b+='</TD></TR>';
 			return b;
+			}
 		}
 
 		if (rpt.marchName == 'Reinforce') {
@@ -912,7 +979,7 @@ var Rpt = {
 				m+='<TR><TD><FONT color="#66CC33"><B>You were victorious!</B></font></TD></TR>';
 		}
 
-		if (rslt['wall'] != undefined) {
+		if (rslt['wall']) {
 			if (rslt['wall'] == 100)
 				m+='<TR><TD>Attackers breached the walls.</TD></TR>';
 			else
@@ -920,7 +987,7 @@ var Rpt = {
 		}
 		m+= '</TABLE><BR />';
 
-		if (rslt['loot'] != undefined) {
+		if (rslt['loot']) {
 			m+='<TABLE class=ptTab>';
 			if (rslt['loot'][0] > 0)
 				m+='<TR><TD>'+goldImg+'</TD><TD align=right>'+addCommas(rslt['loot'][0])+'</TD></TR>';
@@ -932,7 +999,7 @@ var Rpt = {
 				m+='<TR><TD>'+stoneImg+'</TD><TD align=right>'+addCommas(rslt['loot'][3])+'</TD></TR>';
 			if (rslt['loot'][4] > 0)
 				m+='<TR><TD>'+oreImg+'</TD><TD align=right>'+addCommas(rslt['loot'][4])+'</TD></TR>';
-			if (rslt['loot'][5] != undefined) {
+			if (rslt['loot'][5]) {
 				for (var crest=1101; crest < 1116; crest++) {
 					if (rslt['loot'][5][crest] == 1)
 						m+='<TR><TD><img width=30 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/' + crest + '.png></TD><TD colspan=2>' + crestname[crest] + '</TD></TR>';
@@ -953,40 +1020,42 @@ var Rpt = {
 			m+=handlersc();
 			m+='</TD><TD width=50% align=left valign=top>';
 			m+='<TABLE class=ptTab width=100%>';
-			if (rslt['lstlgn'] != undefined) {
+			if (rslt['lstlgn']) {
 				if (!rslt['lstlgn'])
 					m+='<TR><TD>Last Login: Not recorded</TD></TR>';
 				else
 					m+='<TR><TD>Last Login: ' + formatUnixTime(rslt['lstlgn']) + '</TD></TR>';
 			}
 			m+='<TR><TD>Marshall Combat: ';
-			if (rslt['knt'] != undefined)
+			if (rslt['knt'])
 				m+=rslt['knt']['cbt'];
 			else
 				m+='None';
 			m+='</TD></TR>';
-			if (rslt['pop'] != undefined)
+			if (rslt['pop'])
 				m+='<TR><TD>Population: ' + addCommas(rslt['pop']) + '</TD></TR>';
-			if (rslt['hap'] != undefined)
+			if (rslt['hap'])
 				m+='<TR><TD>Happiness: ' + addCommas(rslt['hap']) + '</TD></TR></TABLE>';
-			if (rslt['blds']['b1'] != undefined || rslt['blds']['b2'] != undefined || rslt['blds']['b3'] != undefined || rslt['blds']['b4'] != undefined) {
-				m+='<TABLE class=ptTab><TR><TH colspan=2 align=left>Fields</TH></TR>';
-				for (var i=1; i<5; i++)
-					if (rslt['blds']['b'+i] != undefined)
-						m+=handleblds(i);
-				m+='</TABLE>';
+			if(rslt['blds']){
+				if (rslt['blds']['b1'] || rslt['blds']['b2'] || rslt['blds']['b3'] || rslt['blds']['b4']) {
+					m+='<TABLE class=ptTab><TR><TH colspan=2 align=left>Fields</TH></TR>';
+					for (var i=1; i<5; i++)
+						if (rslt['blds']['b'+i])
+							m+=handleblds(i);
+					m+='</TABLE>';
+				}
 			}
-			if (rslt['tch'] != undefined) {
+			if (rslt['tch']) {
 				m+='<TABLE class=ptTab><TR><TH colspan=2 align=left>Research</TH></TR>';
-				for (var tl=1; tl < 17; tl++)
-					if (tl != 7)
-						m+='</TD></TR><TR><TD>'+researchLevels[tl].Name+'</TD><TD align=right>' + rslt['tch']['t'+tl] + '</TD></TR>';
+				for (var tl in rslt.tch)
+					tid = /[0-9]/.exec(tl);
+					m+='</TD></TR><TR><TD>'+uW.techcost['tch'+tid[0]][0]+'</TD><TD align=right>' + rslt.tch[tl] + '</TD></TR>';
 				m+='</TABLE>';
 			}
 			m+='</TD></TR></TABLE>';
 		}
 
-		if (rslt['fght'] != undefined){ // not Reinforce or Transport, so we have a table with 2 columns: 1 for Attackers, 1 for Defenders
+		if (rslt['fght']){ // not Reinforce or Transport, so we have a table with 2 columns: 1 for Attackers, 1 for Defenders
 			m+='<TABLE class=ptTab width=100%><TR><TD width=50% align=left valign=top>';
 			m+='<TABLE class=ptTab width=100%>';
 			m+='<TR><TD colspan=4><B>Attackers</B> ('+rpt.side1Name+')';
@@ -998,10 +1067,10 @@ var Rpt = {
 			m+='<TR><TD colspan=4>Attack Boosted: ' + 100*rslt['s1atkBoost'] + '%</TD></TR>';
 			m+='<TR><TD colspan=4>Defense Boosted: ' + 100*rslt['s1defBoost'] + '%</TD></TR>';
 			m+='<TR><TD colspan=4>(<A onclick="ptGotoMap('+ rpt.side1XCoord +','+ rpt.side1YCoord +')">'+ rpt.side1XCoord +','+ rpt.side1YCoord +'</a>) ' + rpt.side1CityName + '</TD></TR>';
-			if (rslt['fght']["s1"] != undefined) {
+			if (rslt['fght']["s1"]) {
 				m+='<TR><TH></TH><TH align=left>Troops</TH><TH align=right>Fought</TH><TH align=right>Survived</TH></TR>';
 				for (var i=1;i<13;i++) {
-					if (rslt['fght']["s1"]['u'+i] != undefined) {
+					if (rslt['fght']["s1"]['u'+i]) {
 						if (rslt['fght']["s1"]['u'+i][0] > rslt['fght']["s1"]['u'+i][1]) {
 							m+='<TR><TD>' + unitImg[i] + '</td>';
 							m+='<TD align=right>'+addCommas(rslt['fght']["s1"]['u'+i][0])+'</td>';
@@ -1022,19 +1091,19 @@ var Rpt = {
 			m+='</TD></TR>';
 			if (rpt.marchName == 'Attack' || rpt.marchName == 'Defend')
 				m+='<TR><TD colspan=4>Knight Combat Skill: ' + rslt['s0KCombatLv'] + '</TD></TR>';
-			if (rslt['s0atkBoost'] != undefined)
+			if (rslt['s0atkBoost'])
 				m+='<TR><TD colspan=4>Attack Boosted: ' + 100*rslt['s0atkBoost'] + '%</TD></TR>';
 			else
 				m+='<TR><TD colspan=4>&nbsp;</TD></TR>';
-			if (rslt['s0defBoost'] != undefined)
+			if (rslt['s0defBoost'])
 				m+='<TR><TD colspan=4>Defense Boosted: ' + 100*rslt['s0defBoost'] + '%</TD></TR>';
 			else
 				m+='<TR><TD colspan=4>&nbsp;</TD></TR>';
 			m+='<TR><TD colspan=4>Rounds: ' + rslt['rnds'] + '</TD></TR>';
-			if (rslt['fght']["s0"] != undefined) {
+			if (rslt['fght']["s0"]) {
 				m+='<TR><TH></TH><TH align=left>Troops</TH><TH align=right>Fought</TH><TH align=right>Survived</TH></TR>';
 				for (var i=1;i<13;i++) {
-					if (rslt['fght']["s0"]['u'+i] != undefined) {
+					if (rslt['fght']["s0"]['u'+i]) {
 						if (rslt['fght']["s0"]['u'+i][0] > rslt['fght']["s0"]['u'+i][1]) {
 							m+='<TR><TD>' + unitImg[i] + '</td>';
 							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['u'+i][0])+'</td>';
@@ -1047,7 +1116,7 @@ var Rpt = {
 					}
 				}
 				for (var i=53;i<=55;i++) {
-					if (rslt['fght']["s0"]['f'+i] != undefined) {
+					if (rslt['fght']["s0"]['f'+i]) {
 						if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) {
 							m+='<TR><TD>' + unitImg[i] + '</td>';
 							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
@@ -1060,7 +1129,7 @@ var Rpt = {
 					}
 				}
 				for (var i=60;i<=63;i++) {
-					if (rslt['fght']["s0"]['f'+i] != undefined) {
+					if (rslt['fght']["s0"]['f'+i]) {
 						if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) {
 							m+='<TR><TD>' + unitImg[i] + '</td>';
 							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
@@ -1084,6 +1153,231 @@ var Rpt = {
 	},
 	
 };
+/********************** Tournament Tab *******************************************/
+
+Tabs.Tournament = {
+tabOrder : 100,
+ cont:null,
+ displayTimer : null,
+ 
+init : function (div){
+var t = Tabs.Tournament;
+t.cont = div;
+},
+
+ hide : function (){
+  var t = Tabs.Tournament;
+  clearTimeout (t.displayTimer);
+ },
+ getContent : function (){
+	    var t = Tabs.Tournament;
+	    return t.cont;
+ },
+ show : function () {
+  var t = Tabs.Tournament;
+  
+  clearTimeout (t.displayTimer);
+  t.cont.innerHTML = "<div class='tourny_modal_upsell' align=center >Checking ....</div>";
+  
+  var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+  params.format=2;
+  params.tournyPos=0;
+  new AjaxRequest(unsafeWindow.g_ajaxpath+"ajax/getLeaderboard.php"+unsafeWindow.g_ajaxsuffix, {  method:"post",  parameters:params,
+  
+  onSuccess:function(transport){
+   var rslt=eval("("+transport.responseText+")");
+   if(rslt.ok){
+   
+    if(!rslt.data){
+	   
+	t.cont.innerHTML ="<div class='tourny_modal_upsell'><center>"+unsafeWindow.g_js_strings.modal_tourny_changetab.notourny+"<center></div>";
+	  
+	  
+    }else{ // fin rslt.data
+     var tournyhtml=new Array();
+     
+     if(rslt.name){
+	    tournyhtml.push("<div><center><b><u>"+rslt.name.replace('The Tournament of Might!')+"</u></b></center></div>")
+     }  else{
+	    tournyhtml.push("<div class='tournymodaltitle'><center>"+unsafeWindow.g_js_strings.commonstr.tournament+"<center></div>")
+     }
+	   tournyhtml.push("<div>");
+	   tournyhtml.push("<table class='tourny_list_table' cellpadding='0' cellspacing='0' border='0' align=center>");
+	   tournyhtml.push("<thead>");
+	   tournyhtml.push("<tr>");
+     if(rslt.type==24){
+	    tournyhtml.push("<td class='rankcol' style='background-color:#1e66bd'>");
+	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.ranking+"</div>");
+	    tournyhtml.push("</td>");
+	    tournyhtml.push("<td  style='background-color:#1e66bd'>");
+	    tournyhtml.push("<div>unsafeWindow.g_js_strings.modal_tourny_changetab.chancellorname</div>");
+	    tournyhtml.push("</td>");
+	    tournyhtml.push("<td  style='background-color:#1e66bd'>");
+	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.alliance+"</div>");
+	    tournyhtml.push("</td>");
+	    tournyhtml.push("<td  style='background-color:#1e66bd'>");
+	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.modal_tourny_changetab.mightgained+"</div>");
+	    tournyhtml.push("</td  style='background-color:#1e66bd'>");
+	    tournyhtml.push("<td  style='background-color:#1e66bd'> ");
+	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.modal_tourny_changetab.rewardperplayer+"</div>");
+	    tournyhtml.push("</td>")
+      }else{
+            tournyhtml.push("<td	class='rankcol' style='background-color:#1e66bd'>");
+	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.ranking+"</div>");
+	    tournyhtml.push("</td>");
+	    tournyhtml.push("<td  style='background-color:#1e66bd'>");
+	    tournyhtml.push("<div>Name</div>");
+	    tournyhtml.push("</td>");
+	    tournyhtml.push("<td  style='background-color:#1e66bd'>");
+	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.alliance.replace('Might Change')+"</div>");
+	    tournyhtml.push("</td>");
+	    tournyhtml.push("<td  style='background-color:#1e66bd'>");
+	    tournyhtml.push("<div>"+rslt.contestcategory+"</div>");
+	    tournyhtml.push("</td>");
+	    tournyhtml.push("<td  style='background-color:#1e66bd'>");
+	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.reward+"</div>");
+	    tournyhtml.push("</td>")
+     }
+	   tournyhtml.push("</tr>");
+	   tournyhtml.push("</thead>");
+	   tournyhtml.push("</tbody>");
+	   var nb=rslt.data.length;
+	   var votrepuissance = 0;
+	   for(var i=0;i<rslt.data.length;i++){
+	    var row=rslt.data[i];
+	    if (Seed.player.prefix + ' '+ Seed.player.name == row.name ) {
+	      votrepuissance=row.contestValue;
+	      break;
+	    }	    
+	   }
+	   for(var i=0;i<25;i++){
+	    var row=rslt.data[i];
+	    var rewardString=row.itemCount+" ";
+	    if(row.itemType==0){
+	     rewardString+=unsafeWindow.g_js_strings.commonstr.gems;
+	    }else{
+	     rewardString+=unsafeWindow.itemlist["i"+row.itemType].name;
+	    }
+	    var color="";
+	    if (Seed.player.prefix + ' '+ Seed.player.name == row.name ) {
+	     color=" style='background-color:#aff2af' ";
+	    }
+	    if(i%2==1){
+	     tournyhtml.push("<tr>")
+	    }else{
+	     tournyhtml.push("<tr class='stripe'>")
+	    }
+	    tournyhtml.push("<td class='rankcol' "+color+">");
+	    tournyhtml.push("<div><b>"+row.ranking+"</b></div>");
+	    tournyhtml.push("</td>");
+	    tournyhtml.push("<td "+color+">");
+	    tournyhtml.push("<div>"+row.name+"</div>");
+	    tournyhtml.push("</td>");
+	    tournyhtml.push("<td "+color+">");
+	    tournyhtml.push("<div>"+(row.alliance||"----")+"</div>");
+	    tournyhtml.push("</td>");
+	    tournyhtml.push("<td "+color+">");
+	    tournyhtml.push("<div>"+addCommas(row.contestValue));
+	    if (votrepuissance>0) {
+	      var ecartavecvous = parseInt(row.contestValue - votrepuissance);
+	      if (ecartavecvous>0) {
+	       tournyhtml.push("&nbsp;(+ " + addCommas(ecartavecvous) +")");
+	      } 
+	      if (ecartavecvous<0) {
+	       tournyhtml.push("&nbsp;(" + addCommas(ecartavecvous) +")");
+	      }
+	    }
+	    tournyhtml.push("</div>");
+	    tournyhtml.push("</td>");
+	    tournyhtml.push("<td "+color+">");
+	    tournyhtml.push("<div>"+rewardString+"</div>");
+	    tournyhtml.push("</td>");
+	    tournyhtml.push("</tr>")
+	   } // fin du for
+	
+	   
+	    for(var i=25;i<rslt.data.length;i++){
+	   	    var row=rslt.data[i];
+	   	    if (Seed.player.prefix + ' '+ Seed.player.name == row.name ) {
+	   	      var rewardString=row.itemCount+" ";
+	   	     	    if(row.itemType==0){
+	   	     	     rewardString+=unsafeWindow.g_js_strings.commonstr.gems;
+	   	     	    }else{
+	   	     	     rewardString+=unsafeWindow.itemlist["i"+row.itemType].name;
+	   	     	    }
+	   	     	    tournyhtml.push("<tr class='stripe' >")
+	   	     	    tournyhtml.push("<td class='rankcol' style='background-color:#aff2af'>");
+	   	     	    tournyhtml.push("<div><b>"+row.ranking+"</b></div>");
+	   	     	    tournyhtml.push("</td>");
+	   	     	    tournyhtml.push("<td style='background-color:#aff2af'>");
+	   	     	    tournyhtml.push("<div>"+row.name+"</div>");
+	   	     	    tournyhtml.push("</td>");
+	   	     	    tournyhtml.push("<td style='background-color:#aff2af'>");
+	   	     	    tournyhtml.push("<div>"+(row.alliance||"----")+"</div>");
+	   	     	    tournyhtml.push("</td>");
+	   	     	    tournyhtml.push("<td style='background-color:#aff2af'>");
+	   	     	    tournyhtml.push("<div>"+addCommas(row.contestValue)+"</div>");
+	   	     	    tournyhtml.push("</td>");
+	   	     	    tournyhtml.push("<td style='background-color:#aff2af'>");
+	   	     	    tournyhtml	.push("<div>"+rewardString+"</div>");
+	   	     	    tournyhtml.push("</td>");
+	   	            tournyhtml.push("</tr>")
+	   	       }    
+	   }
+	      tournyhtml.push("</tbody>");
+	   	   tournyhtml.push("</table>");
+	   	   tournyhtml.push("</div>");
+	   	   if(rslt.startdate&&rslt.enddate){
+	   	    var startTime=rslt.startdate;
+	   	    var endTime=rslt.enddate;
+	   	    var now=parseInt(new Date().getTime()/1000);
+	   	    /*tournyhtml.push("<div class='timebar'>");
+	   	    tournyhtml.push("<div class='elapsedtime' style='width:");
+	   	    if(endTime<=now){
+	   	     tournyhtml.push("500px;'")
+	   	    }else{
+	   	     var perc=parseInt(((now-startTime)/(endTime-startTime))*100)*5;
+	   	     tournyhtml.push(perc+"px;'")
+	   	    }
+	   	    tournyhtml.push(">");
+	   	    tournyhtml.push("</div>");
+	   	    tournyhtml.push("</div>");*/
+	   	    tournyhtml.push("<br>");
+	   	    tournyhtml.push("<div class='startdate'>");
+	   	    dt = new Date ();
+	               dt.setTime (startTime * 1000);
+	               dtf = new Date ();
+	               dtf.setTime (endTime * 1000);
+	               // "+new Date(startTime*1000).toGMTString())+ " ->> "
+	               // "+new Date(endTime*1000).toGMTString())+ " ->> 
+	   	    tournyhtml.push("Starts: " + dt.toLocaleDateString() + " @ "+ dt.toLocaleTimeString());
+	   	    tournyhtml.push("</div>");
+	   	    tournyhtml.push("<div	class='enddate'>");
+	   	    tournyhtml.push("Ends: " + dtf.toLocaleDateString()+ " @ "+ dtf.toLocaleTimeString());
+	   	    tournyhtml.push("</div></div>");
+	   } // fin  startdate
+           t.cont.innerHTML = tournyhtml.join("");
+           
+           
+           
+          } // fin rslt.data
+          
+         } //rslt.ok
+         else {
+            t.cont.innerHTML = "<div class='tourny_modal_upsell'><center>No Tournament<center></div>";
+         }
+        
+       },
+       onFailure:function()  {
+         t.cont.innerHTML = "<div class='tourny_modal_upsell'><center>No Info<center></div>";
+       }
+       });
+       
+       
+      t.displayTimer = setTimeout (t.show, 60000); 
+       
+  }
+}
 
 /*************** WILDS TAB *********************/
 
@@ -1613,7 +1907,8 @@ var messageNav = {
 
   isAvailable : function (){
     t = messageNav;
-    return t.mmFunc.isAvailable();
+    //return t.mmFunc.isAvailable();
+	return false;
   },
   
   hook : function (){
@@ -2214,8 +2509,6 @@ function parseIntZero (n){
 }
 
 /*********************************** Players TAB ***********************************/
-
-
 
 function officerId2String (oid){
   if (oid==null)
@@ -3122,7 +3415,6 @@ return 0;
       onSuccess: function (rslt) {
         if (myAid!=null && myAid>0)
           t.fetchMyAllianceInfo  (function (r){ combineResults (rslt, r, notify)});
-
         else
           notify (rslt);
       },
@@ -3178,8 +3470,6 @@ return 0;
     });
   },
 
-
-  
   fetchPlayerInfo : function (uid, notify){
     var params = uW.Object.clone(uW.g_ajaxparams);
     params.uid = uid;
@@ -3323,8 +3613,6 @@ ajax/getOnline.php:
    
    
 };
-
-
 
 
 /*********************************** Test TAB ***********************************/
@@ -3596,7 +3884,7 @@ Tabs.Options = {
     document.getElementById('ptmrchSubV').addEventListener('click', e_butSubtab, false);
 
     
-    changeSubtab (document.getElementById('ptmrchSubU'));
+    changeSubtab (document.getElementById('ptmrchSub'+Options.curOptTab));
     
     function e_butSubtab (evt){            
       changeSubtab (evt.target);   
@@ -3613,7 +3901,7 @@ Tabs.Options = {
       but.className='pbSubtab pbSubtabSel'; 
       but.disabled=true;
       t.curTabName = but.id.substr(9);
-      Options.curMarchTab = t.curTabName;
+	  Options.curOptTab = t.curTabName;
       t.show ();
     }
     },
@@ -3631,7 +3919,6 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=ptEnableWisperAlert type=checkbox /></td><TD>Enable sound alert on whisper<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>';
 	  m+='<TR><TD><INPUT id=ptEnableTowerAlert type=checkbox /></td><TD>Enable sound alert on tower alert in chat<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>';
 	  m+='<TR><TD colspan=2><B>KofC Features:</b></td></tr>';
-	  m+='<TR><TD><INPUT id=togMsgCountFix type=checkbox /></td><TD>Change message icons place(Msg/Reports) and allign them.</td></tr>';
 	  m+='<TR><TD><INPUT id=togAllRpts type=checkbox /></td><TD>Enable enhanced Alliance Reports.</td></tr>';
 	  m+='<TR><TD><INPUT id=togAllowAlter type=checkbox /></td><TD>Allow other scripts to change format of Alliance Reports.</td></tr>';
 	  m+='<TR><TD><INPUT id=togEnhanceMsging type=checkbox /></td><TD>Enable enhanced messaging ("forward" and "all officers" buttons).</td></tr>';
@@ -3660,7 +3947,6 @@ Tabs.Options = {
       t.togOpt ('togAllowAlter', 'allowAlterAR');
       t.togOpt ('togTowerFix', 'fixTower', TowerAlerts.enableFixTarget, TowerAlerts.isFixTargetAvailable);
       t.togOpt ('togTowerFix2', 'fixTower2', TowerAlerts.enableFixFalseReports, TowerAlerts.isFixFalseReportsAvailable);
-      t.togOpt ('togMsgCountFix', 'fixMsgCount', MessageCounts.init);
       t.togOpt ('togMapDistFix', 'fixMapDistance', MapDistanceFix.enable, MapDistanceFix.isAvailable);
       t.togOpt ('togWarnZero', 'fixWarnZero', WarnZeroAttack.setEnable, WarnZeroAttack.isAvailable);
       t.togOpt ('togPageNav', 'fixPageNav', PageNavigator.enable, PageNavigator.isAvailable);
@@ -4112,7 +4398,6 @@ if (t.limitingFactor){
     t.updateTopTroops();
   },
 
-    
   clickTroopDo : function (){
     var t = Tabs.Train;
     var cityId = t.selectedCity.id;
@@ -4614,7 +4899,7 @@ var GMTclock = {
   everySecond : function (){
     var now = new Date();  
     now.setTime(now.getTime() + (now.getTimezoneOffset()*60000));
-   GMTclock.span.innerHTML = ' &nbsp; ('+ now.toLocaleFormat('%H:%M') +')';
+  	GMTclock.span.innerHTML = ' &nbsp; ('+ now.toLocaleFormat('%H:%M') +')';
   },
 }
 
@@ -4730,7 +5015,7 @@ Tabs.OverView = {
            clearTimeout (t.displayTimer);
            t.init(div); 
     }, false);
-    changeSubtab (document.getElementById('ptmrchSubA'));
+    changeSubtab (document.getElementById('ptmrchSub'+Options.curOverTab));
     
     function e_butSubtab (evt){            
       changeSubtab (evt.target);   
@@ -4746,8 +5031,8 @@ Tabs.OverView = {
       t.curTabBut = but;
       but.className='pbSubtab pbSubtabSel'; 
       but.disabled=true;
-      t.curTabName = but.id.substr(9);
-      Options.curMarchTab = t.curTabName;
+      t.curTabName = but.id.substr(-1);
+	  Options.curOverTab = t.curTabName;
       t.show ();
     }    
   },
@@ -5817,380 +6102,929 @@ Tabs.OverView = {
 
 
 /********************************* Messages Tab *************************************/
-Tabs.msg = {
-  tabOrder : 110,
-  tabLabel : uW.g_js_strings.modaltitles.messages,
-  maxPages:9999,
-  totalPages:0,
-  content:"",
+Tabs.Rpt = {
+	tabOrder:    90,
+	tabLabel:    'Reports',
+	cont:        null,
+	state:       null,
+	minPages:    parseInt(Options.arPageFrom),
+	maxPages:    parseInt(Options.arPageTo),
+	data:        [],
+	report:      [],
+	totalPages:  parseInt(Options.arPageTo),
+	what:        '',
+	whatNot:     '',
+	content:     '',
 
-  init : function (div){
-    var t = Tabs.msg;
-    t.cont=div;
-    uW.getmsg = t.getEmailBody;
-	uW.getReport = t.getReportBody;
-	    
-    var m = '<DIV class=ptstat>Search inbox or alliance reports</div>';
-    m += '<DIV class=ptentry style="height:30px"><table>';
-    m += '<TABLE width=95% class=ptTab><TD>Search in: <select id="searchSelect"><option value="Reports">Reports</option>';
-    m += '<option value="inbox">Inbox</option>';
-    m += '<option value="outbox">Outbox</option></select></td>';
-    
-    m += '<TD>Pages: <select id="pagesSelect">';
-    m += '<option value=1> 1 </option>'
-    m += '<option value=5> 5 </option>'
-    m += '<option value=10> 10 </option>'
-    m += '<option value=20> 20 </option>'
-    m += '<option value=30> 30 </option>'
-    m += '<option value=40> 40 </option>'
-    m += '<option value=50> 50 </option>'
-    m += '<option value=60> 60 </option>'
-    m += '<option value=70> 70 </option>'
-    m += '<option value=80> 80 </option>'
-    m += '<option value=90> 90 </option>'
-    m += '<option value=100> 100 </option>'
-    m += '<option value=101> All </option></select></td>'
-    
-    m += '<TD>Search in: <select disabled=true id="searchForSelect"><option value="Subject">Subject</option>';
-    m += '<option value="User">User</option></select></td>';
-    
-    m += '<TD>Search for:<INPUT id=searchString disabled=true type=text size=10 maxlength=25 value=""</td>';
-    m += '<TD><INPUT id=StartSearch type=submit value="Start Search"></td>';
-    m += '<TD><DIV id="searchStatus"></div></td></table>';
-    m += '<BR><DIV id="ReportResults" style="height:470px; max-height:470px; width=100%;"></div>';
-    
-    t.cont.innerHTML = m;
-        
-    document.getElementById('StartSearch').addEventListener ('click', function(){ 
-        	 if (document.getElementById('searchSelect').value == "Reports") {
-        	 		t.totalPages = 0;
-        	 		t.content = '<center><table><thead><th>Click</th><th>Page#</th><th>Date</th><th>Attacker</th><th>From</th><th>Alliance</th><th>Action</th><th>Target</th><th>Type</th><th>At</th></thead><tbody>';
-        	 		t.searchReports("",1); 
-        	 }
-        	 else {
-        	 	t.totalPages = 0;
-        	 	t.content = '<center><table><thead><th>Click</th><th>Page#</th><th>Date</th><th>From</th><th>Subject</th></thead><tbody>';
-        	 	t.searchMail("",1); 
-        	 }
-        }, false);
-    document.getElementById('searchSelect').addEventListener ('change', function(){ 
-        	if (document.getElementById('searchSelect').value == "Reports")  {
-              document.getElementById('searchString').disabled=true;
-              document.getElementById('searchForSelect').disabled=true;
-          }
-        	else {
-              document.getElementById('searchString').disabled=false;
-              document.getElementById('searchForSelect').disabled=false;
-          }
-        }, false);
-        
-    return this.cont;
-  },
+	init: function (div){
+		var t = Tabs.Rpt;
+		t.cont=div;
+		unsafeWindow.getmsg = t.getMailBody;
+		unsafeWindow.getReport = t.getReportBody;
 
- 
-  searchReports : function(rslt, pageNum) {
-    var t = Tabs.msg;
-    t.maxPages=document.getElementById("pagesSelect").value;
-    
-    if (t.totalPages==0){
-  		    var params = uW.Object.clone(uW.g_ajaxparams);
-  		      params.pf=0;
-  		      params.group="a";
-  		      params.pageNo = 1;
-  		         
-  		      new MyAjaxRequest(uW.g_ajaxpath + "ajax/listReports.php" + uW.g_ajaxsuffix, {
-  		      method: "post",
-  		      parameters: params,
-  		      onSuccess: function (rslt) {
-  		          if (rslt.ok)
-  		          t.totalPages = parseInt(rslt['totalPages']);
-  		      },
-  		      onFailure: function () {
-  		      },
-  		    }, false);
-    }
-    
-    if ( t.maxPages==101 && t.totalPages > 0)
-       t.maxPages=t.totalPages;
-       
-       
-    if (parseInt(pageNum) <= t.maxPages) {
-          document.getElementById('searchStatus').innerHTML = pageNum;
-          t.getReports(pageNum);
-       }
-       else {
-          document.getElementById('searchStatus').innerHTML = "DONE";
-       } 
-  },
-  
-  getReports : function (pageNum){
-    var t = Tabs.msg;
-    var params = uW.Object.clone(uW.g_ajaxparams);
-      params.pf=0;
-      params.group="a";
-      params.pageNo = pageNum;
-         
-    new MyAjaxRequest(uW.g_ajaxpath + "ajax/listReports.php" + uW.g_ajaxsuffix, {
-      method: "post",
-      parameters: params,
-      onSuccess: function (rslt) {
-          if (rslt.ok)
-          t.searchInReports(rslt, pageNum);     
-      },
-      onFailure: function () {
-      },
-    }, false);
-  },
-  
-  
-  searchInReports: function(rslt,pageNum){
-  	   var t = Tabs.msg;  
-  	   var myarray = rslt['arReports'];
-  	   var results=document.getElementById("ReportResults");
-  	   
-  	   for (k in myarray) {
-  	   	if (getMyAlliance()[0] != myarray[k]['side1AllianceId'] || myarray[k]['marchType'] == 2) {
-	  	        t.content += '<TR><TD><A><SPAN onclick="getReport('+ myarray[k]['reportId']+','+myarray[k]['side0TileType']	 +')">OPEN</span></a></td>';
-	  	    	t.content +='<TD>'+ pageNum +'</td>';
-	  	    	t.content +='<TD>'+ uW.formatDateByUnixTime(myarray[k]['reportUnixTime']) +'</td>';
-	  	    	t.content +='<TD>';
-	  	    	if ( rslt['arPlayerNames']['g'+myarray[k]['side1PlayerId']] == "M") t.content +='Lord ';
-	  	    	if ( rslt['arPlayerNames']['g'+myarray[k]['side1PlayerId']] == "F") t.content +='Lady ';
-	  	    	t.content += rslt['arPlayerNames']['p'+myarray[k]['side1PlayerId']]+'</td>'
-	  	    	t.content +='<TD>'+ coordLink(myarray[k]['side1XCoord'],myarray[k]['side1YCoord']) +'</td>';
-	  	   		t.content +='<TD>'+ rslt['arAllianceNames']['a'+myarray[k]['side1AllianceId']] +'</td>';
-	  	   		if (myarray[k]['marchType'] == 2) t.content +='<TD><FONT color="00CC33">Reinf</font></td>';
-	  	   		if (myarray[k]['marchType'] == 3) t.content +='<TD><FONT color="FF9933">Scout</font></td>';
-	  	   		if (myarray[k]['marchType'] == 4) t.content +='<TD><FONT color="FF0033">Attack</font></td>';
-				t.content +='<TD>';
-				if ( rslt['arPlayerNames']['g'+myarray[k]['side0PlayerId']] == "M") t.content +='Lord ';
-				if ( rslt['arPlayerNames']['g'+myarray[k]['side0PlayerId']] == "F") t.content +='Lady ';
-				t.content += rslt['arPlayerNames']['p'+myarray[k]['side0PlayerId']]+'</td>'
-				
-				if ( myarray[k]['side0TileType'] == 51 ) t.content += '<TD>City (' + myarray[k]['side0TileLevel'] + ')</td>';
-				else t.content += '<TD><FONT color="#909090"> Wild (' + myarray[k]['side0TileLevel'] + ')</font></td>';
-	  	    	t.content +='<TD>'+ coordLink(myarray[k]['side0XCoord'],myarray[k]['side0YCoord']) +'</td>';
-  	   	  }	
-       }
-       results.innerHTML = t.content;
-       pageNum++;
-       t.searchReports(rslt, pageNum); 
-  },
-  
-  
-  searchMail : function(rslt, pageNum) {
-    var t = Tabs.msg;
-    t.maxPages=document.getElementById("pagesSelect").value;
-    
-    if (t.totalPages==0){
-		    var params = uW.Object.clone(uW.g_ajaxparams);
-		      params.pf=0;
-		      params.requestType="GET_MESSAGE_HEADERS_FOR_USER_INBOX";
-		      params.boxType = document.getElementById('searchSelect').value;
-		      params.pageNo = 1;
-		         
-		      new MyAjaxRequest(uW.g_ajaxpath + "ajax/getEmail.php" + uW.g_ajaxsuffix, {
-		      method: "post",
-		      parameters: params,
-		      onSuccess: function (rslt) {
-		          if (rslt.ok)
-		          t.totalPages = parseInt(rslt['noOfPages']);
-		      },
-		      onFailure: function () {
-		      },
-		    }, false);
-    }
-    
-    if ( t.maxPages==101 && t.totalPages > 0)
-       t.maxPages=t.totalPages;
-       
-    if (parseInt(pageNum) <= t.maxPages) {
-          document.getElementById('searchStatus').innerHTML = pageNum;
-          t.getMail(pageNum);
-       }
-       else {
-          document.getElementById('searchStatus').innerHTML = "DONE";
-       } 
-  },
-  
-  getMail : function (pageNum){
-    var t = Tabs.msg;
-    var params = uW.Object.clone(uW.g_ajaxparams);
-      params.pf=0;
-      params.requestType="GET_MESSAGE_HEADERS_FOR_USER_INBOX";
-      params.boxType = document.getElementById('searchSelect').value;
-      params.pageNo = pageNum;
-         
-    new MyAjaxRequest(uW.g_ajaxpath + "ajax/getEmail.php" + uW.g_ajaxsuffix, {
-      method: "post",
-      parameters: params,
-      onSuccess: function (rslt) {
-          if (rslt.ok)
-          t.searchInMail(rslt, pageNum);     
-      },
-      onFailure: function () {
-      },
-    }, false);
-  },
-  
-  getReportBody : function(ID,TileId){
-    var t = Tabs.msg;
-    var params = uW.Object.clone(uW.g_ajaxparams);
-    params.pf=0;
-    params.rid=ID;
-    params.side=0;
-     
-    new MyAjaxRequest(uW.g_ajaxpath + "ajax/fetchReport.php" + uW.g_ajaxsuffix, {
-      method: "post",
-      parameters: params,
-      onSuccess: function (rslt) {
-          	t.showReportBody(rslt,TileId);
-      },
-      onFailure: function () {
-      },
-    }, false);
-  },
-  
-  showReportBody: function (rslt,TileId) {
-  	var t = Tabs.msg;
-  	var popReport = null;
-  	t.popReport = new CPopup('pbShowBarbs', 0, 0, 500, 300, true, function() {clearTimeout (1000);});
-  	t.popReport.centerMe (mainPop.getMainDiv());  
-  	var m = '<DIV style="max-height:275px; height:275px; overflow-y:scroll">'; 
-  	
-  	m+='<TABLE class=ptTab>';
-  	if (TileId < 51) m+='<TD><FONT size="3px">Wild Lvl.'+ rslt['tileLevel'] +'</font></td>';
-  	if (rslt['conquered']==1) m+='<TD><FONT color="#CC0000" size="3px">Conquered</font></td></tr>';
-  	if (rslt['winner']==1) m+='<TR><TD><FONT color="#CC0000" size="3px">Defeat</font></td></tr><TR><TD></TD></TR><TR><TD></TD></TR><TR><TD></TD></TR></table>';
-  	if (rslt['winner']==0) m+='<TR><TD><FONT color="#66CC33" size="3px">Victory</font></td></tr><TR><TD></TD></TR><TR><TD></TD></TR><TR><TD></TD></TR></table>';
-  	
-		
-	
-	if (rslt['fght'] != undefined){
-			m+='<TABLE style="float:left;width:45%;" class=ptTab><TR><TD align="center">Troops</td><TD align="center">Fought</td><TD align="center">Survived</td></tr>'; 
-			if (rslt['fght']["s1"] != undefined) {
-					for (var i=1;i<=12;i++) {
-						if (rslt['fght']["s1"]['u'+i] != undefined) {
-							if (rslt['fght']["s1"]['u'+i][0] > rslt['fght']["s1"]['u'+i][1]) m+='<TR><TD align="center"><img src=http://koc.god-like.info/img/unit_'+i+'_30.png></td><TD align="center">'+rslt['fght']["s1"]['u'+i][0]+'</td><TD align="center"><FONT color="#CC0000">'+rslt['fght']["s1"]['u'+i][1]+'</font></td></tr>';
-							else m+='<TR><TD align="center"><img src=http://koc.god-like.info/img/unit_'+i+'_30.png></td><TD align="center">'+rslt['fght']["s1"]['u'+i][0]+'</td><TD align="center">'+rslt['fght']["s1"]['u'+i][1]+'</td></tr>';
+		var tc = '<DIV class=ptstat>SEARCH INBOX, OUTBOX, PLAYER AND ALLIANCE REPORTS</DIV><DIV class=ptentry><TABLE><TR align=center valign=center>';
+		tc += '<TD class=xtab align=right>Type:&nbsp;<SELECT id="idRptType">';
+		tc += '<OPTION value="alliance" ' + (Options.rptType=='alliance'?'SELECTED':'') + '>Alliance Reports</OPTION>';
+		tc += '<OPTION value="player" ' + (Options.rptType=='player'?'SELECTED':'') + '>Player Reports</OPTION>';
+		tc += '<OPTION value="inbox" ' + (Options.rptType=='inbox'?'SELECTED':'') + '>Inbox</OPTION>';
+		tc += '<OPTION value="outbox" ' + (Options.rptType=='outbox'?'SELECTED':'') + '>Outbox</OPTION></SELECT>';
+		tc += '<BR />Pages:&nbsp;<INPUT id="idRptPageFrom" size=1 value="' + Options.arPageFrom + '">&#8211;<INPUT id="idRptPageTo" size=1 value="' + Options.arPageTo + '"></TD>';
+		tc += '<TD class=xtab align=right>Attacker:&nbsp;<SELECT id="idRptAttacker">'; // Options.arPageFrom - Options.arPageTo
+		tc += '<OPTION value="Them" ' + (Options.arAttacker=='Them'?'SELECTED':'') + '>Them</OPTION>';
+		tc += '<OPTION value="Us" ' + (Options.arAttacker=='Us'?'SELECTED':'') + '>Us</OPTION>';
+		tc += '<OPTION value="Both" ' + (Options.arAttacker=='Both'?'SELECTED':'') + '>Both</OPTION></SELECT>';
+		tc += '<BR />Target:&nbsp;<SELECT id="idRptTarget">';
+		tc += '<OPTION value="Them" ' + (Options.arTarget=='Them'?'SELECTED':'') + '>Them</OPTION>';
+		tc += '<OPTION value="Us" ' + (Options.arTarget=='Us'?'SELECTED':'') + '>Us</OPTION>';
+		tc += '<OPTION value="Both" ' + (Options.arTarget=='Both'?'SELECTED':'') + '>Both</OPTION></SELECT></TD>';
+		tc += '<TD class=xtab align=right>Contains:&nbsp;<INPUT id=idRptWhat type=text size=11 maxlength=50 value=""><BR />';
+		tc += 'But not:&nbsp;<INPUT id=idRptWhatNot type=text size=11 maxlength=50 value=""></TD>';
+		tc += '<TD class=xtab align=left><INPUT id=idRptAttack type=checkbox '+(Options.arAttack?'CHECKED':'')+' />&nbsp;Attack<BR />';
+		tc += '<INPUT id=idRptScout type=checkbox '+(Options.arScout?'CHECKED':'')+' />&nbsp;Scout</TD>';
+		tc += '<TD class=xtab align=left><INPUT id=idRptReinforce type=checkbox '+(Options.arReinforce?'CHECKED':'')+' />&nbsp;Reinforce<BR />';
+		tc += '<INPUT id=idRptTransport type=checkbox '+(Options.arTransport?'CHECKED':'')+' />&nbsp;Transport</TD>';
+		tc += '<TD class=xtab align=left><INPUT id=idRptSearch type=submit value="Start Search" /></TD></TR></TABLE></DIV>';
+		tc += '<DIV class=ptstat><TABLE width=100% cellspacing=0><TR><TD class=xtab align=left width=125><DIV id=idRptSearched></DIV></TD></TD>';
+		tc += '<TD class=xtab><TD class=xtab align=center><SPAN style="white-space:normal" id=idRptStatus>&nbsp;</span></TD></TD>';
+		tc += '<TD class=xtab><TD class=xtab align=right width=125><DIV id=idRptFound></DIV></TD></TR></TABLE></DIV>';
+		tc += '<DIV id="idRptResultsDiv" style="height:556px; max-height:556px; overflow-x:auto; overflow-y:auto; white-space:nowrap;"></DIV>';
+		t.cont.innerHTML = tc;
+		document.getElementById('idRptType').addEventListener ('change', t.handleRptType, false);
+		document.getElementById('idRptPageFrom').addEventListener ('change', t.handleRptPages, false);
+		document.getElementById('idRptPageTo').addEventListener ('change', t.handleRptPages, false);
+		document.getElementById('idRptAttacker').addEventListener ('change', t.handleRptAttacker, false);
+		document.getElementById('idRptTarget').addEventListener ('change', t.handleRptTarget, false);
+		document.getElementById('idRptWhat').addEventListener ('keyup', t.handleRptWhat, false);
+		document.getElementById('idRptWhatNot').addEventListener ('keyup', t.handleRptWhatNot, false);
+		document.getElementById('idRptSearch').addEventListener ('click', t.handleRptSearch, false);
+		t.togOpt ('idRptAttack', 'arAttack');
+		t.togOpt ('idRptScout', 'arScout');
+		t.togOpt ('idRptReinforce', 'arReinforce');
+		t.togOpt ('idRptTransport', 'arTransport');
+
+		return this.cont;
+	},
+
+	togOpt: function (checkboxId, optionName){
+		var t = Tabs.Rpt;
+		var checkbox = document.getElementById(checkboxId);
+		checkbox.addEventListener ('change', eventHandler, false);
+		function eventHandler (){
+			Options[optionName] = this.checked;
+			saveOptions();
+			if (t.data.length > 0)
+				if (Options.rptType == 'alliance' || Options.rptType == 'player')
+					t.DisplayRpt();
+				else
+					t.DisplayMail();
+		}
+	},
+
+	handleRptType: function(){
+		var t = Tabs.Rpt;
+		Options.rptType = document.getElementById("idRptType").value;
+		saveOptions();
+		document.getElementById("idRptSearched").innerHTML = '';
+		document.getElementById("idRptStatus").innerHTML = '&nbsp;';
+		document.getElementById("idRptFound").innerHTML = '';
+		document.getElementById("idRptResultsDiv").innerHTML = '';
+	},
+
+	handleRptPages: function(){
+		var t = Tabs.Rpt;
+		t.minPages=parseInt(document.getElementById("idRptPageFrom").value);
+		t.maxPages=parseInt(document.getElementById("idRptPageTo").value);
+		if (t.maxPages < t.minPages) {
+			t.maxPages = t.minPages;
+			document.getElementById("idRptPageTo").value = t.maxPages;
+		}
+		Options.arPageFrom = t.minPages;
+		Options.arPageTo = t.maxPages;
+		saveOptions();
+		t.totalPages=t.maxPages;
+	},
+
+	handleRptAttacker: function(){
+		var t = Tabs.Rpt;
+		Options.arAttacker = document.getElementById("idRptAttacker").value;
+		saveOptions();
+		if ((Options.rptType == 'alliance' || Options.rptType == 'player') && t.data.length > 0)
+			t.DisplayRpt();
+	},
+
+	handleRptTarget: function(){
+		var t = Tabs.Rpt;
+		Options.arTarget = document.getElementById("idRptTarget").value;
+		saveOptions();
+		if ((Options.rptType == 'alliance' || Options.rptType == 'player') && t.data.length > 0)
+			t.DisplayRpt();
+	},
+
+	handleRptWhat: function(){
+		var t = Tabs.Rpt;
+		t.what = document.getElementById("idRptWhat").value;
+		if (t.data.length > 0)
+			if (Options.rptType == 'alliance' || Options.rptType == 'player')
+				t.DisplayRpt();
+			else
+				t.DisplayMail();
+	},
+
+	handleRptWhatNot: function(){
+		var t = Tabs.Rpt;
+		t.whatNot = document.getElementById("idRptWhatNot").value;
+		if (t.data.length > 0)
+			if (Options.rptType == 'alliance' || Options.rptType == 'player')
+				t.DisplayRpt();
+			else
+				t.DisplayMail();
+	},
+
+	handleRptSearch: function(){
+		var t = Tabs.Rpt;
+		if (t.searchRunning){
+			t.searchRunning = false;
+			t.stopSearch ('SEARCH CANCELLED!');
+			return;
+		}
+		t.handleRptPages();
+		document.getElementById ('idRptSearch').value = 'Stop Search';
+		document.getElementById('idRptStatus').innerHTML = 'Searching page ' + t.minPages + ' of ' + t.maxPages;
+		t.searchRunning = true;
+		t.data=[];
+		t.report = [];
+		if (Options.rptType == 'alliance' || Options.rptType == 'player')
+			t.getRpt(t.minPages);
+		else
+			t.getMail(t.minPages);
+	},
+
+	stopSearch: function (msg){
+		var t = Tabs.Rpt;
+		if (t.searchRunning || msg == 'SEARCH CANCELLED!')
+			document.getElementById ('idRptStatus').innerHTML = '<FONT color=#ffaaaa>' + msg + '</FONT>';
+		document.getElementById ('idRptSearch').value = 'Start Search';
+		t.searchRunning = false;
+		if (Options.rptType == 'alliance' || Options.rptType == 'player')
+			t.DisplayRpt();
+		else
+			t.DisplayMail();
+	},
+
+	getMail: function (pageNum){
+		var t = Tabs.Rpt;
+		var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+		params.pf=0;
+		params.requestType="GET_MESSAGE_HEADERS_FOR_USER_INBOX";
+		params.boxType = document.getElementById('idRptType').value;
+		params.pageNo = pageNum;
+		new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/getEmail.php" + unsafeWindow.g_ajaxsuffix, {
+			method: "post",
+			parameters: params,
+			onSuccess: function (rslt) {
+				t.getMailCallback(rslt, pageNum);
+			},
+			onFailure: function () {
+			},
+		}, false);
+	},
+
+	getMailCallback: function(rslt, page) {
+		var t = Tabs.Rpt;
+		if (rslt) {
+			if (!rslt.ok) {
+				document.getElementById("idRptStatus").innerHTML = '<FONT color=#ffaaaa>' + rslt.errorMsg + '</FONT>';
+				return;
+			}
+			t.totalPages=parseInt(rslt.noOfPages);
+			if (t.totalPages < t.maxPages)
+				t.maxPages = t.totalPages;
+			if (rslt.message && page) {
+				var ml = rslt.message;
+				if (rslt.messageCount > 0) {
+					var rptkeys = unsafeWindow.Object.keys(ml);
+					for (var i = 0; i < rptkeys.length; i++) {
+						var rpt = ml[rptkeys[i]];
+						rpt.page = page;
+						t.data.push(rpt);
+					}
+				}
+			}
+			if (parseInt(page)+1 <= t.maxPages && t.searchRunning) {
+				document.getElementById("idRptStatus").innerHTML = 'Searching page ' + (parseInt(page)+1) + ' of ' + t.maxPages;
+				t.getMail(parseInt(page)+1);
+				if (t.data.length > 0)
+					t.DisplayMail();
+			} else if (page)
+				t.stopSearch ('Done!');
+		}
+	},
+
+	getRpt: function (pageNum){
+		var t = Tabs.Rpt;
+		var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+		params.pageNo = pageNum;
+		if (Options.rptType == 'alliance')
+			params.group = "a";
+		new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/listReports.php" + unsafeWindow.g_ajaxsuffix, {
+			method: "post",
+			parameters: params,
+			onSuccess: function (rslt){
+				t.getRptCallback (rslt, pageNum);
+			},
+			onFailure: function (rslt){
+				t.getRptCallback (rslt, pageNum);
+			},
+		}, false);
+	},
+
+	getRptCallback: function(rslt, page){
+		var t = Tabs.Rpt;
+		if (rslt) {
+			if (!rslt.ok) {
+				document.getElementById("idRptStatus").innerHTML = '<FONT color=#ffaaaa>' + rslt.errorMsg + '</FONT>';
+				return;
+			}
+			t.totalPages=parseInt(rslt.totalPages);
+			if (t.totalPages < t.maxPages)
+				t.maxPages = t.totalPages;
+			if (rslt.arReports && page) {
+				var ar = rslt.arReports;
+				if (ar.length == 0)
+					t.stopSearch('Empty pages found from page ' + page + ' onwards - Kabam glitch');
+				var rptkeys = unsafeWindow.Object.keys(ar);
+				for (var i = 0; i < rptkeys.length; i++) {
+					var rpt = ar[rptkeys[i]];
+					var reportId = parseInt(rpt.reportId);
+					t.report[reportId] = [];
+
+					// Attacker
+					t.report[reportId].side1Name = rslt.arPlayerNames['p'+rpt.side1PlayerId];
+					t.report[reportId].side1AllianceId = parseInt(rpt.side1AllianceId);
+					if (rpt.side1AllianceId > 0)
+						t.report[reportId].side1AllianceName = rslt.arAllianceNames['a'+rpt.side1AllianceId];
+					else
+						t.report[reportId].side1AllianceName = 'unaligned';
+					if (rpt.side1CityId > 0)
+						t.report[reportId].side1CityName = rslt.arCityNames['c'+rpt.side1CityId];
+					else
+						t.report[reportId].side1CityName = 'none';
+					t.report[reportId].side1XCoord = rpt.side1XCoord;
+					t.report[reportId].side1YCoord = rpt.side1YCoord;
+					// Target
+					if (parseInt(rpt.side0PlayerId) == 0) { // Kabam
+						t.report[reportId].side0Name = 'Enemy';
+						t.report[reportId].side0AllianceName = '';
+						t.report[reportId].side0CityName = '';
+					} else { // Player
+						t.report[reportId].side0Name = rslt.arPlayerNames['p'+rpt.side0PlayerId];
+						if (rpt.side0AllianceId > 0)
+							t.report[reportId].side0AllianceName = rslt.arAllianceNames['a'+rpt.side0AllianceId];
+						else
+							t.report[reportId].side0AllianceName = 'unaligned';
+						if (rpt.side0CityId > 0)
+							t.report[reportId].side0CityName = rslt.arCityNames['c'+rpt.side0CityId];
+						else
+							t.report[reportId].side0CityName = 'none';
+					}
+					t.report[reportId].side0AllianceId = parseInt(rpt.side0AllianceId);
+					t.report[reportId].side0XCoord = rpt.side0XCoord;
+					t.report[reportId].side0YCoord = rpt.side0YCoord;
+					if (parseInt(rpt.side0TileType) == 10)
+						t.report[reportId].side0TileTypeText='Grass';
+					else if (parseInt(rpt.side0TileType) == 11)
+						t.report[reportId].side0TileTypeText='Lake';
+					else if (parseInt(rpt.side0TileType) == 20)
+						t.report[reportId].side0TileTypeText='Woods';
+					else if (parseInt(rpt.side0TileType) == 30)
+						t.report[reportId].side0TileTypeText='Hills';
+					else if (parseInt(rpt.side0TileType) == 40)
+						t.report[reportId].side0TileTypeText='Mount';
+					else if (parseInt(rpt.side0TileType) == 50)
+						t.report[reportId].side0TileTypeText='Plain';
+					else if (parseInt(rpt.side0CityId) ==0)
+						t.report[reportId].side0TileTypeText='Barb';
+					else
+						t.report[reportId].side0TileTypeText='City';
+					t.report[reportId].side0TileTypeLevel = t.report[reportId].side0TileTypeText + ' ' + rpt.side0TileLevel;
+					t.report[reportId].side0TileType = rpt.side0TileType;
+					t.report[reportId].side0TileLevel = rpt.side0TileLevel;
+					// Miscellaneous
+					t.report[reportId].page = page;
+					t.report[reportId].reportUnixTime = rpt.reportUnixTime;
+					if (rpt.side0AllianceId == parseInt(getMyAlliance()[0]))
+						t.report[reportId].sideId = 0;
+					else if (rpt.side1AllianceId == parseInt(getMyAlliance()[0])) {
+						t.report[reportId].sideId = 1;
+					} else { // if we're here then this is a player report from when they were in another alliance
+						if (rpt.side0PlayerId == getMyUserId())
+							t.report[reportId].sideId = 0;
+						else if (rpt.side1PlayerId == getMyUserId())
+							t.report[reportId].sideId = 1;
+						else // shouldn't get here but we'll catch it if the report body is requested
+							t.report[reportId].sideId = -1;
+					}
+					if (rpt.marchType == 0)
+						t.report[reportId].marchName = 'Desertion';
+					else if (rpt.marchType == 1)
+						t.report[reportId].marchName = 'Transport';
+					else if (rpt.marchType == 2)
+						t.report[reportId].marchName = 'Reinforce';
+					else if (rpt.marchType == 3) {
+						if (t.report[reportId].sideId == 0)
+							t.report[reportId].marchName = 'Anti-Scout';
+						else
+							t.report[reportId].marchName = 'Scout';
+					} else if (rpt.marchType == 4) {
+						if (t.report[reportId].sideId == 0)
+							t.report[reportId].marchName = 'Defend';
+						else
+							t.report[reportId].marchName = 'Attack';
+					} else
+						t.report[reportId].marchName = '?';
+					t.data.push ({
+						reportId: reportId,
+					});
+				}
+			}
+			if (parseInt(page)+1 <= t.maxPages && t.searchRunning) {
+				document.getElementById("idRptStatus").innerHTML = 'Searching page ' + (parseInt(page)+1) + ' of ' + t.maxPages;
+				t.getRpt(parseInt(page)+1);
+				if (t.data.length > 0)
+					t.DisplayRpt();
+			} else if (page)
+				t.stopSearch ('Done!');
+		}
+	},
+
+	DisplayMail: function (){
+		var t = Tabs.Rpt;
+		var results = document.getElementById("idRptResultsDiv");
+		if(!t.data.length) {
+			results.innerHTML = '<center>None found</center>';
+			return;
+		}
+		reportsSearched = t.data.length;
+		reportsFound = 0;
+		t.content = '';
+		for (var i=0; i<reportsSearched;i++) {
+			var rpt = t.data[i];
+			if ((t.what == '' || (rpt.subject.search(t.what, "i") != -1) || (rpt.displayName.search(t.what, "i") != -1))
+				&& (t.whatNot == '' || ((rpt.subject.search(t.whatNot, "i") == -1) && (rpt.displayName.search(t.whatNot, "i") == -1)))) {
+				reportsFound++;
+				if (reportsFound == 1)
+					t.content += '<center><table><thead><th>P</th><th>Date</th><th>From</th><th>Subject</th></thead><tbody>';
+				t.content += '<tr><td align=right>'+rpt.page+'</td><td>'+rpt.dateSent+'</td><td>'+rpt.displayName+'</td>';
+				t.content += '<td><A><SPAN onclick="getmsg('+ rpt.messageId +')">' + rpt.subject + '</SPAN></a></td></tr>';
+			}
+		}
+		if (reportsFound > 1)
+			t.content += '</tbody></table></center>';
+		if (reportsFound == 0 && reportsSearched > 0)
+			t.content = '<center>None found</center>';
+		results.innerHTML = t.content;
+		document.getElementById("idRptSearched").innerHTML = '&nbsp;Searched: ' + reportsSearched;
+		document.getElementById("idRptFound").innerHTML = 'Found: ' + reportsFound;
+	},
+
+	getMailBody: function(ID,dataI){
+		var t = Tabs.Rpt;
+		var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+		params.messageId=ID;
+		params.requestType="GET_MESSAGE_FOR_ID";
+
+		new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/getEmail.php" + unsafeWindow.g_ajaxsuffix, {
+			method: "post",
+			parameters: params,
+			onSuccess: function (rslt) {
+				if (rslt.ok)
+					t.displayMailBody(rslt.messageBody);
+			},
+			onFailure: function () {},
+		}, false);
+	},
+
+	displayMailBody: function (messageBody) {
+		var t = Tabs.Rpt;
+		var popMsg = null;
+		t.popMsg = new CPopup('pbMailBody', 0, 0, 670, 600, true, function() {clearTimeout (1000);});
+		t.popMsg.centerMe (mainPop.getMainDiv());
+		var m = '<DIV style="max-height:565px; height:565px; overflow-y:scroll">';
+		m+= messageBody + '</div>';
+		t.popMsg.getMainDiv().innerHTML = m;
+		t.popMsg.getTopDiv().innerHTML = '<DIV align=center><B>Message</B></DIV>';
+		t.popMsg.show(true);
+	},
+
+	DisplayRpt: function (){
+		var t = Tabs.Rpt;
+		var results = document.getElementById("idRptResultsDiv");
+		if(!t.data.length) {
+			results.innerHTML = '<center>None found</center>';
+			return;
+		}
+		var myAllianceId = parseInt(getMyAlliance()[0]);
+		reportsSearched = t.data.length;
+		reportsFound = 0;
+		t.content = '';
+		for (var i=0; i<reportsSearched;i++) {
+			var reportId = t.data[i].reportId;
+			var rpt = t.report[reportId];
+			if ((rpt.side0Name=='undefined') && (rpt.marchName != 'Desertion'))
+				continue;
+			if ((((myAllianceId == parseInt(rpt.side1AllianceId) && Options.arAttacker != 'Them')
+				|| (myAllianceId != parseInt(rpt.side1AllianceId) && Options.arAttacker != 'Us')
+				|| Options.arAttacker == 'Both')
+				&& ((myAllianceId == parseInt(rpt.side0AllianceId) && Options.arTarget != 'Them')
+				|| (myAllianceId != parseInt(rpt.side0AllianceId) && Options.arTarget != 'Us')
+				|| Options.arTarget == 'Both')
+				&& ((Options.arAttack && (rpt.marchName == 'Attack' || rpt.marchName == 'Defend'))
+				|| (Options.arScout && (rpt.marchName == 'Scout' || rpt.marchName == 'Anti-Scout'))
+				|| (Options.arReinforce && rpt.marchName == 'Reinforce')
+				|| (Options.arTransport && rpt.marchName == 'Transport')))
+				|| (rpt.marchName == 'Desertion')) {
+				if (((t.what == ''
+					|| (rpt.side1Name.search(t.what, "i") != -1)
+					|| (rpt.side1AllianceName.search(t.what, "i") != -1)
+					|| (rpt.side0Name.search(t.what, "i") != -1)
+					|| (rpt.side0AllianceName.search(t.what, "i") != -1)
+					|| (rpt.side0TileTypeText.search(t.what, "i") != -1))
+					&& (t.whatNot == ''
+					|| ((rpt.side1Name.search(t.whatNot, "i") == -1)
+					&& (rpt.side1AllianceName.search(t.whatNot, "i") == -1)
+					&& (rpt.side0Name.search(t.whatNot, "i") == -1)
+					&& (rpt.side0AllianceName.search(t.whatNot, "i") == -1)
+					&& (rpt.side0TileTypeText.search(t.whatNot, "i") == -1))))
+					|| (rpt.marchName == 'Desertion')) {
+					reportsFound++;
+					if (reportsFound == 1) {
+						if (Options.enableReportNumber)
+							t.content += '<center><table><thead><th>P</th><th>Date</th><th>Report</th><th>Attacker</th><th>From</th>';
+						else
+							t.content += '<center><table><thead><th>P</th><th>Date</th><th>Attacker</th><th>From</th>';
+						if (Options.arAttacker != 'Us')
+							t.content += '<th>Alliance</th>';
+						t.content += '<th>Action</th><th>Target</th><th>Type</th><th>At</th>';
+						if (Options.arTarget != 'Us')
+							t.content += '<th>Alliance</th>';
+						t.content += '<th>Dist</th><th>Nearest</th></thead><tbody>';
+					}
+					var closestDist=999999;
+					var closestLoc=null;
+					var closestNum=1;
+					for (var c=0; c<Cities.numCities; c++){
+						var city = Cities.cities[c];
+						city.x +','+ city.y
+						var dist=distance(city.x,city.y,rpt.side0XCoord,rpt.side0YCoord);
+						if(dist<closestDist) {
+							closestDist=dist;
+							closestLoc=city.x +','+ city.y;
+							closestNum=c+1;
 						}
 					}
+					t.content += '<tr><td align=right>'+rpt.page+'</td><td>'+formatUnixTime(rpt.reportUnixTime,'24hour')+'</td>';
+					if (Options.enableReportNumber)
+						t.content += '<td>' + reportId + '</td>';
+					if (rpt.marchName == 'Desertion') {
+						t.content += '<td></td><td></td>';
+						if (Options.arAttacker != 'Us')
+							t.content += '<td></td>';
+						t.content += '<td>'+rpt.marchName+'</td><td></td><td></td><td></td>';
+						if (Options.arAttacker != 'Us')
+							t.content += '<td></td>';
+						t.content += '<td></td><td></td>';
+						} else {
+						t.content += '<td>'+rpt.side1Name+'</td><td align=center><A onclick="ptGotoMap('+ rpt.side1XCoord +','+ rpt.side1YCoord +')">'+ rpt.side1XCoord +','+ rpt.side1YCoord +'</a></td>';
+						if (Options.arAttacker != 'Us')
+							t.content += '<td>'+rpt.side1AllianceName+'</td>';
+						t.content += '<td><A><SPAN onclick="getReport('+ reportId+')">'+rpt.marchName+'</span></a></td>';
+						t.content += '<td>'+rpt.side0Name+'</td><td>'+rpt.side0TileTypeLevel+'</td>';
+						t.content += '<td align=center><A onclick="ptGotoMap('+ rpt.side0XCoord +','+ rpt.side0YCoord +')">'+ rpt.side0XCoord +','+ rpt.side0YCoord +'</a></td>';
+						if (Options.arTarget != 'Us')
+							t.content += '<td>'+rpt.side0AllianceName+'</td>';
+						t.content += '<td align=right>'+Math.floor(closestDist)+'</td><td align=center><A onclick=\"ptGotoCity(' + closestNum + ')\">' + closestLoc + '</a></td></tr>';
+					}
+				}
 			}
-				  	
-		  	if (rslt['fght']["s0"] != undefined) {
- 				  	m+='</table><TABLE style="float:right;width:45%;" class=ptTab><TR><TD align="center">Troops</td><TD align="center">Fought</td><TD align="center">Survived</td></tr>';
-				  	for (var i=1;i<=12;i++) {
-				  		if (rslt['fght']["s0"]['u'+i] != undefined) {
-				  			if (rslt['fght']["s0"]['u'+i][0] > rslt['fght']["s0"]['u'+i][1]) m+='<TR><TD align="center"><img src=http://koc.god-like.info/img/unit_'+i+'_30.png></td><TD align="center">'+rslt['fght']["s0"]['u'+i][0]+'</td><TD align="center"><FONT color="#CC0000">'+rslt['fght']["s0"]['u'+i][1]+'</font></td></tr>';
-				  			else m+='<TR><TD align="center"><img src=http://koc.god-like.info/img/unit_'+i+'_30.png></td><TD align="center">'+rslt['fght']["s0"]['u'+i][0]+'</td><TD align="center">'+rslt['fght']["s0"]['u'+i][1]+'</td></tr>';
-				  		}
-				  	}
-				  	
-				  	for (var i=53;i<=55;i++) {
-				  		if (rslt['fght']["s0"]['f'+i] != undefined) {
-				  			if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) m+='<TR><TD align="center"><img src=http://koc.god-like.info/img/unit_'+i+'_30.jpg></td><TD align="center">'+rslt['fght']["s0"]['f'+i][0]+'</td><TD align="center"><FONT color="#CC0000">'+rslt['fght']["s0"]['f'+i][1]+'</font></td></tr>';
-				  			else m+='<TR><TD align="center"><img src=http://koc.god-like.info/img/unit_'+i+'_30.jpg></td><TD align="center">'+rslt['fght']["s0"]['f'+i][0]+'</td><TD align="center">'+rslt['fght']["s0"]['f'+i][1]+'</td></tr>';
-				  		}
-				  	}
-				  	for (var i=60;i<=63;i++) {
-				  		if (rslt['fght']["s0"]['f'+i] != undefined) {
-				  			if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) m+='<TR><TD align="center"><img src=http://koc.god-like.info/img/unit_'+i+'_30.jpg></td><TD align="center">'+rslt['fght']["s0"]['f'+i][0]+'</td><TD align="center"><FONT color="#CC0000">'+rslt['fght']["s0"]['f'+i][1]+'</font></td></tr>';
-				  			else m+='<TR><TD align="center"><img src=http://koc.god-like.info/img/unit_'+i+'_30.jpg></td><TD align="center">'+rslt['fght']["s0"]['f'+i][0]+'</td><TD align="center">'+rslt['fght']["s0"]['f'+i][1]+'</td></tr>';
-				  		}
-				  	}
-		  	}
-		  	m+='<TR><TD></TD></TR></table>';
-	}
-  	
-  	if (rslt['unts']!= undefined) {
-  		  	m+='<TABLE class=ptTab><TR><TD align="center">Troops</td><TD align="center">Reinforced</td></tr>';
-  		  	for (var i=1;i<=12;i++) {
-  		  		if (rslt['unts']['u'+i] != undefined) m+='<TR><TD align="center"><img src=http://koc.god-like.info/img/unit_'+i+'_30.png></td><TD align="center">'+rslt['unts']['u'+i]+'</td></tr>';
-  		  	}
-  	}
-  	m+='<TR><TD></TD></TR><TR><TD></TD></TR></table>';
-  	
-  	if (rslt['loot'] != undefined) {
-		  	m+='<TABLE class=ptTab><TR><TD><img src=http://koc.god-like.info/img/gold_30.png></td><TD>'+addCommas(rslt['loot'][0])+'</td>';
-		  	m+='<TD><img src=http://koc.god-like.info/img/food_30.png></td><TD>'+addCommas(rslt['loot'][1])+'</td>';
-		  	m+='<TD><img src=http://koc.god-like.info/img/wood_30.png></td><TD>'+addCommas(rslt['loot'][2])+'</td>';
-		  	m+='<TD><img src=http://koc.god-like.info/img/stone_30.png></td><TD>'+addCommas(rslt['loot'][3])+'</td>';
-		  	m+='<TD><img src=http://koc.god-like.info/img/iron_30.png></td><TD>'+addCommas(rslt['loot'][4])+'</td></table>';
-	}	
-	
-	
-	if (rslt['rsc'] != undefined) {
-		  	m+='<TABLE class=ptTab><TR><TD><img src=http://koc.god-like.info/img/food_30.png></td><TD>'+addCommas(rslt['rsc']['r1'])+'</td>';
-		  	m+='<TD><img src=http://koc.god-like.info/img/wood_30.png></td><TD>'+addCommas(rslt['rsc']['r2'])+'</td>';
-		  	m+='<TD><img src=http://koc.god-like.info/img/stone_30.png></td><TD>'+addCommas(rslt['rsc']['r3'])+'</td>';
-		  	m+='<TD><img src=http://koc.god-like.info/img/iron_30.png></td><TD>'+addCommas(rslt['rsc']['r4'])+'</td></table>';
-	}	
-	
-	m+='</div>';
-  	t.popReport.getMainDiv().innerHTML = m;
-  	t.popReport.getTopDiv().innerHTML = '<TD><CENTER><B>BATTLE REPORT</center></td>';
-  	t.popReport.show(true)	;
-   },
-   
-  
-  getEmailBody : function(ID){
-    var t = Tabs.msg;
-    var params = uW.Object.clone(uW.g_ajaxparams);
-      params.messageId=ID;
-      params.requestType="GET_MESSAGE_FOR_ID";
-     
-    new MyAjaxRequest(uW.g_ajaxpath + "ajax/getEmail.php" + uW.g_ajaxsuffix, {
-      method: "post",
-      parameters: params,
-      onSuccess: function (rslt) {
-          if (rslt.ok)
-          t.showEmailBody(rslt['messageBody'])
-      },
-      onFailure: function () {
-      },
-    }, false);
-  },
-  
-  showEmailBody: function (messageBody) {
-  	var t = Tabs.msg;
-  	var popMsg = null;
-  	t.popMsg = new CPopup('pbShowBarbs', 0, 0, 550, 300, true, function() {clearTimeout (1000);});
-  	t.popMsg.centerMe (mainPop.getMainDiv());  
-  	var m = '<DIV style="max-height:265px; height:265px; overflow-y:scroll">';  
-  	m+= messageBody + '</div>';
-  	t.popMsg.getMainDiv().innerHTML = m;
-  	t.popMsg.getTopDiv().innerHTML = '<TD><CENTER><B>MESSAGES</center></td>';
-  	t.popMsg.show(true)	;
-   },
-   
-  
-  searchInMail: function(rslt,pageNum){
-	   var t = Tabs.msg;  
-	   var myarray = rslt['message'];
-	   var results=document.getElementById("ReportResults");
-	   
-	   for (k in myarray) {
-	      if (document.getElementById('searchForSelect').value == "Subject") var lookup = myarray[k]['subject'];
-	      else var lookup = myarray[k]['displayName'];
-	      var what = document.getElementById('searchString').value;
-	      if (lookup.search(what, "i") != -1){
-	        t.content += '<TR><TD><A><SPAN onclick="getmsg('+ myarray[k]['messageId'] +')">OPEN</span></a></td>'
-  	    	t.content +='<TD>'+ rslt['pageNo'] +'</td>';
-  	    	t.content +='<TD>'+myarray[k]['dateSent']+'</td>';
-  	    	t.content +='<TD>'+myarray[k]['displayName']+'</td>';
-  	    	t.content +='<TD>'+myarray[k]['subject']+'</td>';
-	   	  }	
-       }
-       results.innerHTML = t.content;
-       pageNum++;
-       t.searchMail(rslt, pageNum); 
-  },
-  
-  show : function (){
-  },
+		}
+		if (reportsFound > 1)
+			t.content += '</tbody></table></center>';
+		if (reportsFound == 0 && reportsSearched > 0)
+			t.content = '<center>None found</center>';
+		results.innerHTML = t.content;
+		document.getElementById("idRptSearched").innerHTML = '&nbsp;Searched: ' + reportsSearched;
+		document.getElementById("idRptFound").innerHTML = 'Found: ' + reportsFound;
+	},
 
-  hide : function (){
-  },
+	getReportBody: function(reportId){
+		var t = Tabs.Rpt;
+		var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+		//params.pf=0;
+		params.rid=reportId;
+		params.side=t.report[reportId].sideId;
+		if (params.side > -1) {
+			new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/fetchReport.php" + unsafeWindow.g_ajaxsuffix, {
+				method: "post",
+				parameters: params,
+				onSuccess: function (rslt) {
+					t.displayReportBody(rslt,reportId);
+				},
+				onFailure: function (rslt) {},
+			}, false);
+		} else {
+			unsafeWindow.alert ('Could not determine which side of the report to view - please send details to the developer');
+		}
+	},
+
+	displayReportBody: function (rslt, reportId) {
+		var t = Tabs.Rpt;
+		var popReport = null;
+		var rpt = t.report[reportId];
+		var m = '';
+		var unitImg = [];
+		for (var i=1;i<13;i++)
+			unitImg[i] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_'+i+'_30.png></TD><TD>' + unsafeWindow.unitcost['unt'+i][0];
+		unitImg[53] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_53_30.png></TD><TD>Crossbows';
+		unitImg[55] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_55_30.png></TD><TD>Trebuchet';
+		unitImg[60] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_60_30.png></TD><TD>Trap';
+		unitImg[61] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_61_30.png></TD><TD>Caltrops';
+		unitImg[62] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_62_30.png></TD><TD>Spiked Barrier';
+		goldImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/gold_30.png></TD><TD>Gold';
+		foodImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/food_30.png></TD><TD>Food';
+		woodImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/wood_30.png></TD><TD>Wood';
+		stoneImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/stone_30.png></TD><TD>Stone';
+		oreImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/iron_30.png></TD><TD>Ore';
+
+		function buildHeader () {
+			var h='<TABLE class=ptTab width=100%>';
+			h+='<TR valign=top><TD align=left width=10%><B>';
+			if (rpt.marchName == 'Anti-Scout' || rpt.marchName == 'Scout')
+				h+=rpt.marchName+'ing at';
+			else if (rpt.marchName == 'Attack' || rpt.marchName == 'Defend')
+				h+='Battle at ';
+			else if (rpt.marchName == 'Reinforce' || rpt.marchName == 'Transport')
+				h+=rpt.marchName+' from<BR />'+rpt.marchName+' to</B>';
+
+			if (rpt.side0TileTypeText == 'Barb')
+				h+=' Barbarian Camp Level ' + rpt.side0TileLevel;
+			else if (rpt.side0TileTypeText != 'City')
+				h+=' '+rpt.side0TileTypeText+' Level '+ rpt.side0TileLevel+' ';
+			h+='</B></TD>';
+
+			if (rpt.marchName == 'Reinforce' || rpt.marchName == 'Transport') {
+				h+='<TD align=left width=1%>';
+				if (Seed.player.name != rpt.side1Name)
+					h+=rpt.side1Name;
+				if (Seed.player.name != rpt.side0Name)
+					h+='<BR />'+rpt.side0Name;
+				h+='</TD>';
+			}
+			h+='<TD align=left width=5%>';
+
+			if (rpt.marchName == 'Reinforce' || rpt.marchName == 'Transport')
+				h+='(<A onclick="ptGotoMap('+ rpt.side1XCoord +','+ rpt.side1YCoord +')">'+ rpt.side1XCoord +','+ rpt.side1YCoord +'</a>)<BR />';
+			h+='(<A onclick="ptGotoMap('+ rpt.side0XCoord +','+ rpt.side0YCoord +')">'+ rpt.side0XCoord +','+ rpt.side0YCoord +'</a>)</TD>';
+
+			if (rpt.side0TileTypeText != 'City' && rpt.side0TileTypeText != 'Barb' && rpt.marchName == 'Attack') {
+				if (rslt['conquered']==1)
+					h+='<TD><FONT color="#CC0000"><B>Conquered</B></font></td>';
+				else if (rslt['conquered']==0)
+					h+='<TD><FONT color="#66CC33"><B>Secured</B></font></td>';
+			} else if (rpt.marchName == 'Reinforce' || rpt.marchName == 'Transport') {
+				h+='<TD align=left width=5%>'+rpt.side1CityName+'<BR />';
+				if (rpt.side0CityName != '')
+					h+=rpt.side0CityName+'</TD>';
+				else
+					h+=rpt.side0TileTypeText+' Level '+ rpt.side0TileLevel+'</TD>';
+			}
+
+			h+='<TD align=right>' + formatUnixTime(rpt.reportUnixTime,'24hour') + '<BR />Report No: ' + reportId + '</TD></TR></TABLE>';
+			return h;
+		}
+
+		function handleunts () { // Troops sent to Reinforce or troops found on a Scout
+			var hunts = '', th = '', tc = '', tf = '';
+			if (rslt['unts']) {
+				if (rpt.marchName == 'Reinforce')
+					th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Troops Reinforced</TH></TR>';
+				else if (rslt['unts'])
+					th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Troops Found</TH></TR>';
+				for (var i=1;i<13;i++)
+					if (rslt['unts']['u'+i])
+						tc+='<TR><TD>' + unitImg[i] + '</TD><TD align=right>'+addCommas(rslt['unts']['u'+i])+'</TD></TR>';
+				tf='</TABLE>';
+			}
+			if (tc != '')
+				hunts = th + tc + tf;
+			return hunts;
+		}
+
+		function handlersc () { // Resources brought with reinforcements or found on a Scout
+			var hrsc = '', th = '', tc = '', tf = '';
+			if (rslt['rsc']) {
+				if (rslt['rsc']['r1'] > 0 || rslt['rsc']['r2'] > 0 || rslt['rsc']['r3'] > 0 || rslt['rsc']['r4'] > 0) {
+					if (rpt.marchName == 'Reinforce')
+						th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Goodies Brought</TH></TR>';
+					else {
+						th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Goodies Found</TH></TR>';
+						if (rslt['gld'] > 0)
+							tc+='<TR><TD>'+goldImg+'</TD><TD align=right>'+addCommasInt(rslt['gld'])+'</TD></TR>';
+					}
+					if (rslt['rsc']['r1'] > 0)
+						tc+='<TR><TD>'+foodImg+'</TD><TD align=right>'+addCommasInt(rslt['rsc']['r1'])+'</TD></TR>';
+					if (rslt['rsc']['r2'] > 0)
+						tc+='<TR><TD>'+woodImg+'</TD><TD align=right>'+addCommasInt(rslt['rsc']['r2'])+'</TD></TR>';
+					if (rslt['rsc']['r3'] > 0)
+						tc+='<TR><TD>'+stoneImg+'</TD><TD align=right>'+addCommasInt(rslt['rsc']['r3'])+'</TD></TR>';
+					if (rslt['rsc']['r4'] > 0)
+						tc+='<TR><TD>'+oreImg+'</TD><TD align=right>'+addCommasInt(rslt['rsc']['r4'])+'</TD></TR>';
+					tf='</TABLE>';
+				}
+			}
+			if (tc != '')
+				hrsc = th + tc + tf;
+			return hrsc;
+		}
+
+		function handlefrt () { // Fortifications found on a Scout
+			var hfrt = '', th = '', tc = '', tf = '';
+			if (rslt['frt']) {
+				if (rslt['frt']) {
+					th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Defenses Found</TH></TR>';
+					if (rslt['frt']['f53'])
+						tc+='<TR><TD>' + unitImg[53] + '</TD><TD align=right>'+addCommas(rslt['frt']['f53'])+'</TD></TR>';
+					if (rslt['frt']['f55'])
+						tc+='<TR><TD>' + unitImg[55] + '</TD><TD align=right>'+addCommas(rslt['frt']['f55'])+'</TD></TR>';
+					if (rslt['frt']['f60'])
+						tc+='<TR><TD>' + unitImg[60] + '</TD><TD align=right>'+addCommas(rslt['frt']['f60'])+'</TD></TR>';
+					if (rslt['frt']['f61'])
+						tc+='<TR><TD>' + unitImg[61] + '</TD><TD align=right>'+addCommas(rslt['frt']['f61'])+'</TD></TR>';
+					if (rslt['frt']['f62'])
+						tc+='<TR><TD>' + unitImg[62] + '</TD><TD align=right>'+addCommas(rslt['frt']['f62'])+'</TD></TR>';
+					tf='</TABLE>';
+				}
+			}
+			if (tc != '')
+				hfrt = th + tc + tf;
+			return hfrt;
+		}
+
+		function handleblds (bType) {
+		  if(rslt['blds']){
+			var blds = rslt['blds']['b'+bType]; b = '<TR><TD>'; arField = [], firstbld = true;
+			if (bType == 1)
+				b+='Farm';
+			else if (bType == 2)
+				b+='Sawmill';
+			else if (bType == 3)
+				b+='Quarry';
+			else if (bType == 4)
+				b+='Mine';
+			b+='</TD><TD>';
+			for (var i=1; i<12; i++)
+				arField[i]=0;
+			for (var i=0; i < blds.length; i++)
+				arField[blds[i]]++
+			for (var i=11; i>0; i--) {
+				if (arField[i] > 0) {
+					if (firstbld)
+						firstbld = false;
+					else
+						b+=', ';
+					if (arField[i] > 1)
+						b+=arField[i] + ' x ';
+					b+=' ' + i;
+				}
+			}
+			b+='</TD></TR>';
+			return b;
+		  }
+		}
+
+		if (rpt.marchName == 'Reinforce') {
+			t.popReport = new CPopup('pbShowRein', 0, 0, 525, 340, true, function() {clearTimeout (1000);});
+			m+= '<DIV style="height:285px">';
+		} else if (rpt.marchName == 'Transport') {
+			t.popReport = new CPopup('pbShowTrans', 0, 0, 525, 240, true, function() {clearTimeout (1000);});
+			m+= '<DIV style="height:185px">';
+		} else if (rpt.marchName == 'Scout' && rslt['winner']==1 && rpt.sideId==1){
+			t.popReport = new CPopup('pbShowOther', 0, 0, 550, 740, true, function() {clearTimeout (1000);});
+			m+= '<DIV style="max-height:705px; height:705px; overflow-y:scroll">';
+		} else {
+			t.popReport = new CPopup('pbShowOther', 0, 0, 550, 680, true, function() {clearTimeout (1000);});
+			m+= '<DIV style="max-height:645px; height:645px; overflow-y:scroll">';
+		}
+		t.popReport.centerMe (mainPop.getMainDiv());
+
+		m+=buildHeader();
+
+		if (rpt.marchName == 'Transport') { // Transport
+			m+='<TABLE class=ptTab>'; // Only transports have these in rslt, so handle them here
+			if (parseInt(rslt['gold']) > 0)
+				m+='<TR><TD>'+goldImg+'</TD><TD align=right>'+addCommas(rslt['gold'])+'</TD></TR>';
+			if (parseInt(rslt['resource1']) > 0)
+				m+='<TR><TD>'+foodImg+'</TD><TD align=right>'+addCommas(rslt['resource1'])+'</TD></TR>';
+			if (parseInt(rslt['resource2']) > 0)
+				m+='<TR><TD>'+woodImg+'</TD><TD align=right>'+addCommas(rslt['resource2'])+'</TD></TR>';
+			if (parseInt(rslt['resource3']) > 0)
+				m+='<TR><TD>'+stoneImg+'</TD><TD align=right>'+addCommas(rslt['resource3'])+'</TD></TR>';
+			if (parseInt(rslt['resource4']) > 0)
+				m+='<TR><TD>'+oreImg+'</TD><TD align=right>'+addCommas(rslt['resource4'])+'</TD></TR>';
+			m+='</TABLE>';
+		}
+
+		m+='<TABLE class=ptTab>';
+		if ((rslt['winner']==1 && rpt.sideId==0) || (rslt['winner']==0 && rpt.sideId==1)) {
+			if (rpt.marchName == 'Scout')
+				m+='<TR><TD><FONT color="#CC0000"><B>Scouting Failed</B></font></TD></TR>';
+			else
+				m+='<TR><TD><FONT color="#CC0000"><B>You were defeated</B></font></TD></TR>';
+		}
+		if (rslt['winner']==0 && rpt.sideId==0)
+			m+='<TR><TD><FONT color="#66CC33"><B>You defended successfully!</B></font></TD></TR>';
+		if (rslt['winner']==1 && rpt.sideId==1) {
+			if (rpt.marchName == 'Scout')
+				m+='<TR><TD><FONT color="#66CC33"><B>Scouting Report</B></font></TD></TR>';
+			else
+				m+='<TR><TD><FONT color="#66CC33"><B>You were victorious!</B></font></TD></TR>';
+		}
+
+		if (rslt['wall']) {
+			if (rslt['wall'] == 100)
+				m+='<TR><TD>Attackers breached the walls.</TD></TR>';
+			else
+				m+='<TR><TD>Attackers did not breach the walls. The walls are '+rslt['wall']+'% damaged</TD></TR>';
+		}
+		m+= '</TABLE><BR />';
+
+		if (rslt['loot']) {
+			m+='<TABLE class=ptTab>';
+			if (rslt['loot'][0] > 0)
+				m+='<TR><TD>'+goldImg+'</TD><TD align=right>'+addCommas(rslt['loot'][0])+'</TD></TR>';
+			if (rslt['loot'][1] > 0)
+				m+='<TR><TD>'+foodImg+'</TD><TD align=right>'+addCommas(rslt['loot'][1])+'</TD></TR>';
+			if (rslt['loot'][2] > 0)
+				m+='<TR><TD>'+woodImg+'</TD><TD align=right>'+addCommas(rslt['loot'][2])+'</TD></TR>';
+			if (rslt['loot'][3] > 0)
+				m+='<TR><TD>'+stoneImg+'</TD><TD align=right>'+addCommas(rslt['loot'][3])+'</TD></TR>';
+			if (rslt['loot'][4] > 0)
+				m+='<TR><TD>'+oreImg+'</TD><TD align=right>'+addCommas(rslt['loot'][4])+'</TD></TR>';
+			if (rslt['loot'][5]) {
+				for (var crest=1101; crest < 1116; crest++) {
+					if (rslt['loot'][5][crest] == 1)
+						m+='<TR><TD><img width=30 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/' + crest + '.png></TD><TD colspan=2>' + crestname[crest] + '</TD></TR>';
+				}
+			}
+			m+='</TABLE><BR />';
+		}
+
+		if (rpt.marchName == 'Reinforce') {
+			m+=handleunts();
+			m+=handlersc();
+		}
+
+		if (rpt.marchName == 'Scout' && rslt['winner']==1) {
+			m+='<TABLE class=ptTab width=100%><TR><TD width=50% align=left valign=top>';
+			m+=handleunts();
+			m+=handlefrt();
+			m+=handlersc();
+			m+='</TD><TD width=50% align=left valign=top>';
+			m+='<TABLE class=ptTab width=100%>';
+			if (rslt['lstlgn']) {
+				if (!rslt['lstlgn'])
+					m+='<TR><TD>Last Login: Not recorded</TD></TR>';
+				else
+					m+='<TR><TD>Last Login: ' + formatUnixTime(rslt['lstlgn']) + '</TD></TR>';
+			}
+			m+='<TR><TD>Marshall Combat: ';
+			if (rslt['knt'])
+				m+=rslt['knt']['cbt'];
+			else
+				m+='None';
+			m+='</TD></TR>';
+			if (rslt['pop'])
+				m+='<TR><TD>Population: ' + addCommas(rslt['pop']) + '</TD></TR>';
+			if (rslt['hap'])
+				m+='<TR><TD>Happiness: ' + addCommas(rslt['hap']) + '</TD></TR></TABLE>';
+			if (rslt['blds']['b1'] || rslt['blds']['b2'] || rslt['blds']['b3'] || rslt['blds']['b4']) {
+				m+='<TABLE class=ptTab><TR><TH colspan=2 align=left>Fields</TH></TR>';
+				for (var i=1; i<5; i++)
+					if (rslt['blds']['b'+i])
+						m+=handleblds(i);
+				m+='</TABLE>';
+			}
+			if (rslt['tch']) {
+				m+='<TABLE class=ptTab><TR><TH colspan=2 align=left>Research</TH></TR>';
+				for (var tl in rslt.tch)
+					tid = /[0-9]/.exec(tl);
+					m+='</TD></TR><TR><TD>'+uW.techcost['tch'+tid[0]][0]+'</TD><TD align=right>' + rslt.tch[tl] + '</TD></TR>';
+				m+='</TABLE>';
+			}
+			m+='</TD></TR></TABLE>';
+		}
+
+		if (rslt['fght']){ // not Reinforce or Transport, so we have a table with 2 columns: 1 for Attackers, 1 for Defenders
+			m+='<TABLE class=ptTab width=100%><TR><TD width=50% align=left valign=top>';
+			m+='<TABLE class=ptTab width=100%>';
+			m+='<TR><TD colspan=4><B>Attackers</B> ('+rpt.side1Name+')';
+			if (rslt['winner']==1)
+				m+='<FONT color="#CC0000"><B> Winner</B></FONT>';
+			m+='</TD></TR>';
+			if (rpt.marchName == 'Attack' || rpt.marchName == 'Defend')
+				m+='<TR><TD colspan=4>Knight Combat Skill: ' + rslt['s1KCombatLv'] + '</TD></TR>';
+			m+='<TR><TD colspan=4>Attack Boosted: ' + 100*rslt['s1atkBoost'] + '%</TD></TR>';
+			m+='<TR><TD colspan=4>Defense Boosted: ' + 100*rslt['s1defBoost'] + '%</TD></TR>';
+			m+='<TR><TD colspan=4>(<A onclick="ptGotoMap('+ rpt.side1XCoord +','+ rpt.side1YCoord +')">'+ rpt.side1XCoord +','+ rpt.side1YCoord +'</a>) ' + rpt.side1CityName + '</TD></TR>';
+			if (rslt['fght']["s1"] != undefined) {
+				m+='<TR><TH></TH><TH align=left>Troops</TH><TH align=right>Fought</TH><TH align=right>Survived</TH></TR>';
+				for (var i=1;i<13;i++) {
+					if (rslt['fght']["s1"]['u'+i] != undefined) {
+						if (rslt['fght']["s1"]['u'+i][0] > rslt['fght']["s1"]['u'+i][1]) {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s1"]['u'+i][0])+'</td>';
+							m+='<TD align=right><FONT color="#CC0000">'+addCommas(rslt['fght']["s1"]['u'+i][1])+'</FONT></td></tr>';
+						} else {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s1"]['u'+i][0])+'</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s1"]['u'+i][1])+'</td></tr>';
+						}
+					}
+				}
+			}
+			m+='</TABLE></TD><TD width=50% align=right valign=top>';
+			m+='<TABLE class=ptTab width=100%>';
+			m+='<TR><TD colspan=4><B>Defenders</B> ('+rpt.side0Name+')';
+			if (rslt['winner']==0)
+				m+='<FONT color="#CC0000"><B> Winner</B></FONT>';
+			m+='</TD></TR>';
+			if (rpt.marchName == 'Attack' || rpt.marchName == 'Defend')
+				m+='<TR><TD colspan=4>Knight Combat Skill: ' + rslt['s0KCombatLv'] + '</TD></TR>';
+			if (rslt['s0atkBoost'] !== undefined)
+				m+='<TR><TD colspan=4>Attack Boosted: ' + 100*rslt['s0atkBoost'] + '%</TD></TR>';
+			else
+				m+='<TR><TD colspan=4>&nbsp;</TD></TR>';
+			if (rslt['s0defBoost'] !== undefined)
+				m+='<TR><TD colspan=4>Defense Boosted: ' + rslt['s0defBoost'] + '%</TD></TR>';
+			else
+				m+='<TR><TD colspan=4>&nbsp;</TD></TR>';
+			m+='<TR><TD colspan=4>Rounds: ' + rslt['rnds'] + '</TD></TR>';
+			if (rslt['fght']["s0"] != undefined) {
+				m+='<TR><TH></TH><TH align=left>Troops</TH><TH align=right>Fought</TH><TH align=right>Survived</TH></TR>';
+				for (var i=1;i<13;i++) {
+					if (rslt['fght']["s0"]['u'+i] != undefined) {
+						if (rslt['fght']["s0"]['u'+i][0] > rslt['fght']["s0"]['u'+i][1]) {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['u'+i][0])+'</td>';
+							m+='<TD align=right><FONT color="#CC0000">'+addCommas(rslt['fght']["s0"]['u'+i][1])+'</FONT></td></tr>';
+						} else {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['u'+i][0])+'</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['u'+i][1])+'</td></tr>';
+						}
+					}
+				}
+				for (var i=53;i<=55;i++) {
+					if (rslt['fght']["s0"]['f'+i] != undefined) {
+						if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
+							m+='<TD align=right><FONT color="#CC0000">'+addCommas(rslt['fght']["s0"]['f'+i][1])+'</font></td></tr>';
+						} else {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][1])+'</td></tr>';
+						}
+					}
+				}
+				for (var i=60;i<=63;i++) {
+					if (rslt['fght']["s0"]['f'+i] != undefined) {
+						if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
+							m+='<TD align=right><FONT color="#CC0000">'+addCommas(rslt['fght']["s0"]['f'+i][1])+'</font></td></tr>';
+						} else {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][1])+'</td></tr>';
+						}
+					}
+				}
+			} else
+				m+='<TR><TD>No Troops Defended</TD></TR>';
+			m+='</TABLE></TD></TR></TABLE>';
+		}
+
+		m+='</DIV>';
+		t.popReport.getMainDiv().innerHTML = m;
+		t.popReport.getTopDiv().innerHTML = '<DIV align=center><B>'+rpt.marchName+' Report</B></DIV>';
+		t.popReport.show(true);
+	},
+
+	show: function (){
+	},
+
+	hide: function (){
+	},
 };
 
 /*********************************** Alliance TAB ***********************************/
@@ -6504,6 +7338,7 @@ Tabs.Marches = {
       but.disabled=true;
       t.curTabName = but.id.substr(9);
       Options.curMarchTab = t.curTabName;
+	  saveOptions();
       t.show ();
     }    
   },
@@ -6829,8 +7664,6 @@ Tabs.Marches = {
     	 	 });
     	 	 
     	 },    
-    	 
-    	     
       
   /***  REINFORCEMENTS SUBTAB  ***/
   showReinforcements : function (){
@@ -7348,19 +8181,6 @@ uW.uwuwuwFunc(funcName +' = '+ t.funcNew);
   }
 };
 
-
-var MessageCounts = {
-  messagesNotifyFunc : null,
-  
-  init : function (){ 
-	var t = MessageCounts; 
-	if (Options.fixMsgCount){ 
-		document.getElementById('chrome_messages_report').style.margin = '10px 0 0 65px'; 
-		document.getElementById('chrome_messages_notify').style.margin = '10px 0 0 10px'; 		
-	}
-  },
-}
-
 function ShowExtraInfo(){
   alert('ineter');
   content = document.getElementById('mod_citylist').innerHTML
@@ -7434,7 +8254,8 @@ var MapDistanceFix = {
   },
   isAvailable : function (){
     var t = MapDistanceFix;
-    return t.popSlotsFunc.isAvailable();
+    //return t.popSlotsFunc.isAvailable();
+	return false;
   },
 }
 
