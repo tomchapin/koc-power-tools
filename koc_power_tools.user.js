@@ -5,7 +5,7 @@
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20111001a';
+var Version = '20111002a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -8953,7 +8953,7 @@ function CdialogCancelContinue (msg, canNotify, contNotify, centerElement){
 
 
 // TODO: make class (multiple instances needed)
-function dialogRetry (errMsg, seconds, onRetry, onCancel){
+function dialogRetry (errMsg, errCode, seconds, onRetry, onCancel){
   seconds = parseInt(seconds);
   var pop = new CPopup ('ptretry', 0, 0, 400,200, true);
   pop.centerMe(mainPop.getMainDiv());
@@ -9116,7 +9116,7 @@ if (DEBUG_TRACE) logit (" 1b myAjaxRequest.mySuccess() !ok : "+ inspect(rslt, 3,
     /*if ( (x = rslt.errorMsg.indexOf ('<br><br>')) > 0)
       rslt.errorMsg = rslt.errorMsg.substr (0, x-1);*/
     if (!noRetry && (rslt.error_code==0 ||rslt.error_code==8 || rslt.error_code==1 || rslt.error_code==3)){
-      dialogRetry (rslt.errorMsg, delay, function(){myRetry()}, function(){wasSuccess (rslt)});
+      dialogRetry (rslt.errorMsg, rslt.error_code, delay, function(){myRetry()}, function(){wasSuccess (rslt)});
     } else {
       wasSuccess (rslt);
     }
@@ -9656,13 +9656,14 @@ function doDefTrain (cityId, siege, unitId, num, notify){
 }
 
 
-function doTrain (cityId, tut, unitId, num, notify){
+function doTrain (cityId, tut, gamble, unitId, num, notify){
   var time = uW.modal_barracks_traintime(unitId, num);
   var params = uW.Object.clone(uW.g_ajaxparams);
   params.cid = cityId;
   params.type = unitId;
   params.quant = num;
   params.items = tut;
+  params.gambleId = gamble;
 
   new MyAjaxRequest(uW.g_ajaxpath + "ajax/train.php" + uW.g_ajaxsuffix, {
     method: "post",
@@ -9671,7 +9672,7 @@ function doTrain (cityId, tut, unitId, num, notify){
       if (rslt.ok) {
         for (var i = 1; i < 5; i++) {
 		  var resourceLost = parseInt(uW.unitcost["unt" + unitId][i]) * 3600 * parseInt(num);
-		  if(rslt.gamble[i]) resourceLost = resourceLost*rslt.gamble[i];
+		  if(rslt.gamble) resourceLost = resourceLost*rslt.gamble[i];
           uW.seed.resources["city" + cityId]["rec" + i][0] = parseInt(uW.seed.resources["city" + cityId]["rec" + i][0]) - resourceLost;
         }
         uW.seed.citystats["city" + cityId].gold[0] = parseInt(uW.seed.citystats["city" + cityId].gold[0]) - parseInt(uW.unitcost["unt" + unitId][5]) * parseInt(num);
