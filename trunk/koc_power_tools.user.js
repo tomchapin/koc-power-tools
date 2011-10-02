@@ -3,10 +3,9 @@
 // @namespace      mat
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
-// @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20110916a';
+var Version = '20111001a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -577,10 +576,10 @@ var ChatStuff = {
     uW.ptChatIconClicked = t.e_iconClicked;
     uW.ptChatReportClicked = Rpt.FindReport;
     t.setEnable (Colors.chatEnhance);
-   setInterval ( function(){
-   			if ( document.getElementById('comm_tabs').className == 'comm_tabs seltab1') document.getElementById("mod_comm_list1").style.background = Colors.ChatGlobal;
-   			else document.getElementById("mod_comm_list2").style.background = Colors.ChatAll;
-   },1500);
+   // setInterval ( function(){
+   			// if ( document.getElementById('comm_tabs').className == 'comm_tabs seltab1') document.getElementById("mod_comm_list1").style.background = Colors.ChatGlobal;
+   			// else document.getElementById("mod_comm_list2").style.background = Colors.ChatAll;
+   // },1500);
     
   },
   
@@ -1946,8 +1945,8 @@ var messageNav = {
     t.mmsFunc = new CalterUwFunc ('modal_messages_send', [[/{\s*var params/i, '{\nif (modal_messages_send_hook()) return;\nvar params']]);
     uW.messageNav_hook = messageNav.hook;
     uW.modal_messages_send_hook = messageNav.msgSendHook;
-    t.mmFunc.setEnable (true);
-    t.mmsFunc.setEnable (true);
+    // t.mmFunc.setEnable (true);
+    // t.mmsFunc.setEnable (true);
   },
 
   setEnable : function (tf){
@@ -4221,6 +4220,7 @@ Tabs.Train = {
   selectedCity : {},
   trainTimer : null,
   running : false,
+  gamble : {"1":{"min":"5","max":"15","cost":"2"},"2":{"min":"10","max":"25","cost":"4"}},
   nextAuto:				null,
   defenseOptions:	"<option value='53'>Crossbow</option><option value='55'>Trebuchet</option><option value='60'>Trap</option><option value='61'>Caltrop</option><option value='62'>Spiked Barrier</option>",
   prevCityNo:			0,
@@ -4250,13 +4250,18 @@ Tabs.Train = {
       <TR><TD align=right valign=top></td><TD colspan=2><INPUT type=CHECKBOX id=chkPop"+ (Options.maxIdlePop?' CHECKED ':'') +"> \
         <SPAN style='white-space:normal;'>"+uW.g_js_strings.commonstr.use +" "+ uW.g_js_strings.commonstr.workers+"</span>\
 		<br><SELECT id=tutelage>\
-		<option value='0'><CENTER>--- "+uW.g_js_strings.commonstr.speedup+" ---</center></option>\
+		<option value='0'><CENTER>--- "+uW.g_js_strings.commonstr.items+" "+uW.g_js_strings.commonstr.speedup+" ---</center></option>\
 		<option value='36'>"+ uW.itemlist.i36.name+"</option>\
         <option value='37'>"+ uW.itemlist.i37.name+"</option>\
         <option value='38'>"+ uW.itemlist.i38.name+"</option>\
 		</select>\
+		<br><br><SELECT id=pttrgamble>\
+		<option value='0'><CENTER>--- "+uW.g_js_strings.commonstr.resources+" "+uW.g_js_strings.commonstr.speedup+" ---</center></option>\
+		<option value=1>Use "+ t.gamble[1].cost+"x resources ("+ t.gamble[1].min+" - "+t.gamble[1].max+"%)</option>\
+		<option value=2>Use "+ t.gamble[2].cost+"x resources ("+ t.gamble[2].min+" - "+t.gamble[2].max+"%)</option>\
+		</select>\
 		</td></tr>\
-     <TR><TD colspan=3 align=center><DIV style='height:10px'></div><INPUT id='ptttButDo' type=submit value='"+uW.g_js_strings.modal_openBarracks.trainttl+"'\
+      <TR><TD colspan=3 align=center><DIV style='height:10px'></div><INPUT id='ptttButDo' type=submit value='"+uW.g_js_strings.modal_openBarracks.trainttl+"'\
       ></td></tr>\
       </table></td><TD width=20></td><TD style='border-left:solid 2px;' width=50% align=center>\
       <TABLE align=center><TR><TD align=right>"+uW.g_js_strings.modal_openWalls.builddefenses+": </td><TD colspan=2>\
@@ -4328,11 +4333,13 @@ Tabs.Train = {
     t.TDbutMaxPerSlot.addEventListener ('click', t.clickDefMaxPS, false);
     t.TDbutMaxSlots.addEventListener ('click', t.clickDefMaxSlots, false);
     t.TDbutDo.addEventListener ('click', t.clickDefDo, false);
-    document.getElementById ('chkPop').addEventListener ('change', t.clickCheckIdlePop, false);
+	document.getElementById ('chkPop').addEventListener ('change', t.clickCheckIdlePop, false);
     document.getElementById ('chkDoTraps').addEventListener ('change', t.clickCheckDoTraps, false);
     document.getElementById ('chkDoCaltrops').addEventListener ('change', t.clickCheckDoCaltrops, false);
     document.getElementById ('chkDoSpikes').addEventListener ('change', t.clickCheckDoSpikes, false);
     document.getElementById ('chkDoXbows').addEventListener ('change', t.clickCheckDoXbows, false);
+    document.getElementById ('pttrgamble').addEventListener ('change', t.changeTroopSelect, false);
+    
     document.getElementById ('chkPop').addEventListener ('change', t.clickCheckIdlePop, false);
     t.changeTroopSelect();
     t.changeDefSelect();
@@ -4466,21 +4473,28 @@ Tabs.Train = {
     t.lastTroopSelect = id;
     t.limitingFactor = null;
     var uc = uW.unitcost['unt'+id];
+	var actualuc = [];
+	for(var r = 1; r<5; r++){
+		if(document.getElementById('pttrgamble').value > 0)
+			actualuc[r] = uc[r] * t.gamble[document.getElementById('pttrgamble').value].cost;
+		else
+			actualuc[r] = uc[r];
+	}
     var max = 9999999999;
-    if ( (t.stats.food / uc[1]) < max){
-      max = t.stats.food / uc[1];
+    if ( (t.stats.food / actualuc[1]) < max){
+      max = t.stats.food / actualuc[1];
       t.limitingFactor = uW.resourceinfo['rec1'];
     }
-    if ( (t.stats.wood / uc[2]) < max){
-      max = t.stats.wood / uc[2];
+    if ( (t.stats.wood / actualuc[2]) < max){
+      max = t.stats.wood / actualuc[2];
       t.limitingFactor = uW.resourceinfo['rec2'];
     }
-    if ( (t.stats.stone / uc[3]) < max){
-      max = t.stats.stone / uc[3];
+    if ( (t.stats.stone / actualuc[3]) < max){
+      max = t.stats.stone / actualuc[3];
       t.limitingFactor = uW.resourceinfo['rec3'];
     }
-    if ( (t.stats.ore / uc[4]) < max){
-      max = t.stats.ore / uc[4];
+    if ( (t.stats.ore / actualuc[4]) < max){
+      max = t.stats.ore / actualuc[4];
       t.limitingFactor = uW.resourceinfo['rec4'];
     }
     if ( (t.stats.idlePop / uc[6]) < max){
@@ -4542,6 +4556,7 @@ if (t.limitingFactor){
     }
 
 	var tut = document.getElementById ('tutelage').value;
+	var gamble = document.getElementById ('pttrgamble').value;
 		
     t.TDbutDo.disabled = true;
     t.TTbutDo.className = 'ptButCancel';
@@ -4551,7 +4566,7 @@ if (t.limitingFactor){
       que.push (['T', unitId, parseInt (perSlot)]);
     t.divTrainStatus.innerHTML = '';
     t.running = true;
-    t.doQueue (cityId, tut, que);
+    t.doQueue (cityId, tut, gamble, que);
   },
 
   
@@ -4594,7 +4609,7 @@ if (t.limitingFactor){
       max = t.stats.ore / uc[4];
     if ( (t.stats.idlePop / uc[6]) < max)
       max = t.stats.idlePop / uc[6];
-    t.stats.MaxDefTrain = parseInt (max);
+    t.stats.MaxDefTrain = parseIntNan (max);
     if (t.stats.MaxDefTrain < 0)
       t.stats.MaxDefTrain = 0;
     if (matTypeof(uc[8]) == 'object'){
@@ -4961,7 +4976,7 @@ if (t.limitingFactor){
   },
   
   
-  doQueue : function (cityId, tut, que, errMsg){
+  doQueue : function (cityId, tut, gamble, que, errMsg){
     var t = Tabs.Train;
     clearTimeout (t.trainTimer);
     try {
@@ -4977,10 +4992,10 @@ if (t.limitingFactor){
       }
       if (cmd[0] == 'T'){
         t.dispTrainStatus (uW.g_js_strings.modal_barracks_train.starttraining+': '+ cmd[2] +' '+  uW.unitcost['unt'+cmd[1]][0] +' at '+ Cities.byID[cityId].name +' ('+ que.length +' slots remaining)<BR>');
-        doTrain (cityId, tut, cmd[1], cmd[2], 
+        doTrain (cityId, tut, gamble, cmd[1], cmd[2], 
           function(errMsg){
             if (t.running)
-              t.trainTimer = setTimeout(function (){Tabs.Train.doQueue(cityId, tut, que, errMsg);}, (Math.random()*2500)+1000 );
+              t.trainTimer = setTimeout(function (){Tabs.Train.doQueue(cityId, tut, gamble, que, errMsg);}, (Math.random()*2500)+1000 );
           }
         );
       }
@@ -5131,7 +5146,7 @@ if (t.limitingFactor){
 					} else
 						actionLog('Building ' + numberToTrain + ' Spikes in city ' + Cities.byID[cityId].name);
 					try {
-						doDefTrain (cityId, 62, numberToTrain);
+						doDefTrain (cityId, 61, numberToTrain);
 					} catch (err) {
 						logit (inspect (err, 8, 1));
 					}
@@ -5222,6 +5237,7 @@ if (t.limitingFactor){
 			t.nextAuto = setTimeout(function(){ t.doAutoTrain(cityNo+1);}, 7000);
 	},
 }
+
 /*************************************** OVERVIEW TAB ************************************************/
 var GMTclock = {
   span : null,
@@ -8947,7 +8963,10 @@ function dialogRetry (errMsg, seconds, onRetry, onCancel){
   document.getElementById('paretryCancel').addEventListener ('click', doCancel, false);
   pop.show(true);
   
-  document.getElementById('paretryErrMsg').innerHTML = errMsg;
+  if(errCode && unsafeWindow.g_js_strings.errorcode['err_'+errCode])
+	document.getElementById('paretryErrMsg').innerHTML = unsafeWindow.g_js_strings.errorcode['err_'+errCode];
+  else
+	document.getElementById('paretryErrMsg').innerHTML = errMsg;
   document.getElementById('paretrySeconds').innerHTML = seconds;
   var rTimer = setTimeout (doRetry, seconds*1000);
   countdown ();
@@ -9466,7 +9485,6 @@ function AddMainTabLink(text, eventListener, mouseListener) {
       tabs.parentNode.insertBefore (gmTabs, tabs);
       gmTabs.style.whiteSpace='normal';
       gmTabs.style.width='735px';
-	  gmTabs.style.height='60px';
       gmTabs.lang = 'en_PT';
     }
     if (gmTabs.firstChild)
@@ -9652,7 +9670,9 @@ function doTrain (cityId, tut, unitId, num, notify){
     onSuccess: function(rslt) {
       if (rslt.ok) {
         for (var i = 1; i < 5; i++) {
-          uW.seed.resources["city" + cityId]["rec" + i][0] = parseInt(uW.seed.resources["city" + cityId]["rec" + i][0]) - parseInt(uW.unitcost["unt" + unitId][i]) * 3600 * parseInt(num)
+		  var resourceLost = parseInt(uW.unitcost["unt" + unitId][i]) * 3600 * parseInt(num);
+		  if(rslt.gamble[i]) resourceLost = resourceLost*rslt.gamble[i];
+          uW.seed.resources["city" + cityId]["rec" + i][0] = parseInt(uW.seed.resources["city" + cityId]["rec" + i][0]) - resourceLost;
         }
         uW.seed.citystats["city" + cityId].gold[0] = parseInt(uW.seed.citystats["city" + cityId].gold[0]) - parseInt(uW.unitcost["unt" + unitId][5]) * parseInt(num);
         uW.seed.citystats["city" + cityId].pop[0] = parseInt(uW.seed.citystats["city" + cityId].pop[0]) - parseInt(uW.unitcost["unt" + unitId][6]) * parseInt(num);
@@ -10389,7 +10409,7 @@ t.state = null;
 function reloadKOC (){
   var serverId = GetServerId();
   if(serverId == '??') window.location.reload(true);
-  var goto = 'http://apps.facebook.com/kingdomsofcamelot/?s='+serverId;
+  var goto = 'https://apps.facebook.com/kingdomsofcamelot/?s='+serverId;
   var t = '<FORM target="_top" action="'+ goto +'" method=post><INPUT id=xxpbButReload type=submit value=RELOAD><INPUT type=hidden name=s value="'+ serverId +'"</form>';
   var e = document.createElement ('div');
   e.innerHTML = t;
