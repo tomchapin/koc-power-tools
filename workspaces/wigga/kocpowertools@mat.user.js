@@ -3,10 +3,9 @@
 // @namespace      mat
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
-// @require        http://tomchapin.me/auto-updater.php?id=103659
 // ==/UserScript==
 
-var Version = '20111002a';
+var Version = '20111002b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -80,7 +79,6 @@ var Options = {
   enableWhisperAlert : true,
   enableTowerAlert : true,
   OverViewShowExtra : 'maximum',
-  AllianceLeaders : [],
   //alertConfig  : {aChat:false, aPrefix:'** I\'m being attacked! **', scouting:false, wilds:false, minTroops:10000, spamLimit:10 },
   rptType:'alliance',
   arAttacker:'Them',
@@ -90,14 +88,34 @@ var Options = {
 };
 
 var Colors ={
-	DarkRow : "#eee",
-	ButtonSelected : "#444444",
-	TabClicked : "#EED",
-	Tabs : "#1E66BD",
-    MainTitle  : "#357",
-    ChatLeaders: "#B8B8B8",
-    ChatGlobal :  "#CCCCFF",
-    OverviewDarkRow : "#f0f0f0",
+	DarkRow : '#eee',
+	ButtonSelected : '#444444',
+	TabClicked : '#EED',
+	Tabs : '#1E66BD',
+    MainTitle  : '#357',
+    ChatLeaders: '#B8B8B8',
+    ChatGlobal :  '#CCCCFF',
+    OverviewDarkRow : '#f0f0f0',
+	TabFont : '#F8E151',
+	ChatAll : '#99ccff',
+	ChatAtt : '#FF4D4D',
+	ChatWhisper : '#FF4D4D',
+		ChatVC: '#00ff00',
+	ChatChancy: '#F8E151',
+
+};
+
+var AutoTrainOptions = {
+	intervalSecs:		60,
+	doTraps:			{1:false,2:false,3:false,4:false,5:false,6:false,7:false,8:false},
+	doCalrops:			{1:false,2:false,3:false,4:false,5:false,6:false,7:false,8:false},
+	doSpikes:			{1:false,2:false,3:false,4:false,5:false,6:false,7:false,8:false},
+	doXbows:			{1:false,2:false,3:false,4:false,5:false,6:false,7:false,8:false},
+	troopType:			{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
+	keepFood:				{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
+	keepWood:				{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
+	keepStone:			{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
+	keepOre:				{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
 };
 
 var JSON;if(!JSON){JSON={};}(function(){"use strict";function f(n){return n<10?'0'+n:n;}if(typeof Date.prototype.toJSON!=='function'){Date.prototype.toJSON=function(key){return isFinite(this.valueOf())?this.getUTCFullYear()+'-'+f(this.getUTCMonth()+1)+'-'+f(this.getUTCDate())+'T'+f(this.getUTCHours())+':'+f(this.getUTCMinutes())+':'+f(this.getUTCSeconds())+'Z':null;};String.prototype.toJSON=Number.prototype.toJSON=Boolean.prototype.toJSON=function(key){return this.valueOf();};}var cx=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,escapable=/[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,gap,indent,meta={'\b':'\\b','\t':'\\t','\n':'\\n','\f':'\\f','\r':'\\r','"':'\\"','\\':'\\\\'},rep;function quote(string){escapable.lastIndex=0;return escapable.test(string)?'"'+string.replace(escapable,function(a){var c=meta[a];return typeof c==='string'?c:'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4);})+'"':'"'+string+'"';}function str(key,holder){var i,k,v,length,mind=gap,partial,value=holder[key];if(value&&typeof value==='object'&&typeof value.toJSON==='function'){value=value.toJSON(key);}if(typeof rep==='function'){value=rep.call(holder,key,value);}switch(typeof value){case'string':return quote(value);case'number':return isFinite(value)?String(value):'null';case'boolean':case'null':return String(value);case'object':if(!value){return'null';}gap+=indent;partial=[];if(Object.prototype.toString.apply(value)==='[object Array]'){length=value.length;for(i=0;i<length;i+=1){partial[i]=str(i,value)||'null';}v=partial.length===0?'[]':gap?'[\n'+gap+partial.join(',\n'+gap)+'\n'+mind+']':'['+partial.join(',')+']';gap=mind;return v;}if(rep&&typeof rep==='object'){length=rep.length;for(i=0;i<length;i+=1){k=rep[i];if(typeof k==='string'){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v);}}}}else{for(k in value){if(Object.hasOwnProperty.call(value,k)){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v);}}}}v=partial.length===0?'{}':gap?'{\n'+gap+partial.join(',\n'+gap)+'\n'+mind+'}':'{'+partial.join(',')+'}';gap=mind;return v;}}if(typeof JSON.stringify!=='function'){JSON.stringify=function(value,replacer,space){var i;gap='';indent='';if(typeof space==='number'){for(i=0;i<space;i+=1){indent+=' ';}}else if(typeof space==='string'){indent=space;}rep=replacer;if(replacer&&typeof replacer!=='function'&&(typeof replacer!=='object'||typeof replacer.length!=='number')){throw new Error('JSON.stringify');}return str('',{'':value});};}if(typeof JSON.parse!=='function'){JSON.parse=function(text,reviver){var j;function walk(holder,key){var k,v,value=holder[key];if(value&&typeof value==='object'){for(k in value){if(Object.hasOwnProperty.call(value,k)){v=walk(value,k);if(v!==undefined){value[k]=v;}else{delete value[k];}}}}return reviver.call(holder,key,value);}text=String(text);cx.lastIndex=0;if(cx.test(text)){text=text.replace(cx,function(a){return'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4);});}if(/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,'@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']').replace(/(?:^|:|,)(?:\s*\[)+/g,''))){j=eval('('+text+')');return typeof reviver==='function'?walk({'':j},''):j;}throw new SyntaxError('JSON.parse');};}}());
@@ -130,7 +148,11 @@ function ptStartup (){
   
   readOptions();
   readColors();
-  
+   readAutoTrainOptions();
+	if (AutoTrainOptions.intervalSecs < 60)
+		AutoTrainOptions.intervalSecs = 60;
+	saveAutoTrainOptions();
+
 //logit ('g_timeoff: '+ uW.g_timeoff);
   Seed = uW.seed;
   var gmstyles = '\
@@ -158,15 +180,17 @@ function ptStartup (){
     .ptentry {padding: 7px; border:1px solid; border-color:#000000; background-color:#FFEECC; white-space:nowrap;}\
     .ptErrText {font-weight:bold; color:#600000}\
     button::-moz-focus-inner, input[type="submit"]::-moz-focus-inner { border: none; }\
-    .ptChatAttack {color: #000; font-weight:bold; background-color: #FF4D4D; }\
-    .ptChatWhisper {font-weight:bold;color:#FF0000}\
+    .ptChatAttack {color: #000; font-weight:bold; background-color:'+Colors.ChatAtt+'; }\
+    .ptChatWhisper {font-weight:bold; color: '+Colors.ChatWhisper+';}\
     .ptChatAlliance {font-weight:bold}\
 	.ptChatScripter {color:#A56631; font-weight:bold; background-color:'+Colors.ChatLeaders+';}\
-	.ptChatOfficers {color:#000; background-color:'+Colors.ChatLeaders+';}\
     .ptChatGlobal {background-color:'+Colors.ChatGlobal+';}\
     .ptChatGlobalBold {font-weight:bold}\
     .ptChatGlobalAll {font-weight:bold;background-color:'+Colors.ChatGlobal+';}\
-    .ptChatIcon {border: 1px inset black}\
+    .ptChatIcon {border: 2px inset black}\
+     .ptChatCHAN {color:#000; background-color:'+Colors.ChatChancy+';}\
+     .ptChatVICE {color:#000; background-color:'+Colors.ChatVC+';}\
+	 .ptChatOFFI {color:#000; background-color:'+Colors.ChatLeaders+';}\
     span.whiteOnRed {padding-left:3px; padding-right:3px; background-color:#700; color:white; font-weight:bold}\
     span.boldRed {color:#800; font-weight:bold}\
     span.boldDarkRed {color:#600; font-weight:bold}\
@@ -179,7 +203,7 @@ function ptStartup (){
     table.ptMainTab tr td   {height:60%; empty-cells:show; padding: 0px 5px 0px 5px;  margin-top:5px; white-space:nowrap; border: 1px solid; border-style: none none solid none; }\
     table.ptMainTab tr td.spacer {padding: 0px 1.5px;}\
     table.ptMainTab tr td.sel {font-weight:bold; font-size:13px; border: 1px solid; border-style: solid solid none solid; background-color:'+Colors.TabClicked+';}\
-    table.ptMainTab tr td.notSel {font-weight:bold; font-size:13px; border: 1px solid; border-style: solid solid none solid; background-color:'+Colors.Tabs+';\ color:white; border-color:black;}\
+    table.ptMainTab tr td.notSel {font-weight:bold; font-size:13px; border: 1px solid; border-style: solid solid none solid; background-color:'+Colors.Tabs+'; color:'+Colors.TabFont+'; border-color:black;}\
     tr.ptPopTop td { background-color:dde; border:none; height: 21px;  padding:0px; }\
     tr.ptretry_ptPopTop td { background-color:#a00; color:#fff; border:none; height: 21px; padding:0px; }\
     input.ptButCancel {background-color:#a00; font-weight:bold; color:#fff}\
@@ -220,7 +244,6 @@ if (TEST_WIDE){
 
   GM_addStyle (gmstyles);  
   mainPop.getMainDiv().innerHTML = '<STYLE>'+ styles +'</style>';
-  getAllianceLeaders();
   FoodAlerts.init();
   TowerAlerts.init();
   MapDistanceFix.init ();
@@ -540,6 +563,7 @@ WHISPER (chatDivContentHook) .....
 </div>
 ****/
   
+
 var ChatStuff = {
   chatDivContentFunc : null,
   getChatFunc : null,
@@ -620,7 +644,7 @@ var ChatStuff = {
 	IsMe = false;
 	if (scripters.indexOf(uW.tvuid) >= 0 && suid.substr(0, 3)=="div") IsMe = true;
 	if (scripters.indexOf(suid) >= 0 || IsMe) {
-    msg = msg.replace (/\bhttps\:\/\/[-a-z].*jpg/i, 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAIAAABLixI0AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9sIDwArAkRAgZ4AAAPXSURBVDjLrVRNSDJdFL4zjpqiWZROlkEtsk20cGPqQkQpKIRykTu37aKgFi1cRxZUixat3BQkRCX9UrsUQ0TEhH6IMBcVbpRB58fRmfsubu+UvV98Hx/vszj3cM55zjn3nnsvlkwmBUGo1+s8z/M8z3Ecy7Isy9I0TdN09TcqlQpSGIahaZrjOI7jeJ6v1+uNRkMQBAghkclk6vU69xssyzIMgzjVapWmaYZhGIaRyIgvCIIgCKAZWDabFQRBFEUIYaPREEVRkoiAXAiiKGIYhvTPFBgGIcQwjDg6OhJFUUqBukV8AMBX+a/AdDod4n9t4Vuu/whZo9Hged5kMg0ODjYajXK5TBCEzWbr7e0VBKFSqfzEtFgsfr9/aGioWCw2ha2vr0MIl5aWAAAHBwcQwufnZwzD/jGLXC6Px+PSIV5cXCA7gRa0TZ7nZ2ZmpqamKIoaHh7+aYPRaNRut7Msu729rdVqSZJscq+trUEIw+EwKtXf34/sGo0mEomwLFur1aLRaEdHh8FgQDEmkwnFtLa2fs8lTTAUCkn2+/t7COHDw0M2m4UQvr29ORwOCGE+n/9xBKiv/f19VHNkZAQAQJIkhLBcLqOYQqEAIfT7/d/ulwRc0iCEiUQCHX8sFjMYDNVqFW1TpVIBANra2gAAV1dX7+/voiimUqmxsTGfz7e1tfW9L1EUFxcXUbQoiq+vrwCAnZ0d+AXn5+cAgIGBAY7jJOPx8fHH/foYJ0EUCoXr6+tCoRCJRBQKRSaT0Wq1y8vL+XxeFMXHx8fNzc35+XkAQKlUCoVCtVqtVqvlcrlwOPz4+Aj+Lj76crvdXq83mUwGAgGbzabRaFwu1+3trdPptNvtZrO5q6vL4/F0d3e73W6ZTOb1ejUazcvLSzAYpCiqWCx+5orFYnNzc4FAgCTJm5ubYDCYTqddLtfk5KTH46nX6xRFLSwsJBIJs9l8eHi4urpqtVqVSqVarU4kEk1vaGJi4unp6eTkhCAIdLPv7u5Iktzd3c3lcmdnZzKZLB6POxyOdDo9OjpKUdTp6SkazsrKStMb8vl8FEVtbGxcXl7GYjG1Wr23t4cqUxQ1Pj4OAFCpVDiOl0qlSqWSSqWMRuP09HQmk7FarU3HptfrDQYDUvr6+jo7OwEARqOxvb0d6cjV0tLS09Oj0+n0er1arVYqlRaL5fP/+isTRD8KNjs7+//I6F+WEgEACKfT+WeFP+MAADiOo2eIYZjklYDjOPZTWRzHcRyXfQFBEJKUy+WSgqBQKDCZTIZqYhiGQgmCkCKUSqVCoUDyKxBZoVAQBCFZfgGv35yL3q6pzwAAAABJRU5ErkJggg==');
+    msg = msg.replace (/\bhttps\:\/\/[-a-z].*jpg/i, 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAAAAADhgtq/AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAI+SURBVHjaJMFLSBRxHAfw7/81s4/ZdV3bEkQFQQNJIoxCIqOOUYJBBAXRoWNEECxdKujS6xB46oGYYFpE9LiYWXapCC+KRtqmIPZQMnfZ2dnHzPxnfh36fNiVmmezYtHMV12bdIExHRguLAeM4CuQq2FKXYmYhbgb0WGklPLYcS+Ana6aqlxOa6cePvFIRdQSLizEYwIQkIxFFAMUJJjBIDyLBz62outPAB0CQosgcdDKh8BM9Vy0YzO8m4QUCaZg8BtUqm6kYSxQP4pBLoZkFAAkXrglIt3Gw1LILyfXuivKTp493yl0f58xlG66bgFfwhXKNQO4RLUKDeMxfWYGTCmNImsN7DzQdy0cLGRPvme0qDzhApihkQ16ishg8BYsS/fuBMsAEglg3und53lXcZFm0xingWYKxk8dGd0B/puyeOCHFxrWyflL3n7cInKJmoFHE2dgvpz+ZLQ+r9HEURg4PblWGa2DgAADAzcAxYAYogIcCoKshpJsIUhNUiOmU0r7TWVihLal12r1pzGWO1z/atfc7ZFvqztn3zTPzx3Dbtq2JTQxFlnpfHdicKHrSYcqDbdP9kwBXUsHvsv40MIea/rQcm/yWRs2t6d/fDB49wBbXP9aTu29mXHqpz7ajojhfmYm+5ChZ2Ut1W7nKBNUWLwQpHi+se6XVnVQ+E/ChEQUAjAVALBG0844USdZQSBlLbSKMaMmZBBzQR75niZN5FJIFBC5RD75IWthAMA5IyY5mICQnHEpxL8BAJjMENYFcW5hAAAAAElFTkSuQmCC');
 		element_class = 'ptChatScripter';
 	}
 	
@@ -1206,35 +1230,35 @@ t.cont = div;
 	   tournyhtml.push("<thead>");
 	   tournyhtml.push("<tr>");
      if(rslt.type==24){
-	    tournyhtml.push("<td class='rankcol' style='background-color:#1e66bd'>");
+	    tournyhtml.push("<td class='rankcol' style='background-color:red'>");
 	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.ranking+"</div>");
 	    tournyhtml.push("</td>");
-	    tournyhtml.push("<td  style='background-color:#1e66bd'>");
+	    tournyhtml.push("<td  style='background-color:red'>");
 	    tournyhtml.push("<div>unsafeWindow.g_js_strings.modal_tourny_changetab.chancellorname</div>");
 	    tournyhtml.push("</td>");
-	    tournyhtml.push("<td  style='background-color:#1e66bd'>");
+	    tournyhtml.push("<td  style='background-color:red'>");
 	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.alliance+"</div>");
 	    tournyhtml.push("</td>");
-	    tournyhtml.push("<td  style='background-color:#1e66bd'>");
+	    tournyhtml.push("<td  style='background-color:red'>");
 	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.modal_tourny_changetab.mightgained+"</div>");
-	    tournyhtml.push("</td  style='background-color:#1e66bd'>");
-	    tournyhtml.push("<td  style='background-color:#1e66bd'> ");
+	    tournyhtml.push("</td  style='background-color:red'>");
+	    tournyhtml.push("<td  style='background-color:red'> ");
 	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.modal_tourny_changetab.rewardperplayer+"</div>");
 	    tournyhtml.push("</td>")
       }else{
-            tournyhtml.push("<td	class='rankcol' style='background-color:#1e66bd'>");
+            tournyhtml.push("<td	class='rankcol' style='background-color:red'>");
 	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.ranking+"</div>");
 	    tournyhtml.push("</td>");
-	    tournyhtml.push("<td  style='background-color:#1e66bd'>");
+	    tournyhtml.push("<td  style='background-color:red'>");
 	    tournyhtml.push("<div>Name</div>");
 	    tournyhtml.push("</td>");
-	    tournyhtml.push("<td  style='background-color:#1e66bd'>");
+	    tournyhtml.push("<td  style='background-color:red'>");
 	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.alliance.replace('Might Change')+"</div>");
 	    tournyhtml.push("</td>");
-	    tournyhtml.push("<td  style='background-color:#1e66bd'>");
+	    tournyhtml.push("<td  style='background-color:red'>");
 	    tournyhtml.push("<div>"+rslt.contestcategory+"</div>");
 	    tournyhtml.push("</td>");
-	    tournyhtml.push("<td  style='background-color:#1e66bd'>");
+	    tournyhtml.push("<td  style='background-color:red'>");
 	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.reward+"</div>");
 	    tournyhtml.push("</td>")
      }
@@ -1260,7 +1284,7 @@ t.cont = div;
 	    }
 	    var color="";
 	    if (Seed.player.prefix + ' '+ Seed.player.name == row.name ) {
-	     color=" style='background-color:#aff2af' ";
+	     color=" style='background-color:#77FF77' ";
 	    }
 	    if(i%2==1){
 	     tournyhtml.push("<tr>")
@@ -1306,19 +1330,19 @@ t.cont = div;
 	   	     	     rewardString+=unsafeWindow.itemlist["i"+row.itemType].name;
 	   	     	    }
 	   	     	    tournyhtml.push("<tr class='stripe' >")
-	   	     	    tournyhtml.push("<td class='rankcol' style='background-color:#aff2af'>");
+	   	     	    tournyhtml.push("<td class='rankcol' style='background-color:#77FF77'>");
 	   	     	    tournyhtml.push("<div><b>"+row.ranking+"</b></div>");
 	   	     	    tournyhtml.push("</td>");
-	   	     	    tournyhtml.push("<td style='background-color:#aff2af'>");
+	   	     	    tournyhtml.push("<td style='background-color:#77FF77'>");
 	   	     	    tournyhtml.push("<div>"+row.name+"</div>");
 	   	     	    tournyhtml.push("</td>");
-	   	     	    tournyhtml.push("<td style='background-color:#aff2af'>");
+	   	     	    tournyhtml.push("<td style='background-color:#77FF77'>");
 	   	     	    tournyhtml.push("<div>"+(row.alliance||"----")+"</div>");
 	   	     	    tournyhtml.push("</td>");
-	   	     	    tournyhtml.push("<td style='background-color:#aff2af'>");
+	   	     	    tournyhtml.push("<td style='background-color:#77FF77'>");
 	   	     	    tournyhtml.push("<div>"+addCommas(row.contestValue)+"</div>");
 	   	     	    tournyhtml.push("</td>");
-	   	     	    tournyhtml.push("<td style='background-color:#aff2af'>");
+	   	     	    tournyhtml.push("<td style='background-color:#77FF77'>");
 	   	     	    tournyhtml	.push("<div>"+rewardString+"</div>");
 	   	     	    tournyhtml.push("</td>");
 	   	            tournyhtml.push("</tr>")
@@ -1350,10 +1374,10 @@ t.cont = div;
 	               dtf.setTime (endTime * 1000);
 	               // "+new Date(startTime*1000).toGMTString())+ " ->> "
 	               // "+new Date(endTime*1000).toGMTString())+ " ->> 
-	   	    tournyhtml.push("Starts: " + dt.toLocaleDateString() + " @ "+ dt.toLocaleTimeString());
+	   	    tournyhtml.push("Starts: " + dt.toLocaleDateString() + " &@; "+ dt.toLocaleTimeString());
 	   	    tournyhtml.push("</div>");
 	   	    tournyhtml.push("<div	class='enddate'>");
-	   	    tournyhtml.push("Ends: " + dtf.toLocaleDateString()+ " @ "+ dtf.toLocaleTimeString());
+	   	    tournyhtml.push("Ends: " + dtf.toLocaleDateString()+ " &@; "+ dtf.toLocaleTimeString());
 	   	    tournyhtml.push("</div></div>");
 	   } // fin  startdate
            t.cont.innerHTML = tournyhtml.join("");
@@ -1422,7 +1446,7 @@ Tabs.Wilds = {
     var t = Tabs.Wilds;
     clearTimeout (t.upGoldTimer);
   },
-  
+
   show : function (){
     var t = Tabs.Wilds;
     clearTimeout (t.upGoldTimer);
@@ -1440,6 +1464,7 @@ Tabs.Wilds = {
         for (var k in cWilds)
           ++totw;
       }       
+	  m += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToWilds" target="_blank">HELP</a></td></tr>';
       m += '<TR><TD colspan=20><DIV class=ptstat><TABLE class=ptNoPad width=100%><TR><TD width=100></td><TD width=90% align=center>'+ city.name 
         +' &nbsp; ('+ city.x +','+ city.y +')</td><TD width=100 align=right>Wilds: '+ totw +' of '+ castle +' &nbsp; </TD></tr></table></div></td></tr>';
       var row = 0;  
@@ -1720,7 +1745,7 @@ Tabs.Knights = {
 
   show : function (){
     var t = Tabs.Knights;
-    clearTimeout (t.displayTimer);
+	clearTimeout (t.displayTimer);
     
     function _dispKnight (roleId, knight){
       var rid = roleId;
@@ -1898,8 +1923,8 @@ var messageNav = {
     t.mmsFunc = new CalterUwFunc ('modal_messages_send', [[/{\s*var params/i, '{\nif (modal_messages_send_hook()) return;\nvar params']]);
     uW.messageNav_hook = messageNav.hook;
     uW.modal_messages_send_hook = messageNav.msgSendHook;
-    t.mmFunc.setEnable (true);
-    t.mmsFunc.setEnable (true);
+    // t.mmFunc.setEnable (true);
+    // t.mmsFunc.setEnable (true);
   },
 
   setEnable : function (tf){
@@ -2639,7 +2664,8 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       }
       
        var m = '<DIV class=ptentry><TABLE width=100% cellpadding=0>';
-       m+='<TR><TD class=xtab align=right></td><TD class=xtab>'+uW.g_js_strings.modal_fow_leaderboard.searchuser+': &nbsp; </td>';
+       m+= '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowtoPlayers" target="_blank">HELP</a></td></tr>';
+	   m+='<TR><TD class=xtab align=right></td><TD class=xtab>'+uW.g_js_strings.modal_fow_leaderboard.searchuser+': &nbsp; </td>';
        m+=' <TD width=80% class=xtab><INPUT id=allPlayName size=20 type=text/> &nbsp;'; 
        m+='<INPUT id=playSubmit type=submit value="'+uW.g_js_strings.modal_fow_leaderboard.finduser+'" /> &nbsp; <INPUT id=ffbuidsubmit type=submit value="UID" /></td>\
             <TD class="xtab ptErrText"><SPAN id=ptplayErr></span></td></tr>\
@@ -3747,7 +3773,6 @@ Tabs.Test = {
 }
 
 /*********************************** Info tab ***********************************/
-
 Tabs.Info = {
   tabOrder : 20,
   tabLabel : document.getElementById('mod_views_map').innerHTML,
@@ -3873,10 +3898,11 @@ Tabs.Options = {
     var t = Tabs.Options;
     t.cont = div;
     
-    var main = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubU type=submit value="Options"></td>';
-    main +='<TD><INPUT class=pbSubtab ID=ptmrchSubV type=submit value="Layout"></td></tr></table><HR class=ptThin>';
+    var main = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubU type=submit value="Options"></td>';    
+	main +='<TD><INPUT class=pbSubtab ID=ptmrchSubV type=submit value="Layout"></td></tr></table><HR class=ptThin>';
+    main += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToOptions" target="_blank">HELP</a></td></tr>';
     main +='<DIV id=ptOptOutput style="margin-top:10px; background-color:white; height:680px; overflow:scroll;"></div>';
-
+	
     t.cont.innerHTML = main;
     t.Overv = document.getElementById('ptOptOutput');
     
@@ -3934,6 +3960,8 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=togTowerFix2 type=checkbox /></td><TD>Fix false attack alerts created from scouting missions.</td></tr>';
 	  m+='<TR><TD><INPUT id=togKnightSelect type=checkbox /></td><TD>Do not automatically select a knight when changing march type to scout, transport or reassign</td></tr>';
 	  m+='<TR><TD><INPUT id=togCoordBox type=checkbox /></td><TD>Keep map coordinate box/bookmarks on top of troop activity</td></tr>';
+	  m+='<TR><TD colspan=2><B>Auto Training:</b></td></tr>';
+	  m+='<TR><TD></TD><TD><INPUT id=optAutoTrainMins type=text size=1 value="'+ parseInt(AutoTrainOptions.intervalSecs/60) +'"> minutes between auto-training.</td></tr>';
 	  m+='</table><BR><BR><HR>Note that if a checkbox is greyed out there has probably been a change of KofC\'s code, rendering the option inoperable.';
       t.Overv.innerHTML = m;
       
@@ -3973,7 +4001,12 @@ Tabs.Options = {
          checkbox.checked = true;
        checkbox.addEventListener ('change', function() {Options.enhanceARpts=document.getElementById('togAllRpts').checked; saveOptions(); AllianceReports.enable(Options.enhanceARpts);}, false);
       
-    } catch (e) {
+	document.getElementById('optAutoTrainMins').addEventListener ('change', function () {
+				AutoTrainOptions.intervalSecs = 60 * document.getElementById('optAutoTrainMins').value;
+				saveAutoTrainOptions();
+			}, false);
+
+	} catch (e) {
       t.Overv.innerHTML = '<PRE>'+ e.name +' : '+ e.message +'</pre>';  
     }
   },
@@ -3985,24 +4018,35 @@ Tabs.Options = {
 	  m+='<TR><TD colspan=2><U><B>Chat Layout:</b></u></td></tr>';
 	  m+='<TR><TD><INPUT id=togChatStuff type=checkbox /></td><TD>Enable Chat Enable Chat enhancements (clickable coords, click on icon to whisper, colors).</td></tr>';
       m+='<TR><TD><INPUT id=togChatGlobal type=checkbox /></td><TD>Enable Global background color.</td></tr>';
-	  m+='<TR><TD><INPUT id=togChatWhisper type=checkbox /></td><TD>Enable Whisper in Red Font.</td></tr>';
+	  m+='<TR><TD><INPUT id=togChatWhisper type=checkbox /></td><TD>Enable Whisper in Color Font.</td></tr>';
 	  m+='<TR><TD><INPUT id=togChatBold type=checkbox /></td><TD>Enable Chat in Bold Font.</td></tr>';
-	  m+='<TR><TD><INPUT id=togChatAttack type=checkbox /></td><TD>Enable Red background on tower alert.</td></tr>';
+	  m+='<TR><TD><INPUT id=togChatAttack type=checkbox /></td><TD>Enable background color on tower alert.</td></tr>';
 	  m+='<TR><TD><INPUT id=togChatLead type=checkbox /></td><TD>Enable background for alliance Leaders.<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr></table>';
-	  
+
 	  m+='<TABLE class=ptTab><BR><TR><TD colspan=2><U><B>Colors:</b></u></td></tr>';
       m+='<TR><TD>Chat Color - Global: </td><TD><INPUT id=togGlobal type=text size=7 maxlength=7 value="'+Colors.ChatGlobal+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatGlobal+'" width=30px>&nbsp;</td></tr>';
+	  m+='<TR><TD>Chat Color - Alliance: </td><TD><INPUT id=togAll type=text size=7 maxlength=7 value="'+Colors.ChatAll+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatAll+'" width=30px>&nbsp;</td></tr>';
+      m+='<TR><TD>Chat Color - Tower Alert: </td><TD><INPUT id=togChatAtt type=text size=7 maxlength=7 value="'+Colors.ChatAtt+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatAtt+'" width=30px>&nbsp;</td></tr>';
+      m+='<TR><TD>Chat Color - Whisper Alert: </td><TD><INPUT id=togChatWhisper type=text size=7 maxlength=7 value="'+Colors.ChatWhisper+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatWhisper+'" width=30px>&nbsp;</td></tr>';
+      m+='<TR><TD>Chat Color - Chancy: </td><TD><INPUT id=togChatC type=text size=7 maxlength=7 value="'+Colors.ChatChancy+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatChancy+'" width=30px>&nbsp;</td></tr>';
+      m+='<TR><TD>Chat Color - Vice-C: </td><TD><INPUT id=togChatVC type=text size=7 maxlength=7 value="'+Colors.ChatVC+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatVC+'" width=30px>&nbsp;</td></tr>';
+      m+='<TR><TD>Chat Color - Officers: </td><TD><INPUT id=togChatLeaders type=text size=7 maxlength=7 value="'+Colors.ChatLeaders+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatLeaders+'" width=30px>&nbsp;</td></tr>';
+
       m+='<TR><TD>Chat Color - Leaders: </td><TD><INPUT id=togChatLeaders type=text size=7 maxlength=7 value="'+Colors.ChatLeaders+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatLeaders+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>General - Title: </td><TD><INPUT id=togChatMainTiltle type=text size=7 maxlength=7 value="'+Colors.MainTitle+'"></td>&nbsp;<TD style="background-color:'+Colors.MainTitle+'" width=30px>&nbsp;</td></tr>';
+	  
+	  
       m+='<TR><TD>General - Dark Row: </td><TD><INPUT id=togDarkRow type=text size=7 maxlength=7 value="'+Colors.DarkRow+'"></td>&nbsp;<TD style="background-color:'+Colors.DarkRow+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>General - Button Selected: </td><TD><INPUT id=togButClick type=text size=7 maxlength=7 value="'+Colors.ButtonSelected+'"></td>&nbsp;<TD style="background-color:'+Colors.ButtonSelected+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>General - Tab Clicked: </td><TD><INPUT id=togTabClick type=text size=7 maxlength=7 value="'+Colors.TabClicked+'"></td>&nbsp;<TD style="background-color:'+Colors.TabClicked+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>General - Tabs: </td><TD><INPUT id=togTab type=text size=7 maxlength=7 value="'+Colors.Tabs+'"></td>&nbsp;<TD style="background-color:'+Colors.Tabs+'" width=30px>&nbsp;</td></tr>';
+	  m+='<TR><TD>General - Tab Font: </td><TD><INPUT id=togTabFont type=text size=7 maxlength=7 value="'+Colors.TabFont+'"></td>&nbsp;<TD style="background-color:'+Colors.TabFont+'" width=30px>&nbsp;</td></tr>';
+	  
       m+='<TR><TD>Overview - Dark Rows:</td><TD><INPUT id=togOverDarkRow type=text size=7 maxlength=7 value="'+Colors.OverviewDarkRow+'"></td>&nbsp;<TD style="background-color:'+Colors.OverviewDarkRow+'" width=30px>&nbsp;</td></tr>';
       m+='</table><BR><BR><DIV>HTML colors:&nbsp;&nbsp;&nbsp;';
       m+='<a href="http://www.colorpicker.com/" target="_blank">Color Picker</a>&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;';
       m+='<a href="http://www.w3schools.com/html/html_colors.asp" target="_blank">Colors</a>';
-      m+='<HR>To apply colors you need to REFRESH!<BR>';
+      m+='</table><BR><BR><HR>To apply colors you need to REFRESH!<BR>';
       m+= strButton20('Reset Colors', 'id=ResetALL');
       t.Overv.innerHTML = m;
             
@@ -4015,12 +4059,18 @@ Tabs.Options = {
       
       document.getElementById('togGlobal').addEventListener('change', function(){Colors.ChatGlobal = document.getElementById('togGlobal').value;t.Layout()}, false);
       document.getElementById('togChatLeaders').addEventListener('change', function(){Colors.ChatLeaders = document.getElementById('togChatLeaders').value;t.Layout()}, false);
+      document.getElementById('togChatC').addEventListener('change', function(){Colors.ChatChancy = document.getElementById('togChatC').value;t.Layout()}, false);
+      document.getElementById('togChatVC').addEventListener('change', function(){Colors.ChatVC = document.getElementById('togChatVC').value;t.Layout()}, false);
       document.getElementById('togChatMainTiltle').addEventListener('change', function(){Colors.MainTitle = document.getElementById('togChatMainTiltle').value;t.Layout()}, false);
       document.getElementById('togDarkRow').addEventListener('change', function(){Colors.DarkRow = document.getElementById('togDarkRow').value;t.Layout()}, false);
       document.getElementById('togButClick').addEventListener('change', function(){Colors.ButtonSelected = document.getElementById('togButClick').value;t.Layout()}, false);
       document.getElementById('togTabClick').addEventListener('change', function(){Colors.TabClicked = document.getElementById('togTabClick').value;t.Layout()}, false);
       document.getElementById('togTab').addEventListener('change', function(){Colors.Tabs = document.getElementById('togTab').value;t.Layout()}, false);
       document.getElementById('togOverDarkRow').addEventListener('change', function(){Colors.OverviewDarkRow = document.getElementById('togOverDarkRow').value;t.Layout()}, false);
+      document.getElementById('togTabFont').addEventListener('change', function(){Colors.TabFont = document.getElementById('togTabFont').value;t.Layout()}, false);
+      document.getElementById('togAll').addEventListener('change', function(){Colors.ChatAll = document.getElementById('togAll').value;t.Layout()}, false);
+      document.getElementById('togChatAtt').addEventListener('change', function(){Colors.ChatAtt = document.getElementById('togChatAtt').value;t.Layout()}, false);
+      document.getElementById('togChatWhisper').addEventListener('change', function(){Colors.ChatWhisper = document.getElementById('togChatWhisper').value;t.Layout()}, false);
       
       document.getElementById('ResetALL').addEventListener ('click', function(){
       		RemoveList = (GM_listValues());
@@ -4148,6 +4198,10 @@ Tabs.Train = {
   selectedCity : {},
   trainTimer : null,
   running : false,
+  gamble : {"1":{"min":"5","max":"15","cost":"2"},"2":{"min":"10","max":"25","cost":"4"}},
+  nextAuto:				null,
+  defenseOptions:	"<option value='53'>Crossbow</option><option value='55'>Trebuchet</option><option value='60'>Trap</option><option value='61'>Caltrop</option><option value='62'>Spiked Barrier</option>",
+  prevCityNo:			0,
   
   init : function (div){
     var t = Tabs.Train;
@@ -4158,7 +4212,7 @@ Tabs.Train = {
       <DIV class=ptstat id=trainheader>"+uW.g_js_strings.modal_openBarracks.trainttl+" & "+uW.g_js_strings.modal_openWalls.builddefenses+"</div>\
       <DIV style='height:5px'></div><DIV class=ptentry>\
       <DIV style='text-align:center; margin-bottom:5px;'>"+uW.g_js_strings.commonstr.city+": &nbsp; <span id=ptspeedcity></span></div>\
-      <TABLE class=ptTab width=100%><TR valign=top><TD width=50%>\
+	  <TABLE class=ptTab width=100%><TR valign=top><TD width=50%>\
       <TABLE align=center><TR><TD align=right>"+uW.g_js_strings.modal_messages_viewdesertionreports.trooptypes+": </td><TD colspan=2>\
       <SELECT id=ptttType>";
      for (i=1;i<=12;i++){
@@ -4174,10 +4228,15 @@ Tabs.Train = {
       <TR><TD align=right valign=top></td><TD colspan=2><INPUT type=CHECKBOX id=chkPop"+ (Options.maxIdlePop?' CHECKED ':'') +"> \
         <SPAN style='white-space:normal;'>"+uW.g_js_strings.commonstr.use +" "+ uW.g_js_strings.commonstr.workers+"</span>\
 		<br><SELECT id=tutelage>\
-		<option value='0'><CENTER>--- "+uW.g_js_strings.commonstr.speedup+" ---</center></option>\
+		<option value='0'><CENTER>--- "+uW.g_js_strings.commonstr.items+" "+uW.g_js_strings.commonstr.speedup+" ---</center></option>\
 		<option value='36'>"+ uW.itemlist.i36.name+"</option>\
         <option value='37'>"+ uW.itemlist.i37.name+"</option>\
         <option value='38'>"+ uW.itemlist.i38.name+"</option>\
+		</select>\
+		<br><br><SELECT id=pttrgamble>\
+		<option value='0'><CENTER>--- "+uW.g_js_strings.commonstr.resources+" "+uW.g_js_strings.commonstr.speedup+" ---</center></option>\
+		<option value=1>Use "+ t.gamble[1].cost+"x resources ("+ t.gamble[1].min+" - "+t.gamble[1].max+"%)</option>\
+		<option value=2>Use "+ t.gamble[2].cost+"x resources ("+ t.gamble[2].min+" - "+t.gamble[2].max+"%)</option>\
 		</select>\
 		</td></tr>\
       <TR><TD colspan=3 align=center><DIV style='height:10px'></div><INPUT id='ptttButDo' type=submit value='"+uW.g_js_strings.modal_openBarracks.trainttl+"'\
@@ -4199,6 +4258,10 @@ Tabs.Train = {
         <TD width=75%><INPUT id='pttdButMaxSlots' type=submit value='"+uW.g_js_strings.commonstr.max+"'\>&nbsp; (\
         "+uW.g_js_strings.commonstr.max+" <span id=pttdSpMaxSlots>1</span>)</td></tr>\
       <TR align=center><TD colspan=3><SPAN id=pttdSpace></span></td></tr>\
+	 <TR><TD align=center colspan=3><INPUT type=CHECKBOX id=chkDoTraps"+ (AutoTrainOptions.doTraps[1]?' CHECKED ':'') +">Auto-train Max Traps (Min=1 Max=5)<SPAN class=boldRed>&nbsp;(NEW)</span></TD></TR>\
+   	 <TR><TD align=center colspan=3><INPUT type=CHECKBOX id=chkDoCaltrops"+ (AutoTrainOptions.doCalrops[1]?' CHECKED ':'') +">Auto-train Max Caltraps (Min=1 Max=5)<SPAN class=boldRed>&nbsp;(NEW)</span></TD></TR>\
+	 <TR><TD align=center colspan=3><INPUT type=CHECKBOX id=chkDoSpikes"+ (AutoTrainOptions.doSpikes[1]?' CHECKED ':'') +">Auto-train Max Spikes (Min=1 Max=5)<SPAN class=boldRed>&nbsp;(NEW)</span></TD></TR>\
+   	 <TR><TD align=center colspan=3><INPUT type=CHECKBOX id=chkDoXbows"+ (AutoTrainOptions.doXbows[1]?' CHECKED ':'') +">Auto-train Max Xbows (Min=1 Max=5)<SPAN class=boldRed>&nbsp;(NEW)</span></TD></TR>\
       <TR><TD colspan=3 align=center><DIV style='height:10px'>\
       <SELECT id=siege>\
       <option value='0'><CENTER>--- "+uW.g_js_strings.commonstr.speedup+" ---</center></option>\
@@ -4248,10 +4311,17 @@ Tabs.Train = {
     t.TDbutMaxPerSlot.addEventListener ('click', t.clickDefMaxPS, false);
     t.TDbutMaxSlots.addEventListener ('click', t.clickDefMaxSlots, false);
     t.TDbutDo.addEventListener ('click', t.clickDefDo, false);
+	document.getElementById ('chkPop').addEventListener ('change', t.clickCheckIdlePop, false);
+    document.getElementById ('chkDoTraps').addEventListener ('change', t.clickCheckDoTraps, false);
+    document.getElementById ('chkDoCaltrops').addEventListener ('change', t.clickCheckDoCaltrops, false);
+    document.getElementById ('chkDoSpikes').addEventListener ('change', t.clickCheckDoSpikes, false);
+    document.getElementById ('chkDoXbows').addEventListener ('change', t.clickCheckDoXbows, false);
+    document.getElementById ('pttrgamble').addEventListener ('change', t.changeTroopSelect, false);
     
     document.getElementById ('chkPop').addEventListener ('change', t.clickCheckIdlePop, false);
     t.changeTroopSelect();
     t.changeDefSelect();
+     t.doAutoTrain(1);
   },
 
 
@@ -4338,6 +4408,39 @@ Tabs.Train = {
     t.changeTroopSelect ();
   },
 
+    	clickCheckDoTraps: function (){
+		var t = Tabs.Train;
+		var cityNo = Cities.byID[t.selectedCity.id].idx + 1;
+		AutoTrainOptions.doTraps[cityNo] = (document.getElementById ('chkDoTraps').checked)
+		saveAutoTrainOptions ();
+		t.displayCityStats ();
+		t.changeDefSelect ();
+	},
+  	clickCheckDoCaltrops: function (){
+		var t = Tabs.Train;
+		var cityNo = Cities.byID[t.selectedCity.id].idx + 1;
+		AutoTrainOptions.doCalrops[cityNo] = (document.getElementById ('chkDoCaltrops').checked)
+		saveAutoTrainOptions ();
+		t.displayCityStats ();
+		t.changeDefSelect ();
+	},
+  	clickCheckDoSpikes: function (){
+		var t = Tabs.Train;
+		var cityNo = Cities.byID[t.selectedCity.id].idx + 1;
+		AutoTrainOptions.doSpikes[cityNo] = (document.getElementById ('chkDoSpikes').checked)
+		saveAutoTrainOptions ();
+		t.displayCityStats ();
+		t.changeDefSelect ();
+	},
+  	clickCheckDoXbows: function (){
+		var t = Tabs.Train;
+		var cityNo = Cities.byID[t.selectedCity.id].idx + 1;
+		AutoTrainOptions.doXbows[cityNo] = (document.getElementById ('chkDoXbows').checked)
+		saveAutoTrainOptions ();
+		t.displayCityStats ();
+		t.changeDefSelect ();
+	},
+
   limitingFactor : null,
     
   changeTroopSelect : function (){
@@ -4348,21 +4451,28 @@ Tabs.Train = {
     t.lastTroopSelect = id;
     t.limitingFactor = null;
     var uc = uW.unitcost['unt'+id];
+	var actualuc = [];
+	for(var r = 1; r<5; r++){
+		if(document.getElementById('pttrgamble').value > 0)
+			actualuc[r] = uc[r] * t.gamble[document.getElementById('pttrgamble').value].cost;
+		else
+			actualuc[r] = uc[r];
+	}
     var max = 9999999999;
-    if ( (t.stats.food / uc[1]) < max){
-      max = t.stats.food / uc[1];
+    if ( (t.stats.food / actualuc[1]) < max){
+      max = t.stats.food / actualuc[1];
       t.limitingFactor = uW.resourceinfo['rec1'];
     }
-    if ( (t.stats.wood / uc[2]) < max){
-      max = t.stats.wood / uc[2];
+    if ( (t.stats.wood / actualuc[2]) < max){
+      max = t.stats.wood / actualuc[2];
       t.limitingFactor = uW.resourceinfo['rec2'];
     }
-    if ( (t.stats.stone / uc[3]) < max){
-      max = t.stats.stone / uc[3];
+    if ( (t.stats.stone / actualuc[3]) < max){
+      max = t.stats.stone / actualuc[3];
       t.limitingFactor = uW.resourceinfo['rec3'];
     }
-    if ( (t.stats.ore / uc[4]) < max){
-      max = t.stats.ore / uc[4];
+    if ( (t.stats.ore / actualuc[4]) < max){
+      max = t.stats.ore / actualuc[4];
       t.limitingFactor = uW.resourceinfo['rec4'];
     }
     if ( (t.stats.idlePop / uc[6]) < max){
@@ -4424,6 +4534,7 @@ if (t.limitingFactor){
     }
 
 	var tut = document.getElementById ('tutelage').value;
+	var gamble = document.getElementById ('pttrgamble').value;
 		
     t.TDbutDo.disabled = true;
     t.TTbutDo.className = 'ptButCancel';
@@ -4433,7 +4544,7 @@ if (t.limitingFactor){
       que.push (['T', unitId, parseInt (perSlot)]);
     t.divTrainStatus.innerHTML = '';
     t.running = true;
-    t.doQueue (cityId, tut, que);
+    t.doQueue (cityId, tut, gamble, que);
   },
 
   
@@ -4476,7 +4587,7 @@ if (t.limitingFactor){
       max = t.stats.ore / uc[4];
     if ( (t.stats.idlePop / uc[6]) < max)
       max = t.stats.idlePop / uc[6];
-    t.stats.MaxDefTrain = parseInt (max);
+    t.stats.MaxDefTrain = parseIntNan (max);
     if (t.stats.MaxDefTrain < 0)
       t.stats.MaxDefTrain = 0;
     if (matTypeof(uc[8]) == 'object'){
@@ -4843,7 +4954,7 @@ if (t.limitingFactor){
   },
   
   
-  doQueue : function (cityId, tut, que, errMsg){
+  doQueue : function (cityId, tut, gamble, que, errMsg){
     var t = Tabs.Train;
     clearTimeout (t.trainTimer);
     try {
@@ -4859,10 +4970,10 @@ if (t.limitingFactor){
       }
       if (cmd[0] == 'T'){
         t.dispTrainStatus (uW.g_js_strings.modal_barracks_train.starttraining+': '+ cmd[2] +' '+  uW.unitcost['unt'+cmd[1]][0] +' at '+ Cities.byID[cityId].name +' ('+ que.length +' slots remaining)<BR>');
-        doTrain (cityId, tut, cmd[1], cmd[2], 
+        doTrain (cityId, tut, gamble, cmd[1], cmd[2], 
           function(errMsg){
             if (t.running)
-              t.trainTimer = setTimeout(function (){Tabs.Train.doQueue(cityId, tut, que, errMsg);}, (Math.random()*2500)+1000 );
+              t.trainTimer = setTimeout(function (){Tabs.Train.doQueue(cityId, tut, gamble, que, errMsg);}, (Math.random()*2500)+1000 );
           }
         );
       }
@@ -4871,8 +4982,239 @@ if (t.limitingFactor){
       t.stopTraining  ('<SPAN class=boldRed>'+uW.g_js_strings.barbarian.erroroccured +' '+ err.message +'</span>');
     }
   },
-}
 
+	doAutoTraps: function (cityNo) {
+		var t = Tabs.Train;
+		wall = {};
+		var cityId = Cities.cities[cityNo - 1].id
+		var cityID = 'city'+ cityId;
+		getWallInfo (cityId, wall);
+		availableSpace = wall.fieldSpace - wall.fieldSpaceUsed;
+		if (availableSpace > 0 && wall.slotsBusy < 3) {
+			var food = parseInt (Seed.resources['city'+cityId].rec1[0]/3600);
+			var wood = parseInt (Seed.resources['city'+cityId].rec2[0]/3600);
+			var stone = parseInt (Seed.resources['city'+cityId].rec3[0]/3600);
+			var ore = parseInt (Seed.resources['city'+cityId].rec4[0]/3600);
+			availableSlots = 3 - wall.slotsBusy;
+
+			var foodRes = AutoTrainOptions.keepFood[cityNo];
+			var woodRes = AutoTrainOptions.keepWood[cityNo];
+			var stoneRes = AutoTrainOptions.keepStone[cityNo];
+			var oreRes = AutoTrainOptions.keepOre[cityNo];
+			var availFood = food - foodRes;
+			var availWood = wood - woodRes;
+			var availStone = stone - stoneRes;
+			var availOre = ore - oreRes;
+	
+		        secsPerTrap = Cities.byID[cityId]['Def60Time'];
+			if (secsPerTrap > 0 && availableSpace > 2 && availableSlots > 0) {
+				if (availFood > 400 && availWood > 800 & availStone > 200 & availOre > 400) {
+					var numberToTrain = 9999999999;
+					if ((availFood / 400) < numberToTrain)
+						numberToTrain = parseInt(availFood / 400);
+					if ((availWood / 800) < numberToTrain)
+						numberToTrain = parseInt(availWood / 800);
+					if ((availStone / 200) < numberToTrain)
+						numberToTrain = parseInt(availStone / 200);
+					if ((availOre / 400) < numberToTrain)
+						numberToTrain = parseInt(availOre / 400);
+					if (numberToTrain > 5)
+						numberToTrain = 5;
+					if (wall.Trap + wall.TrapTraining < 10 || availableSpace < 15) {
+						numberToTrain = 1;
+					actionLog('Building 1 Trap in city ' + Cities.byID[cityId].name);
+					} else
+						actionLog('Building ' + numberToTrain + ' Traps in city ' + Cities.byID[cityId].name);
+					try {
+						doDefTrain (cityId, 60, numberToTrain);
+					} catch (err) {
+						logit (inspect (err, 8, 1));
+					}
+				}
+			}
+		}
+	},
+
+	doAutoCaltrops: function (cityNo) {
+		var t = Tabs.Train;
+		wall = {};
+		var cityId = Cities.cities[cityNo - 1].id
+		var cityID = 'city'+ cityId;
+		getWallInfo (cityId, wall);
+		availableSpace = wall.fieldSpace - wall.fieldSpaceUsed;
+		if (availableSpace > 0 && wall.slotsBusy < 3) {
+			var food = parseInt (Seed.resources['city'+cityId].rec1[0]/3600);
+			var wood = parseInt (Seed.resources['city'+cityId].rec2[0]/3600);
+			var stone = parseInt (Seed.resources['city'+cityId].rec3[0]/3600);
+			var ore = parseInt (Seed.resources['city'+cityId].rec4[0]/3600);
+			availableSlots = 3 - wall.slotsBusy;
+
+			var foodRes = AutoTrainOptions.keepFood[cityNo];
+			var woodRes = AutoTrainOptions.keepWood[cityNo];
+			var stoneRes = AutoTrainOptions.keepStone[cityNo];
+			var oreRes = AutoTrainOptions.keepOre[cityNo];
+			var availFood = food - foodRes;
+			var availWood = wood - woodRes;
+			var availStone = stone - stoneRes;
+			var availOre = ore - oreRes;
+
+			secsPerCaltrop = Cities.byID[cityId]['Def61Time'];
+			if (secsPerCaltrop > 0 && availableSpace > 2 && availableSlots > 0) {
+				if (availFood > 100 && availWood > 400) {
+					var numberToTrain = 9999999999;
+					if ((availFood / 100) < numberToTrain)
+						numberToTrain = parseInt(availFood / 100);
+					if ((availWood / 400) < numberToTrain)
+						numberToTrain = parseInt(availWood / 400);
+					if (numberToTrain > 5)
+						numberToTrain = 5;
+					if (wall.Caltrops + wall.CaltropsTraining < 10 || availableSpace < 15) {
+						numberToTrain = 1;
+						actionLog('Building 1 Caltrop in city ' + Cities.byID[cityId].name);
+					} else
+						actionLog('Building ' + numberToTrain + ' Caltrops in city ' + Cities.byID[cityId].name);
+					try {
+						doDefTrain (cityId, 61, numberToTrain);
+					} catch (err) {
+						logit (inspect (err, 8, 1));
+					}
+				}
+			}
+		}
+	},
+
+	doAutoSpikes: function (cityNo) {
+		var t = Tabs.Train;
+		wall = {};
+		var cityId = Cities.cities[cityNo - 1].id
+		var cityID = 'city'+ cityId;
+		getWallInfo (cityId, wall);
+		availableSpace = wall.fieldSpace - wall.fieldSpaceUsed;
+		if (availableSpace > 0 && wall.slotsBusy < 3) {
+			var food = parseInt (Seed.resources['city'+cityId].rec1[0]/3600);
+			var wood = parseInt (Seed.resources['city'+cityId].rec2[0]/3600);
+			var stone = parseInt (Seed.resources['city'+cityId].rec3[0]/3600);
+			var ore = parseInt (Seed.resources['city'+cityId].rec4[0]/3600);
+			availableSlots = 3 - wall.slotsBusy;
+
+			var foodRes = AutoTrainOptions.keepFood[cityNo];
+			var woodRes = AutoTrainOptions.keepWood[cityNo];
+			var stoneRes = AutoTrainOptions.keepStone[cityNo];
+			var oreRes = AutoTrainOptions.keepOre[cityNo];
+			var availFood = food - foodRes;
+			var availWood = wood - woodRes;
+			var availStone = stone - stoneRes;
+			var availOre = ore - oreRes;
+
+			secsPerSpike = Cities.byID[cityId]['Def62Time'];
+			if (secsPerSpike > 0 && availableSpace > 2 && availableSlots > 0) {
+				if (availFood > 150 && availWood > 750 & availStone > 50) {
+					var numberToTrain = 9999999999;
+					if ((availFood / 150) < numberToTrain)
+						numberToTrain = parseInt(availFood / 150);
+					if ((availWood / 750) < numberToTrain)
+						numberToTrain = parseInt(availWood / 750);
+					if ((availStone / 50) < numberToTrain)
+						numberToTrain = parseInt(availStone / 50);
+					if (numberToTrain > 5)
+						numberToTrain = 5;
+					if (wall.SpikedBarrier + wall.SpikedBarrierTraining < 10 || availableSpace < 15) {
+						numberToTrain = 1;
+						actionLog('Building 1 Spike in city ' + Cities.byID[cityId].name);
+					} else
+						actionLog('Building ' + numberToTrain + ' Spikes in city ' + Cities.byID[cityId].name);
+					try {
+						doDefTrain (cityId, 61, numberToTrain);
+					} catch (err) {
+						logit (inspect (err, 8, 1));
+					}
+				}
+			}
+		}
+	},
+
+	doAutoCrossbows: function (cityNo) {
+		var t = Tabs.Train;
+		wall = {};
+		var cityId = Cities.cities[cityNo - 1].id
+		var cityID = 'city'+ cityId;
+		getWallInfo (cityId, wall);
+		availableSpace = wall.wallSpace - wall.wallSpaceUsed;
+		if (availableSpace > 0 && wall.slotsBusy < 2) {
+			var food = parseInt (Seed.resources['city'+cityId].rec1[0]/3600);
+			var wood = parseInt (Seed.resources['city'+cityId].rec2[0]/3600);
+			var stone = parseInt (Seed.resources['city'+cityId].rec3[0]/3600);
+			var ore = parseInt (Seed.resources['city'+cityId].rec4[0]/3600);
+			availableSlots = 2 - wall.slotsBusy;
+
+			var foodRes = AutoTrainOptions.keepFood[cityNo];
+			var woodRes = AutoTrainOptions.keepWood[cityNo];
+			var stoneRes = AutoTrainOptions.keepStone[cityNo];
+			var oreRes = AutoTrainOptions.keepOre[cityNo];
+			var availFood = food - foodRes;
+			var availWood = wood - woodRes;
+			var availStone = stone - stoneRes;
+			var availOre = ore - oreRes;
+
+	secsPerXbow = Cities.byID[cityId]['Def53Time'];
+			if (secsPerXbow > 0 && availableSpace > 2 && availableSlots > 0) {
+				if (availFood > 250 && availWood > 2000 & availStone > 750 & availOre > 500) {
+					var numberToTrain = 9999999999;
+					if ((availFood / 250) < numberToTrain)
+						numberToTrain = parseInt(availFood / 250);
+					if ((availWood / 2000) < numberToTrain)
+						numberToTrain = parseInt(availWood / 2000);
+					if ((availStone / 750) < numberToTrain)
+						numberToTrain = parseInt(availStone / 750);
+					if ((availOre / 500) < numberToTrain)
+						numberToTrain = parseInt(availOre / 500);
+					if (numberToTrain > 5)
+						numberToTrain = 5;
+					if (wall.Crossbows + wall.CrossbowsTraining < 10 || availableSpace < 15) {
+						numberToTrain = 1;
+					actionLog('Building 1 Crossbow in city ' + Cities.byID[cityId].name);
+					} else
+						actionLog('Building ' + numberToTrain + ' Crossbows in city ' + Cities.byID[cityId].name);
+					try {
+						doDefTrain (cityId, 53, numberToTrain);
+					} catch (err) {
+						logit (inspect (err, 8, 1));
+					}
+				}
+			}
+		}
+	},
+
+	doAutoTrain: function (cityNo) {
+		var t = Tabs.Train;
+		clearTimeout (t.nextAuto);
+		var cityId = Cities.cities[cityNo - 1].id
+		var cityID = 'city'+ cityId;
+		var troopType = AutoTrainOptions.troopType[cityNo];
+		if (troopType > 0) {
+			var unitQ = Seed.queue_unt['city'+cityId];
+			var queued=0;
+			if (unitQ!=null && unitQ.length>0 )
+				queued = unitQ.length;
+			var slots = Cities.byID[cityId].numBarracks - queued;
+			secsPerTroop = Cities.byID[cityId]['Troop'+troopType+'Time'];
+			if (slots > 0 && secsPerTroop > 0)
+				t.doAutoTroopTrain(cityNo);
+		}
+		if (AutoTrainOptions.doTraps[cityNo])
+			t.doAutoTraps(cityNo);
+		if (AutoTrainOptions.doCalrops[cityNo])
+			t.doAutoCaltrops(cityNo);
+		if (AutoTrainOptions.doSpikes[cityNo])
+			t.doAutoSpikes(cityNo);
+		if (AutoTrainOptions.doXbows[cityNo])
+			t.doAutoCrossbows(cityNo);
+		if (cityNo == Cities.numCities)
+			t.nextAuto = setTimeout(function(){ t.doAutoTrain(1);}, (AutoTrainOptions.intervalSecs*1000));
+		else
+			t.nextAuto = setTimeout(function(){ t.doAutoTrain(cityNo+1);}, 7000);
+	},
+}
 
 /*************************************** OVERVIEW TAB ************************************************/
 var GMTclock = {
@@ -4992,7 +5334,7 @@ Tabs.OverView = {
     main +='<TD><SPAN class=ptStatLight>Might:</span> ' + addCommas(Seed.player.might) +'</td>';
     main +='<TD><SPAN class=ptStatLight>Alliance:</span> ' + getMyAlliance()[1] +'</td>';
     main +='<TD align=right><SPAN class=ptStatLight>Domain:</span> ' + uW.domainName +'</td></tr></table></div>';      
-    main +='<TABLE class=ptTab align=left><TR>';
+	main +='<TABLE class=ptTab align=left><TR>';
     main +='<TD width=125px><SELECT id="ShowExtra"><option value="maximum">'+uW.g_js_strings.commonstr.maximum+'</options>';
     main +='<option value="normal">'+uW.g_js_strings.commonstr.normal+'</options></select></td>';
     main +='<TD><INPUT class=pbSubtab ID=ptmrchSubA type=submit value='+uW.g_js_strings.commonstr.resources+'></td>';
@@ -5000,6 +5342,7 @@ Tabs.OverView = {
     main +='<TD><INPUT class=pbSubtab ID=ptmrchSubC type=submit value='+uW.g_js_strings.modaltitles.buildings+'></td>';
     main +='<TD><INPUT class=pbSubtab ID=ptmrchSubD type=submit value='+uW.g_js_strings.commonstr.info+'></td></tr></table><BR><BR>';
     main +='<DIV id=ptOverOutput align=left style="margin-top:10px; background-color:"#F8F8F8"; height:680px; overflow:scroll;"></div>';
+	main += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToOverview" target="_blank">HELP</a></td></tr>';
             
     t.cont.innerHTML = main;
     t.Overv = document.getElementById('ptOverOutput');
@@ -6102,6 +6445,8 @@ Tabs.OverView = {
 
 
 /********************************* Messages Tab *************************************/
+/***found and copeid from RrAaFf****/ 
+
 Tabs.Rpt = {
 	tabOrder:    90,
 	tabLabel:    'Reports',
@@ -6123,6 +6468,7 @@ Tabs.Rpt = {
 		unsafeWindow.getReport = t.getReportBody;
 
 		var tc = '<DIV class=ptstat>SEARCH INBOX, OUTBOX, PLAYER AND ALLIANCE REPORTS</DIV><DIV class=ptentry><TABLE><TR align=center valign=center>';
+		tc += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToMessages" target="_blank">HELP</a></td></tr>';
 		tc += '<TD class=xtab align=right>Type:&nbsp;<SELECT id="idRptType">';
 		tc += '<OPTION value="alliance" ' + (Options.rptType=='alliance'?'SELECTED':'') + '>Alliance Reports</OPTION>';
 		tc += '<OPTION value="player" ' + (Options.rptType=='player'?'SELECTED':'') + '>Player Reports</OPTION>';
@@ -7049,6 +7395,7 @@ Tabs.Alliance = {
     
     var m =  '<DIV class=ptstat>ALLIANCE FUNCTIONS</div><TABLE align=center cellpadding=1 cellspacing=0></table>';
     
+	m += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToAlliance" target="_blank">HELP</a></td></tr>';
     m +='<TABLE class=ptTab><TD width=200px>List Alliance Members</td><TD>Sort by: <select id="searchAlli"><option value="name">Name</option>';
     m += '<option value="might">Might</option>';
     m += '<option value="login">'+uW.g_js_strings.modal_messages_viewreports_view.lastlogin+'</option>';
@@ -7311,10 +7658,12 @@ Tabs.Marches = {
     
     t.cont = div;
     var main = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubN type=submit value='+uW.g_js_strings.attack_viewimpending_view.incomingtroops+'></td>';
-    main +='<TD><INPUT class=pbSubtab ID=ptmrchSubM type=submit value='+uW.g_js_strings.commonstr.marching+'></td>';
+	main +='<TD><INPUT class=pbSubtab ID=ptmrchSubM type=submit value='+uW.g_js_strings.commonstr.marching+'></td>';
     main +='<TD><INPUT class=pbSubtab ID=ptmrchSubR type=submit value='+uW.g_js_strings.commonstr.reinforced+'></td></tr></table><HR class=ptThin>';
-    main +='<DIV id=ptMarchOutput style="margin-top:10px; background-color:white; height:680px; overflow:scroll;"></div>';
-    
+    main += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToMarches" target="_blank">HELP</a></td></tr>';
+	main +='<DIV id=ptMarchOutput style="margin-top:10px; background-color:white; height:680px; overflow:scroll;"></div>';
+
+	
     t.cont.innerHTML = main;       
     t.marchDiv = document.getElementById('ptMarchOutput');
     document.getElementById('ptmrchSubN').addEventListener('click', e_butSubtab, false);
@@ -8582,7 +8931,7 @@ function CdialogCancelContinue (msg, canNotify, contNotify, centerElement){
 
 
 // TODO: make class (multiple instances needed)
-function dialogRetry (errMsg, seconds, onRetry, onCancel){
+function dialogRetry (errMsg, errCode, seconds, onRetry, onCancel){
   seconds = parseInt(seconds);
   var pop = new CPopup ('ptretry', 0, 0, 400,200, true);
   pop.centerMe(mainPop.getMainDiv());
@@ -8592,7 +8941,10 @@ function dialogRetry (errMsg, seconds, onRetry, onCancel){
   document.getElementById('paretryCancel').addEventListener ('click', doCancel, false);
   pop.show(true);
   
-  document.getElementById('paretryErrMsg').innerHTML = errMsg;
+  if(errCode && unsafeWindow.g_js_strings.errorcode['err_'+errCode])
+	document.getElementById('paretryErrMsg').innerHTML = unsafeWindow.g_js_strings.errorcode['err_'+errCode];
+  else
+	document.getElementById('paretryErrMsg').innerHTML = errMsg;
   document.getElementById('paretrySeconds').innerHTML = seconds;
   var rTimer = setTimeout (doRetry, seconds*1000);
   countdown ();
@@ -8742,7 +9094,7 @@ if (DEBUG_TRACE) logit (" 1b myAjaxRequest.mySuccess() !ok : "+ inspect(rslt, 3,
     /*if ( (x = rslt.errorMsg.indexOf ('<br><br>')) > 0)
       rslt.errorMsg = rslt.errorMsg.substr (0, x-1);*/
     if (!noRetry && (rslt.error_code==0 ||rslt.error_code==8 || rslt.error_code==1 || rslt.error_code==3)){
-      dialogRetry (rslt.errorMsg, delay, function(){myRetry()}, function(){wasSuccess (rslt)});
+      dialogRetry (rslt.errorMsg, rslt.error_code, delay, function(){myRetry()}, function(){wasSuccess (rslt)});
     } else {
       wasSuccess (rslt);
     }
@@ -9026,6 +9378,28 @@ function readColors (){
       Colors[k] = opts[k];
   }
 }
+function readAutoTrainOptions (){
+  var serverID = GetServerId();
+	s = GM_getValue ('AutoTrainOptions_'+serverID);
+	if (s != null){
+		opts = JSON2.parse (s);
+		for (k in opts){
+			if (AutoTrainOptions[k] != undefined) {
+				if (matTypeof(opts[k]) == 'object') {
+					for (kk in opts[k])
+						if (AutoTrainOptions[k][kk] != undefined)
+							AutoTrainOptions[k][kk] = opts[k][kk];
+				} else
+					AutoTrainOptions[k] = opts[k];
+			}
+		}
+	}
+}
+
+function saveAutoTrainOptions (){
+  var serverID = GetServerId();
+	GM_setValue ('AutoTrainOptions_'+serverID, JSON2.stringify(AutoTrainOptions));
+}
 
 
 /***
@@ -9087,7 +9461,7 @@ function AddMainTabLink(text, eventListener, mouseListener) {
       gmTabs.className='tabs_engagement';
       gmTabs.style.background='#ca5';
       tabs.parentNode.insertBefore (gmTabs, tabs);
-      gmTabs.style.whiteSpace='nowrap';
+      gmTabs.style.whiteSpace='normal';
       gmTabs.style.width='735px';
       gmTabs.lang = 'en_PT';
     }
@@ -9260,13 +9634,14 @@ function doDefTrain (cityId, siege, unitId, num, notify){
 }
 
 
-function doTrain (cityId, tut, unitId, num, notify){
+function doTrain (cityId, tut, gamble, unitId, num, notify){
   var time = uW.modal_barracks_traintime(unitId, num);
   var params = uW.Object.clone(uW.g_ajaxparams);
   params.cid = cityId;
   params.type = unitId;
   params.quant = num;
   params.items = tut;
+  params.gambleId = gamble;
 
   new MyAjaxRequest(uW.g_ajaxpath + "ajax/train.php" + uW.g_ajaxsuffix, {
     method: "post",
@@ -9274,7 +9649,9 @@ function doTrain (cityId, tut, unitId, num, notify){
     onSuccess: function(rslt) {
       if (rslt.ok) {
         for (var i = 1; i < 5; i++) {
-          uW.seed.resources["city" + cityId]["rec" + i][0] = parseInt(uW.seed.resources["city" + cityId]["rec" + i][0]) - parseInt(uW.unitcost["unt" + unitId][i]) * 3600 * parseInt(num)
+		  var resourceLost = parseInt(uW.unitcost["unt" + unitId][i]) * 3600 * parseInt(num);
+		  if(rslt.gamble) resourceLost = resourceLost*rslt.gamble[i];
+          uW.seed.resources["city" + cityId]["rec" + i][0] = parseInt(uW.seed.resources["city" + cityId]["rec" + i][0]) - resourceLost;
         }
         uW.seed.citystats["city" + cityId].gold[0] = parseInt(uW.seed.citystats["city" + cityId].gold[0]) - parseInt(uW.unitcost["unt" + unitId][5]) * parseInt(num);
         uW.seed.citystats["city" + cityId].pop[0] = parseInt(uW.seed.citystats["city" + cityId].pop[0]) - parseInt(uW.unitcost["unt" + unitId][6]) * parseInt(num);
@@ -10011,7 +10388,7 @@ t.state = null;
 function reloadKOC (){
   var serverId = GetServerId();
   if(serverId == '??') window.location.reload(true);
-  var goto = 'http://apps.facebook.com/kingdomsofcamelot/?s='+serverId;
+  var goto = 'https://apps.facebook.com/kingdomsofcamelot/?s='+serverId;
   var t = '<FORM target="_top" action="'+ goto +'" method=post><INPUT id=xxpbButReload type=submit value=RELOAD><INPUT type=hidden name=s value="'+ serverId +'"</form>';
   var e = document.createElement ('div');
   e.innerHTML = t;
@@ -10028,27 +10405,6 @@ function formatUnixTime (unixTimeString,format){
 	} */
 	return rtn;
 }
-
-function getAllianceLeaders (){
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-    new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetLeaders.php" + unsafeWindow.g_ajaxsuffix, {
-		 method: "post",
-		 parameters: params,
-		 loading: true,
-		 onSuccess: function (rslt) {
-		 rslt = eval("(" + rslt.responseText + ")");
-		 if (rslt.officers) {
-			 Options.AllianceLeaders = [];
-      		 for (add in rslt.officers) Options.AllianceLeaders.push(rslt.officers[add]['userId']);
-       
-     } 
-     else {
-			  setTimeout(function(){getAllianceLeaders;}, 1500);
-		  }
-		},
-		onFailure: function () {}
-  		});
-};
 
 
 ptStartup ();
