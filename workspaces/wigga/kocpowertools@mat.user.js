@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           KOC Power Tools
-// @version        20111005a
+// @version        20111005b
 // @namespace      mat
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
@@ -8483,7 +8483,7 @@ setEnable : function (tf){
 		}else {
 		  var player = "<span>Level "+ tileLevel +"</span>";
 		}
-		var tileNames = ['Level', 'Grassland', 'Lake', 'Forest', 'Hill', 'Mountain', 'Level', 'City' ];
+		var tileNames = ['Level', 'Grassland', 'Lake', 'Forest', 'Hill', 'Mountain', 'Wild', 'City' ];
 		var numtile= (tileType/10) + 1;
 		if (tileType==10) numtile=1;
 		if (tileType==11) numtile=2;
@@ -8507,9 +8507,9 @@ setEnable : function (tf){
                      break;
                    }
                   }
-                  player = 'Votre ville '+ nomville;
+                  player = 'Your City '+ nomville;
                  } else {
-                  player = 'Stadt Level ' + tileLevel;
+                  player = 'City Level ' + tileLevel;
                  }
                 }
                 var typeattack="?";
@@ -8657,7 +8657,7 @@ setEnable : function (tf){
 	   		 }else {
 	   		  var player = "<span title=''>Level "+ tileLevel +"</span>";
 	   		 }
-	   		var tileNames = ['Level', 'Grassland', 'Lake', 'Forest', 'Hill', 'Mountain', 'Level', 'City' ];
+	   		var tileNames = ['Level', 'Grassland', 'Lake', 'Forest', 'Hill', 'Mountain', 'Wild', 'City' ];
 	   		var numtile= (tileType/10) + 1;
 	   		if (tileType==10) numtile=1;
 	   		if (tileType==11) numtile=2;
