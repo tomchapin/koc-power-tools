@@ -8788,7 +8788,7 @@ setEnable : function (tf){
      s += '<td></td></tr></table>';
      s += '<BR><BR><DIV style="font-size: 10px"></div>';
     } else {
-     s= '<div class=pdxStat>TRUPPENBEWEGUNG</div><br>No Current Troop Movement.';
+     s= '<div class=ptstat>TROOP MOVEMENT</div><br>No Current Troop Movement.';
     } 
    } // Fin c=99
    document.getElementById('showMarchDiv').innerHTML = s;
