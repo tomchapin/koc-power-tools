@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
+// @version        20111104a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20111002a';
+var Version = '20111104a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -453,12 +454,14 @@ var battleReports = {
   },
   
   hook2 : function (msg, rslt){
+	//alert('hook2 '+rslt);
     if (rslt.rnds && Options.dispBattleRounds){
       msg = msg.replace (/(Attackers.*?<span.*?)<\/div>/im, '$1<BR>Rounds: '+ rslt.rnds +'</div>');
     }
     return msg;
   },
   hook : function (msg, rslt){
+	//alert('hook '+rslt);
     if (rslt.rnds && Options.dispBattleRounds){
       msg = msg.replace (/(Attackers <span.*?)<\/div>/im, '$1<BR>Rounds: '+ rslt.rnds +'</div>');
     }
@@ -575,7 +578,7 @@ var ChatStuff = {
     uW.chatDivContent_hook = t.chatDivContentHook;
     uW.ptChatIconClicked = t.e_iconClicked;
     uW.ptChatReportClicked = Rpt.FindReport;
-    t.setEnable (Colors.chatEnhance);
+    t.setEnable (Options.chatEnhance);
    // setInterval ( function(){
    			// if ( document.getElementById('comm_tabs').className == 'comm_tabs seltab1') document.getElementById("mod_comm_list1").style.background = Colors.ChatGlobal;
    			// else document.getElementById("mod_comm_list2").style.background = Colors.ChatAll;
@@ -5437,26 +5440,33 @@ Tabs.OverView = {
                 else
                   z+= '<BR><SPAN class=boldRed>Defending</span></td>';
               }
-        	  for (a=1;a<=4;a++){
+        	  for (var a=1; a<=5;a++){
         	  		var total = 0;
-        	  		z+='<TR><TD colspan="8" style="background: #FFFFFF"><B>'+uW.resourceinfo['rec'+a]+': </b></td></tr><TR>';
-        	  		for(b=0; b<Cities.numCities; b++) total += parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]/3600);
+        	  		z+='<TR><TD colspan="8" style="background: #FFFFFF"><B>'+((a!=5)?uW.resourceinfo['rec'+a]:uW.resourceinfo['7'])+': </b></td></tr><TR>';
+        	  		for(b=0; b<Cities.numCities; b++) total += parseInt((a!=5)?Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]/3600:Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]);
         	  		z+='<TD>'+ addCommas(total) +'</td>';
-        	  		for(b=0; b<Cities.numCities; b++) z+='<TD align=right ">'+ addCommas( parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]/3600)) +'</font></td>';
+        	  		for(b=0; b<Cities.numCities; b++) z+='<TD align=right ">'+ addCommasInt((a!=5)?Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]/3600:Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]) +'</font></td>';
         	  		z+='</tr><TR><TD style="background: #FFFFFF"><FONT COLOR="686868">'+uW.g_js_strings.showResourceTooltip.caplimit+':</font></td>';
         	  		for(b=0; b<Cities.numCities; b++) {
         	  			    z+='<TD align=right style="background: #FFFFFF">';
-        	  				if (parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][1]/3600) > parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]/3600)) z+='<FONT COLOR= "669900">';
-        	  				else z+='<FONT COLOR="686868">';
-        	  				z+= addCommas( parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][1]/3600));
+							if(a==5){
+								z+= (parseInt(1000000) > parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]))? '<FONT COLOR= "669900">':'<FONT COLOR="686868">';
+								z+= addCommas(1000000);
+							} else{
+								if (parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][1]/3600) > parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]/3600)) z+='<FONT COLOR= "669900">';
+								else z+='<FONT COLOR="686868">';
+								z+= addCommas( parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][1]/3600));
+							}
         	  				z+='</font></td>';
         	  		}
-        	  		z+='</tr><TR><TD style="background: #FFFFFF"><FONT COLOR="686868">'+uW.g_js_strings.showResourceTooltip.hrprod+':</font></td>';
-        	  		for(b=0; b<Cities.numCities; b++) {
-        	  				var rp = getResourceProduction (Seed.cities[b][0]);
-        	  				var usage = parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][3]);
-        	  				z+='<TD align=right style="background: #FFFFFF"><FONT COLOR="686868">'+ addCommas(rp[a] - usage)  +'</font></td>';
-        	  		}
+					if(a!=5){
+						z+='</tr><TR><TD style="background: #FFFFFF"><FONT COLOR="686868">'+uW.g_js_strings.showResourceTooltip.hrprod+':</font></td>';
+						for(b=0; b<Cities.numCities; b++) {
+								var rp = getResourceProduction (Seed.cities[b][0]);
+								var usage = parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][3]);
+								z+='<TD align=right style="background: #FFFFFF"><FONT COLOR="686868">'+ addCommas(rp[a] - usage)  +'</font></td>';
+						}
+					}
         	  		z+='</tr>';
         	  		if (a==1){
         	  			z+='<TR><TD style="background: #FFFFFF"><FONT COLOR="686868">'+uW.g_js_strings.commonstr.upkeep+':</font></td>';
@@ -5473,7 +5483,7 @@ Tabs.OverView = {
         		  				 
         	  				}
         	  		   }
-        	  	  }
+        	  	    }
         	  	  var totalmarching = 0;
         	  	  for(b=0; b<Cities.numCities; b++) {
         	  	  	   var march = Seed.queue_atkp['city' + Seed.cities[b][0]];
@@ -6250,6 +6260,8 @@ Tabs.OverView = {
     try {
       if (Options.includeMarching)
         march = getMarchInfo ();
+      if (Options.includeTrainingExt)
+        train = getTrainInfo ();
 
       dt = new Date ();
       dt.setTime (Seed.player.datejoinUnixTime * 1000);
@@ -6260,6 +6272,8 @@ Tabs.OverView = {
       }
       if (Options.includeMarching)
         str += '<TD width=81><B>Marching</b></td>';
+      if (Options.includeTrainingExt)
+        str += '<TD width=81><B>Training</b></td>';
       str += "</tr>";
   
     str += '<TR valign=top align=right><TD></td><TD style=\'background: #ffc\'></td>';
@@ -6285,17 +6299,23 @@ Tabs.OverView = {
           rows[r][i] = parseInt(Seed.resources[cityID]['rec'+r][0] / 3600);
         }
       }
+	  rows[5] = [];
+	  for(i=0; i<Cities.numCities; i++) { //Aetherstone
+        cityID = 'city'+ Cities.cities[i].id;
+        rows[5][i] = parseInt(Seed.resources[cityID]['rec5'][0]);
+      }
   
       if (Options.includeMarching){
         for (var i=0; i<5; i++)
-          rows[i][Cities.numCities] = march.resources[i];
+          rows[i][Cities.numCities] = march.resources[i]; //Aetherstone does not show up in march info
       }
       str += _row ('Gold', rows[0]);
       str += _row ('Food', rows[1]);
       str += _row ('Wood', rows[2]);
       str += _row ('Stone', rows[3]);
       str += _row ('Ore', rows[4]);
-      str += '<TR><TD colspan=10><BR></td></tr>';
+      str += _row ('Aetherstone', rows[5]);
+      str += '<TR><TD colspan=11><BR></td></tr>';
       for (r=1; r<13; r++){
         rows[r] = [];
         for(i=0; i<Cities.numCities; i++) {
@@ -6303,10 +6323,19 @@ Tabs.OverView = {
           rows[r][i] = parseInt(Seed.units[cityID]['unt'+r]);
         }
       }
+	  
+	  var colnum = Cities.numCities;
       if (Options.includeMarching){
-        for (var i=0; i<13; i++)
-          rows[i][Cities.numCities] = march.marchUnits[i];
+        for (var i=0; i<13; i++){
+          rows[i][colnum] = march.marchUnits[i];
+		}
+		colnum++;
       }
+	  if(Options.includeTrainingExt){
+		for (var i=0; i<13; i++){
+		  rows[i][colnum] = train.trainUnts[i];
+		}
+	  }
       if (Options.includeTraining){
         var q = Seed.queue_unt;
         for(i=0; i<Cities.numCities; i++) {
@@ -6330,7 +6359,7 @@ Tabs.OverView = {
       str += _row ('Ballista', rows[10]);
       str += _row ('Ram', rows[11]);
       str += _row ('Catapult', rows[12]);
-      str += '<TR><TD colspan=10><BR></td></tr>';
+      str += '<TR><TD colspan=11><BR></td></tr>';
       
       row = [];
       for(i=0; i<Cities.numCities; i++) {
@@ -6419,14 +6448,16 @@ Tabs.OverView = {
       }    
       str += _row ('WallQue', row, true);
       str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><BR><INPUT type=CHECKBOX id=idCheck'+ (Options.includeMarching?' CHECKED':'') +'>Include Marching Troops/Resources</td></tr>';
-      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=ptoverIncTraining'+ (Options.includeTraining?' CHECKED':'') +'>Include troops in training</td></tr>';
+      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=ptoverIncTrain'+ (Options.includeTraining?' CHECKED':'') +'>Include troops in training in cities</td></tr>';
+      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=ptoverIncTrainExt'+ (Options.includeTrainingExt?' CHECKED':'') +'>Include troops in training total</td></tr>';
       str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=ptOverOver'+ (Options.overviewAllowOverflow?' CHECKED':'') +'>Allow width overflow \
          &nbsp; &nbsp; FONT SIZE: '+ htmlSelector ({9:9, 10:10, 11:11, 12:12}, Options.overviewFontSize, 'id=ptoverfont') +'</td></tr><BR>';
       str += "</table></div>";
       str+= 'Koc Power Tools Version:' + Version;
       t.Overv.innerHTML = str;
       document.getElementById('idCheck').addEventListener('click', e_clickEnableMarch, false);
-      document.getElementById('ptoverIncTraining').addEventListener('click', e_clickEnableTraining, false);
+      document.getElementById('ptoverIncTrain').addEventListener('click', e_clickEnableTraining, false);
+      document.getElementById('ptoverIncTrainExt').addEventListener('click', e_clickEnableTrainingExt, false);
       document.getElementById('ptOverOver').addEventListener('click', e_allowWidthOverflow, false);
       document.getElementById('ptoverfont').addEventListener('change', e_fontSize, false);
     //DebugTimer.display ('Draw Overview');    
@@ -6442,7 +6473,12 @@ Tabs.OverView = {
     }
     function e_clickEnableTraining (){
       var t = Tabs.OverView;
-      Options.includeTraining = document.getElementById('ptoverIncTraining').checked;
+      Options.includeTraining = document.getElementById('ptoverIncTrain').checked;
+      t.paintOld ();
+    }
+    function e_clickEnableTrainingExt (){
+      var t = Tabs.OverView;
+      Options.includeTrainingExt = document.getElementById('ptoverIncTrainExt').checked;
       t.paintOld ();
     }
 
@@ -8497,6 +8533,163 @@ function addScript (scriptText){
 addScript ('uwuwuwFunc = function (text){ eval (text);  }');  
 
 
+/************* Updater code *************/
+// Function for displaying a confirmation message modal popup similar to the default javascript confirm() function
+// but with the advantage being that it won't halt all other javascript being executed on the page.
+// Original Author: Thomas Chapin (April 6, 2011)
+function display_confirm(confirm_msg,ok_function,cancel_function){
+    if(!confirm_msg){confirm_msg="";}
+    
+    var container_div = document.getElementById('modal_js_confirm');
+    var div;
+    if(!container_div) {
+        container_div=document.createElement('div');
+        container_div.id='modal_js_confirm';
+        container_div.style.position='absolute';
+        container_div.style.top='0px';
+        container_div.style.left='0px';
+        container_div.style.width='100%';
+        container_div.style.height='1px';
+        container_div.style.overflow='visible';
+        container_div.style.zIndex=100000;
+        
+        div=document.createElement('div');
+        div.id='modal_js_confirm_contents';
+        div.style.zIndex=100000;
+        div.style.backgroundColor='#eee';
+        div.style.fontFamily='"lucida grande",tahoma,verdana,arial,sans-serif';
+        div.style.fontSize='11px';
+        div.style.textAlign='center';
+        div.style.color='#333333';
+        div.style.border='2px outset #666';
+        div.style.padding='10px';
+        div.style.position='relative';
+        div.style.width='300px';
+        div.style.height='100px';
+        div.style.margin='300px auto 0px auto';
+        div.style.display='block';
+        
+        container_div.appendChild(div);
+        document.body.appendChild(container_div);
+        
+        div.innerHTML = '<div style="text-align:center"><div>'+confirm_msg+'</div><br/><div>Press OK to continue.</div><br><button id="modal_js_confirm_ok_button">OK</button> <button id="modal_js_confirm_cancel_button">Cancel</button></div>';
+        var ok_button = document.getElementById('modal_js_confirm_ok_button');
+        ok_button.addEventListener('click',function() {
+            if(ok_function && typeof(ok_function) == "function"){
+           	 ok_function();
+            }
+            container_div.parentNode.removeChild(container_div);
+        },false);
+        var cancel_button = document.getElementById('modal_js_confirm_cancel_button');
+        cancel_button.addEventListener('click',function() {
+            if(cancel_function && typeof(cancel_function) == "function"){
+            	cancel_function();
+            }
+            container_div.parentNode.removeChild(container_div);
+        },false);
+	}
+}
+
+// The following code is released under public domain.
+
+var AutoUpdater_103659 = {
+    id: 103659,
+    days: 1,
+    name: "KOC Power Tools",
+    version: Version,
+	beta: false,
+    time: new Date().getTime(),
+    call: function(response, secure) {
+        GM_xmlhttpRequest({
+            method: 'GET',
+	     url: this.beta ? 'https://koc-power-tools.googlecode.com/svn/trunk/koc_power_tools.user.js' : 'http'+(secure ? 's' : '')+'://userscripts.org/scripts/source/'+this.id+'.meta.js',
+	    onload: function(xpr) {AutoUpdater_103659.compare(xpr, response);},
+            onerror: function(xpr) {if (secure) AutoUpdater_103659.call(response, false);}
+        });
+    },
+    enable: function() {
+        GM_registerMenuCommand("Enable "+this.name+" updates", function() {
+            GM_setValue('updated_103659', new Date().getTime()+'');
+            AutoUpdater_103659.call(true, true)
+        });
+    },
+    compareVersion: function(r_version, l_version) {
+        var r_parts = r_version.split(''),
+            l_parts = l_version.split(''),
+            r_len = r_parts.length,
+            l_len = l_parts.length,
+            r = l = 0;
+        for(var i = 0, len = (r_len > l_len ? r_len : l_len); i < len && r == l; ++i) {
+            r = +(r_parts[i] || '0');
+            l = +(l_parts[i] || '0');
+        }
+        return (r !== l) ? r > l : false;
+    },
+    compare: function(xpr,response) {
+        this.xversion=/\/\/\s*@version\s+(.+)\s*\n/i.exec(xpr.responseText);
+        this.xname=/\/\/\s*@name\s+(.+)\s*\n/i.exec(xpr.responseText);
+        if ( (this.xversion) && (this.xname[1] == this.name) ) {
+            this.xversion = this.xversion[1];
+            this.xname = this.xname[1];
+        } else {
+            if ( (xpr.responseText.match("the page you requested doesn't exist")) || (this.xname[1] != this.name) ) {
+            	GM_setValue('updated_103659', 'off');
+            }
+            return false;
+        }
+        var updated = this.compareVersion(this.xversion, this.version);
+        
+        if ( updated ) {
+                         
+            display_confirm('A new version of '+this.xname+' is available.\nDo you wish to install the latest version?',
+                // Ok
+                function(){
+                    try { 
+                        location.href = this.beta ? 'https://koc-power-tools.googlecode.com/svn/trunk/koc_power_tools.user.js' :  'http://userscripts.org/scripts/source/'+this.id+'.user.js'; 
+                    } catch(e) {}
+                },
+                // Cancel
+                function(){
+                    if ( AutoUpdater_103659.xversion ) {
+                        if(confirm('Do you want to turn off auto updating for this script?')) {
+                            GM_setValue('updated_103659', 'off');
+                            AutoUpdater_103659.enable();
+                            alert('Automatic updates can be re-enabled for this script from the User Script Commands submenu.');
+                        }
+                    }
+                }
+            );
+                                      
+        } else if (response){
+        	alert('No updates available for '+this.name);
+        }
+    },
+    check: function() {
+        if (GM_getValue('updated_103659', 0) == "off"){
+            this.enable();
+        } else {
+            if (+this.time > (+GM_getValue('updated_103659', 0) + 1000*60*60*24*this.days)) {
+                GM_setValue('updated_103659', this.time+'');
+                this.call(false, true);
+            }
+            GM_registerMenuCommand("Check "+this.name+" for updates", function() {
+                GM_setValue('updated_103659', new Date().getTime()+'');
+                AutoUpdater_103659.call(true, true)
+            });
+        }
+    }
+};
+if (typeof(GM_xmlhttpRequest) !== 'undefined' && typeof(GM_updatingEnabled) === 'undefined') { // has an updater?
+    try {
+        if (unsafeWindow.frameElement === null) {
+            AutoUpdater_103659.check();
+        }
+    } catch(e) {
+        AutoUpdater_103659.check();
+    }
+}
+    
+/********* End updater code *************/
 
 // TODO: Handle multiple instances altering same function!!   ****************************
 var CalterUwFunc = function (funcName, findReplace) {
