@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20111105a
+// @version        20111106a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20111105a';
+var Version = '20111106a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -4166,7 +4166,7 @@ Tabs.Options = {
   },
   
 }
-}
+
 
 
 
