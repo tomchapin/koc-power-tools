@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20111106a
+// @version        20111107a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20111106a';
+var Version = '20111107a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -93,20 +93,20 @@ var Options = {
 };
 
 var Colors ={
-	DarkRow : '#eee',
+	DarkRow        : '#eee',
 	ButtonSelected : '#444444',
-	TabClicked : '#EED',
-	Tabs : '#1E66BD',
-    MainTitle  : '#357',
-    ChatLeaders: '#B8B8B8',
-    ChatGlobal :  '#CCCCFF',
+	TabClicked     : '#EED',
+	Tabs           : '#1E66BD',
+    MainTitle      : '#357',
+    ChatLeaders    : '#B8B8B8',
+    ChatGlobal     : '#CCCCFF',
     OverviewDarkRow : '#f0f0f0',
-	TabFont : '#F8E151',
-	ChatAll : '#99ccff',
-	ChatAtt : '#FF4D4D',
-	ChatWhisper : '#FF4D4D',
-		ChatVC: '#00ff00',
-	ChatChancy: '#F8E151',
+	TabFont        : '#F8E151',
+	ChatAll        : '#99ccff',
+	ChatAtt        : '#FF4D4D',
+	ChatWhisper    : '#FF4D4D',
+	ChatVC         : '#00ff00',
+	ChatChancy     : '#F8E151',
 
 };
 
@@ -616,28 +616,27 @@ var ChatStuff = {
        var whisp = m[0];
        
        
-    if (m[0].indexOf('whispers') >= 0) {
-		if (Colors.chatwhisper) {
+    if (m[0].indexOf('whispers to you') >= 0) {
+		if (Options.chatwhisper) {
 			if (whisp.indexOf('says to the alliance') <0) element_class = 'ptChatWhisper';
 		}
 		else element_class = '';
     } else if (m[0].indexOf('to the alliance') >= 0){
-		if (Colors.chatbold)
+		if (Options.chatbold)
 			element_class = 'ptChatAlliance';
 		else element_class = '';
     } else {
 		element_class = '';
    	
    	
-   	if (Colors.chatbold)
+   	if (Options.chatbold)
    		element_class = 'ptChatGlobalBold';
-   	if (Colors.chatglobal){
+   	if (Options.chatglobal){
    		 element_class = 'ptChatGlobal';
    		 }
-   	if (Colors.chatbold && Colors.chatglobal)
+   	if (Options.chatbold && Options.chatglobal)
    		element_class = 'ptChatGlobalAll';
-           } 
-	
+           }
 	var scripters = ["7552815","10681588","1747877","2865067","10153485","15182839","1550996","1617431819","9688786","8184813","9863346","11107993","9751486"];
 	var suid = /viewProfile\(this,([0-9]+),false/i.exec(m[0]);
 	if(!suid)
@@ -645,7 +644,7 @@ var ChatStuff = {
 	else
 		suid = suid[1];
 	
-	if (Colors.chatLeaders) {
+	if (Options.chatLeaders) {
 		if (t.leaders[suid]) element_class = 'ptChat'+t.leaders[suid];
     }
 
@@ -4060,11 +4059,11 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=togChatAttack type=checkbox /></td><TD>Enable background color on tower alert.</td></tr>';
 	  m+='<TR><TD><INPUT id=togChatLead type=checkbox /></td><TD>Enable background for alliance Leaders.<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr></table>';
 
-	  m+='<TABLE class=ptTab><BR><TR><TD colspan=2><U><B>Colors:</b></u></td></tr>';
+	  m+='<TABLE class=ptTab><BR><TR><TD colspan=2><U><B>Colors: &nbsp;(Refresh for effect)</b></u></td></tr>';
       m+='<TR><TD>Chat Color - Global: </td><TD><INPUT id=togGlobal type=text size=7 maxlength=7 value="'+Colors.ChatGlobal+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatGlobal+'" width=30px>&nbsp;</td></tr>';
 	  m+='<TR><TD>Chat Color - Alliance: </td><TD><INPUT id=togAll type=text size=7 maxlength=7 value="'+Colors.ChatAll+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatAll+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>Chat Color - Tower Alert: </td><TD><INPUT id=togChatAtt type=text size=7 maxlength=7 value="'+Colors.ChatAtt+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatAtt+'" width=30px>&nbsp;</td></tr>';
-      m+='<TR><TD>Chat Color - Whisper Alert: </td><TD><INPUT id=togChatWhisper type=text size=7 maxlength=7 value="'+Colors.ChatWhisper+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatWhisper+'" width=30px>&nbsp;</td></tr>';
+      m+='<TR><TD>Chat Color - Whisper Alert: </td><TD><INPUT id=togWhisper type=text size=7 maxlength=7 value="'+Colors.ChatWhisper+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatWhisper+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>Chat Color - Chancy: </td><TD><INPUT id=togChatC type=text size=7 maxlength=7 value="'+Colors.ChatChancy+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatChancy+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>Chat Color - Vice-C: </td><TD><INPUT id=togChatVC type=text size=7 maxlength=7 value="'+Colors.ChatVC+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatVC+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>Chat Color - Officers: </td><TD><INPUT id=togChatLeaders type=text size=7 maxlength=7 value="'+Colors.ChatLeaders+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatLeaders+'" width=30px>&nbsp;</td></tr>';
@@ -4107,7 +4106,7 @@ Tabs.Options = {
       document.getElementById('togTabFont').addEventListener('change', function(){Colors.TabFont = document.getElementById('togTabFont').value;t.Layout()}, false);
       document.getElementById('togAll').addEventListener('change', function(){Colors.ChatAll = document.getElementById('togAll').value;t.Layout()}, false);
       document.getElementById('togChatAtt').addEventListener('change', function(){Colors.ChatAtt = document.getElementById('togChatAtt').value;t.Layout()}, false);
-      document.getElementById('togChatWhisper').addEventListener('change', function(){Colors.ChatWhisper = document.getElementById('togChatWhisper').value;t.Layout()}, false);
+      document.getElementById('togWhisper').addEventListener('change', function(){Colors.ChatWhisper = document.getElementById('togWhisper').value;t.Layout()}, false);
       
       document.getElementById('ResetALL').addEventListener ('click', function(){
       		RemoveList = (GM_listValues());
@@ -9607,16 +9606,23 @@ function readGlobalOptions (){
 
 function saveColors (){
   var serverID = GetServerId();
-  GM_setValue ('Colors', JSON2.stringify(Colors));
+  GM_setValue ('Colors_'+serverID, JSON2.stringify(Colors));
 }
 
 function readColors (){
   var serverID = GetServerId();
-  s = GM_getValue ('Colors');
+  s = GM_getValue ('Colors_'+serverID);
   if (s != null){
     opts = JSON2.parse (s);
     for (k in opts)
       Colors[k] = opts[k];
+  }else{
+	s = GM_getValue ('Colors');
+	if (s != null){
+		opts = JSON2.parse (s);
+		for (k in opts)
+		  Colors[k] = opts[k];
+	}
   }
 }
 function readAutoTrainOptions (){
