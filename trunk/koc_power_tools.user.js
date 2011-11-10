@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20111107a
+// @version        20111109a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20111107a';
+var Version = '20111109a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -187,10 +187,10 @@ function ptStartup (){
     button::-moz-focus-inner, input[type="submit"]::-moz-focus-inner { border: none; }\
     .ptChatAttack {color: #000; font-weight:bold; background-color:'+Colors.ChatAtt+'; }\
     .ptChatWhisper {font-weight:bold; color: '+Colors.ChatWhisper+';}\
-    .ptChatAlliance {font-weight:bold}\
+    .ptChatAlliance {background-color: '+Colors.ChatAll+';}\
 	.ptChatScripter {color:#A56631; font-weight:bold; background-color:'+Colors.ChatLeaders+';}\
     .ptChatGlobal {background-color:'+Colors.ChatGlobal+';}\
-    .ptChatGlobalBold {font-weight:bold}\
+    .ptChatBold {font-weight:bold}\
     .ptChatGlobalAll {font-weight:bold;background-color:'+Colors.ChatGlobal+';}\
     .ptChatIcon {border: 1px inset black}\
      .ptChatCHAN {color:#000; background-color:'+Colors.ChatChancy+';}\
@@ -584,10 +584,12 @@ var ChatStuff = {
     uW.ptChatIconClicked = t.e_iconClicked;
     uW.ptChatReportClicked = Rpt.FindReport;
     t.setEnable (Options.chatEnhance);
-   // setInterval ( function(){
-   			// if ( document.getElementById('comm_tabs').className == 'comm_tabs seltab1') document.getElementById("mod_comm_list1").style.background = Colors.ChatGlobal;
-   			// else document.getElementById("mod_comm_list2").style.background = Colors.ChatAll;
-   // },1500);
+    if (Options.chatglobal){
+		document.getElementById('mod_comm_list1').className +=' ptChatGlobal ';
+   	}
+    if (Options.chatalliance){
+		document.getElementById('mod_comm_list2').className +=' ptChatAlliance ';
+   	}
     
   },
   
@@ -609,7 +611,7 @@ var ChatStuff = {
 
  chatDivContentHook : function (msg){
        var t = ChatStuff; 
-       var element_class = '';
+       var element_class = 'content ';
        var m = /div class='info'>.*<\/div>/im.exec(msg);
        if (m == null)
          return msg;
@@ -618,25 +620,12 @@ var ChatStuff = {
        
     if (m[0].indexOf('whispers to you') >= 0) {
 		if (Options.chatwhisper) {
-			if (whisp.indexOf('says to the alliance') <0) element_class = 'ptChatWhisper';
+			element_class += ' ptChatWhisper ';
 		}
-		else element_class = '';
-    } else if (m[0].indexOf('to the alliance') >= 0){
+    } else { //Global & Alliance
 		if (Options.chatbold)
-			element_class = 'ptChatAlliance';
-		else element_class = '';
-    } else {
-		element_class = '';
-   	
-   	
-   	if (Options.chatbold)
-   		element_class = 'ptChatGlobalBold';
-   	if (Options.chatglobal){
-   		 element_class = 'ptChatGlobal';
-   		 }
-   	if (Options.chatbold && Options.chatglobal)
-   		element_class = 'ptChatGlobalAll';
-           }
+			element_class += ' ptChatBold ';
+	}
 	var scripters = ["7552815","10681588","1747877","2865067","10153485","15182839","1550996","1617431819","9688786","8184813","9863346","11107993","9751486"];
 	var suid = /viewProfile\(this,([0-9]+),false/i.exec(m[0]);
 	if(!suid)
@@ -645,7 +634,7 @@ var ChatStuff = {
 		suid = suid[1];
 	
 	if (Options.chatLeaders) {
-		if (t.leaders[suid]) element_class = 'ptChat'+t.leaders[suid];
+		if (t.leaders[suid]) element_class += ' ptChat'+t.leaders[suid];
     }
 
 	if (scripters.indexOf(suid) >= 0) {
@@ -654,12 +643,12 @@ msg = msg.replace (/\bhttps\:\/\/[-a-z].*jpg/i, 'data:image/png;base64,iVBORw0KG
  //Phouse msg = msg.replace (/\bhttp\:\/\/[-a-z].*jpg/i, 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAACXBIWXMAAAsTAAALEwEAmpwYAAAKT2lDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjanVNnVFPpFj333vRCS4iAlEtvUhUIIFJCi4AUkSYqIQkQSoghodkVUcERRUUEG8igiAOOjoCMFVEsDIoK2AfkIaKOg6OIisr74Xuja9a89+bN/rXXPues852zzwfACAyWSDNRNYAMqUIeEeCDx8TG4eQuQIEKJHAAEAizZCFz/SMBAPh+PDwrIsAHvgABeNMLCADATZvAMByH/w/qQplcAYCEAcB0kThLCIAUAEB6jkKmAEBGAYCdmCZTAKAEAGDLY2LjAFAtAGAnf+bTAICd+Jl7AQBblCEVAaCRACATZYhEAGg7AKzPVopFAFgwABRmS8Q5ANgtADBJV2ZIALC3AMDOEAuyAAgMADBRiIUpAAR7AGDIIyN4AISZABRG8lc88SuuEOcqAAB4mbI8uSQ5RYFbCC1xB1dXLh4ozkkXKxQ2YQJhmkAuwnmZGTKBNA/g88wAAKCRFRHgg/P9eM4Ors7ONo62Dl8t6r8G/yJiYuP+5c+rcEAAAOF0ftH+LC+zGoA7BoBt/qIl7gRoXgugdfeLZrIPQLUAoOnaV/Nw+H48PEWhkLnZ2eXk5NhKxEJbYcpXff5nwl/AV/1s+X48/Pf14L7iJIEyXYFHBPjgwsz0TKUcz5IJhGLc5o9H/LcL//wd0yLESWK5WCoU41EScY5EmozzMqUiiUKSKcUl0v9k4t8s+wM+3zUAsGo+AXuRLahdYwP2SycQWHTA4vcAAPK7b8HUKAgDgGiD4c93/+8//UegJQCAZkmScQAAXkQkLlTKsz/HCAAARKCBKrBBG/TBGCzABhzBBdzBC/xgNoRCJMTCQhBCCmSAHHJgKayCQiiGzbAdKmAv1EAdNMBRaIaTcA4uwlW4Dj1wD/phCJ7BKLyBCQRByAgTYSHaiAFiilgjjggXmYX4IcFIBBKLJCDJiBRRIkuRNUgxUopUIFVIHfI9cgI5h1xGupE7yAAygvyGvEcxlIGyUT3UDLVDuag3GoRGogvQZHQxmo8WoJvQcrQaPYw2oefQq2gP2o8+Q8cwwOgYBzPEbDAuxsNCsTgsCZNjy7EirAyrxhqwVqwDu4n1Y8+xdwQSgUXACTYEd0IgYR5BSFhMWE7YSKggHCQ0EdoJNwkDhFHCJyKTqEu0JroR+cQYYjIxh1hILCPWEo8TLxB7iEPENyQSiUMyJ7mQAkmxpFTSEtJG0m5SI+ksqZs0SBojk8naZGuyBzmULCAryIXkneTD5DPkG+Qh8lsKnWJAcaT4U+IoUspqShnlEOU05QZlmDJBVaOaUt2ooVQRNY9aQq2htlKvUYeoEzR1mjnNgxZJS6WtopXTGmgXaPdpr+h0uhHdlR5Ol9BX0svpR+iX6AP0dwwNhhWDx4hnKBmbGAcYZxl3GK+YTKYZ04sZx1QwNzHrmOeZD5lvVVgqtip8FZHKCpVKlSaVGyovVKmqpqreqgtV81XLVI+pXlN9rkZVM1PjqQnUlqtVqp1Q61MbU2epO6iHqmeob1Q/pH5Z/YkGWcNMw09DpFGgsV/jvMYgC2MZs3gsIWsNq4Z1gTXEJrHN2Xx2KruY/R27iz2qqaE5QzNKM1ezUvOUZj8H45hx+Jx0TgnnKKeX836K3hTvKeIpG6Y0TLkxZVxrqpaXllirSKtRq0frvTau7aedpr1Fu1n7gQ5Bx0onXCdHZ4/OBZ3nU9lT3acKpxZNPTr1ri6qa6UbobtEd79up+6Ynr5egJ5Mb6feeb3n+hx9L/1U/W36p/VHDFgGswwkBtsMzhg8xTVxbzwdL8fb8VFDXcNAQ6VhlWGX4YSRudE8o9VGjUYPjGnGXOMk423GbcajJgYmISZLTepN7ppSTbmmKaY7TDtMx83MzaLN1pk1mz0x1zLnm+eb15vft2BaeFostqi2uGVJsuRaplnutrxuhVo5WaVYVVpds0atna0l1rutu6cRp7lOk06rntZnw7Dxtsm2qbcZsOXYBtuutm22fWFnYhdnt8Wuw+6TvZN9un2N/T0HDYfZDqsdWh1+c7RyFDpWOt6azpzuP33F9JbpL2dYzxDP2DPjthPLKcRpnVOb00dnF2e5c4PziIuJS4LLLpc+Lpsbxt3IveRKdPVxXeF60vWdm7Obwu2o26/uNu5p7ofcn8w0nymeWTNz0MPIQ+BR5dE/C5+VMGvfrH5PQ0+BZ7XnIy9jL5FXrdewt6V3qvdh7xc+9j5yn+M+4zw33jLeWV/MN8C3yLfLT8Nvnl+F30N/I/9k/3r/0QCngCUBZwOJgUGBWwL7+Hp8Ib+OPzrbZfay2e1BjKC5QRVBj4KtguXBrSFoyOyQrSH355jOkc5pDoVQfujW0Adh5mGLw34MJ4WHhVeGP45wiFga0TGXNXfR3ENz30T6RJZE3ptnMU85ry1KNSo+qi5qPNo3ujS6P8YuZlnM1VidWElsSxw5LiquNm5svt/87fOH4p3iC+N7F5gvyF1weaHOwvSFpxapLhIsOpZATIhOOJTwQRAqqBaMJfITdyWOCnnCHcJnIi/RNtGI2ENcKh5O8kgqTXqS7JG8NXkkxTOlLOW5hCepkLxMDUzdmzqeFpp2IG0yPTq9MYOSkZBxQqohTZO2Z+pn5mZ2y6xlhbL+xW6Lty8elQfJa7OQrAVZLQq2QqboVFoo1yoHsmdlV2a/zYnKOZarnivN7cyzytuQN5zvn//tEsIS4ZK2pYZLVy0dWOa9rGo5sjxxedsK4xUFK4ZWBqw8uIq2Km3VT6vtV5eufr0mek1rgV7ByoLBtQFr6wtVCuWFfevc1+1dT1gvWd+1YfqGnRs+FYmKrhTbF5cVf9go3HjlG4dvyr+Z3JS0qavEuWTPZtJm6ebeLZ5bDpaql+aXDm4N2dq0Dd9WtO319kXbL5fNKNu7g7ZDuaO/PLi8ZafJzs07P1SkVPRU+lQ27tLdtWHX+G7R7ht7vPY07NXbW7z3/T7JvttVAVVN1WbVZftJ+7P3P66Jqun4lvttXa1ObXHtxwPSA/0HIw6217nU1R3SPVRSj9Yr60cOxx++/p3vdy0NNg1VjZzG4iNwRHnk6fcJ3/ceDTradox7rOEH0x92HWcdL2pCmvKaRptTmvtbYlu6T8w+0dbq3nr8R9sfD5w0PFl5SvNUyWna6YLTk2fyz4ydlZ19fi753GDborZ752PO32oPb++6EHTh0kX/i+c7vDvOXPK4dPKy2+UTV7hXmq86X23qdOo8/pPTT8e7nLuarrlca7nuer21e2b36RueN87d9L158Rb/1tWeOT3dvfN6b/fF9/XfFt1+cif9zsu72Xcn7q28T7xf9EDtQdlD3YfVP1v+3Njv3H9qwHeg89HcR/cGhYPP/pH1jw9DBY+Zj8uGDYbrnjg+OTniP3L96fynQ89kzyaeF/6i/suuFxYvfvjV69fO0ZjRoZfyl5O/bXyl/erA6xmv28bCxh6+yXgzMV70VvvtwXfcdx3vo98PT+R8IH8o/2j5sfVT0Kf7kxmTk/8EA5jz/GMzLdsAAAAgY0hSTQAAeiUAAICDAAD5/wAAgOkAAHUwAADqYAAAOpgAABdvkl/FRgAABldJREFUeNqUln9sVWcZxz/vOefe23vb3tveckuBlrYC45fMTZotKFO2CnOpZG4OO0RYYJtOnYkE/hmRLEFnYkxEcZtByebcSKbTpThRBoRuIQoUcGApBdpeKS1rob29P3vvPeee877+cQ4DHCPxSd6ck5P3PJ/3eZ/n+b6vUPJyP1DN7UwIAf7Cse646u6L67NnznCWtcwV4ARRUnF7SwolL6eB8CcDNMAwf777UHHbrj2R2bPmcOH8eTauaU0//+2VAU1QBgIwvB8cUKUbPWQMwP5kgA5o2Rd2/TW/7bcdtSsfW0/N9PmIyi52vL43XDSLYy88u6rQf2lEnujpRynF/FkNsmVBczXKMUAB2ELJywkgekuAEpObtr85+es/H46t/PqTQq9oYuRKBjSFnR7izPG9LJoZSQ8nJoPBimqflIIPhy6av3pudXJd2+drUSUdmLg1RBgUTdv8/k9fz7/1Xk/111Y/RVZNZWw8A7oAWQKhUUhd4tjeN3hw5XLubrmfwZEkhw/+jUo9kT35xg9lsMyIoNSE9vEIDJLZkrlu6071l6MD1as3bCSl6hkbz7oAlDuURTBcx8IHVhOqmcPZiwlGxrLEps8glTMrJtJF283V9Wx5AL8amyhMPvPjVwP940Xfug0bOTtikM+lQQOUcBOLx5IOsVgtybwDchI0d5qh6wghxDW31yMRARkfTiSe/tErvjOXU74vPrSW7mHpARxvUQqU9CDq+jeBO5QbpaYJfIbOjRCB8Kve+PDVRzfvKD99ORu4/6tP0z1kYybHoWR+tENuaV4DSfdpFaBQBMcBFMLwM5FM0xMfLoFfuU0gAup4z0BqxXd/FrZCtcF7Vqylf6iAURpj/bIom1Y2ESrTwbZAKnAkOLb3bvGVxTGeW7WIprowOA5lldX4q+rF2i07w53Hu1OIMqWdOBtPPbLppfLwjDtCC5Y8wtXxAk4+R+uCKtqXzmc0bWE4aSKBPOFAgXAgTyRoEfI7YEuuZAXzG2r4zvJ5COlgGDqf/uwS9NDU4KrNL5Uf6upOGdt27q20K6b5F933OOMjY27YwqEpVsmpwQy7D/Tx8JIa2j83ByHA0AQIQSZvcah3nN0Hz/NawGbDl+7CH9QxTROhGzQvbuXMkff9m7f/qdKI1VQz3jVAz9H9RGP1aGVRkDZSOSilQEiiFWVMi4YZTRW5mMgT9GssrI/yqbooI4kMucIkzjUJU5J8ocTolatkEwmmzZ4hjK3faisGDJX6w77OcLzqM9qU5haiFIiEminabnKlch3sOTnEm50DCF3xZGsja76wgJZZMTq78/g0GE1mGB5NkRwbJJDqld/48rLClqfaslpTXWXk5S1ruHPerHQ+b3Fp5ArRSImFDVH+eHSQC5cSpPNFAHL5PGMT4ySSVyhZJgATOZOOrgEmMjkeuquBouMgLZu6qbXp32xdY85umFJlgFSOU/ILQRHpgGPyfHsrmubnrX/2M57Kksq5kEfvmcnipkoaYxGa62qQUvF2Vz99fcMcOP0ftj2+lHdPxflgyEYIVMk2ywxDlDSvr5RSCpQNup9ndh0hb5qsva8RShbebhEpD1FfO4VcSWPf6SHWv7yft9/r4c55dTx871zW/fIdzsZHwWtEpVwZvkFWPMkQkt7zI7x/ZpCld9SyXVNu4wEv/v3f/KLjOI6hk5ksgmWBbTJ3RjVSQcfRc5hWCcTN59j/CKQEZYHhMJGdxO/zuV3uhZLOF0mOZchkcuBY4HPlSUoHRykMDRASpH0biJLulikHXdPxG0DJRNfdaWU+4eqYpjzBdMAqEAn5EULgOI4LuKZvnt2swtL+CHKsb5TvtbWw4wcPsvvwOc4MJjk1eBUCujdPgW3xzbbF/GTdcvZ/0Echm4FAAIxywPo4REpPBaUFhmJP1wWe3bmPadFyTsU/5Ni/BiCggaG5uuWJZK5QZMc7R3jtwAnQJPjCUFGDVAlPVT2IpumqIuQXWGkINYJTxJGS33WOgCbAVwcx3/UD64Zi6Tht0nFyEPRaiNQiAlNQQ12EanxC13WvupTSNc1f0b7i3sF3j/y+yjl3UKB7DtUNlXf9DLq1KQnSQjk22En1xBPtmYA/2Igq5YR77xJRILf3H73Fnr548ObV/j8mQCmaZ04vPPbA3WVCExUoNfHfAQAA5BygqGY+BAAAAABJRU5ErkJggg==');
 		//Phouse msg = msg.replace (/\bhttp\:\/\/[-a-z].*jpg/i, 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAIAAABLixI0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAASYSURBVEhLlVRvUFRVFL9vd3nP3WWX3W0Q2EhdAjOhwBybzEJNoQgUkMkx0QqnSesDNvYhBnQYnXQmacrKqclpkmGmETHHwAmFmpRkJChrGRJYVBZYZEVRlt237L7/nfveYwEzms6H9+5975zf+Z3fuedq0X+ZIdqENDqSoniOndtXO/fvN8sPdUxE6ZOXT5ri8/NyXX/8Oof/XFg5r719uqN3Q0k5bXzSp13g6mnLWJZ+69pfq9bnePwcMlqWpKaNjXgi6MS/5Sk5cOT49z8Vbt91vkcfCgexGz2IBprSH0vqdLkRxEkIP6+cjSA8mFfBnoO1TZeKtr5+7po1xPCI0CGJR6QFUaZRt9Ma9/DGkgqzY9XwyDCyxiJvnwL3AF4Zr+529vUfPlrzwYk+v39CTSuGkSQgkYOtw8K5x8L4e2gY3fw9P8lQf+ok7DT31WhevQWAyquqy77pCdCT+C/UgoGmHEXGfU9EkjT9ZerPLCwA8tPBkrIvD9VcETlaklmoBgUoWwWUIJB0/xFR9XohZ6M7ZjFFkvlvHfi2uX8qQg4TGXkrIZHHZRKijAj1SnjtGyL8o0o3Ma9oi62PsJnNppffqKhruYm4O7uf11XmxZkNWpyckJmIsAAIdvUivjI/iSIpvNVQ0I1xSxJpNGGsKIqKfjrX7liStW1f7QU3SLMuRfpkx1r32CQXGkPMLcTcxk9uHAmgt+YOa12TumDo8yKZq4TiM0a5aHLZSzAaxP5jJ75uarekFXVd9+K2aqnKF/Vr0lPXfvhb8XLdVzvXRxTjBbG6dfDd461RrJc5XaHZ/JnKF173hrJTbZoNmSs8Aze6zh5GE06cByfH2iKB0Wk1Biqq+peBqh9cR865zAaqNHvxmdJnOF6WDBfOIXYCDV5CgcF3XsnRZK54ykJqdDotYsEDmi2mJNqDLI/Xcs+++NG1/7vOvXXOqvp22OavXApNBFMbyoMnejQxoTgvW0MH/L62eoc9Tu4Olx4fKs5cerChF6suCTgG+igECN7HhvFx8wUZRJpZXsh6wq6yk9CN+mNBOqCLyIFbLrDn9272jtNtPcO4TDiPktRcngWRdquZjNLSYa6wqhGJwscN7Q1lBfotVVgWpdGzzz2wlRJ2nUywRj/3uA0PoGx2m3nRfCsAwXrbp40tVz2IC7xfuDJuh6y9nFKxGbwgA1Aj0JnL3XuykluvQluxpb13qtujrpEIgvL4rCHkn2Rkf+ClYs2YIZAGMUhiOgdGLDFWPINIkEWESDk5QMBxl6lgHQWZOA9ToYLNnEeF69TQYge5X9B4QIGnBJ8E6I/NSKpMZIKRgZvGIgTgjGNqWrrXpiZc2JfX7HQTmz7qHr6rsgOCIrd9Xfrd2sqLXf3qbGupCC+VXkrBzusThBTziHJbOmKNC+NsbS4vAwdNccGXDC7QMT9mYfxDF//sxXSAtT4R9Tcqt6uKlbG11Nl/m0jeJLE+lT/+qcHTCygzTZFMNmJerORpMrCjk61101jP5hZd9rJIb/nn7TgLaOZGEYulHdqgu+PnaSxYGU3mYEgZxv9h8ygyHKSVgL8BxwEUOe4NZoMAAAAASUVORK5CYII=');
 
-		element_class = 'ptChatScripter';
+		element_class += ' ptChatScripter';
 	}
-   	if (m[0].indexOf('My embassy has') >= 0 && Colors.chatAttack)
-     	element_class = 'ptChatAttack';
-    if (m[0].indexOf('My wilderness at') >= 0 && Colors.chatAttack)
-       	element_class = 'ptChatAttack';
+   	if (m[0].indexOf('My embassy has') >= 0 && Options.chatAttack)
+     	element_class = ' ptChatAttack';
+    if (m[0].indexOf('My wilderness at') >= 0 && Options.chatAttack)
+       	element_class = ' ptChatAttack';
        msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
 		msg = msg.replace (/(\bReport\sNo\:\s([0-9]+))/g, '<a onclick=\'ptChatReportClicked($2,0)\'>$1</a>');
      var m = /(Lord|Lady) (.*?)</im.exec(msg);
@@ -3930,7 +3919,7 @@ Tabs.Options = {
     var main = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubU type=submit value="Options"></td>';    
 	main +='<TD><INPUT class=pbSubtab ID=ptmrchSubV type=submit value="Layout"></td></tr></table><HR class=ptThin>';
     main += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToOptions" target="_blank">HELP</a></td></tr>';
-    main +='<DIV id=ptOptOutput style="margin-top:10px; background-color:white; height:680px; overflow:scroll;"></div>';
+    main +='<DIV id=ptOptOutput style="margin-top:10px; background-color:white; height:680px; overflow:auto;"></div>';
 	
     t.cont.innerHTML = main;
     t.Overv = document.getElementById('ptOptOutput');
@@ -4053,7 +4042,8 @@ Tabs.Options = {
       m= '<TABLE class=ptTab>';
 	  m+='<TR><TD colspan=2><U><B>Chat Layout:</b></u></td></tr>';
 	  m+='<TR><TD><INPUT id=togChatStuff type=checkbox /></td><TD>Enable Chat Enable Chat enhancements (clickable coords, click on icon to whisper, colors).</td></tr>';
-      m+='<TR><TD><INPUT id=togChatGlobal type=checkbox /></td><TD>Enable Global background color.</td></tr>';
+      m+='<TR><TD><INPUT id=togChatGlobal type=checkbox /></td><TD>Enable Global chat background color.</td></tr>';
+      m+='<TR><TD><INPUT id=togChatAlliance type=checkbox /></td><TD>Enable Alliance chat background color.</td></tr>';
 	  m+='<TR><TD><INPUT id=togChatWhisper type=checkbox /></td><TD>Enable Whisper in Color Font.</td></tr>';
 	  m+='<TR><TD><INPUT id=togChatBold type=checkbox /></td><TD>Enable Chat in Bold Font.</td></tr>';
 	  m+='<TR><TD><INPUT id=togChatAttack type=checkbox /></td><TD>Enable background color on tower alert.</td></tr>';
@@ -4088,6 +4078,7 @@ Tabs.Options = {
             
       t.togOpt ('togChatStuff', 'chatEnhance', ChatStuff.setEnable, ChatStuff.isAvailable);
       t.togOpt ('togChatGlobal', 'chatglobal');
+      t.togOpt ('togChatAlliance', 'chatalliance');
       t.togOpt ('togChatWhisper', 'chatwhisper');	
       t.togOpt ('togChatBold', 'chatbold');
       t.togOpt ('togChatAttack', 'chatAttack');
