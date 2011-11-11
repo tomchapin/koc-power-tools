@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20111109a
+// @version        20111110a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20111109a';
+var Version = '20111110a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -90,6 +90,7 @@ var Options = {
   arTarget:'Them',
   arPageFrom:1,
   arPageTo:5,
+  TournoiLigne:25,
 };
 
 var Colors ={
@@ -1197,30 +1198,121 @@ var Rpt = {
 
 /********************** Tournament Tab *******************************************/
 
+// useless :( ......
+/***/
+
+/***
+RSLT:
+  (string) s0Kid = 57526
+  (string) s1Kid = 35216
+  (string) s1KLv = 1
+  (number) s0KCombatLv = 0
+  (string) s1KCombatLv = Higher
+  (object) fght = [object Object]
+    (object) s1 = [object Object]
+      (array) u2 = 89000,89000
+        (string) 0 = 89000
+        (number) 1 = 89000
+
+      (array) u9 = 1000,1000
+        (string) 0 = 1000
+        (number) 1 = 1000
+
+
+  (number) rnds = 3
+  (number) winner = 1
+  (number) wall = 100
+  (number) s0atkBoost = 0
+  (number) s0defBoost = 0
+  (number) s1atkBoost = 0
+  (number) s1defBoost = 0.2
+  (boolean) conquered = false
+  (array) loot = 111139,763000,643000,78000,138000
+    (number) 0 = 111139
+    (number) 1 = 763000
+    (number) 2 = 643000
+    (number) 3 = 78000
+    (number) 4 = 138000
+
+  (string) errorMsg = Something has gone wrong! Please try again, or refresh if this message reappear
+***/
+
 Tabs.Tournament = {
-tabOrder : 100,
- cont:null,
- displayTimer : null,
+  tabOrder : 100,
+  cont:null,
+  displayTimer : null,
  
 init : function (div){
-var t = Tabs.Tournament;
-t.cont = div;
+	var t = Tabs.Tournament;
+	t.cont = div;
 },
 
- hide : function (){
-  var t = Tabs.Tournament;
+hide : function (){
+	var t = Tabs.Tournament;
+	clearTimeout (t.displayTimer);
+},
+getContent : function (){
+	var t = Tabs.Tournament;
+	return t.cont;
+},
+show : function () {
+	var t = Tabs.Tournament;
+	t.cont.style.overflowY = 'auto';
+	t.cont.style.maxHeight = '650px';
   clearTimeout (t.displayTimer);
- },
- getContent : function (){
-	    var t = Tabs.Tournament;
-	    return t.cont;
- },
- show : function () {
-  var t = Tabs.Tournament;
+  t.cont.innerHTML = "<div class='tourny_modal_upsell'></div>";
+  var mhtl = "<DIV class=pbStat>POPULATION AND PRODUCTION INFORMATION</div><table width=100% class=pdxTab><tr><td colspan=8>&nbsp;</td></tr><tr><td></td>";
+  for(var i=0; i<Cities.numCities; i++) {
+   mhtl += "<TD align=center valign=bottom width=60px><B>" + Cities.cities[i].name + "</B></TD>";
+  }
+  mhtl += "</tr><tr><td><img height=18 src=http://koc-power-pdx.googlecode.com/svn/trunk/img/troops/unit_2_50_s34.jpg title=Militiaman> Militiaman/h</td>";
+  var temps=[];
+  for(var i=0; i<Cities.numCities; i++) {
+   temps[i]=((Cities.cities[i]['Troop2Time'] > 0)?(3600 / Cities.cities[i]['Troop2Time']):0);
+   mhtl += "<td>" + addCommas(parseInt(temps[i])) +"</td>";
+  }
+    mhtl += "</tr><tr><td><img height=18 src=https://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/population_40.png title=Population> Population/h</td>";
+	var pop=[];
+  for(var i=0; i<Cities.numCities; i++) {
+   cityID = 'city'+ Cities.cities[i].id;
+   pop[i] =  parseInt(Seed.citystats[cityID]["pop"][1]) / 2;
+   mhtl += "<td>" + addCommas(parseInt(pop[i])) +"</td>";
+  }
+  mhtl += "</tr><tr><td><b>Difference</b></td>";
+  var diff=0;
+  for(var i=0; i<Cities.numCities; i++) {
+   diff = parseInt(pop[i] - temps[i]);
+   var couleur=" style='font-color:green' ";
+   if (diff<0) couleur=" style='background-color:red' ";
+   mhtl += "<td "+couleur+"><b>" + addCommas(parseInt(diff)) +"</b></td>";
+  }
   
-  clearTimeout (t.displayTimer);
-  t.cont.innerHTML = "<div class='tourny_modal_upsell' align=center >Checking ....</div>";
-  
+   mhtl += "</tr><tr><td><img height=18 src=https://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/happiness.png title=happiness> happiness</td>";
+   for(var i=0; i<Cities.numCities; i++) {
+   cityID = 'city'+ Cities.cities[i].id;
+   var bon = parseInt(Seed.citystats[cityID]["pop"][2]); 
+   var bonc = "red";
+   if (bon>99) bonc="green";
+   mhtl += "<td style='background-color:"+bonc+"'><center><b>"+bon+"</td>";
+  }
+  var now = unixTime();
+  mhtl += "</tr><tr><td><b>Queue</b></td>";
+    for(var i=0; i<Cities.numCities; i++) {
+     cityID = 'city'+ Cities.cities[i].id;
+     var totTime = 0;
+     var q = Seed.queue_unt[cityID]; 
+     if (q!=null && q.length>0)
+         totTime = q[q.length-1][3] - now;
+     if (totTime < 0) totTime = 0;
+     if (totTime < 3600)
+      var bonc="style='background-color:red'";
+     else
+      var bonc="";
+     mhtl += "<td "+bonc+"><center><b>"+timestr(totTime)+"</td>";
+    }
+    
+  mhtl += "</tr></table><br>";
+  t.cont.innerHTML += mhtl;
   var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
   params.format=2;
   params.tournyPos=0;
@@ -1232,27 +1324,53 @@ t.cont = div;
    
     if(!rslt.data){
 	   
-	t.cont.innerHTML ="<div class='tourny_modal_upsell'><center>"+unsafeWindow.g_js_strings.modal_tourny_changetab.notourny+"<center></div>";
+	t.cont.innerHTML +="<div class=pbStat>TOURNAMENT CHECK</div><div class='tourny_modal_upsell'><br><center><b>"+unsafeWindow.g_js_strings.modal_tourny_changetab.notourny+"</b></center></div>";
 	  
 	  
-    }else{ // fin rslt.data
+    }else{ //  rslt.data
      var tournyhtml=new Array();
      
      if(rslt.name){
-	    tournyhtml.push("<div><center><b><u>"+rslt.name.replace('The Tournament of Might!')+"</u></b></center></div>")
+	    tournyhtml.push("<div class=pbStat><center>"+rslt.name.replace('The Tournament of Might','THE TOURNAMENT OF MIGHT')+"</center></div>")
      }  else{
-	    tournyhtml.push("<div class='tournymodaltitle'><center>"+unsafeWindow.g_js_strings.commonstr.tournament+"<center></div>")
+	    tournyhtml.push("<div class='tournymodaltitle'><center>"+unsafeWindow.g_js_strings.commonstr.tournament+"</div>")
      }
 	   tournyhtml.push("<div>");
-	   tournyhtml.push("<table class='tourny_list_table' cellpadding='0' cellspacing='0' border='0' align=center>");
+	   
+	   
+	   
+	   if(rslt.startdate&&rslt.enddate){
+	   	   	    var startTime=rslt.startdate;
+	   	   	    var endTime=rslt.enddate;
+	   	   	    var now=parseInt(new Date().getTime()/1000);
+	   	   	    tournyhtml.push("<table width=100% align=center class=pbTab><tr bgcolor=#FE8888><td width=40%><b>Starts</td><td width=40%><b>Ends</td><td width=20%><b>Ends</td></tr>");
+	   	   	    dt = new Date ();
+	   	            dt.setTime (startTime * 1000);
+	   	            dtf = new Date ();
+	   	            dtf.setTime (endTime * 1000);
+	   	           
+	   	            var restant = endTime - now; 
+	   	            
+	   	   	   
+	   	   	   tournyhtml.push("<tr><td>");
+	   	   	     tournyhtml.push("" + dt.toLocaleDateString() + " - "+ dt.toLocaleTimeString());
+	   	   	    tournyhtml.push("</td><td>");
+	   	   	    tournyhtml.push("" + dtf.toLocaleDateString()+ " - "+ dtf.toLocaleTimeString());
+	   	   	    tournyhtml.push("</td><td>"+timestr(restant,1)+"</td></tr></table>");
+	   	     tournyhtml.push("<br>");
+	   
+	   }
+	   
+	
+	   tournyhtml.push("<center><table class='tourny_list_table' cellpadding='0' cellspacing='0' border='0' width=90% style='margin:5px'>");
 	   tournyhtml.push("<thead>");
 	   tournyhtml.push("<tr>");
      if(rslt.type==24){
 	    tournyhtml.push("<td class='rankcol' style='background-color:red'>");
-	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.ranking+"</div>");
+	    tournyhtml.push("<div><input type=button id='BOTournoiPM' value='-'>&nbsp;"+unsafeWindow.g_js_strings.commonstr.ranking+"</div>");
 	    tournyhtml.push("</td>");
 	    tournyhtml.push("<td  style='background-color:red'>");
-	    tournyhtml.push("<div>unsafeWindow.g_js_strings.modal_tourny_changetab.chancellorname</div>");
+	    tournyhtml.push("<div>Chancellor</div>");
 	    tournyhtml.push("</td>");
 	    tournyhtml.push("<td  style='background-color:red'>");
 	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.alliance+"</div>");
@@ -1265,13 +1383,13 @@ t.cont = div;
 	    tournyhtml.push("</td>")
       }else{
             tournyhtml.push("<td	class='rankcol' style='background-color:red'>");
-	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.ranking+"</div>");
+	    tournyhtml.push("<div><input type=button id='BOTournoiPM' value='-'>&nbsp;"+unsafeWindow.g_js_strings.commonstr.ranking+"</div>");
 	    tournyhtml.push("</td>");
 	    tournyhtml.push("<td  style='background-color:red'>");
-	    tournyhtml.push("<div>Name</div>");
+	    tournyhtml.push("<div>Player</div>");
 	    tournyhtml.push("</td>");
 	    tournyhtml.push("<td  style='background-color:red'>");
-	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.alliance.replace('Might Change')+"</div>");
+	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.alliance+"</div>");
 	    tournyhtml.push("</td>");
 	    tournyhtml.push("<td  style='background-color:red'>");
 	    tournyhtml.push("<div>"+rslt.contestcategory+"</div>");
@@ -1287,12 +1405,19 @@ t.cont = div;
 	   var votrepuissance = 0;
 	   for(var i=0;i<rslt.data.length;i++){
 	    var row=rslt.data[i];
-	    if (Seed.player.prefix + ' '+ Seed.player.name == row.name ) {
+	    if(rslt.type==24){ // Tournament
+	     if (getMyAlliance()[1] == row.alliance) {
 	      votrepuissance=row.contestValue;
 	      break;
-	    }	    
+	     }
+	    } else {
+	     if (Seed.player.prefix + ' '+ Seed.player.name == row.name ) {
+	      votrepuissance=row.contestValue;
+	      break;
+	     }	
+	    }
 	   }
-	   for(var i=0;i<25;i++){
+	   for(var i=0;i< Options.TournoiLigne;i++){
 	    var row=rslt.data[i];
 	    var rewardString=row.itemCount+" ";
 	    if(row.itemType==0){
@@ -1300,25 +1425,31 @@ t.cont = div;
 	    }else{
 	     rewardString+=unsafeWindow.itemlist["i"+row.itemType].name;
 	    }
-	    var color="";
-	    if (Seed.player.prefix + ' '+ Seed.player.name == row.name ) {
-	     color=" style='background-color:#77FF77' ";
+	    var couleur="";
+	    if(rslt.type==24){ //Alliance Tournament
+	     if (getMyAlliance()[1] == row.alliance) {
+	      couleur=" style='background-color:#FF0000' ";
+	     }
+	    }else{
+	     if (Seed.player.prefix + ' '+ Seed.player.name == row.name ) {
+	      couleur=" style='background-color:#FF0000' ";
+	     }
 	    }
 	    if(i%2==1){
 	     tournyhtml.push("<tr>")
 	    }else{
 	     tournyhtml.push("<tr class='stripe'>")
 	    }
-	    tournyhtml.push("<td class='rankcol' "+color+">");
+	    tournyhtml.push("<td class='rankcol' "+couleur+">");
 	    tournyhtml.push("<div><b>"+row.ranking+"</b></div>");
 	    tournyhtml.push("</td>");
-	    tournyhtml.push("<td "+color+">");
+	    tournyhtml.push("<td "+couleur+">");
 	    tournyhtml.push("<div>"+row.name+"</div>");
 	    tournyhtml.push("</td>");
-	    tournyhtml.push("<td "+color+">");
+	    tournyhtml.push("<td "+couleur+">");
 	    tournyhtml.push("<div>"+(row.alliance||"----")+"</div>");
 	    tournyhtml.push("</td>");
-	    tournyhtml.push("<td "+color+">");
+	    tournyhtml.push("<td "+couleur+">");
 	    tournyhtml.push("<div>"+addCommas(row.contestValue));
 	    if (votrepuissance>0) {
 	      var ecartavecvous = parseInt(row.contestValue - votrepuissance);
@@ -1331,15 +1462,17 @@ t.cont = div;
 	    }
 	    tournyhtml.push("</div>");
 	    tournyhtml.push("</td>");
-	    tournyhtml.push("<td "+color+">");
+	    tournyhtml.push("<td "+couleur+">");
 	    tournyhtml.push("<div>"+rewardString+"</div>");
 	    tournyhtml.push("</td>");
 	    tournyhtml.push("</tr>")
 	   } // fin du for
 	
-	   
-	    for(var i=25;i<rslt.data.length;i++){
+	      if(rslt.type!=24){
+
+	    for(var i= Options.TournoiLigne;i<rslt.data.length;i++){
 	   	    var row=rslt.data[i];
+	   	 
 	   	    if (Seed.player.prefix + ' '+ Seed.player.name == row.name ) {
 	   	      var rewardString=row.itemCount+" ";
 	   	     	    if(row.itemType==0){
@@ -1348,77 +1481,90 @@ t.cont = div;
 	   	     	     rewardString+=unsafeWindow.itemlist["i"+row.itemType].name;
 	   	     	    }
 	   	     	    tournyhtml.push("<tr class='stripe' >")
-	   	     	    tournyhtml.push("<td class='rankcol' style='background-color:#77FF77'>");
+	   	     	    tournyhtml.push("<td class='rankcol' style='background-color:#FF0000'>");
 	   	     	    tournyhtml.push("<div><b>"+row.ranking+"</b></div>");
 	   	     	    tournyhtml.push("</td>");
-	   	     	    tournyhtml.push("<td style='background-color:#77FF77'>");
+	   	     	    tournyhtml.push("<td style='background-color:#FF0000'>");
 	   	     	    tournyhtml.push("<div>"+row.name+"</div>");
 	   	     	    tournyhtml.push("</td>");
-	   	     	    tournyhtml.push("<td style='background-color:#77FF77'>");
+	   	     	    tournyhtml.push("<td style='background-color:#FF0000'>");
 	   	     	    tournyhtml.push("<div>"+(row.alliance||"----")+"</div>");
 	   	     	    tournyhtml.push("</td>");
-	   	     	    tournyhtml.push("<td style='background-color:#77FF77'>");
+	   	     	    tournyhtml.push("<td style='background-color:#FF0000'>");
 	   	     	    tournyhtml.push("<div>"+addCommas(row.contestValue)+"</div>");
 	   	     	    tournyhtml.push("</td>");
-	   	     	    tournyhtml.push("<td style='background-color:#77FF77'>");
+	   	     	    tournyhtml.push("<td style='background-color:#FF0000'>");
 	   	     	    tournyhtml	.push("<div>"+rewardString+"</div>");
 	   	     	    tournyhtml.push("</td>");
 	   	            tournyhtml.push("</tr>")
-	   	       }    
+	   	   }    
 	   }
-	      tournyhtml.push("</tbody>");
-	   	   tournyhtml.push("</table>");
-	   	   tournyhtml.push("</div>");
-	   	   if(rslt.startdate&&rslt.enddate){
-	   	    var startTime=rslt.startdate;
-	   	    var endTime=rslt.enddate;
-	   	    var now=parseInt(new Date().getTime()/1000);
-	   	    /*tournyhtml.push("<div class='timebar'>");
-	   	    tournyhtml.push("<div class='elapsedtime' style='width:");
-	   	    if(endTime<=now){
-	   	     tournyhtml.push("500px;'")
-	   	    }else{
-	   	     var perc=parseInt(((now-startTime)/(endTime-startTime))*100)*5;
-	   	     tournyhtml.push(perc+"px;'")
-	   	    }
-	   	    tournyhtml.push(">");
-	   	    tournyhtml.push("</div>");
-	   	    tournyhtml.push("</div>");*/
-	   	    tournyhtml.push("<br>");
-	   	    tournyhtml.push("<div class='startdate'>");
-	   	    dt = new Date ();
-	               dt.setTime (startTime * 1000);
-	               dtf = new Date ();
-	               dtf.setTime (endTime * 1000);
-	               // "+new Date(startTime*1000).toGMTString())+ " ->> "
-	               // "+new Date(endTime*1000).toGMTString())+ " ->> 
-	   	    tournyhtml.push("Starts: " + dt.toLocaleDateString() + " &@; "+ dt.toLocaleTimeString());
-	   	    tournyhtml.push("</div>");
-	   	    tournyhtml.push("<div	class='enddate'>");
-	   	    tournyhtml.push("Ends: " + dtf.toLocaleDateString()+ " &@; "+ dtf.toLocaleTimeString());
-	   	    tournyhtml.push("</div></div>");
-	   } // fin  startdate
-           t.cont.innerHTML = tournyhtml.join("");
+	   }
+	   tournyhtml.push("</tbody>");
+	   tournyhtml.push("</table>");
+      tournyhtml.push("</div>");
+      t.cont.innerHTML += tournyhtml.join("");      
+           document.getElementById('BOTournoiPM').addEventListener ('click', function() { 
+            var lg=rslt.data.length;
+            if (rslt.type!=24) lg=25;
+            t.plusmoins(lg);
+           }, false);      
            
-           
-           
-          } // fin rslt.data
-          
-         } //rslt.ok
-         else {
-            t.cont.innerHTML = "<div class='tourny_modal_upsell'><center>No Tournament<center></div>";
+        if ((Options.TournoiLigne==5 && rslt.type!=24) || (Options.TournoiLigne==5 && rslt.type==24)) {
+	        document.getElementById('BOTournoiPM').value="Maximize";
+	    } else {
+	        document.getElementById('BOTournoiPM').value="Minimize";           
+        }
+          } // fin rslt.data 
+         } else {
+            t.cont.innerHTML = "<div class='tourny_modal_upsell'><center>No Info</div>";
          }
-        
-       },
-       onFailure:function()  {
-         t.cont.innerHTML = "<div class='tourny_modal_upsell'><center>No Info<center></div>";
+       }, onFailure:function()  {
+         t.cont.innerHTML = "<div class='tourny_modal_upsell'><center>No Info</div>";
        }
-       });
-       
-       
-      t.displayTimer = setTimeout (t.show, 60000); 
-       
-  }
+   });
+   t.displayTimer = setTimeout (t.show, 240000);       
+  },
+  plusmoins: function(lg) {
+   var t = Tabs.Tournament;
+   if (document.getElementById('BOTournoiPM').value=="Maximize") {
+     document.getElementById('BOTournoiPM').value="Minimize";
+     Options.TournoiLigne = lg;
+   } else {
+     document.getElementById('BOTournoiPM').value="Maximize";
+     Options.TournoiLigne = 5;
+   }
+   saveOptions();
+   clearTimeout (t.displayTimer);
+   t.show();
+  },  
+
+/*
+checktourney: function() {
+ var t = Tabs.Tournament;
+  var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+params.format=2;
+params.tournyPos=0;
+new AjaxRequest(unsafeWindow.g_ajaxpath+"ajax/getLeaderboard.php"+unsafeWindow.g_ajaxsuffix, {  
+  method:"post",  parameters:params,
+	  
+onSuccess:function(transport){
+var rslt=eval("("+transport.responseText+")");
+if(rslt.name){
+ var t = Tabs.Tournament;
+   AddTowerTab('Turnier', t.showTournament, 10);
+};		  
+},
+   });	  
+},
+showTournament: function() {
+//      Options.currentTab = culang.tournament;   
+//        saveOptions();
+mainPop.show (true);
+//		setTimeout(function(){document.getElementById('pbtc'+culang.tournament).e_clickedTab}, 3000);
+//  tabManager.e_clickedTab(e);
+},
+*/
 }
 
 /*************** WILDS TAB *********************/
@@ -3962,7 +4108,7 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=ptEnableFoodTower type=checkbox /></td><TD>Enable Tower food alert. (Warning set to 6 hours, checked every 30min.)</td></tr>';
 	  m+='<TR><TD><INPUT id=ptEnableWisperAlert type=checkbox /></td><TD>Enable sound alert on whisper</td></tr>';
 	  m+='<TR><TD><INPUT id=ptEnableTowerAlert type=checkbox /></td><TD>Enable sound alert on tower alert in chat</td></tr>';
-      m+='<TR><TD><INPUT id=ptupdate type=checkbox '+ (GlobalOptions.ptupdate?'CHECKED ':'') +'/></td><TD>Check updates on '+ htmlSelector({0:'Userscripts', 1:'Google Code'},GlobalOptions.ptupdatebeta,'id=ptupdatebeta') +' (all domains)</td></tr>';
+      m+='<TR><TD><INPUT id=ptupdate type=checkbox '+ (GlobalOptions.ptupdate?'CHECKED ':'') +'/></td><TD>Check updates on '+ htmlSelector({0:'Userscripts', 1:'Google Code'},GlobalOptions.ptupdatebeta,'id=ptupdatebeta') +' (all domains) &nbsp; &nbsp; <INPUT id=ptupdatenow type=submit value="Update Now" /></td></tr>';
 	  m+='<TR><TD colspan=2><B>KofC Features:</b></td></tr>';
 	  m+='<TR><TD><INPUT id=togAllRpts type=checkbox /></td><TD>Enable enhanced Alliance Reports.</td></tr>';
 	  m+='<TR><TD><INPUT id=togAllowAlter type=checkbox /></td><TD>Allow other scripts to change format of Alliance Reports.</td></tr>';
@@ -4007,8 +4153,11 @@ Tabs.Options = {
       document.getElementById('ptupdate').addEventListener ('change', t.e_updateChanged, false);
 	  
 	  document.getElementById('ptupdatebeta').addEventListener ('change', function(){
-      		GlobalOptions.ptupdatebeta = document.getElementById('ptupdatebeta').checked;
+      		GlobalOptions.ptupdatebeta = document.getElementById('ptupdatebeta').value;
 			GM_setValue ('Options_??', JSON2.stringify(GlobalOptions));
+      },false);	
+	  document.getElementById('ptupdatenow').addEventListener ('click', function(){
+			AutoUpdater_103659.call(true,true);
       },false);	
                   
       document.getElementById('optFoodHours').addEventListener ('change', function () {
@@ -9028,10 +9177,108 @@ function setCities(){
     city.y = parseInt(Seed.cities[i][3]);
     city.tileId = parseInt(Seed.cities[i][5]);
     city.provId = parseInt(Seed.cities[i][4]);
+	getTroopDefTrainEstimates('city'+ city.id, city);
     Cities.cities[i] = city;
     Cities.byID[Seed.cities[i][0]] = city;
   }
 }
+
+function getTroopDefTrainEstimates (cityID, city){
+	var b = Seed.buildings[cityID];
+	city.numBarracks = 0;
+	city.maxBarracks = 0;
+	city.totLevelsBarracks = 0;
+	city.blacksmithLevel = 0;
+	city.stableLevel = 0;
+	city.workshopLevel = 0;
+	city.wallLevel = 0;
+	for (var j=1; j<33; j++){
+		if (b['pos'+j]) {
+			var bname = parseInt(b['pos'+j][0]);
+			var blvl = parseInt(b['pos'+j][1]);
+			switch(bname){
+				case 13:
+					city.numBarracks++;
+					city.totLevelsBarracks += parseInt(blvl);
+					if (blvl>city.maxBarracks) city.maxBarracks=blvl;
+					break;
+				case 15:
+					city.blacksmithLevel = blvl;
+					break;
+				case 16:
+					city.workshopLevel = blvl;
+					break;
+				case 17:
+					city.stableLevel = blvl;
+					break;
+				case 19:
+					city.wallLevel = blvl;
+					break;
+			}
+		}
+	}
+
+	var now = unixTime();
+	city.marshallCombatScore = 0;
+	var s = Seed.knights[cityID];
+	if (s) {
+		s = s["knt" + Seed.leaders[cityID].combatKnightId];
+		if (s){
+			city.marshallCombatScore = s.combat;
+			if (s.combatBoostExpireUnixtime > now)
+				city.marshallCombatScore *= 1.25;
+		}
+	}
+	city.foremanBasePoliticsScore = 0;
+	var s = Seed.knights[cityID];
+	if (s) {
+		s = s["knt" + Seed.leaders[cityID].politicsKnightId];
+		if (s)
+			city.foremanBasePoliticsScore = s.basePolitics;
+	}
+
+	city.loggingLevel = parseInt(Seed.tech["tch2"]);
+	city.geometryLevel = parseInt(Seed.tech["tch5"]);
+	city.eagleEyesLevel = parseInt(Seed.tech["tch6"]);
+	city.poisonedEdgeLevel = parseInt(Seed.tech["tch8"]);
+	city.metalAlloysLevel = parseInt(Seed.tech["tch9"]);
+	city.featherweightPowderLevel = parseInt(Seed.tech["tch10"]);
+	city.alloyHorseshoesLevel = parseInt(Seed.tech["tch12"]);
+	city.fletchingLevel = parseInt(Seed.tech["tch13"]);
+	city.giantsStrengthLevel = parseInt(Seed.tech["tch16"]);
+
+	var bm = city.numBarracks + 0.1 * (city.totLevelsBarracks - city.numBarracks);
+	var mf = city.marshallCombatScore / 200;
+	var gf = city.geometryLevel / 10;
+	var sf = city.stableLevel / 10;
+	var wf = city.workshopLevel / 10;
+	var isf = bm * (1 + mf + gf);
+	var csf = bm * (1 + mf + gf + sf);
+	var ssf = bm * (1 + mf + gf + sf + wf);
+	var pf = city.foremanBasePoliticsScore / 200;
+	var gsf = city.giantsStrengthLevel / 10;
+	var dsf = 1 + pf + gsf;
+
+	
+	city.Troop1Time = ((city.maxBarracks > 0)?(50/isf):0);
+	city.Troop2Time = city.Troop1Time/2;
+	city.Troop3Time = ((city.maxBarracks > 1 && city.eagleEyesLevel > 0)?(100/isf):0);
+	city.Troop4Time = ((city.maxBarracks > 1 && city.poisonedEdgeLevel > 0)?(150/isf):0);
+	city.Troop5Time = ((city.maxBarracks > 2 && city.blacksmithLevel > 0 && city.metalAlloysLevel > 0)?(225/isf):0);
+	city.Troop6Time = ((city.maxBarracks > 3 && city.fletchingLevel > 0)?(350/isf):0);
+	city.Troop7Time = ((city.maxBarracks > 4 && city.stableLevel > 0 && city.alloyHorseshoesLevel > 0)?(500/csf):0);
+	city.Troop8Time = ((city.maxBarracks > 6 && city.blacksmithLevel > 4 && city.stableLevel > 4 && city.alloyHorseshoesLevel > 4)?(1500/csf):0);
+	city.Troop9Time = ((city.maxBarracks > 5 && city.stableLevel > 0 && city.workshopLevel > 2 && city.featherweightPowderLevel > 0)?(1000/ssf):0);
+	city.Troop10Time = ((city.maxBarracks > 7 && city.stableLevel > 1 && city.workshopLevel > 4 && city.geometryLevel > 4 && city.fletchingLevel > 5)?(3000/ssf):0);
+	city.Troop11Time = ((city.maxBarracks > 8 && city.blacksmithLevel > 4 && city.stableLevel > 2 && city.workshopLevel > 6 && city.metalAlloysLevel > 7 && city.geometryLevel > 6)?(4500/ssf):0);
+	city.Troop12Time = ((city.maxBarracks > 9 && city.stableLevel > 1 && city.workshopLevel > 8 && city.geometryLevel > 9 && city.fletchingLevel > 9)?(6000/ssf):0);
+	city.Def53Time = ((city.wallLevel > 5 && city.blacksmithLevel > 5 && city.fletchingLevel > 4)?(180/dsf):0);
+	city.Def55Time = ((city.wallLevel > 7 && city.blacksmithLevel > 7 && city.fletchingLevel > 6 && city.geometryLevel > 6)?(135/dsf):0);
+	city.Def60Time = ((city.wallLevel > 3 && city.blacksmithLevel > 3 && city.poisonedEdgeLevel > 1)?(90/dsf):0);
+	city.Def61Time = ((city.wallLevel > 0 && city.metalAlloysLevel > 0)?(30/dsf):0);
+	city.Def62Time = ((city.wallLevel > 1 && city.blacksmithLevel > 1 && city.loggingLevel > 1)?(60/dsf):0);
+}
+
 
 function officerId2String (oid){
   if (oid==null)
