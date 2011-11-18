@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20111110a
+// @version        20111117a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20111110a';
+var Version = '20111117a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -580,7 +580,7 @@ var ChatStuff = {
     var t = ChatStuff;
 	if(getMyAlliance()[0] > 0)
 		t.getAllianceLeaders();
-    t.chatDivContentFunc = new CalterUwFunc ('Chat.chatDivContent', [['return e.join("");', 'var msg = e.join("");\n msg=chatDivContent_hook(msg);\n return msg;']]);
+    t.chatDivContentFunc = new CalterUwFunc ('Chat.chatDivContent', [['return f.join("");', 'var msg = f.join("");\n msg=chatDivContent_hook(msg);\n return msg;']]);
     uW.chatDivContent_hook = t.chatDivContentHook;
     uW.ptChatIconClicked = t.e_iconClicked;
     uW.ptChatReportClicked = Rpt.FindReport;
@@ -612,14 +612,14 @@ var ChatStuff = {
 
  chatDivContentHook : function (msg){
        var t = ChatStuff; 
-       var element_class = 'content ';
+       var element_class = '';
        var m = /div class='info'>.*<\/div>/im.exec(msg);
        if (m == null)
          return msg;
        var whisp = m[0];
        
        
-    if (m[0].indexOf('whispers to you') >= 0) {
+    if (m[0].indexOf('whispers to') >= 0) {
 		if (Options.chatwhisper) {
 			element_class += ' ptChatWhisper ';
 		}
@@ -656,7 +656,7 @@ msg = msg.replace (/\bhttps\:\/\/[-a-z].*jpg/i, 'data:image/png;base64,iVBORw0KG
      if (m != null)
        m[2] = m[2].replace(/\'/g,"Â°Â°");
        msg = msg.replace (/<img (.*?>)/img, '<A onclick=\"ptChatIconClicked(\''+ m[2] +'\')\"><img class=\"ptChatIcon\" $1</a>');
-     if (whisp.indexOf('whispers to you') >= 0 && Options.enableWhisperAlert) {
+     if (whisp.indexOf('whispers to') >= 0 && Options.enableWhisperAlert) {
      	if (whisp.indexOf('says to the alliance') < 0) msg +='<span id="dummy"><iframe src="http://koc.god-like.info/doorbell.html" height="0" width="0"></iframe></span>';
      } 
      if (whisp.indexOf('My embassy has') >= 0 && Options.enableTowerAlert) {
@@ -4206,8 +4206,6 @@ Tabs.Options = {
       m+='<TR><TD>Chat Color - Chancy: </td><TD><INPUT id=togChatC type=text size=7 maxlength=7 value="'+Colors.ChatChancy+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatChancy+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>Chat Color - Vice-C: </td><TD><INPUT id=togChatVC type=text size=7 maxlength=7 value="'+Colors.ChatVC+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatVC+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>Chat Color - Officers: </td><TD><INPUT id=togChatLeaders type=text size=7 maxlength=7 value="'+Colors.ChatLeaders+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatLeaders+'" width=30px>&nbsp;</td></tr>';
-
-      m+='<TR><TD>Chat Color - Leaders: </td><TD><INPUT id=togChatLeaders type=text size=7 maxlength=7 value="'+Colors.ChatLeaders+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatLeaders+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>General - Title: </td><TD><INPUT id=togChatMainTiltle type=text size=7 maxlength=7 value="'+Colors.MainTitle+'"></td>&nbsp;<TD style="background-color:'+Colors.MainTitle+'" width=30px>&nbsp;</td></tr>';
 	  
 	  
@@ -6329,7 +6327,7 @@ Tabs.OverView = {
 	        cost = uW.unitcost['unt'+ui];     //  NAME, Food, Wood, Stone, Ore, ?, IdlePop, Time
 	        stats = uW.unitstats['unt'+ui];   //  Life, Attack, Defense, Speed, Range, Load
 	        food = uW.unitupkeeps[ui];
-	        might = uW.unitmight['u'+ui];
+	        might = uW.unitmight['unt'+ui];
 	        u += '<TR '+ rsty +'align=right><TD class=xtab align=left><B>'+ cost[0].substr(0,16) +'</b></td><TD class=xtabL>'+ cost[1] +'</td><TD class=xtab>'+ cost[2] +'</td>\
 	            <TD class=xtab>'+ cost[3] +'</td><TD class=xtab>'+ cost[4] +'</td><TD class=xtab>'+ cost[6] +'</td><TD class=xtabL>'+ might +'</td>\
 	            <TD class=xtab>'+ stats[0] +'</td><TD class=xtab>'+ stats[1] +'</td><TD class=xtab>'+ stats[2] +'</td><TD class=xtab>'+ stats[3] +'</td>\
