@@ -376,10 +376,6 @@ var battleReports = {
     var t = battleReports; 
     return t.getReportDisplayFunc.isAvailable();
   },
-  isDeleteAvailable : function (){
-    var t = battleReports; 
-    return t.renderButtonsFunc.isAvailable();
-  },
   
   e_deleteReport : function (rptid){
     var t = battleReports; 
@@ -4130,7 +4126,7 @@ Tabs.Options = {
       t.togOpt ('togEnhanceMsging', 'enhanceMsging', messageNav.setEnable, messageNav.isAvailable);
       t.togOpt ('togCoordBox', 'mapCoordsTop', CoordBox.setEnable, CoordBox.isAvailable);
       t.togOpt ('togBatRounds', 'dispBattleRounds', null, battleReports.isRoundsAvailable);
-      t.togOpt ('togAtkDelete', 'reportDeleteButton', null, battleReports.isDeleteAvailable);
+      t.togOpt ('togAtkDelete', 'reportDeleteButton', null, battleReports.isRoundsAvailable);
       document.getElementById('ptupdate').addEventListener ('change', t.e_updateChanged, false);
 	  
 	  document.getElementById('ptupdatebeta').addEventListener ('change', function(){
