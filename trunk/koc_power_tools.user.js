@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20111117a
+// @version        20111117b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20111117a';
+var Version = '20111117b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -52,6 +52,7 @@ var Options = {
   fixMsgCount  : true,
   fixWarnZero  : true,
   fixPageNav   : true,
+  enhanceViewMembers : true,
   enhanceARpts : true,
   allowAlterAR : true,
   enhanceMsging : true,
@@ -2242,8 +2243,11 @@ var AllianceReports = {
     t = AllianceReports;
     t.enable (Options.enhanceARpts);
     t.marvFunc = new CalterUwFunc ('modal_alliance_report_view', [['getReportDisplay', 'getReportDisplay_hook2']]);
+    t.memListFunc = new CalterUwFunc ('membersInfo', [['commonstr.might','commonstr.might + "</td><td class=colcities>" + g_js_strings.commonstr.cities + "</td><td class=collast>" + g_js_strings.membersInfo.lastonline'],['memberInfo[key].prestige', 'memberInfo[key].prestige+ "</td>");memhtml.push("<td class=colcities>" + memberInfo[key].cities + "</td>");memhtml.push("<td class=collast>" + memberInfo[key].lastLogin']]);
     uW.getReportDisplay_hook2 = t.getReportDisplayHook;
+    uW.getmembersInfo_hook = t.getMembersInfoHook;
     t.marvFunc.setEnable (true);
+	t.enable_viewmembers(Options.enhanceViewMembers);
   },
    
   getReportDisplayHook : function (a, b){
@@ -2254,6 +2258,11 @@ var AllianceReports = {
       x = 'Error formatting report: '+ e;
     }
     return x;
+  },
+  
+  enable_viewmembers : function (tf){
+    t = AllianceReports;
+    t.memListFunc.setEnable (tf);
   },
   
   enable : function (tf){
@@ -4112,6 +4121,7 @@ Tabs.Options = {
 	  m+='<TR><TD colspan=2><B>KofC Features:</b></td></tr>';
 	  m+='<TR><TD><INPUT id=togAllRpts type=checkbox /></td><TD>Enable enhanced Alliance Reports.</td></tr>';
 	  m+='<TR><TD><INPUT id=togAllowAlter type=checkbox /></td><TD>Allow other scripts to change format of Alliance Reports.</td></tr>';
+	  m+='<TR><TD><INPUT id=togAllMembers type=checkbox /></td><TD>Enable enhanced alliance members view.</td></tr>';
 	  m+='<TR><TD><INPUT id=togEnhanceMsging type=checkbox /></td><TD>Enable enhanced messaging ("forward" and "all officers" buttons).</td></tr>';
 	  m+='<TR><TD><INPUT id=togPageNav type=checkbox /></td><TD>Enhanced page navigation for messages and reports.</td></tr>';
 	  m+='<TR><TD><INPUT id=togWarnZero type=checkbox /></td><TD>Warn if attempting to march to location 0,0.</td></tr>';
@@ -4138,6 +4148,8 @@ Tabs.Options = {
       t.togOpt ('ptHideOnGoto', 'hideOnGoto');
       t.togOpt ('ptAllowWinMove', 'ptWinDrag', mainPop.setEnableDrag);
       t.togOpt ('togAllowAlter', 'allowAlterAR');
+      t.togOpt ('togAllRpts', 'enhanceARpts', AllianceReports.enable);
+      t.togOpt ('togAllMembers', 'enhanceViewMembers', AllianceReports.enable_viewmembers);
       t.togOpt ('togTowerFix', 'fixTower', TowerAlerts.enableFixTarget, TowerAlerts.isFixTargetAvailable);
       t.togOpt ('togTowerFix2', 'fixTower2', TowerAlerts.enableFixFalseReports, TowerAlerts.isFixFalseReportsAvailable);
       t.togOpt ('togMapDistFix', 'fixMapDistance', MapDistanceFix.enable, MapDistanceFix.isAvailable);
@@ -4169,11 +4181,6 @@ Tabs.Options = {
           Options.foodWarnHours = x; 
           saveOptions();
         }, false);
-
-      var checkbox = document.getElementById('togAllRpts');
-       if (Options.enhanceARpts)
-         checkbox.checked = true;
-       checkbox.addEventListener ('change', function() {Options.enhanceARpts=document.getElementById('togAllRpts').checked; saveOptions(); AllianceReports.enable(Options.enhanceARpts);}, false);
       
 	document.getElementById('optAutoTrainMins').addEventListener ('change', function () {
 				AutoTrainOptions.intervalSecs = 60 * document.getElementById('optAutoTrainMins').value;
