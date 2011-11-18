@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20111117b
+// @version        20111118a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20111117b';
+var Version = '20111118a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -358,25 +358,18 @@ setTimeout ( function(){
   
 }
 
-
-
-
 var battleReports = {
   init : function (){
     var t = battleReports; 
-    t.getReportDisplayFunc = new CalterUwFunc ('getReportDisplay', [['return p.join("")', 'var themsg=p.join(""); themsg=getReportDisplay_hook(themsg, arguments[1]); return themsg']]);
+    t.getReportDisplayFunc = new CalterUwFunc ('getReportDisplay', [['return t.join("")', 'var themsg=t.join(""); themsg=getReportDisplay_hook(themsg, arguments[1]); return themsg']]); //Alliance report battle rounds function
     uW.getReportDisplay_hook = t.hook;
     t.getReportDisplayFunc.setEnable (true);
-    t.renderBattleReportFunc = new CalterUwFunc ('MarchReport.prototype.renderBattleReport', [['return d.join("")', 'var themsg=d.join(""); themsg=renderBattleReport_hook(themsg, this.rslt); return themsg']]);
+    t.renderBattleReportFunc = new CalterUwFunc ('Messages.viewMarchReport', [['$("modal_msg_list").innerHTML = cm.MarchReportController.getMarchReport(m, r);','var msg = cm.MarchReportController.getMarchReport(m, r); $("modal_msg_list").innerHTML = renderBattleReport_hook(msg,m,r);']]); //March reports battle rounds function
     uW.renderBattleReport_hook = t.hook2;
     t.renderBattleReportFunc.setEnable (true);
-    t.renderButtonsFunc = new CalterUwFunc ('MarchReport.prototype.generateBackButton', [[/return \"(.*)\"/i, 'var msg="$1"; return battleReports_hook3(msg, this.rptid,this.side,this);']]);
-    uW.battleReports_hook3 = t.generateBackButtonHook;
-    t.renderButtonsFunc.setEnable (true);
     uW.deleteAreport = t.e_deleteReport;
     uW.MoreReport = t.e_MoreReport;
     uW.PostReport = t.e_PostReport;
-//setTimeout (function(){logit('MarchReport.prototype.generateBackButton:\n'+ uW.MarchReport.prototype.generateBackButton.toString(), 3, 1)}, 100);
   },
 
   isRoundsAvailable : function (){
@@ -386,34 +379,6 @@ var battleReports = {
   isDeleteAvailable : function (){
     var t = battleReports; 
     return t.renderButtonsFunc.isAvailable();
-  },
-  
-    
-  generateBackButtonHook : function (msg, rptid, side, test){
-    if (!Options.reportDeleteButton)
-      return msg;
-    //alert(test.toSource());
-    var delBut = msg.replace ('onclick=\'', 'onclick=\'deleteAreport('+ rptid +',false); ');
-    delBut = delBut.replace (/<span>(.*)<\/span>/, '<span>'+ uW.g_js_strings.commonstr.deletetx +'</span>');
-    
-    var MoreBut = msg.replace ('onclick=\'', 'onclick=\'MoreReport('+ rptid+','+side +',false); ');
-    MoreBut = MoreBut.replace (/<span>(.*)<\/span>/, '<span>'+ 'More' +'</span>');
-    
-    var PostBut = msg.replace ('onclick=\'', 'onclick=\'PostReport('+ rptid +',false); ');
-    PostBut = PostBut.replace (/<span>(.*)<\/span>/, '<span>'+ 'Post To Chat' +'</span>');
-
-     var send = delBut + MoreBut + PostBut;
-//logit ('DELBUT: '+ delBut);    
-    return msg + send;
-  },
-  
-  generateMoreButtonHook : function (msg, rptid){
-    //if (!Options.reportDeleteButton)
-    //  return msg;
-    var MoreBut = msg.replace ('onclick=\'', 'onclick=\'MoreReport('+ rptid +',false); ');                 
-    MoreBut = MoreBut.replace (/<span>(.*)<\/span>/, '<span>'+ 'More'+'</span>');
-//logit ('DELBUT: '+ delBut);    
-    return msg + delBut;
   },
   
   e_deleteReport : function (rptid){
@@ -460,11 +425,16 @@ var battleReports = {
     });
   },
   
-  hook2 : function (msg, rslt){
+  hook2 : function (msg, args, rslt){
 	//alert('hook2 '+rslt);
     if (rslt.rnds && Options.dispBattleRounds){
-      msg = msg.replace (/(Attackers.*?<span.*?)<\/div>/im, '$1<BR>Rounds: '+ rslt.rnds +'</div>');
+      msg = msg.replace (/<\/ul>.*\s*<\/div>.*\s*<div class="unitsContainer">/im, '<li><span class=\'label\'>Rounds: </span><span class=\'value\'>'+ rslt.rnds +'</span></li></ul></div><div class="unitsContainer">');
     }
+	if (Options.reportDeleteButton){
+		msg = msg.replace(/Reports<\/span><\/a>/im, 'Reports</span></a><a class=\'button20\' onclick=\'PostReport('+args[0]+',false)\'><span>Post To Chat</span></a>'); //Post to Chat button
+		msg = msg.replace(/Reports<\/span><\/a>/im, 'Reports</span></a><a class=\'button20\' onclick=\'MoreReport('+args[0]+','+args[1]+',false)\'><span>More</span></a>'); //More button
+		msg = msg.replace(/Reports<\/span><\/a>/im, 'Reports</span></a><a class=\'button20\' onclick=\'deleteAreport('+args[0]+',false)\'><span>'+uW.g_js_strings.commonstr.deletetx+'</span></a>'); //Delete button
+	}
     return msg;
   },
   hook : function (msg, rslt){
@@ -475,7 +445,6 @@ var battleReports = {
     return msg;
   },
 }
-
 
 var anticd = {
   isInited : false,
