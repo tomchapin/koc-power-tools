@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
-// @version        20111005b
 // @namespace      mat
+// @version        20111120a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20111005a';
+var Version = '20111120a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -29,6 +29,10 @@ ZkXIhmZeSclm4FoaV%2BVgXkWhNedQU%2B4SyWJlyiKiBPJewBwkAW%2FSjBIAtTyYVjjHvmBfQay34I
 JeyhtzlOcQ13nUuc51PYuQatfPZYzmeVMup2Sb6ck3CgZN0nKPZNzo4TsLjH76NEObrXzku0zcXvr4Z4SuYMH9C4RvUtIjxLTowT1JFG9VfouNYqT8ukHrejO3Vnz%2FyRbisBvifBbQnySGH8qttcl54XHfKL%2BvfKBx%2FzgNQ%2B38b%2FR80HPfkq2n5Luj%2BT7%2FiNB%2FkiULxLWD4X36BZRyjJR0Sd40EJ4QmV4fuF73yF%2FKEF%2FUEF73tZwefdwM8d%2BkuN8EgV9MyV9mUd9YucjUfRKDkgSEEgS9icS%2BCcS%2BicS%2FBcR%2FtcSrkcSsNcSsjd8Enh84UduuOcSuvd%2F8EeCioc1jKc2jscukNce5ZeB51dxlleA6neAGAg77vdIQYh9Q4g3Rag4R9gwSeggS9hxTfh8T9iBBuguCNhzCmh9iJd4Xbd4W%2BcrFPh4eneB70R5Tph%2BSDd9WLKGInh9VpOFmLOFqtOFXleHYDeFPzeGG1iGRueB6weCk0cZwZAAbYh1b0iEcegZc4iEiBh5iig%2F%2Fxo4gBz4iGf4MGm4eX6oG5V4iR4hiLhDiMpjiEzzhS0ieec0dgKILgRohlGIhqEIQVXITHoSDIBoN7CIPbKoPrTINrYoMrioU4xIio54d5AohZKYi3%2FoiiU4Eic4EikYESsYES0YES8IETGYEjM4EjWoFL1oir%2BIisEIQ8NIb1cYiJmohZvoF%2BMIEeUIEef4EOmIEusoEu2IEjfIfTkIfrHSgy3xgzIIgCTBgL3RjSLxjSIRjhDRjw%2Fxjw8RkAsxkCRRkBFxkCSRkPW3kPm3g6vnkCkBkeookSNBkV6Sj4O4j%2BfRiV74iUoYjRM3jbxYitZ4ii2Tiu23inFBk5dhkf8RgZEqoZL3p5OHaIGJeIe66HTV2HjXCIzZKI0LOIJYaJOxiJMIIpW1yJNg6JNMh4dkqIcVaFHz2Eb1%2BHb3iIxiqYxkiSJm6YxoeYtxaYVAmTDvOJTxWJR%2FqUxzuXvFeIyWk4z4s4wK1IyM84xCpJZ%2Bx5aN6JZ0CFRd%2BZNfyZi245gYBJkqJJmsQ5mJEoaLiJnUqJmeyJl9aJXbeIlMCRFOCREa%2BRAcuRAeuRAgqRAiORIkCREmORIoGYE20pBGCTmJCYSH14a1%2BRC3%2BRZQqYJ7OZl9CY2HaY%2BBeTKDqZVE6TTLSYVISS%2BgaT2iiUOkeUamyTyoeSqqKYrdiTTfaYT%2FWymPnbmWbEib6VlF63lI7ck%2B74lTltl884k29cmF92mY%2BXmZ%2Bwmd%2FVlH%2F0lMAcpAAyou8dl5B4o4CVqICyqe29l2zRmRxWiJ%2FHmXj5mXR3Kdp5mdlRmiirmhqNOhs%2FihbjOe0DOiMVmXjYmio6mig8Ki7umiqVmg5seaQZmV9hmeNwqjPqijBCmTIqGUQRKhlTSh7FahLHShEWekTIikgimU4FmYINqgBrqArVgWBGADKoVyIfCmJUAWGvADKXAvVipLWHp2WppGXCo0GSpDo5ikrrmTsKlK5VkxxxgCuIAP%2BsAKFfED8oAP%2BMAPWwAAP5AO%2BkAPezZQ2zaoQeqj%2F3xKpPDppWIIpt4ppktKpk1qpkf6oBtxCfRQBGGAD5U6q3ygBnLwAh0lDj8QCvRQAtq2K0AaKkI6k2J1EB%2FUVX00EMqalk5KojKKPDTKjDbqODgKP1A6klIaEVXDAfLwZhoQAhUBCevwAsAKAM4GAErQD1MQrNoyrP1SrCLRDfRar%2FSKDpNGEP8TDvQaDj5YDP3ak8%2B6o9GKPtMamdXqOtcqjIc6M4B4W7gwDOvAB%2F40DPsQqaHgACWGXATQsR6rAcEAquaTp7OnHkwgrxABDkEgAifQsi1rAjRQBZ0QEt%2BjDlAgAiJgCKB6DXqAs0cgsvb2E0DrUN4QqG7BDkzBDv%2BeijUsOZNYMbRdVAyIAQ7DKRZgGVz4sA5TMAeUSgCHkFRy0A9ssLFzAABTwApom7a2wAu30LZu%2B7ZwG7dyO7dxGwuxQLd4m7d6ewt2u7d%2B67dsawSZwLZ%2Fi7e8YAsogACKu7iMqwe80LeF27a8sAMIYABiQLiFGwt6YAAGwAK8gLmRG7m8kAWSALqhe7p8e7eou7qQu7qnywt0QAem67p%2F27q0m7mqe7uFywuSkAWzq7t5a7vAu7ex8LvDK7e8UAkmuhFNdQkAAG2hgBHQ61t5BgT8oAZw5gDaq70gqw7l8L3gG77iO77kW77iKxgnYb7qu77riw62wBLsG7%2FyC77%2FJ%2Bu986u%2B6gAOLaC4FoCzOKsAiusBz2AT4etV5vtVQaC4eMAO49tVBezADsGzPmu%2FD0zB94u%2FQnvBGky%2Bt1C0G%2FzBDpEN6QvCG4y0gMDAJKzB7gu%2FKXy%2F6OANN9HCF6wOTyvDLlwMUmvD90sUOhy%2F6mCMHaEB0fa88AAJGhAI7aoB8nAJGkAPb7YF%2FaAEWXWnoUeyOLinD7G%2FCHAF5tCvhiABijsJ6iAbaSUNz4ANf3YQ6uAO2PAM4TAPCYwAfeAUf7bG6PAMz%2BBV7tANz9ANWuEMxWAO4eCv6LDGaRUUeGzHovOn71ewCHSwpZmwzrOw9NiwVHO1AHAI%2FHAIl8AP%2F0rQAOIgD2oQCvtQBAAQCvjAB9YgDifHqcK6tPEKtQihxV0wD12VVicQxmPcVYuQBB6wASLwBKVwGu5QC0kgAhswA4sQx30wD6sQBEEQB6kQBBvgAUkgDOFQBiewASqQBwRxDY0AzV2wxnkAzaUwCTlQzUcwzItMqqt5lYCXRHv4gbFZfbPJEQ5wCOkgDmNgES%2FACutgDZWaXJewDsPwAywny8FnxQqJxQtBy%2BowyN1ACGAsAb6gDn1VBYyruBLQByGhDqkgAotrAAgAxnJsD5uguBsgASStuC2QA5y7uHkQWJtrADOgDvFQBSSdA5W7uBsgDAqNDsH5FdtakrsYpv9KqqBMaq0DixIwGaU8%2BrwGZxEOMNXPGwB2GtTzx9Ap6dAKocXcrAIqINIl%2FQfuAFp%2FsLgtUAW5rLibEBQzwL9VUAUbsLh9gNKLawFQcAQA7NJVoMUtYA48q7g5gNNX4NNVIASLGwfPOtQRUbULUZwicZwoWJ3%2B2LT955JOna3CWdQPQaWYQcULDa88g7IQocUbrbgiMAlnbQttDQVv%2FAxxjQA54A6pYNKLMA%2FzsAkLoLh3ndKKawj24A48jQAm8Ax4jQAW8AzcoAeEbdj86wnz4A5xDAWNzciAaar0iapKrapMzapf6qqfJ9rax9XIyXVSocUncAQ74AEeYNIIkNv%2FlcC%2FtRAU8QDcy70ILl3IBDHbv63SeewOSaC4UMBVtQDGG8Dczk3b0I0AQWDfbkDg1%2B3O8qndCMrdHrrUCtvUJPHU2hrV6KnVD2jele3VCUHL9qAO0oANtTDbMFAO840AItANHy0MFlDSwqDfCHDTBEHdvp3cJxAOazzgCBAHBo7gCv7c8XDYCNAFThEPZSDh5Efh9vZVBVEuVl7IXhV3koWVsIydhYpRsqkbmNyjnSrPOSni6EDLTtFV89AHKo0NMe4B2FDjNy4BOa64PF7IzAzkNC7gimvk6nDgCJDgza3kTO7k%2BBrlCGDdU87hBuEO4bAKqVDpz5BW6HAs6vAM%2F5UO1OogDJ2Oop%2BeCp5QCV5OP1tOnTaS6vRsqGOelGUemmrujSQOjpa9kaadxYr7BcP9Z%2FPA6Bsg5329CbY8D2ld6N0wCQF86eqADR7w48B9An9O5IJO6Ia%2B4IW95Iqr6FAu5eKD3dy6CDPAAIvrAV1w6cfiDoaguGUQD9re5EltEPHQBdse79KK4QQxyISMEJteC7UgDLg5HGs86wpRDrbg77Ww79hIGWu8I6me5QkB8Y%2Ft2VZ7nvZjpYYMaBKfENO5EEZiyASPf1osBItgCIawCFxg0jkADrYw2y2wCcIwCWRd4M9Q1whQBd2ADfQO7Yor7UMe6Ede6EnO4O%2FO7f%2BM7ujfTuUzGeGpbdyp0FjouO4I0O5Fb%2B%2BFcQWcywVW%2F8gY%2Fukz0AIzkMcI0e03r3lRIel%2FUAsEXxe2INIMkAprjxCyohfCEAzB0CDdYPcAf8d2%2FwwL8Qx23w0f%2FpyIR0cqPgmIPwmUIAx47MfSWesZuS6fPgmLAPd8k%2BsP3fSMuwiaRgnwDd8iANTusPMyTtY8jwA%2BD%2BhFHvTXjuj1vujeLkDgHpJwrtJV4AazveO2AB%2B3DBrqzu7unuiKVRAQr8dlIAIecAa1MfAE0az3Hu%2BDDsB4TlBQzrlIrxAroQ6bENelEPcGYfA2b%2FmR2CSTIAHmLwbXEOmLYP45sOjmr%2FX%2BCSHg5p8H9g7ZER%2FrIV52hNDS%2FLsBFgAQKv64Q1fQoEFvtg4uZNjQ4cODwLI5dIfIAIIZEDU%2BjGJM3UaQBlUgIFmypAdC6srdUrdopMkcqT4WvFLSwIkjCAzksbeJpIhu6twdMWDATTx1tUhKeMZNz8UZ6uJVKdolHrp4ZYo6IRgSojswmrp61ajumQiSOYLFu9qFpAE97NAJ7VbKkzR1M90ZIlmGbU0EXdxJe9bNYLdnhQ8%2Fk4buWTBaCgsSrLUJm7twicORBRkPEKCrG5NKQGBB2MyD7txYsMBlbF7YBSV280Ay1diCsRfmNci7oe6C5Wy12LBhFWrYqHcD9%2Br%2BThMY3JzJuoNSEsQv1O4WkYSB1S2CKqEXugtC0o54jbfKSWd%2FUF0zBwDkz6df3%2F59%2FAASNFNONt4fkwJEwI7%2BEJKsPQQloggRklpAkCOPHmSok0kqtLDCTZ4haCV03OnGEDJCXCSc19SZJMQ4nhGmwtOewTC3VCr05aNuLDTHGVoq9GQuWSqs5aOkKjxOwsnCik5CdwBEQAJZQlMHGxVyIKOScj5y4wSSPEjCF4L26usvksgQRgQPZgjKHS466EAwdaRpwQMRnnGjAw%2FKIEgdT3IgTQQyzlCTkCMf9Aw0kEYr7bSGpAkmmGdy8zCVUmQh0R2JlEELgU3CMWeycIL%2BKQUv1MLpphsS0alFUtzykqaUYEpFRzhhFt1sLnWEKaWURlP1sJRaSCzwq%2BcCJXI3YSwwCZGxtCMpo3i%2BC485d5JgrQ%2F0aC2Ql%2FVy821Yh96LLz9ww7Vvv187I2QpKK64IgjSlsxlprzckTeh3ngTCkjf7u1N3gLj3XYyYryZi1%2BD3KFkhhmuUE4od8oFqSOH2ZN3YoobDu4WR9mKx%2BLxNI7XYoZfI3gyedEpxpmRGUZuZCLBEovbgqZalqFnpMIWneoCPOFHLxHwKx7AulCnBZI8weylFkjcDoEW1OGCJC423qTdktqlFmasPqu221pIM61Ad%2BwwwQQyGu6GCxX%2BFFiyhS6eWaYREdRGAM5NGv6jBWNFSGJI7UQQwQ5CZpBAghYM6codYaBAy4IW8phLuBlM2FmoTXTYgKQNZjAE3me4WFwFN8KJeLxgsXYoHjsCDCK7pZn97gp7upEFm22fqaUWbPY1VZaglLNF07xs99V09%2BAT93hxyW0vnnMR2KCbedhqHoE%2FrvKwFkMMqeUYYgyyvRZ0hFmkV2FqmRGdUrSnVXxKNEztmVIISaUb8cLxpRJaPPTEkBln6uZ2YRQsHKsghCc0NDqHQIx4GuHQAjVyMgd%2BxUhYc4cTSCKY3RTkFuzgy5LKYIjyIOAIUungz4JmjzKQxA32KAUDllL%2Fi3kA5gz2%2BI5V0BFCD%2FThDzkoydVgNqit%2FaZrhypQVooChaskQUAGOEIxGnERmywChQKygEx6hhYoImABk2hYMIgWIMEI53IISEU8PGEsARnOLDMQ0BNEFxLnQCeCuQkHG0VIGgn8aDKt8w5JqhCHtIkACrW40xVa0AJAzSUccZiBBRRggiPcZi7CYIEKoCCMJIiAASooQ1Ac6C3khRI%2FymMP8zBXs7nQhiR5QIohVNAuCXhADJNJggQs0IXaLMAQOojlJEIogScIowtoFMHmDOKG2jSIEDCSwAKS0IdLSaAKotPO4HIwmU7kQG4b6MIbOaPAOTKkgeFkCATJOZ4J%2FsIsHC%2Fxi0PUkxOf5cMe5sBSHudRQjAFxh6eIIkOwmaSzRGNAamg4QXnMUQESHEe0jABSXzILSAWaohfY0hWSAKFeZSiQZ6ohR3kVolVDKFdOjiCLFLRLij8AZ46wEoHEaACO7hhjM8KYQv6UIZ2TaIdtkhmKuaRszLUohQhXJ07AHOCPKyGJAOBY%2Bnm6A6fLEkWX2xnh%2FjYLJIYK4si4Fl5DHCeJ%2B1AQBLoQ8NqobYNeCCLBqiCsIgESlHGdT6klI4pnQe9eMxjakvtiYCWKi94mqQUbFSABLLovADlUSgpFJAdGpaKrArIDfLiozvOKKAkmAOBCwHnOS%2Fm2YWY%2FxO0HUont9QRwraOp2G8wAaWEACFMsT2JZOwBz6BZtBuLO4ZSpRbFYbougvaY2kn8ORQHBpEBEVUNBNF1EIs%2Blp7TIIkAglGSyaRClt4wxyXWkX0qnBRe9hjaLa5Z5aCMQ97AKYK8zip84SRj3ykDjw77Wk8dHBRSiDmD6wyy%2BUkkAr4ShcBq2uqHJ%2BaMyHMgwwkIe5HlIWRPi4rDl1o1wiNOyCkKHFJSSiDay2winggFAFXsIMdN4BK4sFVrnGlK2fsKoEyxGHCY1RALeLhhIsEYROb4CECkgDYkhwBCkdAhx0lEIdOaBgBIliEIZLZh4OikQydwOmh4gHZBi1iEv4vyYFQ%2BFhkkhxhE4QY4yLcmsAIjXacoxUtaF125rp%2BFyMLM8QipMHaSxWlKG8hRG2%2FdNvAbEzOeRhJEHg4AzeQ5AxsqaE9GISAG8wkHolGwEOHpdyyMLeIjMWoL6hGuC4YjRjZyC1JSkGQHg8hpiVepZ8R0GWsMDYH7hCwCGQcB8C0ABw8JS8ZsriBIOThGRvjp%2FPcIGMyoBXFGokjnCVklmRKEaFmturMsLrkZ8xjHvK1wFrgaYeDyo2V8XjGF50Q4naRIR72aG%2BNNysdFa84lC32z%2FT8SoaPrMgOz7CHOxh7BCC%2FOi%2BGsWMS0EuJkig0hDyJA0mCEF57yPkP7P5dik%2Ft0TwaeHlZliWJCcIR3g5CwdmcTTNo1wzaNnv2zRTMQ1aD0RWz7EkP4LhUErrAhS6EqAuLKK%2FP8mkVWi%2BLNHZIoQWwtACZXLsLws0S7ToET0sTCdMQMRRFnctppOQBjSYJQnZLjYBTf10ne9YJ7DoI6werQB1KGvueDbABbPCajO54RghN0gEoF7vtUGTKZps9x%2F9gThjmqCNJhODgqzrrKv0t2jy%2BbQ8lqeCN8ehDg9Dh6SWdmvGKXWC85X08envFrgLygBt481g7DOEEcgP4hY8yFzBTb2MClkB1T%2BtQewiBwVDgvR27QPG5nensGsdIzzzAeyiEUPLfLP%2B5Z9XBC4%2B5R2NIMV3Kz7lymKkD8yKkXxJLogd19NgO8nRHHhaBKtsGDSliJ6PeEdBgpR%2B0XRM%2F6BijLqGpP6TqzT3Ic0WuDnuQkxwYI50QA3L4ulNbp2WpAt5TlyowhJ5DOwFrmg7aAOSrgiuoAjLYtZ6SClqDgrQpiRPTqNKAAgbEwCroAk%2FaiL%2Bbox6TgBM4ARVAI8V6MOAascVDQMczD3toOB87nKWRAGEQBq%2Bpmc3ToxQzns%2BbN%2F5YnuY5sj%2Fogz4wIJgTBh7aMzRqvW8TDzsys6BjGtG5vUqbh%2Ft6Cz3TiRy4sizBi57pMhvsmb3TiROYFa%2ForOubhCZwQC7%2FmoxJwMAMnIR3CwnrIyfsgxnVKIkZIIM4KMMBs4V2oDQLWIRn8EF7Sr8Lsh45e7%2FMIMDUUrqrKEMYswPXqjTkWh6tkagijJ7pcwf%2FC7FFsAOee4ZNCKEdOEDuih54IoN8iB5DmARfIJHh65AJNBEGA0B7qIVF%2BBTh6MBJQIROMhWtKxrMM43wEh8D2hSQaMHOKwWq8Su%2FsMEIu4IcvBRP2MEB6UGHk7Th6hSvOY0jDESy8LwlBJfQCwm7eh5V5JiCCKEcyANZoDQtNA8uJAkvnMAwDCEoC6EjyAM7sIM86APzcwcs8wA2HL437KATaEiHhEhDkA47JCcjeguuoCUo%2FzKAOChF9hjEcCpE01IHwBAQFRAGbCm3qimJsomHDlI3mQm0aiOJH1MHsSKJPYyHp0GAqFGHVNg6knAhUsSa%2FOMaPLqCEJlKMoBATqOhixCB%2BemGnGkCW1QhRBCG5tmARfiQpfAEV5NAy5OGZOIC2%2FmiJzgHuUuFcBCBouACbKgLY1GA2yjDIxCGZxCCi8gBOmQ2p1ogNFkKD1jMxUSjE5CGeEi8BukGVtyrPIqHx6M9GJKXnAkCd9C0d%2Bw8JZzH5GnCUhrLZeuNZ9hLXwivfwu48zCILpQXg8wLhLQHSksCiJMxSZTINRQKi2wdqFrD8JoENzAEWfDI5gNJSvuJ3v95hmQSSKxRyacqrexDhzi4lKXYEndQD3cIhh7LKnzrEERgjclyh2GyADuZJBGYFnmJA9ZogeIiA9b4AoLYJ8uxgL8pw%2FsTlFNcrm40CSaaoteaB2FIJgnYABqsBG9whyGwiUlAhy9yHrUxgCRoqWVxMAGTvCQpCQuApVJgh7mcBx90ng1olyQQCkqApa3bw2w8TNOBtjDpBmmQhm0oBj0oiT6TzIsqHzu6pgs7D2y4lBmYhFJYMJKAQNB8Bv9CwhgdTdKkR9OsK9Tsl9VUoWdYhEsJSAyTTYKkzQY5SIeaB1lol6BqHgMgBOCjSOBMC%2BKLinCAgTArBUowgSOCR3T%2F%2BMhwmrQAMZrhNInYdBSK%2BQ2KWRh3uIZrGNTrs04KwoYL%2BZGPUA%2FYKwUL4T%2FEUAx0uFTD8J7E2NRLdbqCQIzIaBPkTAVG6YbcWyWUrKv%2FzLQTHRxYhVUowM3BaSt3KIXw%2FIlFWIZsqKaSmLhaeNCqqQLa2YvB0QENHZwZ2Iwkic6X4iLhOIHBkSRkCpAhQKW%2BMQkPYKoCGzmJcanbgI1rKIYfBcdry6p22SJ5EdbzgMMAgYK8WNK9dFKskccoHZcpdbE%2FuIi%2BcwhGJMAlox%2FdM0nx%2BKKCnC4x3YmN6YLD8skOwbINqMgMfbDuoLUARQATSM2HWc49bU6B5FNADQ3E%2F7GDJLA5T9iWvEiFMyjZMlgFkEmFP8ADSpiEJ6gCQFzUl%2FmkQjUISRVUfdQWeGEO4EgO91CHbCAGuhujJzAMT7gUSvBWe2xVjQiHWFkUq7XamlEURpkM9MmeXtQQBUHK7JmERsmLTvBamfCfRQmgUF3bgsnSsb2MV7GFqp0Vumuy7EkF2JsMF8me3pwOGK1X3RuwhXCGa0idwooRa0NSMpjQDTCcp1NVq5rQ0uimeCWNDXBH6FwSes0%2BKL3X%2B6jHbFwEyYEBjc0NX7A7gcgBGSyFqRgbbkUHIRgbLoKqsQmCMISCsVGjRWqorFLBeI1BM%2FGysUlRWhsbIhPGFpAbCf%2FQAZdVTjzFP0qTVhGyzSVxrUCVqQB5AlRSh27IxKUog7kISQ8gDQOANUJk1HPq2dHKBmCYCyUTgRBcMrxwSqkti%2BTIX3z5l5CxGAUZGJbZ2XrhX%2F4V4JUQWgF2jwTu1gi6nVpITWdwhv%2B5HWmY4GCYi%2B8RFUP4gz8QhrEonwfWixrhYEPw4JkIh0q4nVkJBwcuzHr9XNCtD9EFCVEZFapDh1VIhflxh2ywBVJBhxouzBrGxkz94YII4twgNx02VX3sBltgBoMwh1GZFSk24g4JhyUGn%2BjNU44FPEobAqI5MWyojRYIoXaVryWJTtzNiyuAIgsgQMEAWZtgJZyFWpj%2FYV%2FQct%2B5wAa7g6IW2IQthoinJKf%2FVTOMGa0OCdx6ZQ50iGBr2V%2BgjZeNWRgEZoufRQdeIOBALhQYjuG5yld4%2B5duiQ1vIAbk6BdKpuTlYGR1GLWifeWiZWSy0FMvvqic2QQBqwILGhADRaMkqIVuYCwEyIN50LsuAMyc%2Ba95aM4g8AQ7qK46RmR0wGPP0mNF8oQ4cANtngTKJJ5BDqdCNrlDHi1tBC1HlmZqJid79WT9AOVzohdpDmfQouUIAtkqUJJsJglC2GU7gLyfuAypeIJ%2BUjA35Q07KgPcFLxJVjn1Jad0JidrHphV3GRBvt9zkudzOrnrU2RyOmdEfug5%2F1pnT57hCIJnRMboc6JnBwJZKJCFBUAAHeChPNKwfpYvgIuZDpqBCvqSmMnNhH4pb2LonB0tkJ6jiAatb54jlA4njSZEjg4njybqbAEtkY5hknYgkx6tpQ4nlV4gkHUCdMASBVAbFUAHmrYHmwbCjQOq0ABZ3ZzeFRRqO%2BaWoo6go%2FaspI6grY6gpl7Jp56jqAatuhbNb2FnGXZncspq0NrrCOpqb%2FZpJUMAJzDHfm45CPuIZV6WnTwCkRXWWaW0jEBklvSswV6guz6nvHYgxl6gvn6qv46gwCbtqXa%2BTmbnq14gxfas1V4gxzYdt7YHy%2Barb5uHVRA3oViFZEJoJf%2BJRNpsF0P4aSQS7YYOp9ImntMGSYsm5IlA5NaOoHL2rNhe39k%2Bp6oG3dsmnty%2B6O1G5N52ytzMqJIYKMyUzsHFiCAYoxPI2i9iAB3gpbQIB5ae65aZ7jmqbtO57j3NbnBeb3GW5u8%2Bp%2FB26PFW59oeacQOp%2FTWbmnmYoquK61gonj4ujmMhyAoipP0XrsTwbrpkFWg3GX5ESOyUAFHEgKPIAPHGgQHPAVXagb3rO52oAfvaGfY8Bs3rQq36gufowxf8A1vb0NsBCSAgj7ICzvgvTzIizzgvT1Uh3D4gyBQARVIxFx4DWywgxwAc0QrrkWoAiTAgxl%2FkNEWb2nO8Xr%2F3nG97vGMHmc3e20HinDqnvBwKu97PW%2FTWXIeb%2FIuDmno0wtLngy2WBkuZ9b%2BEAog3gzqcxREdfAad6Ai5xY6X2k7V208J6cfR0w%2BXyA%2FL3BAD%2BkjN%2B8kL%2BkD0epRJycnh5lSXyDq9O5NX6BOH5ZP9%2BpQX6DdNp1bN50gh%2BohR%2BdVjyCRdoAfePZnTwH5eIEt%2BAH6oHZrH6VXx%2BpYX%2BxZ5%2BpE52s9R7lkJ%2BddJ55eJ5Jf9%2BZgJ55hx5pip6BTJ55Ut%2FFl%2F6QK%2FwF%2F4Ad%2BwId%2BOAQAUIJ7uAd9CAT5mIKBL3ht73D2MPQ7R3SG54x4n85yd7NzN510l5B19%2B12N513%2F7f1cd9oAxuteuf0eyfs%2FNAAJVCCIggFerABArAGawiBQ9CHF4j5mYcEfHiB0N123O523f72Oap1bpl4mMl1IL94rMn4B9l4%2ByWUkxZ6BzL6YTl2wK54wT75JCzs%2FAgBeJADAEgBfAD4IuiHLQgBfDB4JTD7%2ByCAZnjzB%2FGG941ngZHmjoD79qD6YSl54gELUMD79mB6BHH6H%2Bp4rPn4og95QgSFkTdnrCdtB291ALgEcYiPHuCHOQCAy1cDG%2BAHsP8BzweAF5gC0if9LaCFCE591V991m9913f9YoiF15992q99Z4iFk7F93d99JniFbNh94Kd92Q9%2B4m99W7CF4v9P%2FtTPhiyQhN9X%2FuQffugv%2FmLghekv%2FmygAzp4%2FusHfl7I%2Fe4HfukPf9vPBknIAu4n%2F9o%2FfvXf%2FfFv%2F9fPBlpIgHARezWQD9AH%2B86Xg%2F0HgPwHCAA%2F%2BBAkGKgYsmIKFzJs6PAhRIfAYkWsaPFisVi2MHLsWMxIJo8iK1IcabIhr1snVxZblkXSMpYnYwGTadJWSZsel9GhE1OnR41APU4c2nGZpCw%2FjV7kxYspx5xQIyKjlQAA1qxaAajBlwJrDH58BPIL80IsgCL8xmzN2swdurhy59Kta%2FduXW%2FA8PLt6xcdMG9%2FBxNGF8UY3MKK795a7LiuM2ePJ6NzBwZUYsr%2Bi2%2BV0%2Bw4217PiuMBAhRPtOLAqAuXa7x6sDtQYDK%2F7hu59mDXuPm6a%2Bag7VZW1ghg1QAvFIAw%2FX44kIdcORDgCZqp293Xmy3rfYFl0873cHXvdVuLv1tMcnm6ljXRTo%2BOs%2Fu5oOPLJW2aflzu%2BNGRx%2B9O02z73bYffPSp4xtwWTmwDnJZHbLPJesM89sh%2BlwCz4TSUbcfdvsB1t1%2B4OHXH37n7bdee%2BkVSN98%2BNl3Gn76jahbfP8FiN%2BA%2BK3o3oG%2FJQiAA5BsoZUDfAxzyVdAGolkgtOFR1%2BH%2B8mIn4j0kUifif6BwR6BneHXIn0vSgmilTS6Z2OK5eVI347p9fj%2BI5xxavhkfFHGSCZ9VcZ3ZXxZ0odil%2FuBGZ%2BYd%2B7HZ3poCoiejl7G96ackcbpJIfZjemhnu4hmp6fNW6Zpnhtpjeoe4XSN%2BWeZiYKIKjerRmfqOJBKimtbVGKn52n4hlfpultWl6nZ34a6JehhVkajLoeqmp5iuLIKJuO8ohgrdVmdSuUlhoaojF0%2BsossNAKy2WjghpLKLKXzngiq4t6GKt3s1pbK7Z1aqsst96W96t4wSY6bLnF7mdqfKhqCq53ztL3qnvwaifvvJLW616uBe%2FqXq%2F7Iuydv80CHK25A6e7bZns3riwuA1L6ya1EdM6cXoVu2cwxt2uu1%2FH4gH%2FGjCL55Y6Mr4l%2B9fus%2B%2BuXB7ELk%2B6Ia73WoypzUKXmLLH5IIssItAP33zn0SjbDR%2BSSv9I8zlyZwezellLB6%2FHFOt88ewHl0eqekRPPPFGpvcqnYMqzh3vC2PvbS%2BZjuNN9SFe9e2djknHLfKIWd9H8mp7u0usY8KPjjZTGfrYdrlrb34xo2%2F%2FbjVckt%2BLOVBWz70yfH5XZ7D1onN%2BVZli3d2eaGLN7p2jFvnuHY7X92zyK1vLXWNXst%2Bune173Y77td6bi%2FoeYse9etTnwj536ujqzziXDcfu3uzhwr4w5tXn%2Fv1FB%2BOtva%2Fc3%2Bwh8RbZ7zqWLOe7PK6dz6%2BWUd9%2FtFjn%2B3c9z7rKc47vBOP77wDPOsIbzf62w3%2FIue%2F8QGwfMw7k%2FPSBz3tSA831Huf7hw4v97VT4L3%2B1b%2BRohB8NEOgdapW3nuRr9lXa5omZuWjxZoq%2FjFbIUQbKF2JribCuLmgrjJYPg2%2BDPy7dB8IERfegxIQhuaUIFCTKF2HuidCCbxhXrDmQyfSMP1iW%2BKHaziB1eFRTWlETclrM0JqwdG64hRO2S0jhJxw8TaOLE2UKxhG%2B2mNQ8K8IoE3I0WrXPH1%2BQRd3vcTR%2Bt88fdBLI2g3xNIV9zSDZKUZFUZCEPYfdI3ERyN5NcTSU5d0ncZHI3m8RNJ1%2FzydWEcjWj%2FjxgInO4SDg2Uo6rrE0r7chFPHpxgbOsTS1xc8va5HI1u0RNL1Hzyy0GUzw6RKUVjYk5ngFRiHOqVPYSF05O1VGUawRmKYV5yiOmsmtzFE8ya%2FNK1MRycM98TTRrM83XVBM11xRNNkWzTUkuszY49OYwwRnHZoUwi%2B18zT5F08%2Bx%2FXM1AX3NQFdTUNEc1DMJ9cxCXdnQ1zzUO9%2Bk5zp1VlE6gs1AzUQhEQ2XznzFtF8X1eY7uRlPiM5zjEhcYukwOFN8%2FhQ1GfXMRpXWUdR8dDUhRc1IPVNSzZxUMylVZjddGlGYTlSm93RVU0XzVM1E1WVTFU1VUXNV0WRVM1ul%2F0xXKfNVfa50NS3VzkuNWs8BjvN45TQn%2FBoYRiMKlqdl9en3UqdB5E3ujRItJkXP2re0ematlGlrxN7qmbiKZq6eqStl7jqZvE5mrxjtK2r%2Bap3A%2BvGogkzqE5eK1ppqLoiIxYpoNUNaz5hWM6idjGofw9rHuHY1nqWMbHdDW03a1pO4NaRuN8vbw%2F4WuDndHWNrq87Hui2yx3xtWAE71saSd3%2FZLSBnNfPcx4B2XsGlzHA1U1zKHPcxyXXMch3TXKfCVjTRxc10bVldXV5XlO%2BFZHwpM1%2FH1Nda951Mfimz38n01zH%2FXUyAFzNgtRbYMweuTYKluWBrNtiXD2ZlhP4nM%2BHFVLhaF35Mhiez4cd0eDEfVkyIFTPizpZYMyd%2BTYoFumKDtlibL0ZmjB8zY8VQLwWXuPKVh5QCSFw5FD8AUiCOlKQhKpaP4aXueDEbLvP%2B0D1HXk2SQbpkkjZZoU9%2BTT7Ra1PfbsUG4vjzOv4xlin0Ix3iWIcSAFChCGWIzOhUF5XMyLY6IzTKIg4qQ9M72%2FWKt6fFu%2FNq8uzcIk%2FmhAQggANYkSE%2ByCMExAGABpyTnH4UATgE%2BK4KdxrpMt82hmwmp5t9ZkrLklXNCQM1akRN4LDdFCtT0MeXARAK57Ai0TZAi1rSACQNcJvbJWjGPNwh7nGTu9zmPje6zf7tDV6ku93ufrc7iOENeNO73u5gAjXiYe99o1sdvFAHvwNe7mVEQ%2BAGd0c9wCAKfR884LwoR8MDzg1iRJzf9ShNPSq%2Bb2JwQ%2BP2Lge7yw1wj587HqIAQ8ZJDu9rXMPjI3%2B3v1%2B%2Bb5nbex7NJoA1GoTzdEBiGPoowrXlQBahT4EVRj%2B6OVrxiVGM4hNOf%2FonVHGKpbei6U5XRSumDnWot0IVXof6Kbw%2BC1pInelWP8UpRuF1prci62k3%2Byfargq1Nx3rbm97062uClrM4utPP4Xcrb71q6tdFVdvO%2BLRXnWnmz3sWtjE1AUP9a%2BPAu1PH0XXB%2F90rPud8VI%2FBS3ezv50xqfd61NPvNnr3vXCO73tis%2F60q9OC7Ib%2FvKAX7zmo856qiP%2B7mlfutlb0QZGKF3ym5%2F7JyzP%2BMznnvOdVzvaQz%2F30S%2B99Gu3u%2BibDvi5h731d8%2B83sfe%2Berjnfpb97rfMd97xf8%2B9a0YxCCKr%2Fm1Jx%2F5S8e68Tff9eejfe99F331Md31uV7qJR%2FedV%2FUud3tUV%2Fl0R7UVR4BNh%2F6ed76bV%2FeBd8gaIH8DR7dUZ3VqR3uceD%2B1V71hR0lUELZUd%2FbDaDbwZ36CeDhfR%2FcJZ%2F0bd3t%2FZ7mFR7ygWDvQeAHsl2zqUWiYUUIaAAAlAA9XELQDR1waAArdNeP2AAkQP5hghxCtFHhVoSCEWIhkTwhF2qFGoTBF2qFFY5hVmihGQrEIaRhcohhGpahGYZAg5ihDYxFGm7BkKQhK%2FAZFrLCFv7IIcDDFhJAChjhgoRCCuBDIACAEvRDHm5FqrGhFLIhJFzhGKKhGUZiGoYhG8KhGWLiGP7AGqZhGLihGXriF8ohG4oiG4aBGrDhHurhH9raMOBCVoSAPLBCCEwBP8gBzlnDlnlFE3ohHU5hGlYiG4LiF2qiGXLiG1riF4ZCCKQhK5KiKY4hKnKhKlLjKJphKaYhAcSiGfohnDSHMWJFV8gDPsSiEtADPuiDHbaFE0riOY4hMqahMnIhM46hM%2F%2BeIjRyoTRyYyte4xdmIxZuoxlWozcSJBaGIx9SITn%2BCAHYwJhhxQtsQRG8GgCkwBb8Y1bMYxpO4jF6JBXmIxbu4xf2IzaSJBQGZEJ24xh%2B4zOmIUKGIkx%2BoUyOoUPKIhZqACxI4iVQIkt2V0SOoQbY4ia%2B4kjC4jSaYRHUY0oqpRne4xiGADGGIlRyoRpI5RcSAC48JBTCwix2lw2woQOUZRq%2BwFhyoQ1o5BiiZRw2JR2uJRa2ZRo6wAuwYQjI5Ri%2BAFh210Tq5RSs4lD%2BFly%2BpVv%2BlgbYAF8C5l7u5atpwA80JucwZlZM5GFiZmIOTgj0wKsRwF5qgKsR4Q98wPv%2FnKUNBNFEroBWTGRevk8K%2FEAJKMhjjiYAhMAP0KW1pEAPzGIJ5KZW%2FKZuRsxZviYRhqaPFKcQEcBkZkUKpKZW8OZfusxz3uJjJidFnmZtOid0cud0SooDbCeQPOYfvkB34o5mfmQPzKZ6ViTn4KZcimZoZoV5bmbEgGZt%2Bshi8qVkUma1NEBthsBv4GcRRmZzCtEPpIM%2ByANDmpMS3AM%2BvGOiFcE6LOgjco4S9CJWOEAovGMo%2FAaHeuh31ooD4MI6%2BMgWRGiEftkUyIM%2BIBruvIA1RKg15KUT6gM%2BXMJv3GiONgDnEEAgRCg9CB1XqOg95OUWuOg6RIfLAGmEikOt%2FyUHPeiDOERbGExpleLOD4hDhB4CcWgAl%2BIDPyxiCPgcPnjp%2B8iBP7ihHNwDlaKlHLyjONTA%2B4TAOgzHRq5DhGpoClgDjsbj4ByCiqbDb%2FDBOwIjVhiqPiCq0kCCiorDbzjqk%2F5GkOrDMLiny4QALkQoOfqZPtCDUnoqqFaPGqijPAymtEWopZ6ao%2BoDLpjm4BTBPkSoOo7FD1SoPOThrVqo0mQoreLDHDCiO0poWuDqhf7oMFQpK7QaFRoqH6iBHKTAL%2F6AiQ4niY4BPWhocpTFFvDDK4ZBWYArVyrNC%2BACP0AqVhyCPMgBtApoOgzDDyTriEbKpirBFOADcsgBP%2F9sgRo4IgDoK7%2F6a6z%2BAyTYQCjoQ15GiBywgRxwWy5u6TDYp6T8QD%2FwgZ8Nw206B8RmrJeJQ8RyDi6kQw8EQj8k2g%2FoAyRAa60JqhLwAT9EaWVmqxi%2BQI7e6hPS7CXY7PtcQj%2FgqRLowyGoQR182SXQQxEcAj8cZpMOgzVAqxpMJD8cQhEkIQBcm9RSbZNawzBA6xicmtZyLXOOaRHgQ1ZGzCXggxKk6JCY6A%2Bc7VewrdtyTg%2FsQ8EOQ8Q6gDjgArSKYYbOwbMt4uCkgByw66ZmZLL%2BwLJqAAEc7rL6p6QILuHiw5fVAT48a7ROa7XCpiICAKENYXeFAjA2ZViMxRb%2F0BrnbIGF4AORhsKJEoA4PCHrOgABpMNVugze2i26AgAuXGpT%2FgA%2FaBsbJO3gEEAY5KHW6q44AIk8BCUuiAOqLS%2FnvAAfTGPp1towsEIJbGEjDmYgIKzLSCZxMC3n9sNgCmoIbK%2BiCePgvEBeToE%2FJFoY4EMRJAnOYWwiAu7gNECy4oMYKketXYI8OEDpRgcAw%2BrgJKk44Gmc%2FkCSLMgThgWRjk2sHUIKQABW6GtZssI6EAAGA4AGz2uC4GIgpICPiDAJJ%2Bo%2B5KUr5K7SxFpQimZ43sMUFoEjaoAMp4XAjk2QknARbqTqnnD6TiPTSuy8aMA6jEUK6MMidm4JKPH4%2F3pupq7D6oauRe4D6Zpu9fguG6SFt0Kh6%2BKDOkICAdAw3%2FZDg1qLDdjAC%2BiD0C0unlqDNTjAELsxEdMKASiBA0TIb2CAnqqjlxLaYG6BP6Aq7qgFH9QvADRA3jrA8eItUqInLghirIFx5c5arfUrzEZMCgyDPNRa8H4ZBqcBP4DyKFcPHyQhcUACP6jjpRoHcsTaHI4NH4jDvYqhy8YAAHRvCvDBPpRlIKQw56SAPKgB6BJHKKwyPrxqCNxwIpattfiuPNwDgwKAo36Fo4aAoFozPrDnvAABMsPDkHizOoIzNd%2FDNBat49YKze7uEQNADVhx1fbiC8DztQGqy0wb6%2F%2FiQvsiM4yGgiB68DpYa7VAAqECgDe%2FolqEwbUhdBePzSWgK85RshgnNCPmMOfQ8Cv6bgQjVpAEgg2QLEaacUWf8bzMcxvDcfjG8RADANOCcKTELqxdgsUeQskCMgAIMiEPzg%2FIgzVogCLbousOQwTkbSJrbR3XCgFcQlncZijIgRSOMrjWWhpgscsYbDvr65cFbw%2BoQSmzwXKYst3mpRzk7L1eAizD2nFwzg8YbQrsw5AEAj%2FkJS9Lr%2FfCtdLOSzjCrjUkasFuwT4cQgmQ7UbSgzNXi8FugQ1sagg46mwKaglAwj1oM6bSCuIiNid3ZihYdqsB8DRe8%2BDYAD6swxT%2FAOzoxjMfnMVY2AA8D84xQ4ISJPAYh8IU%2FIA1BLQGG%2BG0CTStJCKRqkVG%2Fy7FMvQWK80K4INSdnQdOiIZczFJz4tG43BzL5AGEDbFlvGxkus%2BEOkcGzUuDEf9HnWtwHR0KiL6li4UK81Oi8NXIDLeukIDNDJR%2FyjPbjRWBF31AsAnc44c9IMNgGt06OsLKAcRAEAdCG%2F1nLVWNG8KMEjGBuXYeCU8yIGgssIPdHD3loCF44NxukyGXoIc1PbTagXTCvMUJuJNHvD77nA5a0A2UzM9pHOtmLdWhIE%2FHC0%2BnLM86LacrHFQzu4lrPEiXhsbJPEi9oC2OrT3Bu%2BG77cN%2F1yIEbrCieIOG6iv78IBFyM2P2zxcisN5XLzR1L371b0dStNYE%2Bh%2F0JhCARCrZl4YC8iVxemOmc3VgCwBjhAWtO5nccya0d5CpThtdXBWQgdH3jv%2Bt7pmGkwAdjwFCK6Bgg25yCtVL7AIeQlEJhxdaevl1dLEVzCbIbBPxQBDQ8JJNCDBoS6i8M4eAYtkKwDLnCwUra0%2BKL28JooPMiDO8JB50rbibpvorGujsfJFsDDOtQ6PlhDCdSBGAa1IwtEP4xrxBytEY7BcoDrlzUvAfRrtbOwtShBIBghthdBt%2BM3f3N1Wa60BLP6qps19HZucwSlTQ%2BOy4LyPqQAtxcqP%2F%2BswKB%2FhTU88uC4wsf68Boqx2SeqSWPze7eopoDfJtzBT%2F0wAKFAj3UQQK7dMQYxzqoASvgg8O7wrpOfPXEQD8QaYer8mCOPD%2Fk9J7%2FRgrcgzikAS7QwwssrhSzOnjLSTj2gziEgiusYbdy2cveND%2F4fCZzOD%2BsIyvggg2swKKOgTXAg4D%2BmRzImsv4Li7IwTqIQ50ncB3cwwtrPdf%2FKC7Ao1KL4THzAdIKnb4GQsZvuO3WuVr4op0Og6FOYQhgyNz%2FaLc1r%2BLiQnarshjCNR%2FggjxM9rb%2FAyuowZ02QArQAy647CIufuOPqdJMwT%2BEAuJHLOVbvoQQwDoDPu7A9SH%2BkDwAnC0f1LYRkr7pRy89WIPVt7qnX0KpPqEN6EMoQDru2LmDA0AAsMKQejzvy4HHf688nKMRX3zGfxnHA38cL1AIPDTS1yUr5O0QpkAovC7bj00K4MIjMr01sMEAYEUawDEb1DytBMKHYsUPrDAuROkLVD8ico4T4oL8D8MUcjAcu6H9W0N004oa4IIrAAQuXMN%2BACiCSxyrHgAA2GAl7lIIhhMpVrQ4ccowcaFeMLThCqLEhiAjXjR5kmEISOKsqSEAQMMhlnJeNggkbtgUlDtNpsClhOEPhJA0MAQytChPpRMDXUq5suUAAA5kDgO6lOcWjZdSMFSi8ZADr2CtxWK9GGZrVwBoIZYYKy5QWbMmHQSyZm0MQw0rcRWEydfvXJMHIXYloMaaOEgitYrj81LwRQ2swlAMcUmcKxspMWuOTJEDri0UHYr7ybBEqIQdP%2B%2FUALn13NcVZ8dW6iDpRNy2lQbgAFsvb6Ua5OotLvwigdwMlSNvTvH5xOjIYR4nTvs4dejLAUzXjh289t3bK3pvPV43d%2FTUr1OsPfG9c%2FXzv5uMDxP49%2Fu1AwIAOw%3D%3D";
 var provMapCoords = {imgWidth:710, imgHeight:708, mapWidth:670, mapHeight:670, leftMargin:31, topMargin:19};  
 
+var GlobalOptions = {
+  ptupdate : true,
+  ptupdatebeta : 0,
+};
     
 var Options = {
   includeCity	: true,
@@ -48,6 +52,7 @@ var Options = {
   fixMsgCount  : true,
   fixWarnZero  : true,
   fixPageNav   : true,
+  enhanceViewMembers : true,
   enhanceARpts : true,
   allowAlterAR : true,
   enhanceMsging : true,
@@ -86,23 +91,24 @@ var Options = {
   arTarget:'Them',
   arPageFrom:1,
   arPageTo:5,
+  TournoiLigne:25,
 };
 
 var Colors ={
-	DarkRow : '#eee',
+	DarkRow        : '#eee',
 	ButtonSelected : '#444444',
-	TabClicked : '#EED',
-	Tabs : '#1E66BD',
-    MainTitle  : '#357',
-    ChatLeaders: '#B8B8B8',
-    ChatGlobal :  '#CCCCFF',
+	TabClicked     : '#EED',
+	Tabs           : '#1E66BD',
+    MainTitle      : '#357',
+    ChatLeaders    : '#dedede',
+    ChatGlobal     : '#CCCCFF',
     OverviewDarkRow : '#f0f0f0',
-	TabFont : '#F8E151',
-	ChatAll : '#99ccff',
-	ChatAtt : '#FF4D4D',
-	ChatWhisper : '#FF4D4D',
-		ChatVC: '#00ff00',
-	ChatChancy: '#F8E151',
+	TabFont        : '#F8E151',
+	ChatAll        : '#99ccff',
+	ChatAtt        : '#FF4D4D',
+	ChatWhisper    : '#FF4D4D',
+	ChatVC         : '#EED',
+	ChatChancy     : '#EED',
 
 };
 
@@ -132,7 +138,6 @@ var KOCversion = null;
 var ptStartupTimer = null;
 var uW = unsafeWindow;
 var ResetColors = false;
-var NessajaHook = false;
 
 function ptStartup (){
   clearTimeout (ptStartupTimer);
@@ -148,6 +153,7 @@ function ptStartup (){
   logit ("KofC client version: "+ KOCversion);
   
   readOptions();
+  readGlobalOptions();
   readColors();
    readAutoTrainOptions();
 	if (AutoTrainOptions.intervalSecs < 60)
@@ -183,10 +189,10 @@ function ptStartup (){
     button::-moz-focus-inner, input[type="submit"]::-moz-focus-inner { border: none; }\
     .ptChatAttack {color: #000; font-weight:bold; background-color:'+Colors.ChatAtt+'; }\
     .ptChatWhisper {font-weight:bold; color: '+Colors.ChatWhisper+';}\
-    .ptChatAlliance {font-weight:bold}\
+    .ptChatAlliance {background-color: '+Colors.ChatAll+';}\
 	.ptChatScripter {color:#A56631; font-weight:bold; background-color:'+Colors.ChatLeaders+';}\
     .ptChatGlobal {background-color:'+Colors.ChatGlobal+';}\
-    .ptChatGlobalBold {font-weight:bold}\
+    .ptChatBold {font-weight:bold}\
     .ptChatGlobalAll {font-weight:bold;background-color:'+Colors.ChatGlobal+';}\
     .ptChatIcon {border: 1px inset black}\
      .ptChatCHAN {color:#000; background-color:'+Colors.ChatChancy+';}\
@@ -236,7 +242,7 @@ if (TEST_WIDE){
     Options.ptWinPos.y = c.y+c.height;
     saveOptions ();
   }
-  mainPop = new CPopup ('ptmain', Options.ptWinPos.x, Options.ptWinPos.y, 850,700, Options.ptWinDrag, 
+  mainPop = new CPopup ('ptmain', Options.ptWinPos.x, Options.ptWinPos.y, 749,700, Options.ptWinDrag, 
       function (){
         tabManager.hideTab();
         Options.ptWinIsOpen=false; 
@@ -352,62 +358,23 @@ setTimeout ( function(){
   
 }
 
-
-
-
 var battleReports = {
   init : function (){
     var t = battleReports; 
-    t.getReportDisplayFunc = new CalterUwFunc ('getReportDisplay', [['return p.join("")', 'var themsg=p.join(""); themsg=getReportDisplay_hook(themsg, arguments[1]); return themsg']]);
+    t.getReportDisplayFunc = new CalterUwFunc ('getReportDisplay', [['return t.join("")', 'var themsg=t.join(""); themsg=getReportDisplay_hook(themsg, arguments[1]); return themsg']]); //Alliance report battle rounds function
     uW.getReportDisplay_hook = t.hook;
     t.getReportDisplayFunc.setEnable (true);
-    t.renderBattleReportFunc = new CalterUwFunc ('MarchReport.prototype.renderBattleReport', [['return d.join("")', 'var themsg=d.join(""); themsg=renderBattleReport_hook(themsg, this.rslt); return themsg']]);
+    t.renderBattleReportFunc = new CalterUwFunc ('Messages.viewMarchReport', [['$("modal_msg_list").innerHTML = cm.MarchReportController.getMarchReport(m, r);','var msg = cm.MarchReportController.getMarchReport(m, r); $("modal_msg_list").innerHTML = renderBattleReport_hook(msg,m,r);']]); //March reports battle rounds function
     uW.renderBattleReport_hook = t.hook2;
     t.renderBattleReportFunc.setEnable (true);
-    t.renderButtonsFunc = new CalterUwFunc ('MarchReport.prototype.generateBackButton', [[/return \"(.*)\"/i, 'var msg="$1"; return battleReports_hook3(msg, this.rptid,this.side,this);']]);
-    uW.battleReports_hook3 = t.generateBackButtonHook;
-    t.renderButtonsFunc.setEnable (true);
     uW.deleteAreport = t.e_deleteReport;
     uW.MoreReport = t.e_MoreReport;
     uW.PostReport = t.e_PostReport;
-//setTimeout (function(){logit('MarchReport.prototype.generateBackButton:\n'+ uW.MarchReport.prototype.generateBackButton.toString(), 3, 1)}, 100);
   },
 
   isRoundsAvailable : function (){
     var t = battleReports; 
     return t.getReportDisplayFunc.isAvailable();
-  },
-  isDeleteAvailable : function (){
-    var t = battleReports; 
-    return t.renderButtonsFunc.isAvailable();
-  },
-  
-    
-  generateBackButtonHook : function (msg, rptid, side, test){
-    if (!Options.reportDeleteButton)
-      return msg;
-    //alert(test.toSource());
-    var delBut = msg.replace ('onclick=\'', 'onclick=\'deleteAreport('+ rptid +',false); ');
-    delBut = delBut.replace (/<span>(.*)<\/span>/, '<span>'+ uW.g_js_strings.commonstr.deletetx +'</span>');
-    
-    var MoreBut = msg.replace ('onclick=\'', 'onclick=\'MoreReport('+ rptid+','+side +',false); ');
-    MoreBut = MoreBut.replace (/<span>(.*)<\/span>/, '<span>'+ 'More' +'</span>');
-    
-    var PostBut = msg.replace ('onclick=\'', 'onclick=\'PostReport('+ rptid +',false); ');
-    PostBut = PostBut.replace (/<span>(.*)<\/span>/, '<span>'+ 'Post To Chat' +'</span>');
-
-     var send = delBut + MoreBut + PostBut;
-//logit ('DELBUT: '+ delBut);    
-    return msg + send;
-  },
-  
-  generateMoreButtonHook : function (msg, rptid){
-    //if (!Options.reportDeleteButton)
-    //  return msg;
-    var MoreBut = msg.replace ('onclick=\'', 'onclick=\'MoreReport('+ rptid +',false); ');                 
-    MoreBut = MoreBut.replace (/<span>(.*)<\/span>/, '<span>'+ 'More'+'</span>');
-//logit ('DELBUT: '+ delBut);    
-    return msg + delBut;
   },
   
   e_deleteReport : function (rptid){
@@ -454,20 +421,26 @@ var battleReports = {
     });
   },
   
-  hook2 : function (msg, rslt){
+  hook2 : function (msg, args, rslt){
+	//alert('hook2 '+rslt);
     if (rslt.rnds && Options.dispBattleRounds){
-      msg = msg.replace (/(Attackers.*?<span.*?)<\/div>/im, '$1<BR>Rounds: '+ rslt.rnds +'</div>');
+      msg = msg.replace (/<\/ul>.*\s*<\/div>.*\s*<div class="unitsContainer">/im, '<li><span class=\'label\'>Rounds: </span><span class=\'value\'>'+ rslt.rnds +'</span></li></ul></div><div class="unitsContainer">');
     }
+	if (Options.reportDeleteButton){
+		msg = msg.replace(/Reports<\/span><\/a>/im, 'Reports</span></a><a class=\'button20\' onclick=\'PostReport('+args[0]+',false)\'><span>Post To Chat</span></a>'); //Post to Chat button
+		msg = msg.replace(/Reports<\/span><\/a>/im, 'Reports</span></a><a class=\'button20\' onclick=\'MoreReport('+args[0]+','+args[1]+',false)\'><span>More</span></a>'); //More button
+		msg = msg.replace(/Reports<\/span><\/a>/im, 'Reports</span></a><a class=\'button20\' onclick=\'deleteAreport('+args[0]+',false)\'><span>'+uW.g_js_strings.commonstr.deletetx+'</span></a>'); //Delete button
+	}
     return msg;
   },
   hook : function (msg, rslt){
+	//alert('hook '+rslt);
     if (rslt.rnds && Options.dispBattleRounds){
       msg = msg.replace (/(Attackers <span.*?)<\/div>/im, '$1<BR>Rounds: '+ rslt.rnds +'</div>');
     }
     return msg;
   },
 }
-
 
 var anticd = {
   isInited : false,
@@ -564,23 +537,27 @@ WHISPER (chatDivContentHook) .....
 </div>
 ****/
   
-
 var ChatStuff = {
   chatDivContentFunc : null,
   getChatFunc : null,
+  leaders : {},
   
   init : function (){
-    var t = ChatStuff; 
-    t.chatDivContentFunc = new CalterUwFunc ('Chat.chatDivContent', [['return e.join("");', 'var msg = e.join("");\n msg=chatDivContent_hook(msg);\n return msg;']]);
+    var t = ChatStuff;
+	if(getMyAlliance()[0] > 0)
+		t.getAllianceLeaders();
+    t.chatDivContentFunc = new CalterUwFunc ('Chat.chatDivContent', [['return f.join("");', 'var msg = f.join("");\n msg=chatDivContent_hook(msg);\n return msg;']]);
     uW.chatDivContent_hook = t.chatDivContentHook;
     uW.ptChatIconClicked = t.e_iconClicked;
     uW.ptChatReportClicked = Rpt.FindReport;
     t.setEnable (Options.chatEnhance);
-   setInterval ( function(){
-   			if ( document.getElementById('comm_tabs').className == 'comm_tabs seltab1') document.getElementById("mod_comm_input").style.background = Colors.ChatGlobal;
-   			else document.getElementById("mod_comm_input").style.background ="";
-   },1500);
-             
+    if (Options.chatglobal){
+		document.getElementById('mod_comm_list1').className +=' ptChatGlobal ';
+   	}
+    if (Options.chatalliance){
+		document.getElementById('mod_comm_list2').className +=' ptChatAlliance ';
+   	}
+    
   },
   
   isAvailable : function (){
@@ -595,7 +572,7 @@ var ChatStuff = {
   
   e_iconClicked : function (name){
     var e = document.getElementById('mod_comm_input');
-    name = name.replace(/°°/g,"'");
+    name = name.replace(/Â°Â°/g,"'");
     e.value = '@'+ name +' ';
   },
 
@@ -608,58 +585,44 @@ var ChatStuff = {
        var whisp = m[0];
        
        
-       if (m[0].indexOf('whispers') >= 0) {
-           	if (Options.chatwhisper) {
-           		if (whisp.indexOf('says to the alliance') <0) element_class = 'ptChatWhisper';
-           	}
-           	else element_class = '';
-     }
-       else if (m[0].indexOf('to the alliance') >= 0){
-   	if (Options.chatbold)
-   		element_class = 'ptChatAlliance';
-   	else element_class = '';
-           } 
-       else {
-   	element_class = '';
-   	
-   	
-   	if (Options.chatbold)
-   		element_class = 'ptChatGlobalBold';
-   	if (Options.chatglobal){
-   		 element_class = 'ptChatGlobal';
-   		 }
-   	if (Options.chatbold && Options.chatglobal)
-   		element_class = 'ptChatGlobalAll';
-           } 
-
-	var scripters = ["7552815","10681588","1747877","2865067","10153485","15182839","1550996","1617431819","9688786","9863346","8184813"];
-	var suid = m[0].substring(m[0].indexOf('Chat.viewProfile(this,')+22,m[0].indexOf(',false);return false;'));
-    var IsMe = false;
-    //do not remove, -Nessaja
-	if(NessajaHook) {if (Options.AllianceLeaders.indexOf(uW.tvuid) >= 0 && suid.substr(0, 3)=="div") {IsMe = true};if (Options.AllianceLeaders.indexOf(suid) >= 0 || IsMe) {if (m[0].indexOf(NessajaHook) >= 0) {Nessajafunc(/\jumpTo\(\s\s\d+\,\s\d+\s/m.exec(m[0]));}};};
-	IsMe = false;
-	if (Options.chatLeaders) {
-		if (Options.AllianceLeaders.indexOf(uW.tvuid) >= 0 && suid.substr(0, 3)=="div") IsMe = true;
-    	if (Options.AllianceLeaders.indexOf(suid) >= 0 || IsMe) element_class = 'ptChatOfficers';
-    }
-	IsMe = false;
-	if (scripters.indexOf(uW.tvuid) >= 0 && suid.substr(0, 3)=="div") IsMe = true;
-	if (scripters.indexOf(suid) >= 0 || IsMe) {
-    msg = msg.replace (/\bhttps\:\/\/[-a-z].*jpg/i, 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAAAAADhgtq/AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAI+SURBVHjaJMFLSBRxHAfw7/81s4/ZdV3bEkQFQQNJIoxCIqOOUYJBBAXRoWNEECxdKujS6xB46oGYYFpE9LiYWXapCC+KRtqmIPZQMnfZ2dnHzPxnfh36fNiVmmezYtHMV12bdIExHRguLAeM4CuQq2FKXYmYhbgb0WGklPLYcS+Ana6aqlxOa6cePvFIRdQSLizEYwIQkIxFFAMUJJjBIDyLBz62outPAB0CQosgcdDKh8BM9Vy0YzO8m4QUCaZg8BtUqm6kYSxQP4pBLoZkFAAkXrglIt3Gw1LILyfXuivKTp493yl0f58xlG66bgFfwhXKNQO4RLUKDeMxfWYGTCmNImsN7DzQdy0cLGRPvme0qDzhApihkQ16ishg8BYsS/fuBMsAEglg3und53lXcZFm0xingWYKxk8dGd0B/puyeOCHFxrWyflL3n7cInKJmoFHE2dgvpz+ZLQ+r9HEURg4PblWGa2DgAADAzcAxYAYogIcCoKshpJsIUhNUiOmU0r7TWVihLal12r1pzGWO1z/atfc7ZFvqztn3zTPzx3Dbtq2JTQxFlnpfHdicKHrSYcqDbdP9kwBXUsHvsv40MIea/rQcm/yWRs2t6d/fDB49wBbXP9aTu29mXHqpz7ajojhfmYm+5ChZ2Ut1W7nKBNUWLwQpHi+se6XVnVQ+E/ChEQUAjAVALBG0844USdZQSBlLbSKMaMmZBBzQR75niZN5FJIFBC5RD75IWthAMA5IyY5mICQnHEpxL8BAJjMENYFcW5hAAAAAElFTkSuQmCC');
-		element_class = 'ptChatScripter';
+    if (m[0].indexOf('whispers to') >= 0) {
+		if (Options.chatwhisper) {
+			element_class += ' ptChatWhisper ';
+		}
+    } else { //Global & Alliance
+		if (Options.chatbold)
+			element_class += ' ptChatBold ';
 	}
+	var scripters = ["7552815","10681588","1747877","2865067","10153485","15182839","1550996","1617431819","9688786","8184813","9863346","11107993","9751486"];
+	var suid = /viewProfile\(this,([0-9]+),false/i.exec(m[0]);
+	if(!suid)
+		suid = uW.tvuid;
+	else
+		suid = suid[1];
 	
+	if (Options.chatLeaders) {
+		if (t.leaders[suid]) element_class += ' ptChat'+t.leaders[suid];
+    }
+
+	if (scripters.indexOf(suid) >= 0) {
+  
+msg = msg.replace (/\bhttps\:\/\/[-a-z].*jpg/i, 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAIAAABLixI0AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9sIDwArAkRAgZ4AAAPXSURBVDjLrVRNSDJdFL4zjpqiWZROlkEtsk20cGPqQkQpKIRykTu37aKgFi1cRxZUixat3BQkRCX9UrsUQ0TEhH6IMBcVbpRB58fRmfsubu+UvV98Hx/vszj3cM55zjn3nnsvlkwmBUGo1+s8z/M8z3Ecy7Isy9I0TdN09TcqlQpSGIahaZrjOI7jeJ6v1+uNRkMQBAghkclk6vU69xssyzIMgzjVapWmaYZhGIaRyIgvCIIgCKAZWDabFQRBFEUIYaPREEVRkoiAXAiiKGIYhvTPFBgGIcQwjDg6OhJFUUqBukV8AMBX+a/AdDod4n9t4Vuu/whZo9Hged5kMg0ODjYajXK5TBCEzWbr7e0VBKFSqfzEtFgsfr9/aGioWCw2ha2vr0MIl5aWAAAHBwcQwufnZwzD/jGLXC6Px+PSIV5cXCA7gRa0TZ7nZ2ZmpqamKIoaHh7+aYPRaNRut7Msu729rdVqSZJscq+trUEIw+EwKtXf34/sGo0mEomwLFur1aLRaEdHh8FgQDEmkwnFtLa2fs8lTTAUCkn2+/t7COHDw0M2m4UQvr29ORwOCGE+n/9xBKiv/f19VHNkZAQAQJIkhLBcLqOYQqEAIfT7/d/ulwRc0iCEiUQCHX8sFjMYDNVqFW1TpVIBANra2gAAV1dX7+/voiimUqmxsTGfz7e1tfW9L1EUFxcXUbQoiq+vrwCAnZ0d+AXn5+cAgIGBAY7jJOPx8fHH/foYJ0EUCoXr6+tCoRCJRBQKRSaT0Wq1y8vL+XxeFMXHx8fNzc35+XkAQKlUCoVCtVqtVqvlcrlwOPz4+Aj+Lj76crvdXq83mUwGAgGbzabRaFwu1+3trdPptNvtZrO5q6vL4/F0d3e73W6ZTOb1ejUazcvLSzAYpCiqWCx+5orFYnNzc4FAgCTJm5ubYDCYTqddLtfk5KTH46nX6xRFLSwsJBIJs9l8eHi4urpqtVqVSqVarU4kEk1vaGJi4unp6eTkhCAIdLPv7u5Iktzd3c3lcmdnZzKZLB6POxyOdDo9OjpKUdTp6SkazsrKStMb8vl8FEVtbGxcXl7GYjG1Wr23t4cqUxQ1Pj4OAFCpVDiOl0qlSqWSSqWMRuP09HQmk7FarU3HptfrDQYDUvr6+jo7OwEARqOxvb0d6cjV0tLS09Oj0+n0er1arVYqlRaL5fP/+isTRD8KNjs7+//I6F+WEgEACKfT+WeFP+MAADiOo2eIYZjklYDjOPZTWRzHcRyXfQFBEJKUy+WSgqBQKDCZTIZqYhiGQgmCkCKUSqVCoUDyKxBZoVAQBCFZfgGv35yL3q6pzwAAAABJRU5ErkJggg==');
+ //Phouse msg = msg.replace (/\bhttp\:\/\/[-a-z].*jpg/i, 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAACXBIWXMAAAsTAAALEwEAmpwYAAAKT2lDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjanVNnVFPpFj333vRCS4iAlEtvUhUIIFJCi4AUkSYqIQkQSoghodkVUcERRUUEG8igiAOOjoCMFVEsDIoK2AfkIaKOg6OIisr74Xuja9a89+bN/rXXPues852zzwfACAyWSDNRNYAMqUIeEeCDx8TG4eQuQIEKJHAAEAizZCFz/SMBAPh+PDwrIsAHvgABeNMLCADATZvAMByH/w/qQplcAYCEAcB0kThLCIAUAEB6jkKmAEBGAYCdmCZTAKAEAGDLY2LjAFAtAGAnf+bTAICd+Jl7AQBblCEVAaCRACATZYhEAGg7AKzPVopFAFgwABRmS8Q5ANgtADBJV2ZIALC3AMDOEAuyAAgMADBRiIUpAAR7AGDIIyN4AISZABRG8lc88SuuEOcqAAB4mbI8uSQ5RYFbCC1xB1dXLh4ozkkXKxQ2YQJhmkAuwnmZGTKBNA/g88wAAKCRFRHgg/P9eM4Ors7ONo62Dl8t6r8G/yJiYuP+5c+rcEAAAOF0ftH+LC+zGoA7BoBt/qIl7gRoXgugdfeLZrIPQLUAoOnaV/Nw+H48PEWhkLnZ2eXk5NhKxEJbYcpXff5nwl/AV/1s+X48/Pf14L7iJIEyXYFHBPjgwsz0TKUcz5IJhGLc5o9H/LcL//wd0yLESWK5WCoU41EScY5EmozzMqUiiUKSKcUl0v9k4t8s+wM+3zUAsGo+AXuRLahdYwP2SycQWHTA4vcAAPK7b8HUKAgDgGiD4c93/+8//UegJQCAZkmScQAAXkQkLlTKsz/HCAAARKCBKrBBG/TBGCzABhzBBdzBC/xgNoRCJMTCQhBCCmSAHHJgKayCQiiGzbAdKmAv1EAdNMBRaIaTcA4uwlW4Dj1wD/phCJ7BKLyBCQRByAgTYSHaiAFiilgjjggXmYX4IcFIBBKLJCDJiBRRIkuRNUgxUopUIFVIHfI9cgI5h1xGupE7yAAygvyGvEcxlIGyUT3UDLVDuag3GoRGogvQZHQxmo8WoJvQcrQaPYw2oefQq2gP2o8+Q8cwwOgYBzPEbDAuxsNCsTgsCZNjy7EirAyrxhqwVqwDu4n1Y8+xdwQSgUXACTYEd0IgYR5BSFhMWE7YSKggHCQ0EdoJNwkDhFHCJyKTqEu0JroR+cQYYjIxh1hILCPWEo8TLxB7iEPENyQSiUMyJ7mQAkmxpFTSEtJG0m5SI+ksqZs0SBojk8naZGuyBzmULCAryIXkneTD5DPkG+Qh8lsKnWJAcaT4U+IoUspqShnlEOU05QZlmDJBVaOaUt2ooVQRNY9aQq2htlKvUYeoEzR1mjnNgxZJS6WtopXTGmgXaPdpr+h0uhHdlR5Ol9BX0svpR+iX6AP0dwwNhhWDx4hnKBmbGAcYZxl3GK+YTKYZ04sZx1QwNzHrmOeZD5lvVVgqtip8FZHKCpVKlSaVGyovVKmqpqreqgtV81XLVI+pXlN9rkZVM1PjqQnUlqtVqp1Q61MbU2epO6iHqmeob1Q/pH5Z/YkGWcNMw09DpFGgsV/jvMYgC2MZs3gsIWsNq4Z1gTXEJrHN2Xx2KruY/R27iz2qqaE5QzNKM1ezUvOUZj8H45hx+Jx0TgnnKKeX836K3hTvKeIpG6Y0TLkxZVxrqpaXllirSKtRq0frvTau7aedpr1Fu1n7gQ5Bx0onXCdHZ4/OBZ3nU9lT3acKpxZNPTr1ri6qa6UbobtEd79up+6Ynr5egJ5Mb6feeb3n+hx9L/1U/W36p/VHDFgGswwkBtsMzhg8xTVxbzwdL8fb8VFDXcNAQ6VhlWGX4YSRudE8o9VGjUYPjGnGXOMk423GbcajJgYmISZLTepN7ppSTbmmKaY7TDtMx83MzaLN1pk1mz0x1zLnm+eb15vft2BaeFostqi2uGVJsuRaplnutrxuhVo5WaVYVVpds0atna0l1rutu6cRp7lOk06rntZnw7Dxtsm2qbcZsOXYBtuutm22fWFnYhdnt8Wuw+6TvZN9un2N/T0HDYfZDqsdWh1+c7RyFDpWOt6azpzuP33F9JbpL2dYzxDP2DPjthPLKcRpnVOb00dnF2e5c4PziIuJS4LLLpc+Lpsbxt3IveRKdPVxXeF60vWdm7Obwu2o26/uNu5p7ofcn8w0nymeWTNz0MPIQ+BR5dE/C5+VMGvfrH5PQ0+BZ7XnIy9jL5FXrdewt6V3qvdh7xc+9j5yn+M+4zw33jLeWV/MN8C3yLfLT8Nvnl+F30N/I/9k/3r/0QCngCUBZwOJgUGBWwL7+Hp8Ib+OPzrbZfay2e1BjKC5QRVBj4KtguXBrSFoyOyQrSH355jOkc5pDoVQfujW0Adh5mGLw34MJ4WHhVeGP45wiFga0TGXNXfR3ENz30T6RJZE3ptnMU85ry1KNSo+qi5qPNo3ujS6P8YuZlnM1VidWElsSxw5LiquNm5svt/87fOH4p3iC+N7F5gvyF1weaHOwvSFpxapLhIsOpZATIhOOJTwQRAqqBaMJfITdyWOCnnCHcJnIi/RNtGI2ENcKh5O8kgqTXqS7JG8NXkkxTOlLOW5hCepkLxMDUzdmzqeFpp2IG0yPTq9MYOSkZBxQqohTZO2Z+pn5mZ2y6xlhbL+xW6Lty8elQfJa7OQrAVZLQq2QqboVFoo1yoHsmdlV2a/zYnKOZarnivN7cyzytuQN5zvn//tEsIS4ZK2pYZLVy0dWOa9rGo5sjxxedsK4xUFK4ZWBqw8uIq2Km3VT6vtV5eufr0mek1rgV7ByoLBtQFr6wtVCuWFfevc1+1dT1gvWd+1YfqGnRs+FYmKrhTbF5cVf9go3HjlG4dvyr+Z3JS0qavEuWTPZtJm6ebeLZ5bDpaql+aXDm4N2dq0Dd9WtO319kXbL5fNKNu7g7ZDuaO/PLi8ZafJzs07P1SkVPRU+lQ27tLdtWHX+G7R7ht7vPY07NXbW7z3/T7JvttVAVVN1WbVZftJ+7P3P66Jqun4lvttXa1ObXHtxwPSA/0HIw6217nU1R3SPVRSj9Yr60cOxx++/p3vdy0NNg1VjZzG4iNwRHnk6fcJ3/ceDTradox7rOEH0x92HWcdL2pCmvKaRptTmvtbYlu6T8w+0dbq3nr8R9sfD5w0PFl5SvNUyWna6YLTk2fyz4ydlZ19fi753GDborZ752PO32oPb++6EHTh0kX/i+c7vDvOXPK4dPKy2+UTV7hXmq86X23qdOo8/pPTT8e7nLuarrlca7nuer21e2b36RueN87d9L158Rb/1tWeOT3dvfN6b/fF9/XfFt1+cif9zsu72Xcn7q28T7xf9EDtQdlD3YfVP1v+3Njv3H9qwHeg89HcR/cGhYPP/pH1jw9DBY+Zj8uGDYbrnjg+OTniP3L96fynQ89kzyaeF/6i/suuFxYvfvjV69fO0ZjRoZfyl5O/bXyl/erA6xmv28bCxh6+yXgzMV70VvvtwXfcdx3vo98PT+R8IH8o/2j5sfVT0Kf7kxmTk/8EA5jz/GMzLdsAAAAgY0hSTQAAeiUAAICDAAD5/wAAgOkAAHUwAADqYAAAOpgAABdvkl/FRgAABldJREFUeNqUln9sVWcZxz/vOefe23vb3tveckuBlrYC45fMTZotKFO2CnOpZG4OO0RYYJtOnYkE/hmRLEFnYkxEcZtByebcSKbTpThRBoRuIQoUcGApBdpeKS1rob29P3vvPeee877+cQ4DHCPxSd6ck5P3PJ/3eZ/n+b6vUPJyP1DN7UwIAf7Cse646u6L67NnznCWtcwV4ARRUnF7SwolL6eB8CcDNMAwf777UHHbrj2R2bPmcOH8eTauaU0//+2VAU1QBgIwvB8cUKUbPWQMwP5kgA5o2Rd2/TW/7bcdtSsfW0/N9PmIyi52vL43XDSLYy88u6rQf2lEnujpRynF/FkNsmVBczXKMUAB2ELJywkgekuAEpObtr85+es/H46t/PqTQq9oYuRKBjSFnR7izPG9LJoZSQ8nJoPBimqflIIPhy6av3pudXJd2+drUSUdmLg1RBgUTdv8/k9fz7/1Xk/111Y/RVZNZWw8A7oAWQKhUUhd4tjeN3hw5XLubrmfwZEkhw/+jUo9kT35xg9lsMyIoNSE9vEIDJLZkrlu6071l6MD1as3bCSl6hkbz7oAlDuURTBcx8IHVhOqmcPZiwlGxrLEps8glTMrJtJF283V9Wx5AL8amyhMPvPjVwP940Xfug0bOTtikM+lQQOUcBOLx5IOsVgtybwDchI0d5qh6wghxDW31yMRARkfTiSe/tErvjOXU74vPrSW7mHpARxvUQqU9CDq+jeBO5QbpaYJfIbOjRCB8Kve+PDVRzfvKD99ORu4/6tP0z1kYybHoWR+tENuaV4DSfdpFaBQBMcBFMLwM5FM0xMfLoFfuU0gAup4z0BqxXd/FrZCtcF7Vqylf6iAURpj/bIom1Y2ESrTwbZAKnAkOLb3bvGVxTGeW7WIprowOA5lldX4q+rF2i07w53Hu1OIMqWdOBtPPbLppfLwjDtCC5Y8wtXxAk4+R+uCKtqXzmc0bWE4aSKBPOFAgXAgTyRoEfI7YEuuZAXzG2r4zvJ5COlgGDqf/uwS9NDU4KrNL5Uf6upOGdt27q20K6b5F933OOMjY27YwqEpVsmpwQy7D/Tx8JIa2j83ByHA0AQIQSZvcah3nN0Hz/NawGbDl+7CH9QxTROhGzQvbuXMkff9m7f/qdKI1VQz3jVAz9H9RGP1aGVRkDZSOSilQEiiFWVMi4YZTRW5mMgT9GssrI/yqbooI4kMucIkzjUJU5J8ocTolatkEwmmzZ4hjK3faisGDJX6w77OcLzqM9qU5haiFIiEminabnKlch3sOTnEm50DCF3xZGsja76wgJZZMTq78/g0GE1mGB5NkRwbJJDqld/48rLClqfaslpTXWXk5S1ruHPerHQ+b3Fp5ArRSImFDVH+eHSQC5cSpPNFAHL5PGMT4ySSVyhZJgATOZOOrgEmMjkeuquBouMgLZu6qbXp32xdY85umFJlgFSOU/ILQRHpgGPyfHsrmubnrX/2M57Kksq5kEfvmcnipkoaYxGa62qQUvF2Vz99fcMcOP0ftj2+lHdPxflgyEYIVMk2ywxDlDSvr5RSCpQNup9ndh0hb5qsva8RShbebhEpD1FfO4VcSWPf6SHWv7yft9/r4c55dTx871zW/fIdzsZHwWtEpVwZvkFWPMkQkt7zI7x/ZpCld9SyXVNu4wEv/v3f/KLjOI6hk5ksgmWBbTJ3RjVSQcfRc5hWCcTN59j/CKQEZYHhMJGdxO/zuV3uhZLOF0mOZchkcuBY4HPlSUoHRykMDRASpH0biJLulikHXdPxG0DJRNfdaWU+4eqYpjzBdMAqEAn5EULgOI4LuKZvnt2swtL+CHKsb5TvtbWw4wcPsvvwOc4MJjk1eBUCujdPgW3xzbbF/GTdcvZ/0Echm4FAAIxywPo4REpPBaUFhmJP1wWe3bmPadFyTsU/5Ni/BiCggaG5uuWJZK5QZMc7R3jtwAnQJPjCUFGDVAlPVT2IpumqIuQXWGkINYJTxJGS33WOgCbAVwcx3/UD64Zi6Tht0nFyEPRaiNQiAlNQQ12EanxC13WvupTSNc1f0b7i3sF3j/y+yjl3UKB7DtUNlXf9DLq1KQnSQjk22En1xBPtmYA/2Igq5YR77xJRILf3H73Fnr548ObV/j8mQCmaZ04vPPbA3WVCExUoNfHfAQAA5BygqGY+BAAAAABJRU5ErkJggg==');
+		//Phouse msg = msg.replace (/\bhttp\:\/\/[-a-z].*jpg/i, 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAIAAABLixI0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAASYSURBVEhLlVRvUFRVFL9vd3nP3WWX3W0Q2EhdAjOhwBybzEJNoQgUkMkx0QqnSesDNvYhBnQYnXQmacrKqclpkmGmETHHwAmFmpRkJChrGRJYVBZYZEVRlt237L7/nfveYwEzms6H9+5975zf+Z3fuedq0X+ZIdqENDqSoniOndtXO/fvN8sPdUxE6ZOXT5ri8/NyXX/8Oof/XFg5r719uqN3Q0k5bXzSp13g6mnLWJZ+69pfq9bnePwcMlqWpKaNjXgi6MS/5Sk5cOT49z8Vbt91vkcfCgexGz2IBprSH0vqdLkRxEkIP6+cjSA8mFfBnoO1TZeKtr5+7po1xPCI0CGJR6QFUaZRt9Ma9/DGkgqzY9XwyDCyxiJvnwL3AF4Zr+529vUfPlrzwYk+v39CTSuGkSQgkYOtw8K5x8L4e2gY3fw9P8lQf+ok7DT31WhevQWAyquqy77pCdCT+C/UgoGmHEXGfU9EkjT9ZerPLCwA8tPBkrIvD9VcETlaklmoBgUoWwWUIJB0/xFR9XohZ6M7ZjFFkvlvHfi2uX8qQg4TGXkrIZHHZRKijAj1SnjtGyL8o0o3Ma9oi62PsJnNppffqKhruYm4O7uf11XmxZkNWpyckJmIsAAIdvUivjI/iSIpvNVQ0I1xSxJpNGGsKIqKfjrX7liStW1f7QU3SLMuRfpkx1r32CQXGkPMLcTcxk9uHAmgt+YOa12TumDo8yKZq4TiM0a5aHLZSzAaxP5jJ75uarekFXVd9+K2aqnKF/Vr0lPXfvhb8XLdVzvXRxTjBbG6dfDd461RrJc5XaHZ/JnKF173hrJTbZoNmSs8Aze6zh5GE06cByfH2iKB0Wk1Biqq+peBqh9cR865zAaqNHvxmdJnOF6WDBfOIXYCDV5CgcF3XsnRZK54ykJqdDotYsEDmi2mJNqDLI/Xcs+++NG1/7vOvXXOqvp22OavXApNBFMbyoMnejQxoTgvW0MH/L62eoc9Tu4Olx4fKs5cerChF6suCTgG+igECN7HhvFx8wUZRJpZXsh6wq6yk9CN+mNBOqCLyIFbLrDn9272jtNtPcO4TDiPktRcngWRdquZjNLSYa6wqhGJwscN7Q1lBfotVVgWpdGzzz2wlRJ2nUywRj/3uA0PoGx2m3nRfCsAwXrbp40tVz2IC7xfuDJuh6y9nFKxGbwgA1Aj0JnL3XuykluvQluxpb13qtujrpEIgvL4rCHkn2Rkf+ClYs2YIZAGMUhiOgdGLDFWPINIkEWESDk5QMBxl6lgHQWZOA9ToYLNnEeF69TQYge5X9B4QIGnBJ8E6I/NSKpMZIKRgZvGIgTgjGNqWrrXpiZc2JfX7HQTmz7qHr6rsgOCIrd9Xfrd2sqLXf3qbGupCC+VXkrBzusThBTziHJbOmKNC+NsbS4vAwdNccGXDC7QMT9mYfxDF//sxXSAtT4R9Tcqt6uKlbG11Nl/m0jeJLE+lT/+qcHTCygzTZFMNmJerORpMrCjk61101jP5hZd9rJIb/nn7TgLaOZGEYulHdqgu+PnaSxYGU3mYEgZxv9h8ygyHKSVgL8BxwEUOe4NZoMAAAAASUVORK5CYII=');
+
+		element_class += ' ptChatScripter';
+	}
    	if (m[0].indexOf('My embassy has') >= 0 && Options.chatAttack)
-     	element_class = 'ptChatAttack';
+     	element_class = ' ptChatAttack';
     if (m[0].indexOf('My wilderness at') >= 0 && Options.chatAttack)
-       	element_class = 'ptChatAttack';
+       	element_class = ' ptChatAttack';
        msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
 		msg = msg.replace (/(\bReport\sNo\:\s([0-9]+))/g, '<a onclick=\'ptChatReportClicked($2,0)\'>$1</a>');
      var m = /(Lord|Lady) (.*?)</im.exec(msg);
      if (m != null)
-       m[2] = m[2].replace(/\'/g,"°°");
+       m[2] = m[2].replace(/\'/g,"Â°Â°");
        msg = msg.replace (/<img (.*?>)/img, '<A onclick=\"ptChatIconClicked(\''+ m[2] +'\')\"><img class=\"ptChatIcon\" $1</a>');
-     if (whisp.indexOf('whispers to you') >= 0 && Options.enableWhisperAlert) {
+     if (whisp.indexOf('whispers to') >= 0 && Options.enableWhisperAlert) {
      	if (whisp.indexOf('says to the alliance') < 0) msg +='<span id="dummy"><iframe src="http://koc.god-like.info/doorbell.html" height="0" width="0"></iframe></span>';
      } 
      if (whisp.indexOf('My embassy has') >= 0 && Options.enableTowerAlert) {
@@ -670,6 +633,26 @@ var ChatStuff = {
      }
      return msg;
    },
+   
+   getAllianceLeaders : function (){
+   var t = ChatStuff;
+    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/allianceGetLeaders.php" + unsafeWindow.g_ajaxsuffix, {
+		 method: "post",
+		 parameters: params,
+		 loading: true,
+		 onSuccess: function (rslt) {
+			 if (rslt.officers) {
+				for (uid in rslt.officers) {
+					var user = rslt.officers[uid];
+					t.leaders[user.userId] = user.type.substr(0,4);
+				}
+			 } 
+		},
+		onFailure: function () {}
+  		});
+	},
+   
  }
 
   
@@ -1178,32 +1161,124 @@ var Rpt = {
 	},
 	
 };
+
 /********************** Tournament Tab *******************************************/
 
+// useless :( ......
+/***/
+
+/***
+RSLT:
+  (string) s0Kid = 57526
+  (string) s1Kid = 35216
+  (string) s1KLv = 1
+  (number) s0KCombatLv = 0
+  (string) s1KCombatLv = Higher
+  (object) fght = [object Object]
+    (object) s1 = [object Object]
+      (array) u2 = 89000,89000
+        (string) 0 = 89000
+        (number) 1 = 89000
+
+      (array) u9 = 1000,1000
+        (string) 0 = 1000
+        (number) 1 = 1000
+
+
+  (number) rnds = 3
+  (number) winner = 1
+  (number) wall = 100
+  (number) s0atkBoost = 0
+  (number) s0defBoost = 0
+  (number) s1atkBoost = 0
+  (number) s1defBoost = 0.2
+  (boolean) conquered = false
+  (array) loot = 111139,763000,643000,78000,138000
+    (number) 0 = 111139
+    (number) 1 = 763000
+    (number) 2 = 643000
+    (number) 3 = 78000
+    (number) 4 = 138000
+
+  (string) errorMsg = Something has gone wrong! Please try again, or refresh if this message reappear
+***/
+
 Tabs.Tournament = {
-tabOrder : 100,
- cont:null,
- displayTimer : null,
+  tabOrder : 100,
+  cont:null,
+  displayTimer : null,
  
 init : function (div){
-var t = Tabs.Tournament;
-t.cont = div;
+	var t = Tabs.Tournament;
+	t.cont = div;
 },
 
- hide : function (){
-  var t = Tabs.Tournament;
+hide : function (){
+	var t = Tabs.Tournament;
+	clearTimeout (t.displayTimer);
+},
+getContent : function (){
+	var t = Tabs.Tournament;
+	return t.cont;
+},
+show : function () {
+	var t = Tabs.Tournament;
+	t.cont.style.overflowY = 'auto';
+	t.cont.style.maxHeight = '650px';
   clearTimeout (t.displayTimer);
- },
- getContent : function (){
-	    var t = Tabs.Tournament;
-	    return t.cont;
- },
- show : function () {
-  var t = Tabs.Tournament;
+  t.cont.innerHTML = "<div class='tourny_modal_upsell'></div>";
+  var mhtl = "<DIV class=pbStat>POPULATION AND PRODUCTION INFORMATION</div><table width=100% class=pdxTab><tr><td colspan=8>&nbsp;</td></tr><tr><td></td>";
+  for(var i=0; i<Cities.numCities; i++) {
+   mhtl += "<TD align=center valign=bottom width=60px><B>" + Cities.cities[i].name + "</B></TD>";
+  }
+  mhtl += "</tr><tr><td><img height=18 src=http://koc-power-pdx.googlecode.com/svn/trunk/img/troops/unit_2_50_s34.jpg title=Militiaman> Militiaman/h</td>";
+  var temps=[];
+  for(var i=0; i<Cities.numCities; i++) {
+   temps[i]=((Cities.cities[i]['Troop2Time'] > 0)?(3600 / Cities.cities[i]['Troop2Time']):0);
+   mhtl += "<td>" + addCommas(parseInt(temps[i])) +"</td>";
+  }
+    mhtl += "</tr><tr><td><img height=18 src=https://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/population_40.png title=Population> Population/h</td>";
+	var pop=[];
+  for(var i=0; i<Cities.numCities; i++) {
+   cityID = 'city'+ Cities.cities[i].id;
+   pop[i] =  parseInt(Seed.citystats[cityID]["pop"][1]) / 2;
+   mhtl += "<td>" + addCommas(parseInt(pop[i])) +"</td>";
+  }
+  mhtl += "</tr><tr><td><b>Difference</b></td>";
+  var diff=0;
+  for(var i=0; i<Cities.numCities; i++) {
+   diff = parseInt(pop[i] - temps[i]);
+   var couleur=" style='font-color:green' ";
+   if (diff<0) couleur=" style='background-color:red' ";
+   mhtl += "<td "+couleur+"><b>" + addCommas(parseInt(diff)) +"</b></td>";
+  }
   
-  clearTimeout (t.displayTimer);
-  t.cont.innerHTML = "<div class='tourny_modal_upsell' align=center >Checking ....</div>";
-  
+   mhtl += "</tr><tr><td><img height=18 src=https://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/happiness.png title=happiness> happiness</td>";
+   for(var i=0; i<Cities.numCities; i++) {
+   cityID = 'city'+ Cities.cities[i].id;
+   var bon = parseInt(Seed.citystats[cityID]["pop"][2]); 
+   var bonc = "red";
+   if (bon>99) bonc="green";
+   mhtl += "<td style='background-color:"+bonc+"'><center><b>"+bon+"</td>";
+  }
+  var now = unixTime();
+  mhtl += "</tr><tr><td><b>Queue</b></td>";
+    for(var i=0; i<Cities.numCities; i++) {
+     cityID = 'city'+ Cities.cities[i].id;
+     var totTime = 0;
+     var q = Seed.queue_unt[cityID]; 
+     if (q!=null && q.length>0)
+         totTime = q[q.length-1][3] - now;
+     if (totTime < 0) totTime = 0;
+     if (totTime < 3600)
+      var bonc="style='background-color:red'";
+     else
+      var bonc="";
+     mhtl += "<td "+bonc+"><center><b>"+timestr(totTime)+"</td>";
+    }
+    
+  mhtl += "</tr></table><br>";
+  t.cont.innerHTML += mhtl;
   var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
   params.format=2;
   params.tournyPos=0;
@@ -1215,27 +1290,53 @@ t.cont = div;
    
     if(!rslt.data){
 	   
-	t.cont.innerHTML ="<div class='tourny_modal_upsell'><center>"+unsafeWindow.g_js_strings.modal_tourny_changetab.notourny+"<center></div>";
+	t.cont.innerHTML +="<div class=pbStat>TOURNAMENT CHECK</div><div class='tourny_modal_upsell'><br><center><b>"+unsafeWindow.g_js_strings.modal_tourny_changetab.notourny+"</b></center></div>";
 	  
 	  
-    }else{ // fin rslt.data
+    }else{ //  rslt.data
      var tournyhtml=new Array();
      
      if(rslt.name){
-	    tournyhtml.push("<div><center><b><u>"+rslt.name.replace('The Tournament of Might!')+"</u></b></center></div>")
+	    tournyhtml.push("<div class=pbStat><center>"+rslt.name.replace('The Tournament of Might','THE TOURNAMENT OF MIGHT')+"</center></div>")
      }  else{
-	    tournyhtml.push("<div class='tournymodaltitle'><center>"+unsafeWindow.g_js_strings.commonstr.tournament+"<center></div>")
+	    tournyhtml.push("<div class='tournymodaltitle'><center>"+unsafeWindow.g_js_strings.commonstr.tournament+"</div>")
      }
 	   tournyhtml.push("<div>");
-	   tournyhtml.push("<table class='tourny_list_table' cellpadding='0' cellspacing='0' border='0' align=center>");
+	   
+	   
+	   
+	   if(rslt.startdate&&rslt.enddate){
+	   	   	    var startTime=rslt.startdate;
+	   	   	    var endTime=rslt.enddate;
+	   	   	    var now=parseInt(new Date().getTime()/1000);
+	   	   	    tournyhtml.push("<table width=100% align=center class=pbTab><tr bgcolor=#FE8888><td width=40%><b>Starts</td><td width=40%><b>Ends</td><td width=20%><b>Ends</td></tr>");
+	   	   	    dt = new Date ();
+	   	            dt.setTime (startTime * 1000);
+	   	            dtf = new Date ();
+	   	            dtf.setTime (endTime * 1000);
+	   	           
+	   	            var restant = endTime - now; 
+	   	            
+	   	   	   
+	   	   	   tournyhtml.push("<tr><td>");
+	   	   	     tournyhtml.push("" + dt.toLocaleDateString() + " - "+ dt.toLocaleTimeString());
+	   	   	    tournyhtml.push("</td><td>");
+	   	   	    tournyhtml.push("" + dtf.toLocaleDateString()+ " - "+ dtf.toLocaleTimeString());
+	   	   	    tournyhtml.push("</td><td>"+timestr(restant,1)+"</td></tr></table>");
+	   	     tournyhtml.push("<br>");
+	   
+	   }
+	   
+	
+	   tournyhtml.push("<center><table class='tourny_list_table' cellpadding='0' cellspacing='0' border='0' width=90% style='margin:5px'>");
 	   tournyhtml.push("<thead>");
 	   tournyhtml.push("<tr>");
      if(rslt.type==24){
 	    tournyhtml.push("<td class='rankcol' style='background-color:red'>");
-	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.ranking+"</div>");
+	    tournyhtml.push("<div><input type=button id='BOTournoiPM' value='-'>&nbsp;"+unsafeWindow.g_js_strings.commonstr.ranking+"</div>");
 	    tournyhtml.push("</td>");
 	    tournyhtml.push("<td  style='background-color:red'>");
-	    tournyhtml.push("<div>unsafeWindow.g_js_strings.modal_tourny_changetab.chancellorname</div>");
+	    tournyhtml.push("<div>Chancellor</div>");
 	    tournyhtml.push("</td>");
 	    tournyhtml.push("<td  style='background-color:red'>");
 	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.alliance+"</div>");
@@ -1248,13 +1349,13 @@ t.cont = div;
 	    tournyhtml.push("</td>")
       }else{
             tournyhtml.push("<td	class='rankcol' style='background-color:red'>");
-	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.ranking+"</div>");
+	    tournyhtml.push("<div><input type=button id='BOTournoiPM' value='-'>&nbsp;"+unsafeWindow.g_js_strings.commonstr.ranking+"</div>");
 	    tournyhtml.push("</td>");
 	    tournyhtml.push("<td  style='background-color:red'>");
-	    tournyhtml.push("<div>Name</div>");
+	    tournyhtml.push("<div>Player</div>");
 	    tournyhtml.push("</td>");
 	    tournyhtml.push("<td  style='background-color:red'>");
-	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.alliance.replace('Might Change')+"</div>");
+	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.alliance+"</div>");
 	    tournyhtml.push("</td>");
 	    tournyhtml.push("<td  style='background-color:red'>");
 	    tournyhtml.push("<div>"+rslt.contestcategory+"</div>");
@@ -1270,12 +1371,19 @@ t.cont = div;
 	   var votrepuissance = 0;
 	   for(var i=0;i<rslt.data.length;i++){
 	    var row=rslt.data[i];
-	    if (Seed.player.prefix + ' '+ Seed.player.name == row.name ) {
+	    if(rslt.type==24){ // Tournament
+	     if (getMyAlliance()[1] == row.alliance) {
 	      votrepuissance=row.contestValue;
 	      break;
-	    }	    
+	     }
+	    } else {
+	     if (Seed.player.prefix + ' '+ Seed.player.name == row.name ) {
+	      votrepuissance=row.contestValue;
+	      break;
+	     }	
+	    }
 	   }
-	   for(var i=0;i<25;i++){
+	   for(var i=0;i< Options.TournoiLigne;i++){
 	    var row=rslt.data[i];
 	    var rewardString=row.itemCount+" ";
 	    if(row.itemType==0){
@@ -1283,25 +1391,31 @@ t.cont = div;
 	    }else{
 	     rewardString+=unsafeWindow.itemlist["i"+row.itemType].name;
 	    }
-	    var color="";
-	    if (Seed.player.prefix + ' '+ Seed.player.name == row.name ) {
-	     color=" style='background-color:#77FF77' ";
+	    var couleur="";
+	    if(rslt.type==24){ //Alliance Tournament
+	     if (getMyAlliance()[1] == row.alliance) {
+	      couleur=" style='background-color:#FF0000' ";
+	     }
+	    }else{
+	     if (Seed.player.prefix + ' '+ Seed.player.name == row.name ) {
+	      couleur=" style='background-color:#FF0000' ";
+	     }
 	    }
 	    if(i%2==1){
 	     tournyhtml.push("<tr>")
 	    }else{
 	     tournyhtml.push("<tr class='stripe'>")
 	    }
-	    tournyhtml.push("<td class='rankcol' "+color+">");
+	    tournyhtml.push("<td class='rankcol' "+couleur+">");
 	    tournyhtml.push("<div><b>"+row.ranking+"</b></div>");
 	    tournyhtml.push("</td>");
-	    tournyhtml.push("<td "+color+">");
+	    tournyhtml.push("<td "+couleur+">");
 	    tournyhtml.push("<div>"+row.name+"</div>");
 	    tournyhtml.push("</td>");
-	    tournyhtml.push("<td "+color+">");
+	    tournyhtml.push("<td "+couleur+">");
 	    tournyhtml.push("<div>"+(row.alliance||"----")+"</div>");
 	    tournyhtml.push("</td>");
-	    tournyhtml.push("<td "+color+">");
+	    tournyhtml.push("<td "+couleur+">");
 	    tournyhtml.push("<div>"+addCommas(row.contestValue));
 	    if (votrepuissance>0) {
 	      var ecartavecvous = parseInt(row.contestValue - votrepuissance);
@@ -1314,15 +1428,17 @@ t.cont = div;
 	    }
 	    tournyhtml.push("</div>");
 	    tournyhtml.push("</td>");
-	    tournyhtml.push("<td "+color+">");
+	    tournyhtml.push("<td "+couleur+">");
 	    tournyhtml.push("<div>"+rewardString+"</div>");
 	    tournyhtml.push("</td>");
 	    tournyhtml.push("</tr>")
 	   } // fin du for
 	
-	   
-	    for(var i=25;i<rslt.data.length;i++){
+	      if(rslt.type!=24){
+
+	    for(var i= Options.TournoiLigne;i<rslt.data.length;i++){
 	   	    var row=rslt.data[i];
+	   	 
 	   	    if (Seed.player.prefix + ' '+ Seed.player.name == row.name ) {
 	   	      var rewardString=row.itemCount+" ";
 	   	     	    if(row.itemType==0){
@@ -1331,77 +1447,90 @@ t.cont = div;
 	   	     	     rewardString+=unsafeWindow.itemlist["i"+row.itemType].name;
 	   	     	    }
 	   	     	    tournyhtml.push("<tr class='stripe' >")
-	   	     	    tournyhtml.push("<td class='rankcol' style='background-color:#77FF77'>");
+	   	     	    tournyhtml.push("<td class='rankcol' style='background-color:#FF0000'>");
 	   	     	    tournyhtml.push("<div><b>"+row.ranking+"</b></div>");
 	   	     	    tournyhtml.push("</td>");
-	   	     	    tournyhtml.push("<td style='background-color:#77FF77'>");
+	   	     	    tournyhtml.push("<td style='background-color:#FF0000'>");
 	   	     	    tournyhtml.push("<div>"+row.name+"</div>");
 	   	     	    tournyhtml.push("</td>");
-	   	     	    tournyhtml.push("<td style='background-color:#77FF77'>");
+	   	     	    tournyhtml.push("<td style='background-color:#FF0000'>");
 	   	     	    tournyhtml.push("<div>"+(row.alliance||"----")+"</div>");
 	   	     	    tournyhtml.push("</td>");
-	   	     	    tournyhtml.push("<td style='background-color:#77FF77'>");
+	   	     	    tournyhtml.push("<td style='background-color:#FF0000'>");
 	   	     	    tournyhtml.push("<div>"+addCommas(row.contestValue)+"</div>");
 	   	     	    tournyhtml.push("</td>");
-	   	     	    tournyhtml.push("<td style='background-color:#77FF77'>");
+	   	     	    tournyhtml.push("<td style='background-color:#FF0000'>");
 	   	     	    tournyhtml	.push("<div>"+rewardString+"</div>");
 	   	     	    tournyhtml.push("</td>");
 	   	            tournyhtml.push("</tr>")
-	   	       }    
+	   	   }    
 	   }
-	      tournyhtml.push("</tbody>");
-	   	   tournyhtml.push("</table>");
-	   	   tournyhtml.push("</div>");
-	   	   if(rslt.startdate&&rslt.enddate){
-	   	    var startTime=rslt.startdate;
-	   	    var endTime=rslt.enddate;
-	   	    var now=parseInt(new Date().getTime()/1000);
-	   	    /*tournyhtml.push("<div class='timebar'>");
-	   	    tournyhtml.push("<div class='elapsedtime' style='width:");
-	   	    if(endTime<=now){
-	   	     tournyhtml.push("500px;'")
-	   	    }else{
-	   	     var perc=parseInt(((now-startTime)/(endTime-startTime))*100)*5;
-	   	     tournyhtml.push(perc+"px;'")
-	   	    }
-	   	    tournyhtml.push(">");
-	   	    tournyhtml.push("</div>");
-	   	    tournyhtml.push("</div>");*/
-	   	    tournyhtml.push("<br>");
-	   	    tournyhtml.push("<div class='startdate'>");
-	   	    dt = new Date ();
-	               dt.setTime (startTime * 1000);
-	               dtf = new Date ();
-	               dtf.setTime (endTime * 1000);
-	               // "+new Date(startTime*1000).toGMTString())+ " ->> "
-	               // "+new Date(endTime*1000).toGMTString())+ " ->> 
-	   	    tournyhtml.push("Starts: " + dt.toLocaleDateString() + " &@; "+ dt.toLocaleTimeString());
-	   	    tournyhtml.push("</div>");
-	   	    tournyhtml.push("<div	class='enddate'>");
-	   	    tournyhtml.push("Ends: " + dtf.toLocaleDateString()+ " &@; "+ dtf.toLocaleTimeString());
-	   	    tournyhtml.push("</div></div>");
-	   } // fin  startdate
-           t.cont.innerHTML = tournyhtml.join("");
+	   }
+	   tournyhtml.push("</tbody>");
+	   tournyhtml.push("</table>");
+      tournyhtml.push("</div>");
+      t.cont.innerHTML += tournyhtml.join("");      
+           document.getElementById('BOTournoiPM').addEventListener ('click', function() { 
+            var lg=rslt.data.length;
+            if (rslt.type!=24) lg=25;
+            t.plusmoins(lg);
+           }, false);      
            
-           
-           
-          } // fin rslt.data
-          
-         } //rslt.ok
-         else {
-            t.cont.innerHTML = "<div class='tourny_modal_upsell'><center>No Tournament<center></div>";
+        if ((Options.TournoiLigne==5 && rslt.type!=24) || (Options.TournoiLigne==5 && rslt.type==24)) {
+	        document.getElementById('BOTournoiPM').value="Maximize";
+	    } else {
+	        document.getElementById('BOTournoiPM').value="Minimize";           
+        }
+          } // fin rslt.data 
+         } else {
+            t.cont.innerHTML = "<div class='tourny_modal_upsell'><center>No Info</div>";
          }
-        
-       },
-       onFailure:function()  {
-         t.cont.innerHTML = "<div class='tourny_modal_upsell'><center>No Info<center></div>";
+       }, onFailure:function()  {
+         t.cont.innerHTML = "<div class='tourny_modal_upsell'><center>No Info</div>";
        }
-       });
-       
-       
-      t.displayTimer = setTimeout (t.show, 60000); 
-       
-  }
+   });
+   t.displayTimer = setTimeout (t.show, 240000);       
+  },
+  plusmoins: function(lg) {
+   var t = Tabs.Tournament;
+   if (document.getElementById('BOTournoiPM').value=="Maximize") {
+     document.getElementById('BOTournoiPM').value="Minimize";
+     Options.TournoiLigne = lg;
+   } else {
+     document.getElementById('BOTournoiPM').value="Maximize";
+     Options.TournoiLigne = 5;
+   }
+   saveOptions();
+   clearTimeout (t.displayTimer);
+   t.show();
+  },  
+
+/*
+checktourney: function() {
+ var t = Tabs.Tournament;
+  var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+params.format=2;
+params.tournyPos=0;
+new AjaxRequest(unsafeWindow.g_ajaxpath+"ajax/getLeaderboard.php"+unsafeWindow.g_ajaxsuffix, {  
+  method:"post",  parameters:params,
+	  
+onSuccess:function(transport){
+var rslt=eval("("+transport.responseText+")");
+if(rslt.name){
+ var t = Tabs.Tournament;
+   AddTowerTab('Turnier', t.showTournament, 10);
+};		  
+},
+   });	  
+},
+showTournament: function() {
+//      Options.currentTab = culang.tournament;   
+//        saveOptions();
+mainPop.show (true);
+//		setTimeout(function(){document.getElementById('pbtc'+culang.tournament).e_clickedTab}, 3000);
+//  tabManager.e_clickedTab(e);
+},
+*/
 }
 
 /*************** WILDS TAB *********************/
@@ -2079,8 +2208,11 @@ var AllianceReports = {
     t = AllianceReports;
     t.enable (Options.enhanceARpts);
     t.marvFunc = new CalterUwFunc ('modal_alliance_report_view', [['getReportDisplay', 'getReportDisplay_hook2']]);
+    t.memListFunc = new CalterUwFunc ('membersInfo', [['commonstr.might','commonstr.might + "</td><td class=colcities>" + g_js_strings.commonstr.cities + "</td><td class=collast>" + g_js_strings.membersInfo.lastonline'],['memberInfo[key].prestige', 'memberInfo[key].prestige+ "</td>");memhtml.push("<td class=colcities>" + memberInfo[key].cities + "</td>");memhtml.push("<td class=collast>" + memberInfo[key].lastLogin']]);
     uW.getReportDisplay_hook2 = t.getReportDisplayHook;
+    uW.getmembersInfo_hook = t.getMembersInfoHook;
     t.marvFunc.setEnable (true);
+	t.enable_viewmembers(Options.enhanceViewMembers);
   },
    
   getReportDisplayHook : function (a, b){
@@ -2091,6 +2223,11 @@ var AllianceReports = {
       x = 'Error formatting report: '+ e;
     }
     return x;
+  },
+  
+  enable_viewmembers : function (tf){
+    t = AllianceReports;
+    t.memListFunc.setEnable (tf);
   },
   
   enable : function (tf){
@@ -3902,7 +4039,7 @@ Tabs.Options = {
     var main = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubU type=submit value="Options"></td>';    
 	main +='<TD><INPUT class=pbSubtab ID=ptmrchSubV type=submit value="Layout"></td></tr></table><HR class=ptThin>';
     main += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToOptions" target="_blank">HELP</a></td></tr>';
-    main +='<DIV id=ptOptOutput style="margin-top:10px; background-color:white; height:680px; overflow:scroll;"></div>';
+    main +='<DIV id=ptOptOutput style="margin-top:10px; background-color:white; height:680px; overflow:auto;"></div>';
 	
     t.cont.innerHTML = main;
     t.Overv = document.getElementById('ptOptOutput');
@@ -3943,11 +4080,13 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=ptEnableFoodWarn type=checkbox /></td><TD>Show \'food left\' in RED if food will run out in less than';
 	  m+='<INPUT id=optFoodHours type=text size=3 value="'+ Options.foodWarnHours +'"> hours, does NOT affect the food alert anymore!</td></tr>';
 	  m+='<TR><TD><INPUT id=ptEnableFoodTower type=checkbox /></td><TD>Enable Tower food alert. (Warning set to 6 hours, checked every 30min.)</td></tr>';
-	  m+='<TR><TD><INPUT id=ptEnableWisperAlert type=checkbox /></td><TD>Enable sound alert on whisper<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>';
-	  m+='<TR><TD><INPUT id=ptEnableTowerAlert type=checkbox /></td><TD>Enable sound alert on tower alert in chat<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>';
+	  m+='<TR><TD><INPUT id=ptEnableWisperAlert type=checkbox /></td><TD>Enable sound alert on whisper</td></tr>';
+	  m+='<TR><TD><INPUT id=ptEnableTowerAlert type=checkbox /></td><TD>Enable sound alert on tower alert in chat</td></tr>';
+      m+='<TR><TD><INPUT id=ptupdate type=checkbox '+ (GlobalOptions.ptupdate?'CHECKED ':'') +'/></td><TD>Check updates on '+ htmlSelector({0:'Userscripts', 1:'Google Code'},GlobalOptions.ptupdatebeta,'id=ptupdatebeta') +' (all domains) &nbsp; &nbsp; <INPUT id=ptupdatenow type=submit value="Update Now" /></td></tr>';
 	  m+='<TR><TD colspan=2><B>KofC Features:</b></td></tr>';
 	  m+='<TR><TD><INPUT id=togAllRpts type=checkbox /></td><TD>Enable enhanced Alliance Reports.</td></tr>';
 	  m+='<TR><TD><INPUT id=togAllowAlter type=checkbox /></td><TD>Allow other scripts to change format of Alliance Reports.</td></tr>';
+	  m+='<TR><TD><INPUT id=togAllMembers type=checkbox /></td><TD>Enable enhanced alliance members view.</td></tr>';
 	  m+='<TR><TD><INPUT id=togEnhanceMsging type=checkbox /></td><TD>Enable enhanced messaging ("forward" and "all officers" buttons).</td></tr>';
 	  m+='<TR><TD><INPUT id=togPageNav type=checkbox /></td><TD>Enhanced page navigation for messages and reports.</td></tr>';
 	  m+='<TR><TD><INPUT id=togWarnZero type=checkbox /></td><TD>Warn if attempting to march to location 0,0.</td></tr>';
@@ -3974,6 +4113,8 @@ Tabs.Options = {
       t.togOpt ('ptHideOnGoto', 'hideOnGoto');
       t.togOpt ('ptAllowWinMove', 'ptWinDrag', mainPop.setEnableDrag);
       t.togOpt ('togAllowAlter', 'allowAlterAR');
+      t.togOpt ('togAllRpts', 'enhanceARpts', AllianceReports.enable);
+      t.togOpt ('togAllMembers', 'enhanceViewMembers', AllianceReports.enable_viewmembers);
       t.togOpt ('togTowerFix', 'fixTower', TowerAlerts.enableFixTarget, TowerAlerts.isFixTargetAvailable);
       t.togOpt ('togTowerFix2', 'fixTower2', TowerAlerts.enableFixFalseReports, TowerAlerts.isFixFalseReportsAvailable);
       t.togOpt ('togMapDistFix', 'fixMapDistance', MapDistanceFix.enable, MapDistanceFix.isAvailable);
@@ -3985,7 +4126,16 @@ Tabs.Options = {
       t.togOpt ('togEnhanceMsging', 'enhanceMsging', messageNav.setEnable, messageNav.isAvailable);
       t.togOpt ('togCoordBox', 'mapCoordsTop', CoordBox.setEnable, CoordBox.isAvailable);
       t.togOpt ('togBatRounds', 'dispBattleRounds', null, battleReports.isRoundsAvailable);
-      t.togOpt ('togAtkDelete', 'reportDeleteButton', null, battleReports.isDeleteAvailable);
+      t.togOpt ('togAtkDelete', 'reportDeleteButton', null, battleReports.isRoundsAvailable);
+      document.getElementById('ptupdate').addEventListener ('change', t.e_updateChanged, false);
+	  
+	  document.getElementById('ptupdatebeta').addEventListener ('change', function(){
+      		GlobalOptions.ptupdatebeta = document.getElementById('ptupdatebeta').value;
+			GM_setValue ('Options_??', JSON2.stringify(GlobalOptions));
+      },false);	
+	  document.getElementById('ptupdatenow').addEventListener ('click', function(){
+			AutoUpdater_103659.call(true,true);
+      },false);	
                   
       document.getElementById('optFoodHours').addEventListener ('change', function () {
           var x = document.getElementById('optFoodHours').value; 
@@ -3996,11 +4146,6 @@ Tabs.Options = {
           Options.foodWarnHours = x; 
           saveOptions();
         }, false);
-
-      var checkbox = document.getElementById('togAllRpts');
-       if (Options.enhanceARpts)
-         checkbox.checked = true;
-       checkbox.addEventListener ('change', function() {Options.enhanceARpts=document.getElementById('togAllRpts').checked; saveOptions(); AllianceReports.enable(Options.enhanceARpts);}, false);
       
 	document.getElementById('optAutoTrainMins').addEventListener ('change', function () {
 				AutoTrainOptions.intervalSecs = 60 * document.getElementById('optAutoTrainMins').value;
@@ -4018,22 +4163,21 @@ Tabs.Options = {
       m= '<TABLE class=ptTab>';
 	  m+='<TR><TD colspan=2><U><B>Chat Layout:</b></u></td></tr>';
 	  m+='<TR><TD><INPUT id=togChatStuff type=checkbox /></td><TD>Enable Chat Enable Chat enhancements (clickable coords, click on icon to whisper, colors).</td></tr>';
-      m+='<TR><TD><INPUT id=togChatGlobal type=checkbox /></td><TD>Enable Global background color.</td></tr>';
+      m+='<TR><TD><INPUT id=togChatGlobal type=checkbox /></td><TD>Enable Global chat background color.</td></tr>';
+      m+='<TR><TD><INPUT id=togChatAlliance type=checkbox /></td><TD>Enable Alliance chat background color.</td></tr>';
 	  m+='<TR><TD><INPUT id=togChatWhisper type=checkbox /></td><TD>Enable Whisper in Color Font.</td></tr>';
 	  m+='<TR><TD><INPUT id=togChatBold type=checkbox /></td><TD>Enable Chat in Bold Font.</td></tr>';
 	  m+='<TR><TD><INPUT id=togChatAttack type=checkbox /></td><TD>Enable background color on tower alert.</td></tr>';
 	  m+='<TR><TD><INPUT id=togChatLead type=checkbox /></td><TD>Enable background for alliance Leaders.<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr></table>';
 
-	  m+='<TABLE class=ptTab><BR><TR><TD colspan=2><U><B>Colors:</b></u></td></tr>';
+	  m+='<TABLE class=ptTab><BR><TR><TD colspan=2><U><B>Colors: &nbsp;(Refresh for effect)</b></u></td></tr>';
       m+='<TR><TD>Chat Color - Global: </td><TD><INPUT id=togGlobal type=text size=7 maxlength=7 value="'+Colors.ChatGlobal+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatGlobal+'" width=30px>&nbsp;</td></tr>';
 	  m+='<TR><TD>Chat Color - Alliance: </td><TD><INPUT id=togAll type=text size=7 maxlength=7 value="'+Colors.ChatAll+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatAll+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>Chat Color - Tower Alert: </td><TD><INPUT id=togChatAtt type=text size=7 maxlength=7 value="'+Colors.ChatAtt+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatAtt+'" width=30px>&nbsp;</td></tr>';
-      m+='<TR><TD>Chat Color - Whisper Alert: </td><TD><INPUT id=togChatWhisper type=text size=7 maxlength=7 value="'+Colors.ChatWhisper+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatWhisper+'" width=30px>&nbsp;</td></tr>';
+      m+='<TR><TD>Chat Color - Whisper Alert: </td><TD><INPUT id=togWhisper type=text size=7 maxlength=7 value="'+Colors.ChatWhisper+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatWhisper+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>Chat Color - Chancy: </td><TD><INPUT id=togChatC type=text size=7 maxlength=7 value="'+Colors.ChatChancy+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatChancy+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>Chat Color - Vice-C: </td><TD><INPUT id=togChatVC type=text size=7 maxlength=7 value="'+Colors.ChatVC+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatVC+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>Chat Color - Officers: </td><TD><INPUT id=togChatLeaders type=text size=7 maxlength=7 value="'+Colors.ChatLeaders+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatLeaders+'" width=30px>&nbsp;</td></tr>';
-
-      m+='<TR><TD>Chat Color - Leaders: </td><TD><INPUT id=togChatLeaders type=text size=7 maxlength=7 value="'+Colors.ChatLeaders+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatLeaders+'" width=30px>&nbsp;</td></tr>';
       m+='<TR><TD>General - Title: </td><TD><INPUT id=togChatMainTiltle type=text size=7 maxlength=7 value="'+Colors.MainTitle+'"></td>&nbsp;<TD style="background-color:'+Colors.MainTitle+'" width=30px>&nbsp;</td></tr>';
 	  
 	  
@@ -4053,6 +4197,7 @@ Tabs.Options = {
             
       t.togOpt ('togChatStuff', 'chatEnhance', ChatStuff.setEnable, ChatStuff.isAvailable);
       t.togOpt ('togChatGlobal', 'chatglobal');
+      t.togOpt ('togChatAlliance', 'chatalliance');
       t.togOpt ('togChatWhisper', 'chatwhisper');	
       t.togOpt ('togChatBold', 'chatbold');
       t.togOpt ('togChatAttack', 'chatAttack');
@@ -4071,7 +4216,7 @@ Tabs.Options = {
       document.getElementById('togTabFont').addEventListener('change', function(){Colors.TabFont = document.getElementById('togTabFont').value;t.Layout()}, false);
       document.getElementById('togAll').addEventListener('change', function(){Colors.ChatAll = document.getElementById('togAll').value;t.Layout()}, false);
       document.getElementById('togChatAtt').addEventListener('change', function(){Colors.ChatAtt = document.getElementById('togChatAtt').value;t.Layout()}, false);
-      document.getElementById('togChatWhisper').addEventListener('change', function(){Colors.ChatWhisper = document.getElementById('togChatWhisper').value;t.Layout()}, false);
+      document.getElementById('togWhisper').addEventListener('change', function(){Colors.ChatWhisper = document.getElementById('togWhisper').value;t.Layout()}, false);
       
       document.getElementById('ResetALL').addEventListener ('click', function(){
       		RemoveList = (GM_listValues());
@@ -4123,7 +4268,14 @@ Tabs.Options = {
       }
     }
   },
+  
+  e_updateChanged : function (){
+    GlobalOptions.ptupdate = document.getElementById('ptupdate').checked;
+    GM_setValue ('Options_??', JSON2.stringify(GlobalOptions));  
+  },
+  
 }
+
 
 
 
@@ -4271,7 +4423,7 @@ Tabs.Train = {
       <BR><INPUT id='pttdButDo' type=submit value='"+uW.g_js_strings.modal_openWalls.builddefenses+"'\></td></tr></table>\
       </td></tr></table></div></div>\
       <TABLE align=center width=425 class=ptTab><TR><TD><div id=ptTrainStatus style='overflow-y:auto; max-height:78px; height: 78px;'></div></td></tr></table>\
-      <div style='height: 400px; background: #e8ffe8'>\
+      <div style='height: 330px; background: #e8ffe8'>\
       <TABLE width=100% class=ptTab><TR><TD colspan=3><DIV id=divSTtop></div></td></tr>\
       <TR><TD width=50% style='padding-left:15px; padding-right:15px'><DIV style='text-align:center'>\
       <B>"+uW.g_js_strings.commonstr.troops+" ("+uW.g_js_strings.modal_openBarracks.trainingttl+")\
@@ -4777,7 +4929,7 @@ if (t.limitingFactor){
           if (actual < 0)
             actual = 0;
           q[i][6] = cityId;
-           m += '<TR align=right><TD width="5px"><A><DIV onclick="cancelTrain('+ q[i][0]+','+q[i][1]+','+q[i][2]+','+q[i][3]+','+q[i][5]+','+q[i][6]+','+i +');return false;" href="javascript:void(0);"><img src="http://cdn1.iconfinder.com/data/icons/fugue/icon/cross.png" border=0 title="Cancel Training"></div></a></td>';
+          m += '<TR align=right><TD width="5px"><A><DIV onclick="cancelTrain('+ q[i][0]+','+q[i][1]+','+q[i][2]+','+q[i][3]+','+q[i][5]+','+q[i][6]+','+i +')">X</div></a></td>';
           m += '<TD>'+ q[i][1] +' </td><TD align=left> '+ uW.unitcost['unt'+q[i][0]][0];
           if (first)
             m += '</td><TD> &nbsp; '+  timestr(end-start, true) +'</td><TD> (<SPAN id=ptttfq>'+ timestr(actual, true) +'</span>)';
@@ -5341,8 +5493,7 @@ Tabs.OverView = {
     main +='<TD><INPUT class=pbSubtab ID=ptmrchSubA type=submit value='+uW.g_js_strings.commonstr.resources+'></td>';
     main +='<TD><INPUT class=pbSubtab ID=ptmrchSubB type=submit value='+uW.g_js_strings.commonstr.troops+'></td>';
     main +='<TD><INPUT class=pbSubtab ID=ptmrchSubC type=submit value='+uW.g_js_strings.modaltitles.buildings+'></td>';
-    main +='<TD><INPUT class=pbSubtab ID=ptmrchSubD type=submit value='+uW.g_js_strings.commonstr.info+'></td>';
-	main +='<TD><INPUT class=pbSubtab ID=ptmrchSubE type=submit value=Extras></td></tr></table><BR><BR>';
+    main +='<TD><INPUT class=pbSubtab ID=ptmrchSubD type=submit value='+uW.g_js_strings.commonstr.info+'></td></tr></table><BR><BR>';
     main +='<DIV id=ptOverOutput align=left style="margin-top:10px; background-color:"#F8F8F8"; height:680px; overflow:scroll;"></div>';
 	main += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToOverview" target="_blank">HELP</a></td></tr>';
             
@@ -5354,14 +5505,13 @@ Tabs.OverView = {
     document.getElementById('ptmrchSubB').addEventListener('click', e_butSubtab, false);
     document.getElementById('ptmrchSubC').addEventListener('click', e_butSubtab, false);
     document.getElementById('ptmrchSubD').addEventListener('click', e_butSubtab, false);
-	document.getElementById('ptmrchSubE').addEventListener('click', e_butSubtab, false);
     document.getElementById('ShowExtra').addEventListener('change', function(){
            Options.OverViewShowExtra = document.getElementById('ShowExtra').value;
            saveOptions();
            clearTimeout (t.displayTimer);
            t.init(div); 
     }, false);
-    changeSubtab (document.getElementById('ptmrchSubA'));
+    changeSubtab (document.getElementById('ptmrchSub'+Options.curOverTab));
     
     function e_butSubtab (evt){            
       changeSubtab (evt.target);   
@@ -5377,8 +5527,8 @@ Tabs.OverView = {
       t.curTabBut = but;
       but.className='pbSubtab pbSubtabSel'; 
       but.disabled=true;
-      t.curTabName = but.id.substr(9);
-      Options.curMarchTab = t.curTabName;
+      t.curTabName = but.id.substr(-1);
+	  Options.curOverTab = t.curTabName;
       t.show ();
     }    
   },
@@ -5400,10 +5550,6 @@ Tabs.OverView = {
       t.showBuilds();
     else if (t.curTabName == 'D')
       t.showInfo();
-	  else if (t.curTabName == 'E')
-      t.showExtras();
-	  mainPop.div.style.width = 850 + 'px';
-	   if (Options.widescreen==true)mainPop.div.style.width = 1100 + 'px';
   },
   
       showResources : function (){
@@ -5422,26 +5568,33 @@ Tabs.OverView = {
                 else
                   z+= '<BR><SPAN class=boldRed>Defending</span></td>';
               }
-        	  for (a=1;a<=4;a++){
+        	  for (var a=1; a<=5;a++){
         	  		var total = 0;
-        	  		z+='<TR><TD colspan="8" style="background: #FFFFFF"><B>'+uW.resourceinfo['rec'+a]+': </b></td></tr><TR>';
-        	  		for(b=0; b<Cities.numCities; b++) total += parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]/3600);
+        	  		z+='<TR><TD colspan="8" style="background: #FFFFFF"><B>'+((a!=5)?uW.resourceinfo['rec'+a]:uW.resourceinfo['7'])+': </b></td></tr><TR>';
+        	  		for(b=0; b<Cities.numCities; b++) total += parseInt((a!=5)?Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]/3600:Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]);
         	  		z+='<TD>'+ addCommas(total) +'</td>';
-        	  		for(b=0; b<Cities.numCities; b++) z+='<TD align=right ">'+ addCommas( parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]/3600)) +'</font></td>';
+        	  		for(b=0; b<Cities.numCities; b++) z+='<TD align=right ">'+ addCommasInt((a!=5)?Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]/3600:Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]) +'</font></td>';
         	  		z+='</tr><TR><TD style="background: #FFFFFF"><FONT COLOR="686868">'+uW.g_js_strings.showResourceTooltip.caplimit+':</font></td>';
         	  		for(b=0; b<Cities.numCities; b++) {
         	  			    z+='<TD align=right style="background: #FFFFFF">';
-        	  				if (parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][1]/3600) > parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]/3600)) z+='<FONT COLOR= "669900">';
-        	  				else z+='<FONT COLOR="686868">';
-        	  				z+= addCommas( parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][1]/3600));
+							if(a==5){
+								z+= (parseInt(1000000) > parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]))? '<FONT COLOR= "669900">':'<FONT COLOR="686868">';
+								z+= addCommas(1000000);
+							} else{
+								if (parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][1]/3600) > parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]/3600)) z+='<FONT COLOR= "669900">';
+								else z+='<FONT COLOR="686868">';
+								z+= addCommas( parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][1]/3600));
+							}
         	  				z+='</font></td>';
         	  		}
-        	  		z+='</tr><TR><TD style="background: #FFFFFF"><FONT COLOR="686868">'+uW.g_js_strings.showResourceTooltip.hrprod+':</font></td>';
-        	  		for(b=0; b<Cities.numCities; b++) {
-        	  				var rp = getResourceProduction (Seed.cities[b][0]);
-        	  				var usage = parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][3]);
-        	  				z+='<TD align=right style="background: #FFFFFF"><FONT COLOR="686868">'+ addCommas(rp[a] - usage)  +'</font></td>';
-        	  		}
+					if(a!=5){
+						z+='</tr><TR><TD style="background: #FFFFFF"><FONT COLOR="686868">'+uW.g_js_strings.showResourceTooltip.hrprod+':</font></td>';
+						for(b=0; b<Cities.numCities; b++) {
+								var rp = getResourceProduction (Seed.cities[b][0]);
+								var usage = parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][3]);
+								z+='<TD align=right style="background: #FFFFFF"><FONT COLOR="686868">'+ addCommas(rp[a] - usage)  +'</font></td>';
+						}
+					}
         	  		z+='</tr>';
         	  		if (a==1){
         	  			z+='<TR><TD style="background: #FFFFFF"><FONT COLOR="686868">'+uW.g_js_strings.commonstr.upkeep+':</font></td>';
@@ -5458,7 +5611,7 @@ Tabs.OverView = {
         		  				 
         	  				}
         	  		   }
-        	  	  }
+        	  	    }
         	  	  var totalmarching = 0;
         	  	  for(b=0; b<Cities.numCities; b++) {
         	  	  	   var march = Seed.queue_atkp['city' + Seed.cities[b][0]];
@@ -6075,212 +6228,52 @@ Tabs.OverView = {
     t.displayTimer = setTimeout (t.showBuilds, 1000);
   },
   
-    showExtras : function (){
-    var t = Tabs.OverView;
-    clearTimeout (t.displayTimer);
-    t.Overv.innerHTML =null;
-    t.Overv.style.maxHeight = '700px';
-    t.Overv.style.overflowY = 'scroll';	
- 			  		       
-    
-   var m='<DIV class=ptstat>LINKS</div><DIV id=ptLinks><TABLE align=center cellpadding=1 cellspacing=0><TR>';
-	  m+='<TD width="300px" ; border:none">Scripts</td><TD width="300px" ; border:none">Information sites</td></tr>';
-	  m+='<TR><TD width="300px" ; border:none"><a href="http://userscripts.org/scripts/show/103659" target="_blank">Power Tools (Koc Scripters)</a></td>';
-	  m+='<TD width="300px" ; border:none"><a href="http://koctools.com/index.php?pageid=servers" target="_blank">KOCTools</a></td></tr>';
-	  m+='<TR><TD width="100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/Home?tm=6" target="_blank">Power Tools WIKI</a></td>';
-	  m+='<TD width="300px" ; border:none"><a href="http://koc.dunno.com/index.sjs?f=ListServers" target="_blank">KOC Mapper</a></td></tr>';
-	  m+='<TR><TD width="100px" ; border:none"><a href="http://userscripts.org/scripts/show/101052" target="_blank">Power Bot (Koc Scripters)</a></td>';
-	  m+='<TD width="300px" ; border:none"><a href="http://kocmon.com/" target="_blank">KoC Monitor</a></td></tr>';
-	  m+='<TR><TD width="100px" ; border:none"><a href="http://code.google.com/p/koc-power-bot/wiki/Home?tm=6" target="_blank">Power Bot WIKI</a></td>';
-	  m+='<TD width="300px" ; border:none"><a href="http://koc.wikia.com/wiki/" target="_blank">Koc Wikia</a></td></tr>';
-	  m+='<TR><TD width="100px" ; border:none"><a href="https://addons.mozilla.org/en/firefox/addon/greasemonkey/" target="_blank">Greasemonkey</a></td><TD width="100px" ; border:none"></td>';
-	  m+='<TR><TD width="100px" ; border:none"><a href="https://addons.mozilla.org/en/firefox/addon/scriptish/" target="_blank">Scriptish</a></td><TD width="100px" ; border:none"></td>';
-	  m+='</tr></table></div><BR>';
-	  
-   m += '<DIV class=ptstat>MISC INFO</div><TABLE><TD width="200px" style="background-color:#FFFFFF; border:none">KofC client version: '+ KOCversion +'</td>';
-   m += '<TD style="background-color:#FFFFFF; border:none"><INPUT id=ptButDebug type=submit name="SEED" value="DEBUG"></td></table></div>';
-      
-      t.Overv.innerHTML = m;   
-      document.getElementById('ptButDebug').addEventListener('click', function (){debugWin.doit()}, false);
-    t.displayTimer = setTimeout (t.showExtras, 1000);
-  },  
-
   showInfo : function (){
       var t = Tabs.OverView;
       t.Overv.innerHTML = null;
-      t.Overv.style.maxHeight = '600px';
+      t.Overv.style.maxHeight = '700px';
       t.Overv.style.overflowY = 'scroll';
       clearTimeout (t.displayTimer);	
-
-	  var bor,ector,kay,bedivere,gawain,percival,galahad,lancelot,arthur,morgana,mordred;
+      
+	  var u='<DIV class=ptstat>USEFULL LINKS</div><DIV id=ptLinks><TABLE align=center cellpadding=1 cellspacing=0><TR>';
+	  u+='<TD width="300px" ; border:none">Scripts</td><TD width="300px" ; border:none">Information sites</td></tr>';
+	  u+='<TR><TD width="300px" ; border:none"><a href="http://userscripts.org/scripts/show/103659" target="_blank">Power Tools (Koc Scripters)</a></td>';
+	  u+='<TD width="300px" ; border:none"><a href="http://koctools.com/index.php?pageid=servers" target="_blank">KOCTools</a></td></tr>';
+	  u+='<TR><TD width="100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/Home?tm=6" target="_blank">Power Tools WIKI</a></td>';
+	  u+='<TD width="300px" ; border:none"><a href="http://koc.dunno.com/index.sjs?f=ListServers" target="_blank">KOC Mapper</a></td></tr>';
+	  u+='<TR><TD width="100px" ; border:none"><a href="http://userscripts.org/scripts/show/101052" target="_blank">Power Bot (Koc Scripters)</a></td>';
+	  u+='<TD width="300px" ; border:none"><a href="http://kocmon.com/" target="_blank">KoC Monitor</a></td></tr>';
+	  u+='<TR><TD width="100px" ; border:none"><a href="http://code.google.com/p/koc-power-bot/wiki/Home?tm=6" target="_blank">Power Bot WIKI</a></td>';
+	  u+='<TD width="300px" ; border:none"><a href="http://koc.wikia.com/wiki/" target="_blank">Koc Wikia</a></td></tr>';
+	  u+='<TR><TD width="100px" ; border:none"><a href="https://addons.mozilla.org/en/firefox/addon/greasemonkey/" target="_blank">Greasemonkey</a></td><TD width="100px" ; border:none"></td>';
+	  u+='<TR><TD width="100px" ; border:none"><a href="https://addons.mozilla.org/en/firefox/addon/scriptish/" target="_blank">Scriptish</a></td><TD width="100px" ; border:none"></td>';
+	  u+='</tr></table></div><BR>';
 	  
-	if (Seed.items.i1101){bor=Seed.items.i1101}else{bor=0};
-	if (Seed.items.i1102){ector=Seed.items.i1102}else{ector=0};
-	if (Seed.items.i1103){kay=Seed.items.i1103}else{kay=0};
-	if (Seed.items.i1104){bedivere=Seed.items.i1104}else{bedivere=0};
-	if (Seed.items.i1105){gawain=Seed.items.i1105}else{gawain=0};
-	if (Seed.items.i1106){percival=Seed.items.i1106}else{percival=0};
-	if (Seed.items.i1107){galahad=Seed.items.i1107}else{galahad=0};
-	if (Seed.items.i1108){lancelot=Seed.items.i1108}else{lancelot=0};
-	if (Seed.items.i1109){arthur=Seed.items.i1109}else{arthur=0};
-	if (Seed.items.i1110){morgana=Seed.items.i1110}else{morgana=0};
-	if (Seed.items.i1111){mordred=Seed.items.i1111}else{mordred=0};
-	if (Seed.items.i1112){Stag=Seed.items.i1112}else{Stag=0};
-	if (Seed.items.i1113){Pendragon=Seed.items.i1113}else{Pendragon=0};
-	if (Seed.items.i1114){Lady=Seed.items.i1114}else{Lady=0};
-	
-	if (Cities.cities[1]){ville2="#ceface";}else{ville2="#fdc1cf";}
-	if (Cities.cities[2]){ville3="#ceface";}else{ville3="#fdc1cf";}
-	if (Cities.cities[3]){ville4="#ceface";}else{ville4="#fdc1cf";}
-   
-   	if (Cities.cities[4]){ville5="#ceface";}else{ville5="#fdc1cf";}
-   	if (Cities.cities[5]){ville6="#ceface";}else{ville6="#fdc1cf";}
-   	if (Cities.cities[6]){ville7="#ceface";}else{ville7="#fdc1cf";}
-   	
-	{
-	  var m = '';
-	      m += '<STYLE>\
-		  CAPTION.MYTABLE\
-  {\
-     background-color:eeffff;\
-     color:black;\
-     border-style:solid;\
-     border-width:1px;\
-     border-color:black;\
-  }\
-  TABLE.MYTABLE\
-  { \
-     font-family:arial;\
-     border-collapse:collapse;\
-     font-size:10pt;\
-     background-color:F5F5F5;\
-     width:100%;\
-     border-style:solid;\
-     border-color:black;\
-     border-width:1px;\
-  }\
-\
-  TH.MYTABLE\
-  {\
-     font-size:10pt;\
-     color:black;\
-     text-align:center;\
-     border-style:solid;\
-     border-color:black;\
-     border-width:1px;\
-  }\
-\
-\
-  TR.MYTABLE\
-  { \
-  }\
-\
-  TD.MYTABLE\
-  {  \
-     font-size:10pt;\
-     background-color:FFFFE5;\
-     color:black;\
-     border-style:solid;\
-     border-width:1px;\
-     text-align:left;\
-  }\
-  .xtabH {background:#ffffe8; border:none; padding-right: 5px; padding-left: 5px; margin-left:10px; }\
-	              .xtabHL { background:#ffffe8; border-width: 1px; border-style: none none none solid; padding-right:5px; padding-left:5px; margin-left:10px; }\
-	              .xtabL { background:none; border-width: 1px; border-style: none none none solid; padding-right:5px; padding-left: 5px; margin-left:10px; }\
-	              .xtabLine { padding:0px; spacing:0px; height:1px; border-color:black; border-width: 1px; border-style: none none solid none }</style>\
-			  <TABLE CLASS="MYTABLE" CELLPADDING=0 CELLSPACING=0>\
-    <div CLASS="ptstat">CITY REQUIREMENTS</div>\
-    \
-    <THEAD >\
-      <TR CLASS="MYTABLE">\
-        <TH CLASS="MYTABLE">Cities</TH>\
-        <TH CLASS="MYTABLE">Requirement 1</TH>\
-        <TH CLASS="MYTABLE">Requirement 2</TH>\
-        <TH CLASS="MYTABLE">Requirement 3</TH>\
-      </TR>\
-    </THEAD>\
-    \
-    <TBODY>\
-      <TR CLASS="MYTABLE">  \
-        <TD CLASS="MYTABLE" style="background-color:'+ville2+';">City 2</TD>\
-        <TD CLASS="MYTABLE" style="background-color:'+ville2+';">Level 7 ('+Seed.player.title+')</TD>\
-        <TD CLASS="MYTABLE" style="background-color:'+ville2+';">10 Friends</TD>\
-        <TD CLASS="MYTABLE" style="background-color:'+ville2+';">&nbsp;</TD>\
-      </TR>\
-   \
-      <TR CLASS="MYTABLE">  \
-        <TD CLASS="MYTABLE" style="background-color:'+ville3+';">City 3</TD>\
-        <TD CLASS="MYTABLE" style="background-color:'+ ( (bor>=4)?"#ceface":ville3 ) +';"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1101.jpg>&nbsp;4 Sir Bors ('+bor+')</TD>\
-        <TD CLASS="MYTABLE" style="background-color:'+ ( (ector>=2)?"#ceface":ville3 ) +';"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1102.jpg>&nbsp;2 Sir Ectors ('+ector+')</TD>\
-        <TD CLASS="MYTABLE" style="background-color:'+ ( (kay>=1)?"#ceface":ville3 ) +';"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1103.jpg>&nbsp;1 Sir Kays ('+kay+')</TD>\
-      </TR>\
-   \
-      <TR CLASS="MYTABLE">  \
-        <TD CLASS="MYTABLE" style="background-color:'+ville4+';">City 4</TD>\
-        <TD CLASS="MYTABLE" style="background-color:'+( (kay>=4)?"#ceface":ville4 )+';"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1103.jpg>&nbsp;4 Sir Kays ('+kay+')</TD>\
-        <TD CLASS="MYTABLE" style="background-color:'+( (bedivere>=3)?"#ceface":ville4 )+';"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1104.jpg>&nbsp;3 Sir Bediveres ('+bedivere+')</TD>\
-        <TD CLASS="MYTABLE" style="background-color:'+( (gawain>=1)?"#ceface":ville4 )+';"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1105.jpg>&nbsp;1 Sir Gawains ('+gawain+')</TD>\
-      </TR>\
-      <TR CLASS="MYTABLE">  \
-        <TD CLASS="MYTABLE" style="background-color:'+ville5+';">City 5</TD>\
-        <TD CLASS="MYTABLE" style="background-color:'+( (percival>=4)?"#ceface":ville5 )+';"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1106.jpg>&nbsp;4 Sir Percivals ('+percival+')</TD>\
-        <TD CLASS="MYTABLE" style="background-color:'+( (galahad>=3)?"#ceface":ville5 )+';"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1107.jpg>&nbsp;3 Sir Galahads ('+galahad+')</TD>\
-        <TD CLASS="MYTABLE" style="background-color:'+( (lancelot>=2)?"#ceface":ville5 )+';"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1108.jpg>&nbsp;2 Sir Lancelots ('+lancelot+')</TD>\
-      </TR>\
-      <TR CLASS="MYTABLE">  \
-        <TD CLASS="MYTABLE" style="background-color:'+ville6+';">City 6</TD>\
-        <TD CLASS="MYTABLE" style="background-color:'+( (arthur>=4)?"#ceface":ville6 )+';"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1109.jpg>&nbsp;4 König Arthurs ('+arthur+')</TD>\
-        <TD CLASS="MYTABLE" style="background-color:'+( (morgana>=3)?"#ceface":ville6 )+';"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1110.jpg>&nbsp;3 Morganas ('+morgana+')</TD>\
-        <TD CLASS="MYTABLE" style="background-color:'+( (mordred>=2)?"#ceface":ville6 )+';"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1111.jpg>&nbsp;2 Mordreds ('+mordred+')</TD>\
-      </TR>\
-       <TR CLASS="MYTABLE">  \
-        <TD CLASS="MYTABLE" style="background-color:'+ville7+';">City 7</TD>\
-        <TD CLASS="MYTABLE" style="background-color:'+( (Stag>=4)?"#ceface":ville7 )+';"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1112.jpg>&nbsp;4 Konig Stags ('+Stag+')</TD>\
-        <TD CLASS="MYTABLE" style="background-color:'+( (Pendragon>=3)?"#ceface":ville7 )+';"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1113.jpg>&nbsp;3 Pendragons ('+Pendragon+')</TD>\
-        <TD CLASS="MYTABLE" style="background-color:'+( (Lady>=2)?"#ceface":ville7 )+';"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1114.jpg>&nbsp;2 Lady of the Lake('+Lady+')</TD>\
-      </TR>\
-    </TBODY>\
-  </TABLE>\
-  <TABLE CLASS="MYTABLE" CELLPADDING=0 CELLSPACING=0>\
-      <div CLASS="ptstat">CREST OVERVIEW</div>\
-      <THEAD >\
-        <TR CLASS="MYTABLE">\
-          <TH CLASS="MYTABLE"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1101.jpg title="Bors\'s"></TH>\
-          <TH CLASS="MYTABLE"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1102.jpg title="Ector\'s"></TH>\
-          <TH CLASS="MYTABLE"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1103.jpg title="Kay\'s"></TH>\
-          <TH CLASS="MYTABLE"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1104.jpg title="Bedivere\'s"></TH>\
-          <TH CLASS="MYTABLE"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1105.jpg title="Gawain\'s"></TH>\
-          <TH CLASS="MYTABLE"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1106.jpg title="Percival\'s"></TH>\
-          <TH CLASS="MYTABLE"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1107.jpg title="Galahad\'s"></TH>\
-          <TH CLASS="MYTABLE"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1108.jpg title="Lancelot\'s"></TH>\
-          <TH CLASS="MYTABLE"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1109.jpg title="Arthur\'s"></TH>\
-          <TH CLASS="MYTABLE"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1110.jpg title="Morganna\'s"></TH>\
-          <TH CLASS="MYTABLE"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1111.jpg title="Mordred\'s"></TH>\
-          <TH CLASS="MYTABLE"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1112.jpg title="Stag\'s"></TH>\
-          <TH CLASS="MYTABLE"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1113.jpg title="Pendragon\'s"></TH>\
-          <TH CLASS="MYTABLE"><img width=25 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/1114.jpg title="Lady of the Lake"></TH>\
-      </TR>\
- </THEAD>\
-  <TR CLASS="MYTABLE">\
-  <TD CLASS="MYTABLE"><center><b>'+bor+'</TD>\
-  <TD CLASS="MYTABLE"><center><b>'+ector+'</TD>\
-  <TD CLASS="MYTABLE"><center><b>'+kay+'</TD>\
-  <TD CLASS="MYTABLE"><center><b>'+bedivere+'</TD>\
-  <TD CLASS="MYTABLE"><center><b>'+gawain+'</TD>\
-  <TD CLASS="MYTABLE"><center><b>'+percival+'</TD>\
-  <TD CLASS="MYTABLE"><center><b>'+galahad+'</TD>\
-  <TD CLASS="MYTABLE"><center><b>'+lancelot+'</TD>\
-  <TD CLASS="MYTABLE"><center><b>'+arthur+'</TD>\
-  <TD CLASS="MYTABLE"><center><b>'+morgana+'</TD>\
-  <TD CLASS="MYTABLE"><center><b>'+mordred+'</TD>\
-  <TD CLASS="MYTABLE"><center><b>'+Stag+'</TD>\
-  <TD CLASS="MYTABLE"><center><b>'+Pendragon+'</TD>\
-  <TD CLASS="MYTABLE"><center><b>'+Lady+'</TD>\
-  </TR><TR CLASS="MYTABLE"></tr>\
-  </table>';
-  
-  }
-   fortmight = {
+	  var crestreq = { 3:{1101:4, 1102:2, 1103:1},
+	  				 4:{1103:4, 1104:3, 1105:1},
+	  				 5:{1106:4, 1107:3, 1108:2},
+	  				 6:{1109:4, 1110:3, 1111:2},
+	  				 7:{1112:4, 1113:3, 1114:2}
+	  				};
+	  				
+	  u+='<DIV class=ptstat>CREST INFO</div><DIV id=ptLinks><TABLE align=center cellpadding=1 cellspacing=0><TR>';
+	  for (city in crestreq){
+	  		deed = 'q800' + city;
+        if (Seed.quests[deed] ==1) u+='<TD width=75px style="background:#CCFFCC">';
+        else  u+='<TD width=75px ">';
+        u+= uW.g_js_strings.commonstr.city+' '+city+'</td>';
+	  		for (crest in crestreq[city]){
+	  			owned = Seed.items['i'+crest];
+	  			if (Seed.quests[deed] ==1) u+='<TD 200px style="background:#CCFFCC">';
+          else  u+='<TD 200px ">';
+	  			if (owned == undefined) owned=0;
+	  			if (owned < crestreq[city][crest]) u+='<FONT color=red>'+owned+'/'+crestreq[city][crest]+'</font> '+uW.itemlist['i'+crest]['name']+'</td>';
+	  				else  u+='<FONT color=green>'+owned+'/'+crestreq[city][crest]+'</font> '+uW.itemlist['i'+crest]['name']+'</td>'; 
+	  		}
+	  		u+='</tr>';
+	  }
+	  u+='</table><BR>';
+	  fortmight = {
 	        u53: "4",
 	        u55: "7",
 	        u60: "1",
@@ -6288,8 +6281,7 @@ Tabs.OverView = {
 	        u62: "3",
 	      };
 	      rownum = 0;
-		  
-	      m += '<STYLE>.xtabH {background:#ffffe8; border:none; padding-right: 5px; padding-left: 5px; margin-left:10px; }\
+	      u += '<STYLE>.xtabH {background:#ffffe8; border:none; padding-right: 5px; padding-left: 5px; margin-left:10px; }\
 	              .xtabHL { background:#ffffe8; border-width: 1px; border-style: none none none solid; padding-right:5px; padding-left:5px; margin-left:10px; }\
 	              .xtabL { background:none; border-width: 1px; border-style: none none none solid; padding-right:5px; padding-left: 5px; margin-left:10px; }\
 	              .xtabLine { padding:0px; spacing:0px; height:1px; border-color:black; border-width: 1px; border-style: none none solid none }</style>\
@@ -6307,14 +6299,14 @@ Tabs.OverView = {
 	        cost = uW.unitcost['unt'+ui];     //  NAME, Food, Wood, Stone, Ore, ?, IdlePop, Time
 	        stats = uW.unitstats['unt'+ui];   //  Life, Attack, Defense, Speed, Range, Load
 	        food = uW.unitupkeeps[ui];
-	        might = uW.unitmight['u'+ui];
-	        m += '<TR '+ rsty +'align=right><TD class=xtab align=left><B>'+ cost[0].substr(0,16) +'</b></td><TD class=xtabL>'+ cost[1] +'</td><TD class=xtab>'+ cost[2] +'</td>\
+	        might = uW.unitmight['unt'+ui];
+	        u += '<TR '+ rsty +'align=right><TD class=xtab align=left><B>'+ cost[0].substr(0,16) +'</b></td><TD class=xtabL>'+ cost[1] +'</td><TD class=xtab>'+ cost[2] +'</td>\
 	            <TD class=xtab>'+ cost[3] +'</td><TD class=xtab>'+ cost[4] +'</td><TD class=xtab>'+ cost[6] +'</td><TD class=xtabL>'+ might +'</td>\
 	            <TD class=xtab>'+ stats[0] +'</td><TD class=xtab>'+ stats[1] +'</td><TD class=xtab>'+ stats[2] +'</td><TD class=xtab>'+ stats[3] +'</td>\
 	            <TD class=xtab>'+ stats[4] +'</td><TD class=xtab>'+ stats[5] +'</td><TD class=xtabL>'+ food +'</td></tr>';
 	  
 	      }
-	      m += '<TR class=xtabLine><TD colspan=14 class=xtabLine></td></tr>';
+	      u += '<TR class=xtabLine><TD colspan=14 class=xtabLine></td></tr>';
 	      for (k in uW.fortcost){
 	        if (++rownum % 2)
 	          rsty = '';
@@ -6327,85 +6319,21 @@ Tabs.OverView = {
 	        might = fortmight['u'+fi];
 	        name = cost[0].replace ('Defensive','');
 	        name = name.replace ('Wall-Mounted','');
-	        m += '<TR '+ rsty +'align=right><TD align=left class=xtab><B>'+ name +'</b></td><TD class=xtabL>'+ cost[1] +'</td><TD class=xtab>'+ cost[2] +'</td>\
+	        u+= '<TR '+ rsty +'align=right><TD align=left class=xtab><B>'+ name +'</b></td><TD class=xtabL>'+ cost[1] +'</td><TD class=xtab>'+ cost[2] +'</td>\
 	            <TD class=xtab>'+ cost[3] +'</td><TD class=xtab>'+ cost[4] +'</td><TD class=xtab>'+ cost[6] +'</td><TD class=xtabL>'+ might +'</td>\
 	            <TD class=xtab>'+ stats[0] +'</td><TD class=xtab>'+ stats[1] +'</td><TD class=xtab>'+ stats[2] +'</td><TD class=xtab>'+ stats[3] +'</td>\
 	            <TD class=xtab>'+ stats[4] +'</td><TD class=xtab>'+ stats[5] +'</td><TD class=xtabL>'+ food +'</td></tr>';
 	      }
-	      m += '<TR class=xtabLine><TD colspan=14 class=xtabLine></td></tr>';
-	      m += '</table></div>';
-		  
-		    // TRAINING INFO
-	function _displayrow (name, row){
-			if (rownum++ % 2)
-				style = '';
-			else
-				style = ' style = "background: #e8e8e8"';
-			m += '<TR' + style + '>';
-			m += '<TD align=right><B>' + name + '</B></td>';
-			for (i=0; i<row.length; i++)
-				if (row[i]==0)
-					m += '<td align=right><SPAN class=boldRed>0</SPAN></td>';
-				else
-					m += '<td align=right>'+addCommas(parseInt(row[i]))+'</td>';
-			m += '</tr>';
-		}
-		m += '<DIV class=ptstat>TRAINING TIMES</div><BR /><TABLE align=center cellpadding=1 cellspacing=0>\
-					<TABLE class=ptTab align=center><TR align=right><TD></td>';
-		infoRows = [];
-		for (r=0; r<18; r++){
-			infoRows[r] = [];
-		}
-		for(i=0; i<Cities.numCities; i++) {
-			cityID = 'city'+ Cities.cities[i].id;
-			m += "<TD class=xtabL align=center valign=bottom width=60px><B>";
-			m += Cities.cities[i].name.replace(/ /g, "<BR>");
-			m += "</B></TD>";
-			getTroopTrainEstimates(cityID);
-			infoRows[0][i] = numBarracks;
-			infoRows[1][i] = totLevelsBarracks;
-			infoRows[2][i] = marshallCombatScore;
-			infoRows[3][i] = geometryLevel;
-			infoRows[4][i] = stableLevel;
-			infoRows[5][i] = workshopLevel;
-			infoRows[6][i] = rateSupplyTroop;
-			infoRows[7][i] = rateMilitiaman;
-			infoRows[8][i] = rateScout;
-			infoRows[9][i] = ratePikeman;
-			infoRows[10][i] = rateSwordsman;
-			infoRows[11][i] = rateArcher;
-			infoRows[12][i] = rateCavalry;
-			infoRows[13][i] = rateHeavyCavalry;
-			infoRows[14][i] = rateSupplyWagon;
-			infoRows[15][i] = rateBallista;
-			infoRows[16][i] = rateBatteringRam;
-			infoRows[17][i] = rateCatapult;
-		}
-		m += "</tr>";
-		rownum=0;
-		_displayrow (" Number of Barracks",   infoRows[0]);
-		_displayrow ("Total Level of Barracks", infoRows[1]);
-		_displayrow ("Marshal Skill", infoRows[2]);
-		_displayrow ("Geometry",       infoRows[3]);
-		_displayrow ("Stable Level",         infoRows[4]);
-		_displayrow ("Workshop Level",       infoRows[5]);
-		m += "<TR><TD nowrap align=center colspan="+(Cities.numCities+1)+"><B>Total You Can <u>Train </u><u>In a Hour</u></B></TD>";
-		_displayrow ("Supply troops",  infoRows[6]);
-		_displayrow ("Militiaman",    infoRows[7]);
-		_displayrow ("Scout",         infoRows[8]);
-		_displayrow ("Pikeman",       infoRows[9]);
-		_displayrow ("Swordsman",     infoRows[10]);
-		_displayrow ("Archer",        infoRows[11]);
-		_displayrow ("Cavalry",       infoRows[12]);
-		_displayrow ("Heavy Cavalry", infoRows[13]);
-		_displayrow ("Supply Wagon",  infoRows[14]);
-		_displayrow ("Ballista",      infoRows[15]);
-		_displayrow ("Battering Ram", infoRows[16]);
-		_displayrow ("Catapult",      infoRows[17]);
-		m += "</TABLE>";
-            t.Overv.innerHTML = m;
-  },  
-  
+	      u += '<TR class=xtabLine><TD colspan=14 class=xtabLine></td></tr>';
+	      u += '</table></div><BR>';
+	      
+	      u += '<DIV class=ptstat>MISC INFO</div><TABLE><TD width="200px" style="background-color:#FFFFFF; border:none">KofC client version: '+ KOCversion +'</td>';
+	      u += '<TD style="background-color:#FFFFFF; border:none"><INPUT id=ptButDebug type=submit name="SEED" value="DEBUG"></td></table></div>';
+      
+      t.Overv.innerHTML = u;   
+      document.getElementById('ptButDebug').addEventListener('click', function (){debugWin.doit()}, false);  
+  },      
+
   paintOld : function (){
     var rownum = 0;
     var t = Tabs.OverView;
@@ -6460,6 +6388,8 @@ Tabs.OverView = {
     try {
       if (Options.includeMarching)
         march = getMarchInfo ();
+      if (Options.includeTrainingExt)
+        train = getTrainInfo ();
 
       dt = new Date ();
       dt.setTime (Seed.player.datejoinUnixTime * 1000);
@@ -6470,6 +6400,8 @@ Tabs.OverView = {
       }
       if (Options.includeMarching)
         str += '<TD width=81><B>Marching</b></td>';
+      if (Options.includeTrainingExt)
+        str += '<TD width=81><B>Training</b></td>';
       str += "</tr>";
   
     str += '<TR valign=top align=right><TD></td><TD style=\'background: #ffc\'></td>';
@@ -6495,17 +6427,23 @@ Tabs.OverView = {
           rows[r][i] = parseInt(Seed.resources[cityID]['rec'+r][0] / 3600);
         }
       }
+	  rows[5] = [];
+	  for(i=0; i<Cities.numCities; i++) { //Aetherstone
+        cityID = 'city'+ Cities.cities[i].id;
+        rows[5][i] = parseInt(Seed.resources[cityID]['rec5'][0]);
+      }
   
       if (Options.includeMarching){
         for (var i=0; i<5; i++)
-          rows[i][Cities.numCities] = march.resources[i];
+          rows[i][Cities.numCities] = march.resources[i]; //Aetherstone does not show up in march info
       }
       str += _row ('Gold', rows[0]);
       str += _row ('Food', rows[1]);
       str += _row ('Wood', rows[2]);
       str += _row ('Stone', rows[3]);
       str += _row ('Ore', rows[4]);
-      str += '<TR><TD colspan=10><BR></td></tr>';
+      str += _row ('Aetherstone', rows[5]);
+      str += '<TR><TD colspan=11><BR></td></tr>';
       for (r=1; r<13; r++){
         rows[r] = [];
         for(i=0; i<Cities.numCities; i++) {
@@ -6513,10 +6451,19 @@ Tabs.OverView = {
           rows[r][i] = parseInt(Seed.units[cityID]['unt'+r]);
         }
       }
+	  
+	  var colnum = Cities.numCities;
       if (Options.includeMarching){
-        for (var i=0; i<13; i++)
-          rows[i][Cities.numCities] = march.marchUnits[i];
+        for (var i=0; i<13; i++){
+          rows[i][colnum] = march.marchUnits[i];
+		}
+		colnum++;
       }
+	  if(Options.includeTrainingExt){
+		for (var i=0; i<13; i++){
+		  rows[i][colnum] = train.trainUnts[i];
+		}
+	  }
       if (Options.includeTraining){
         var q = Seed.queue_unt;
         for(i=0; i<Cities.numCities; i++) {
@@ -6540,7 +6487,7 @@ Tabs.OverView = {
       str += _row ('Ballista', rows[10]);
       str += _row ('Ram', rows[11]);
       str += _row ('Catapult', rows[12]);
-      str += '<TR><TD colspan=10><BR></td></tr>';
+      str += '<TR><TD colspan=11><BR></td></tr>';
       
       row = [];
       for(i=0; i<Cities.numCities; i++) {
@@ -6629,14 +6576,16 @@ Tabs.OverView = {
       }    
       str += _row ('WallQue', row, true);
       str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><BR><INPUT type=CHECKBOX id=idCheck'+ (Options.includeMarching?' CHECKED':'') +'>Include Marching Troops/Resources</td></tr>';
-      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=ptoverIncTraining'+ (Options.includeTraining?' CHECKED':'') +'>Include troops in training</td></tr>';
+      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=ptoverIncTrain'+ (Options.includeTraining?' CHECKED':'') +'>Include troops in training in cities</td></tr>';
+      str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=ptoverIncTrainExt'+ (Options.includeTrainingExt?' CHECKED':'') +'>Include troops in training total</td></tr>';
       str += '<TR><TD class=xtab></td><TD class=xtab colspan=4><INPUT type=CHECKBOX id=ptOverOver'+ (Options.overviewAllowOverflow?' CHECKED':'') +'>Allow width overflow \
          &nbsp; &nbsp; FONT SIZE: '+ htmlSelector ({9:9, 10:10, 11:11, 12:12}, Options.overviewFontSize, 'id=ptoverfont') +'</td></tr><BR>';
       str += "</table></div>";
       str+= 'Koc Power Tools Version:' + Version;
       t.Overv.innerHTML = str;
       document.getElementById('idCheck').addEventListener('click', e_clickEnableMarch, false);
-      document.getElementById('ptoverIncTraining').addEventListener('click', e_clickEnableTraining, false);
+      document.getElementById('ptoverIncTrain').addEventListener('click', e_clickEnableTraining, false);
+      document.getElementById('ptoverIncTrainExt').addEventListener('click', e_clickEnableTrainingExt, false);
       document.getElementById('ptOverOver').addEventListener('click', e_allowWidthOverflow, false);
       document.getElementById('ptoverfont').addEventListener('change', e_fontSize, false);
     //DebugTimer.display ('Draw Overview');    
@@ -6652,7 +6601,12 @@ Tabs.OverView = {
     }
     function e_clickEnableTraining (){
       var t = Tabs.OverView;
-      Options.includeTraining = document.getElementById('ptoverIncTraining').checked;
+      Options.includeTraining = document.getElementById('ptoverIncTrain').checked;
+      t.paintOld ();
+    }
+    function e_clickEnableTrainingExt (){
+      var t = Tabs.OverView;
+      Options.includeTrainingExt = document.getElementById('ptoverIncTrainExt').checked;
       t.paintOld ();
     }
 
@@ -7881,1068 +7835,400 @@ Tabs.Marches = {
   curTabBut : null,
   curTabName : null,
   widescreen:true,
-  	 
+  	
   init : function (div){
     var t = Tabs.Marches;
-    unsafeWindow.pr58Recall = t.ajaxRecall;
-    unsafeWindow.BOraid_delete = t.ajaxDeleteRaid;
-    unsafeWindow.r8x6Home = t.butSendHome;
-    
-    unsafeWindow.pr56Recall = t.butRecall;
-    unsafeWindow.pr57Recall = t.butRecall2;
-    
-     t.setEnable(Options.forceMarchUpdate);
-    
-  
-    var atkclass='';
-    if(Seed && Seed.queue_atkinc) {
-      for(k in Seed.queue_atkinc){
-        m = Seed.queue_atkinc[k];
-        if (m.marchType == 4){
-    	   atkclass = 'style="background-color:#FF9999;"';
-    	 }
-      }
-    }
+    uW.pr56Recall = t.butRecall;
+    uW.r8x6Home = t.butSendHome;
+    uW.cancelMarch = t.butcancelmarch;
     
     t.cont = div;
-    t.cont.innerHTML = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=BoptmrchSubM type=submit value="Marching"></td>\
-          <TD><INPUT class=pbSubtab ID=BoptmrchSubA type=submit '+atkclass+' value="Incomming"></td>\
-          <TD><INPUT class=pbSubtab ID=BoptmrchSubR type=submit value="Embassy"></td>\
-          <TD><INPUT class=pbSubtab ID=BoptmrchSubZ type=submit value="Reinforcments"></td></tr></table>\
-      <DIV id="BoptMarchOutput" style="margin-top:5px; background-color:white; height:630px;max-height:630px;overflow-y:auto"></div>';
-     t.marchDiv = document.getElementById('BoptMarchOutput'); 
-    document.getElementById('BoptmrchSubA').addEventListener('click', e_butSubtab, false);
-    document.getElementById('BoptmrchSubR').addEventListener('click', e_butSubtab, false);
-    document.getElementById('BoptmrchSubM').addEventListener('click', e_butSubtab, false);
-    document.getElementById('BoptmrchSubZ').addEventListener('click', e_butSubtab, false);
-     
-       if (atkclass!='') {
-       changeSubtab (document.getElementById('BoptmrchSubA'));  
-       }else {
-       changeSubtab (document.getElementById('BoptmrchSubM'));  
-       }
-       
-      function e_butSubtab (evt){
-          changeSubtab (evt.target);   
-      }
+    var main = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubN type=submit value='+uW.g_js_strings.attack_viewimpending_view.incomingtroops+'></td>';
+	main +='<TD><INPUT class=pbSubtab ID=ptmrchSubM type=submit value='+uW.g_js_strings.commonstr.marching+'></td>';
+    main +='<TD><INPUT class=pbSubtab ID=ptmrchSubR type=submit value='+uW.g_js_strings.commonstr.reinforced+'></td></tr></table><HR class=ptThin>';
+    main += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToMarches" target="_blank">HELP</a></td></tr>';
+	main +='<DIV id=ptMarchOutput style="margin-top:10px; background-color:white; height:680px; overflow:scroll;"></div>';
+
+	
+    t.cont.innerHTML = main;       
+    t.marchDiv = document.getElementById('ptMarchOutput');
+    document.getElementById('ptmrchSubN').addEventListener('click', e_butSubtab, false);
+    document.getElementById('ptmrchSubR').addEventListener('click', e_butSubtab, false);
+    document.getElementById('ptmrchSubM').addEventListener('click', e_butSubtab, false);
+    changeSubtab (document.getElementById('ptmrchSub'+Options.curMarchTab));
     
-      function changeSubtab (but){
-          if (but == t.curTabBut)
-            return;
-          if (t.curTabBut){
-            t.curTabBut.className='pbSubtab';
+    function e_butSubtab (evt){
+      changeSubtab (evt.target);   
+    }
+
+    function changeSubtab (but){
+      if (but == t.curTabBut)
+        return;
+      if (t.curTabBut){
+        t.curTabBut.className='pbSubtab'; 
         t.curTabBut.disabled=false;
       }
       t.curTabBut = but;
       but.className='pbSubtab pbSubtabSel'; 
-          but.disabled=true;
-          t.curTabName = but.id.substr(11);
-          t.show();
-      }    
+      but.disabled=true;
+      t.curTabName = but.id.substr(9);
+      Options.curMarchTab = t.curTabName;
+	  saveOptions();
+      t.show ();
+    }    
   },
-setEnable : function (tf){
-      var t = Tabs.Marches;
-      clearInterval (t.reportTimer);
-      if (tf){
-        t.reportTimer = setInterval (function(){Tabs.Marches.getBattleReports(1);}, 5*1000);
-      } 
-  },
-  
-  fetchReportCB : function (rptNum, rslt){
-      var t = Tabs.Marches;
-      if (!rslt)
-         return;
-      if (rptNum < 0) {
-         return;
-      }
-      var rptid = t.rptList.shift();//TBD verify matching rptHead.
-  
-      //Find the march, if it still exists, and update it.
-      //Verify that the report data returned matches the march.
-      var elem = t.marchData.shift();
-      var rptHead = elem.report;
-      var theCity = '';
-      var theIndex = '';
-      var march;
-      for(ii=0; ii<Cities.numCities; ii++) {   
-        cityId = 'city'+ Cities.cities[ii].id;   
-        for (kk in Seed.queue_atkp[cityId]){   
-          march = Seed.queue_atkp[cityId][kk];
-          if (typeof (march) == 'object'){
-              if (rptHead.side0XCoord==march.toXCoord && 
-                  (Math.abs(parseInt(rptHead.reportUnixTime)-parseInt(march.destinationUnixTime)) < 30) &&
-                  rptHead.side0YCoord==march.toYCoord && rslt.s1Kid == march.knightId &&
-                  march.marchType == rptHead.marchType
-  ) {
-                 theCity = cityId;
-                 theIndex = kk;
-                 //if ( (Math.abs(parseInt(rptHead.reportUnixTime)-parseInt(march.destinationUnixTime)) >= 15) )
-              }
-          }
-        }
-      }
-  
-      if (theCity != '') {
-         march = Seed.queue_atkp[theCity][theIndex];
-         march.toCityId = rptHead.side0CityId;//So correct target type can be displayed.
-  
-         if (march.marchType==3) {
-            t.scoutingReports.push( {'rptHead':rptHead,'report':rslt});//For scouting
-         }
-         if (march.marchType!=3) {
-            march.gold = rslt.loot[0];
-            march.resource1 = rslt.loot[1];
-            march.resource2 = rslt.loot[2];
-            march.resource3 = rslt.loot[3];
-            march.resource4 = rslt.loot[4];
-  
-            //if ( t.resources(march) == 0 )
-              //march.gold = -1;//Need a way to show that nothing was looted.
-  
-            var rptkeys = unsafeWindow.Object.keys(rslt.fght.s1);
-  
-            for (var key = 0; key < rptkeys.length; key++) {
-              switch ( rptkeys[key]) {
-                case 'u1':
-                  march.unit1Return = rslt.fght.s1.u1[1];
-                  break;
-                case 'u2':
-                  march.unit2Return = rslt.fght.s1.u2[1];
-                  break;
-                case 'u3':
-                  march.unit3Return = rslt.fght.s1.u3[1];
-                  break;
-                case 'u4':
-                  march.unit4Return = rslt.fght.s1.u4[1];
-                  break;
-                case 'u5':
-                  march.unit5Return = rslt.fght.s1.u5[1];
-                  break;
-                case 'u6':
-                  march.unit6Return = rslt.fght.s1.u6[1];
-                  break;
-                case 'u7':
-                  march.unit7Return = rslt.fght.s1.u7[1];
-                  break;
-                case 'u8':
-                  march.unit8Return = rslt.fght.s1.u8[1];
-                  break;
-                case 'u9':
-                  march.unit9Return = rslt.fght.s1.u9[1];
-                  break;
-                case 'u10':
-                  march.unit10Return = rslt.fght.s1.u10[1];
-                  break;
-                case 'u11':
-                  march.unit11Return = rslt.fght.s1.u11[1];
-                  break;
-                case 'u12':
-                  march.unit12Return = rslt.fght.s1.u12[1];
-                  break;
-              };
-            }
-         }
-      } 
-      if (t.rptList.length)
-         setTimeout (function(){Tabs.Marches.fetchReport(0);},1500);
-    },
-  
-    fetchReport : function (rptNum){
-      var t = Tabs.Marches;
-      var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-      if (!t.rptList.length) return;
-      if (t.rptList.length-1 < rptNum) return;
-  
-      var rptid = t.rptList[rptNum];
-   
-      params.rid = rptid;
-      params.side = 1;
-  
-      new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/fetchReport.php" + unsafeWindow.g_ajaxsuffix, {
-        method: "post",
-        parameters: params,
-        onSuccess: function (rslt) {
-          Tabs.Marches.fetchReportCB(rptNum, rslt);
-        },
-        onFailure: function (rslt) {
-          Tabs.Marches.fetchReportCB(-1, rslt);
-        },
-      });
-    }, 
-  
-    rptList:[],
-    scoutingReports:[],
-  
-    returningTroops : function (march) {
-       var t = Tabs.Marches;
-       if (!march) return 0;
-       var sum = 0;
-       sum += parseInt(march.unit1Return);
-       sum += parseInt(march.unit2Return);
-       sum += parseInt(march.unit3Return);
-       sum += parseInt(march.unit4Return);
-       sum += parseInt(march.unit5Return);
-       sum += parseInt(march.unit6Return);
-       sum += parseInt(march.unit7Return);
-       sum += parseInt(march.unit8Return);
-       sum += parseInt(march.unit9Return);
-       sum += parseInt(march.unit10Return);
-       sum += parseInt(march.unit11Return);
-       sum += parseInt(march.unit12Return);
-       return sum;
-    },
-    resources : function (march) {
-       var t = Tabs.Marches;
-       if (!march) return 0;
-       var sum = 0;
-       sum += parseInt(march.gold);
-       sum += parseInt(march.resource1);
-       sum += parseInt(march.resource2);
-       sum += parseInt(march.resource3);
-       sum += parseInt(march.resource4);
-       //logit ("resources "+sum);
-       return sum;
-    },
-    needUpdate : function (march) {
-       var t = Tabs.Marches;
-       if (!march) return false;
-       var result = false;
-       var now = unixTime();
-       var eta = parseInt(march.destinationUnixTime)-parseInt(now);
-       if (t.resources(march) == 0 && eta < 0 )
-          result = true;
-       return result;
-    },
-    updateMarches : function () {
-      var t = Tabs.Marches;
-      var result = false;
-      for(var ii=0; ii<Cities.numCities; ii++) {   
-        cityId = 'city'+ Cities.cities[ii].id;
-        
-        for (var kk in Seed.queue_atkp[cityId]){   
-          march = Seed.queue_atkp[cityId][kk];
-          if (typeof (march) == 'object'){
-             if ( t.needUpdate (march) )
-                return true;
-          }
-        }
-      }
-      return result;
-    },
-  
-  getBattleReports : function (pageNum){
-      var t = Tabs.Marches;
-      var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-      params.pageNo = '';
-      if (pageNum && pageNum  > 1)
-        params.pageNo = pageNum;
-      if (!t.updateMarches()) {
-         //logit("BattleReports: No update needed."); 
-         return;
-      }
-      var page = pageNum+'';
-      new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/listReports.php" + unsafeWindow.g_ajaxsuffix, {
-        method: "post",
-        parameters: params,
-        onSuccess: function (rslt) {
-            t.getBattleReportsCB (pageNum,rslt);
-        },
-        onFailure: function (rslt) {
-            t.getBattleReportsCB (pageNum,rslt);
-        },
-      }, false);
-  },
-  matchReport : function (report) { 
-     //return the march, or null
-      var t = Tabs.Marches;
-      for(var c=0; c<Cities.numCities; c++) {   
-        cityId = 'city'+ Cities.cities[c].id;
-        
-        for (var k in Seed.queue_atkp[cityId]){   
-          march = Seed.queue_atkp[cityId][k];
-          if (typeof (march) == 'object'){
-              //march.destinationUnixTime, report.reportUnixTime: The time should be close.
-              if (report.side0XCoord==march.toXCoord && 
-                  report.side0YCoord==march.toYCoord //&& (Math.abs(parseInt(report.reportUnixTime)-parseInt(march.destinationUnixTime)) < 15)
-               )
-              {
-                 var result = march;
-                 return result;
-              }
-          }
-        }
-      }
-      return '';
-  },
-  marchData:[],
-  getBattleReportsCB : function (page, rslt){
-      var t = Tabs.Marches;
-      var pageNum = page;
-      if (rslt) {
-         if (!rslt.ok) {
-            return;
-         }
-         if (rslt.arReports) {
-           if (page == 1)
-              t.matchCount=0;
-           var ar = rslt.arReports;
-           var rptkeys = unsafeWindow.Object.keys(ar);
-           for (var j = 0; j < rptkeys.length; j++) {
-                var rpt = ar[rptkeys[j]];
-                //If not fetched
-              if (parseInt(rpt.reportStatus) == 2) {
-                var march = Tabs.Marches.matchReport (rpt);
-                if (march != '') {
-                       t.matchCount++;
-                       t.marchData.push({'report':rpt});
-                       t.rptList.push(rpt.reportId);
-                }
-              }
-           }
-         }
-         setTimeout (function(){Tabs.Marches.fetchReport(0);},1500);   
-      }
-    },
-  
-    handleUpdate : function() {
-      var t = Tabs.Marches;
-      t.getBattleReports(1);
-  },
+
   hide : function (){
     var t = Tabs.Marches;
     clearTimeout (t.displayTimer);
   },
-  ///////////////////////
+  
   show : function (){
     var t = Tabs.Marches;
-    t.state = null;
     clearTimeout (t.displayTimer);
-    if (t.curTabName == 'Z')
-      t.showReinforcementsOut();
-    else if (t.curTabName == 'R')
+    if (t.curTabName == 'R')
       t.showReinforcements();
     else if (t.curTabName == 'M')
-      t.showMarches(9);
-    else
-      t.showAttacks();
+      t.showMarches();
+    else 
+      t.showIncoming();
   },
- 
-   /***  INCOMING SUBTAB  ***/
-  showAttacks : function (){
-      var t = Tabs.Marches;
-      clearTimeout (t.displayTimer);
-      var now = unixTime();
-      var target, atkType, who, atkclass;
-      t.marchDiv.innerHTML = ""; 
-      var s = '<div class=ptstat>INCOMING ATTACKS</div>';
-      s += '<STYLE> .eclkk{background:#ffffbc;} .attackkk{background:#ff8989;} .attackkA{background:#fbc19a;}</style>';
-      s += '<TABLE cellspacing=0 cellpadding=2 width=100%>';
-      s += '<tr><td width=55><b>Type</td><td width=55><b>Time</td><td width=60><b>Defense</td><td width=140 colspan=2><b>City Name</td><td width=150 colspan=2><b>Player<td width=35><b>Dist</td><td width=25><b>Kinght</td><td><b>Troops</td></tr>';  
-      var at=0;
-      if(Seed && Seed.queue_atkinc) {
-       var sortem = [];    
-       for (var k in Seed.queue_atkinc) 
-          sortem.push (Seed.queue_atkinc[k]);
-          
-        sortem.sort (function (a,b){
-          var x; if ((x = a.arrivalTime-b.arrivalTime)!=0) 
-            return x; 
-          return b.arrivalTime-a.arrivalTime;
-        });    
-            
-            
-       //for(k in Seed.queue_atkinc){
-       //	m = Seed.queue_atkinc[k];
-       for (i=0; i<sortem.length; i++){
-          var m = sortem[i]; 
-      
-      	if (m.marchType == 3){
-	      atkType = 'Scout';
-	      atkclass = 'eclkk';
-	    } else if (m.marchType == 4){
-	      atkType = 'Attack';
-	      atkclass = 'attackkk';
-	       var nbtroupe=0;
-	       for (k in m.unts){
-	                nbtroupe += parseInt(m.unts[k]);
-                }
-	        if (nbtroupe==1) {
-	         atkclass = 'attackkA';
-	        }
-	      
-	    } else {
-	      atkType ="?";//return;
-	      atkclass = '';
-    	 }
-    	 if (atkclass !='') {  // Seulement les vraies attaques !
-    	 at++;
-    	 s += '<tr align=left >';
-    	  
-    	 var arrivedans = unsafeWindow.timestr(parseInt(m.arrivalTime - unixTime()));
-    	 s += '<td class="'+atkclass+'">' + atkType + '</td>';
-    	 s += '<td class="'+atkclass+'">' + arrivedans +'</td>';
-    	 var couelur="";
-    	 var city = Cities.byID[m.toCityId];
-    	 if (city.tileId == m.toTileId) {
-           target = '<a onclick="citysel_click(document.getElementById(\'citysel_'+ (city.idx+1)+'\'));">'+ city.name.substring(0,10) +'</a>';
-           cityID = 'city'+ m.toCityId;
-	   Gate = parseInt(Seed.citystats[cityID].gate);
-	   if(Gate == 0) {
-	   	bouttt = '<input type=button value="DEF OFF" id="but_'+m.toCityId+'" style="background-color:#00AA00;padding:2px;border:1px solid yellow;">';
-	   	}	   else {
-		bouttt = '<input type=button value="DEF ON" id="but_'+m.toCityId+'" style="background-color:red;">';
-		}
-           coordos = '<a class="coordinateLink" onclick="cm.utils.CoordinateLinkController.onClick(event)" href="javascript:void(0)">('+ city.x + ',' + city.y +')</a>';
-         } else {
-           target = 'TS';
-           bouttt='';
-           for (k in Seed.wilderness['city'+m.toCityId]){
-            if (Seed.wilderness['city'+m.toCityId][k].tileId == m.toTileId){
-             coordos = '<a class="coordinateLink" onclick="cm.utils.CoordinateLinkController.onClick(event)" href="javascript:void(0)">('+Seed.wilderness['city'+m.toCityId][k].xCoord + ',' + Seed.wilderness['city'+m.toCityId][k].yCoord+')</a>';
-             break;           
-            }
-           }
-         }  
-         s += '<td class="'+atkclass+'" align=center>'+bouttt+'</td><td class="'+atkclass+'" align=center><b>' + target + '<td class="'+atkclass+'" align=center>'+coordos+'</b></td>';
-         
-         if (Seed.players['u'+m.pid]) {
-	    who = '<span>'+Seed.players['u'+m.pid].n +'<br>'+addCommas(Seed.players['u'+m.pid].m)+'</span>';
-	 
-	 } else if (m.players && m.players['u'+m.pid]) {
-	    who = m.players['u'+m.pid].n;
-	 } else{
-	    who = 'Unknown';
-	
-      	 }
-      	 if (m.fromXCoord) who += '</td><td class="'+atkclass+'"><a class="coordinateLink" onclick="cm.utils.CoordinateLinkController.onClick(event)" href="javascript:void(0)">(' + m.fromXCoord +','+ m.fromYCoord+')</a>';
-      	 s += '<td class="'+atkclass+'">' + who + '</td>';
-      	 s +='<td class="'+atkclass+'">'+ distance(city.x,city.y,m.fromXCoord,m.fromYCoord) +'</td>';
-         var troupe = "";
-         for (k in m.unts){
-          var uid = parseInt(k.substr (1));
-          troupe += m.unts[k] +' '+ unsafeWindow.unitcost['unt'+uid][0] +'<br>';
-         }
-                 if (m.knt) {
-	           for (k in m.knt){
-	            knh=parseInt(m.knt[k]);
-	           }
-	           s+='<td  class="'+atkclass+'">'+knh+'</td>';
-	          } else {
-	           s+='<td  class="'+atkclass+'">&nbsp;</td>';
-         }
-         s += '<td class="'+atkclass+'">' + troupe +'</td>';
- 
-         s += '</tr>';
-         } // fin si attaque et eclaireur seulement
-      	}  // fin du for
-      	if (at==0) {
-      	 s ="<tr><colspan=4><div class=ptstat>INCOMING ATTACKS</div><br><b><center>No Current Incoming Attacks At This Time</center></b></b></td></tr>";
-      	}
-      } // fin de if
-      s+='</table>';
-      t.marchDiv.innerHTML = s; 
-      
-      for (var cityId in Cities.byID){
-      	var but = document.getElementById ('but_'+ cityId);
-      	if (but) {
-      	  //t.displayDefMode (cityId);
-      	  addListener (but, cityId);
-         }
-      }
-      			  
-       function addListener (but, i){
-      	 but.addEventListener ('click', function (){t.butToggleDefMode(i)}, false);
-       }
-      
-      t.displayTimer = setTimeout (t.showAttacks, 900);
-    },
-    
-    butToggleDefMode : function (cityId){
+  
+  /***   Incoming SUBTAB  ***/
+      showIncoming : function (){
         var t = Tabs.Marches;
-        var mode = 1;
-        if (Seed.citystats["city" + cityId].gate != 0)
-          mode = 0;
-          t.ajaxSetDefMode (cityId, mode, function (newMode){
-            t.defMode[cityId] = newMode;
-            t.displayDefMode (cityId);
-          });
-    },
-      displayDefMode : function (cityId){
-        var t = Tabs.Marches;
-        var but = document.getElementById('but'+ cityId);
-        if (t.defMode[cityId]){
-          but.style.backgroundColor = 'red';
-        } else {
-          but.style.backgroundColor = '#00AA00'; 
-        }  
-  },
-    ajaxSetDefMode : function (cityId, state, notify){
-    		var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-    		params.cid = cityId;
-    		params.state = state;
-    		new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/gate.php" + unsafeWindow.g_ajaxsuffix, {
-    			method: "post",
-    			parameters: params,
-    			onSuccess: function (rslt) {
-    				if (rslt.ok) {
-    					Seed.citystats["city" + cityId].gate = state;
-    					notify (state);
-    				} 
-    			},
-    			onFailure: function () {
-    			}
-    		})
-     },
-    
-    /***   MARCHES SUBTAB  ***/
-    showMarches : function (numville){
-      var t = Tabs.Marches;
-      var rownum = 0;
-      var now = unixTime();
-      var names = ['ST', 'MM', 'Scout', 'Pike', 'Swords', 'Archers', 'Cav', 'H-Cav', 'Wagon', 'Balli', 'Rams', 'Cats'];
-      var t = Tabs.Marches;
-      clearTimeout (t.displayTimer);
-      if (t.state == null){       
-       var s = '<div class=ptstat>TROOP MOVEMENT</div><BR><b>Hide Raids</b> <input id=BOVoirRaid type=checkbox '+ (!Options.voirRaid?'':' CHECKED ') +'>'; 
-       s += '<STYLE> .tot{background:#f0e0f8;} .city{background:#ffffaa;}</style><input style="font-size:12px" type=button id="9_BOVilleBouton" value="0">';
-       for (var c=0; c<Cities.numCities; c++){
-            s += '<input style="font-size:12px" type=button id="'+ c +'_BOVilleBouton" value="' + (parseInt(c)+1) + ' : '+ Cities.cities[c].name.substring(0,10) +'">';
-       }
-       s += '<div id="showMarchDiv"></div>';
-       t.marchDiv.innerHTML = s;
+        t.marchDiv.innerHTML = null;	
+
+        var z = '<TABLE id=pdincoming cellSpacing=10 width=100% height=0% class=pbTab>';
        
-       document.getElementById('BOVoirRaid').addEventListener('click', function() {
-       
-         Options.voirRaid = document.getElementById('BOVoirRaid').checked;
-         saveOptions();
-         
-       }, false);
-       
-       document.getElementById("9_BOVilleBouton").addEventListener('click', function(){
-                           var t = Tabs.Marches;
-                           clearTimeout (t.displayTimer);
-                           t.showMarches(this.id.substring(0,1));
-                           
-       }, false);
-       
-       for (var c=0; c<Cities.numCities; c++){
-          document.getElementById(c + "_BOVilleBouton").addEventListener('click', function(){
-                    var t = Tabs.Marches;
-                    clearTimeout (t.displayTimer);
-                    t.showMarches(this.id.substring(0,1));
-                    
-           }, false);
-       
-       }
-       
-       t.state = 1; 
-      }
-      
-      s = '<TABLE cellspacing=0 cellpadding=2 width=100%>';
-      tot = [];
-      for (i=0; i<13; i++)  tot[i] = 0;
-      
-      var c = numville;
-      
-      // si c=9 alors on affiche toute les villes
-      if (numville==9) {
-        
-        for (var c=0; c<Cities.numCities; c++){
-          var que = Seed.queue_atkp['city'+ Cities.cities[c].id];
-          if (matTypeof(que)=='object') {
-            var a=0;
-            for (k in que) {
-              march = que[k]; 
-              if ((march.marchType!=2 && !Options.voirRaid) || (march.marchType!=9 && march.marchType!=2 && Options.voirRaid) ) { /// Marche Type \\ 2= Défense / 3= Späher / 4= Angriff
-                 a++;
-                 if (a==1) {
-      	             var cityID = 'city'+ Cities.cities[c].id;
-      	             var slots=0;
-		     for(var z in Seed.queue_atkp[cityID])
-		     	slots++;      
-      	             var niveauPointRall=parseInt(getCityBuilding (Cities.cities[c].id, 12).maxLevel); // 12=Point de ralliement
-      	  	     s+= '<TR><TD class="city">Slots: '+slots+' / '+niveauPointRall+'</td><TD class="city" colspan=19 align=center><font size=3><B><i><u>'+ Cities.cities[c].name +'</b></td></tr>';
-      	         }
-                 var mid = k.substr(1);
-                 knight = '';
-                 if (Seed.queue_atkp['city'+ Cities.cities[c].id][k]["knightId"] !=0){
-		  for (i in Seed.knights['city'+ Cities.cities[c].id]) {
-		    if (i == ("knt" + Seed.queue_atkp['city'+ Cities.cities[c].id][k]["knightId"]) ) knight = '' +Seed.knights['city'+ Cities.cities[c].id][i]["combat"] +'';
-		  }
-  		 } else knight = '';
-                var playerId = march.toPlayerId;
-                var cityId = march.toCityId;
-                var tileType = parseInt(march.toTileType);
-                var tileLevel = march.toTileLevel;
-                var who = 'Unknown';
-                if (Seed.players['u' + playerId]) {
-		 who = Seed.players['u' + playerId].n;
-		}
-		if (march.marchType==1) { // si transport c'est forcement sur une ville lol
-		  var player = "<span>City - Level "+ tileLevel +"</span>";
-		}else {
-		  var player = "<span>Level "+ tileLevel +"</span>";
-		}
-		var tileNames = ['Level', 'Grassland', 'Lake', 'Forest', 'Hill', 'Mountain', 'Wild', 'City' ];
-		var numtile= (tileType/10) + 1;
-		if (tileType==10) numtile=1;
-		if (tileType==11) numtile=2;
-                if (tileType <= 50) { // TS
-                  player = tileNames[numtile] +" Level " + tileLevel;
-                  /*if (playerId==0) {
-                   player += " - Libre";
-                  } else {
-                   player += " - " + who;
-                  }*/  // BUG DU JEU !!! pfff
-                }
-                if (tileType == 51 && playerId == 0) { // Barbares
-                  player = "Level " + tileLevel;
-                }
-                var nomville="";
-                if (playerId > 0 && tileType == 51) { // ville
-                 if (march.marchType==1) {
-                  for(i=0; i<Cities.numCities; i++) {
-                   if (cityId==Cities.cities[i].id) {
-                    nomville=Cities.cities[i].name
-                     break;
-                   }
-                  }
-                  player = 'Your City '+ nomville;
-                 } else {
-                  player = 'City Level ' + tileLevel;
-                 }
-                }
-                var typeattack="?";
-                if (march.marchType==3) typeattack='Scout';
-                if (march.marchType==4) typeattack='Attack';
-                if (march.marchType==1) typeattack='Transport';
-                if (march.marchType==5) typeattack='Reassign';
-                if (march.marchType==9) typeattack='Raid';
-                var now = new Date();
-                var statusm = march.marchStatus;
-                var Marchstatut="<span title='type : "+march.marchType+" Status : "+statusm+"'>?</span> ";
-                var arrivedans="0s";
-                var arrivedanssec=0;
-		if (statusm==1) { 
-		 Marchstatut="";
-		 if (march.marchType==3) 
-		  Marchstatut+='<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/scouting.jpg" align=absmiddle>';
-		 if (march.marchType==4) 
-		  Marchstatut+='<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg" align=absmiddle>';
-		 if (march.marchType==9) 
-		  Marchstatut+='<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg" align=absmiddle>';
-		 if (march.marchType==1) 
-		  Marchstatut+='<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg" align=absmiddle>';
-                 if (march.marchType==5) 
-                  Marchstatut+='<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg" align=absmiddle>';
-		  Marchstatut+="&nbsp;Marching"; 
-		  arrivedans = unsafeWindow.timestr(parseInt(march.destinationUnixTime - unixTime()));
-		  arrivedanssec = parseInt(march.destinationUnixTime - unixTime());
-		}
-                if (statusm==8) { 
-                  Marchstatut = '<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg" align=absmiddle>&nbsp;Returning';
-                  arrivedans = unsafeWindow.timestr(march.returnUnixTime - unixTime());
-                  arrivedanssec = parseInt(march.returnUnixTime - unixTime());
-                }
-                if (statusm==2) { 
-                   Marchstatut='<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg" align=absmiddle>&nbsp;Encamped';
-                }
-                if (statusm==5) { 
-                   Marchstatut='<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg" align=absmiddle>&nbsp;Waiting for Report';
-                }
-                if (statusm==4) { 
-		   Marchstatut='<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/autoAttack/raid_resting.png" align=absmiddle>Unloading Loot';
-                }
-                if (statusm==3) { 
-		  Marchstatut='<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/autoAttack/raid_stopped_desat.png" align=absmiddle>Raid Stopped';
-		}
- 
-                s += '<TR align=left><td align=left width=10%>';
-                if (march.marchType!=9 && statusm==1 && arrivedanssec>60) s +='<A class=button20 onclick="pr58Recall('+ mid+','+Cities.cities[c].id+')"><SPAN>Recall</span></a>';
-                if (march.marchType!=9 && statusm==2) s +='<A class=button20 onclick="attack_recall('+ mid+', 1, '+Cities.cities[c].id+');"><span>Recall</span></a>';
-                if (march.marchType==9 && statusm==3 && arrivedanssec>60) s +='<A class=button20 onclick="BOraid_delete('+ mid+','+Cities.cities[c].id+');return false;"><span>Delete</span></a>';
-             
-             s +='</td><td align=left width=10%>'+typeattack+'</td><td>'+arrivedans+'</td><td align=left width=15%>' + Marchstatut +'</td>\
-                <TD align=left width=15%>' + player + '</td><td><a class="coordinateLink" onclick="cm.utils.CoordinateLinkController.onClick(event)" href="javascript:void(0)">(' + march.toXCoord +','+ march.toYCoord +')</a></td><td>' + knight +' </td><td colspan=12>'
-	       for (i=1; i<13; i++) {
-	                  if (statusm==8) { 
-	                    if (parseInt (march['unit'+ i +'Return']) > 0) {
-	      	           s += names[i-1]+" :" + parseInt (march['unit'+ i +'Return']) + "<br>";
-	      	          tot[i] += parseInt (march['unit'+ i +'Return']);
-	                  }
-	                  
-	                  } else {
-	                   if (parseInt (march['unit'+ i +'Count']) > 0) {
-	                       s += names[i-1]+" :" + parseInt (march['unit'+ i +'Count']) + "<br>";
-	                       tot[i] += parseInt (march['unit'+ i +'Count']);
-	                   }
-	                  }
-                }
-	      
-                s += '</td><td style="font-size:11px">';
-		//if (statusm==8) { // seulement le retour pour les barbares
-		// s += 'Or : ' + addCommas(parseInt (march['gold'])) + '<br>Nourriture : ' + addCommas(march['resource1']) + '<br>Bois : ' + addCommas(march['resource2']) + '<br>Pierre : ' + addCommas(march['resource3']) + '<br>Minerais : ' + addCommas(march['resource4']) + '</td>';         
-      		//} else {
-      		if (march.marchType!=9) {
-      		  s += '<a  class=button20 onclick="view_march('+ mid+');return false;";><span>Details</psan></a></td>';
-      		  }else {
-      		  s+='</td>';
-      		  }
-      		//}
-                s += '</tr>';
-                 // Bouton détail : <td><a  class=button20 onclick="view_march('+ mid+');return false;";><span>D&eacute;tail</psan></a></td>
-              }// MarchType !=2 (renfort)
-            }   
-            
-        
-	
-	//} else {
-	//   s= '<br>keine märsche..';
-        } // in test Object 
-      } 
-      s += '<TR><TD colspan=20><BR><BR></td></tr></table><TABLE cellspacing=0 cellpadding=2 width=100%><tr><td colspan=1></td>';
-     	 for (k=0; k<names.length; k++)
-     	 	s += '<TD width=7% align=center><B>' + names[k] + '</b></td>';
-     	 s += '</tr>';
-     	 s += '<TR align=center><TD class="tot" align=left width=10%><B>TOTAL</b></td>';
-     	 for (i=1; i<13; i++)
-     		s+= '<TD class="tot">'+ tot[i] +'</td>';
-     	 s += '<td></td></tr></table>';
-	 s += '<BR><BR><DIV style="font-size: 10px"></div>';
-            
-  } else { /// ici c'est quand il y a une seule ville à montrer c!=99
-      
-      
-   var que = Seed.queue_atkp['city'+ Cities.cities[c].id];
-   if (matTypeof(que)=='object') {      
-			var a=0;
-			for (k in que){
-	                   march = que[k]; 
-	                   
-	              if ((march.marchType!=2 && !Options.voirRaid) || (march.marchType!=9 && march.marchType!=2 && Options.voirRaid) ) { /// Marche Type \\ 2= Défense / 3= Späher / 4= Angriff
-                  a++;
-	                   if (a==1) {
-	         	             //s+= '<TR><TD class=xtab><BR></td></tr>';
-	         	             var cityID = 'city'+ Cities.cities[c].id;
-	         	             var slots=0;
-	   		     for(var z in Seed.queue_atkp[cityID])
-	   		     	slots++;
-	   	      	             
-	         	             var niveauPointRall=parseInt(getCityBuilding (Cities.cities[c].id, 12).maxLevel); // 12=Point de ralliement
-	        
-	         	  	     s+= '<TR><TD class="city">Slots: '+slots+' / '+niveauPointRall+'</td><TD class="city" colspan=17 align=center><font size=3><B><i><u>'+ Cities.cities[c].name +'</b></td></tr>';
-	         	        }
-	                   var mid = k.substr(1);
-	                   knight = '';
-	                   //if (parseInt(march.knightCombat)>0) knight=' ('+ march.knightCombat +')';
-	                    if (Seed.queue_atkp['city'+ Cities.cities[c].id][k]["knightId"] !=0){
-	   		  				    	for (i in Seed.knights['city'+ Cities.cities[c].id]) {
-	   		  				    			if (i == ("knt" + Seed.queue_atkp['city'+ Cities.cities[c].id][k]["knightId"]) ) knight = '&nbsp; - Kinght ' +Seed.knights['city'+ Cities.cities[c].id][i]["combat"] +'';
-	   		  				    	}
-	     				    } else knight = '';
-	                   //if (march.toPlayerId) {
-	                    var playerId = march.toPlayerId;
-	                   //}else{
-	                    //var playerId = -1;
-	                   //}
-	                   var cityId = march.toCityId;
-	                   var tileType = parseInt(march.toTileType);
-	                   var tileLevel = march.toTileLevel;
-	                   var who = 'Unknown';
-	                   if (Seed.players['u' + playerId]) {
-	   		 who = Seed.players['u' + playerId].n;
-	   		}
-	   		 if (march.marchType==1) { // si transport c'est forcement sur une ville lol
-	   		  var player = "<span>City- Level "+ tileLevel +"</span>";
-	   		 }else {
-	   		  var player = "<span title=''>Level "+ tileLevel +"</span>";
-	   		 }
-	   		var tileNames = ['Level', 'Grassland', 'Lake', 'Forest', 'Hill', 'Mountain', 'Wild', 'City' ];
-	   		var numtile= (tileType/10) + 1;
-	   		if (tileType==10) numtile=1;
-	   		if (tileType==11) numtile=2;
-	                   if (tileType <= 50) { // TS
-	                     player = tileNames[numtile] +" Level " + tileLevel;
-	                     /*if (playerId==0) {
-	                      player += " - Libre";
-	                     } else {
-	                      player += " - " + who;
-	                     }*/  // BUG DU JEU !!! pfff
-	                   }
-	                   if (tileType == 51 && playerId == 0) { // Barbares
-	                     player = "Level " + tileLevel;
-	                   }
-	                   var nomville="";
-	                   if (playerId > 0 && tileType == 51) { // ville
-	                    if (march.marchType==1) {
-	                     for(i=0; i<Cities.numCities; i++) {
-	                      if (cityId==Cities.cities[i].id) {
-	                       nomville=Cities.cities[i].name
-	                        break;
-	                      }
-	                     }
-	                     player = 'City'+ nomville;
-	                    } else {
-	                     player = 'City - Level ' + tileLevel;
-	                    }
-	                   }
-	         	   	//player += "<br>playerId:"+ playerId + "<br>tileType:" + tileType + "<br>tileLevel:" +  tileLevel + "<br>cityId:" + cityId;
-	                   var typeattack="?";
-	                    if (march.marchType==3) typeattack='Scout';
-                        if (march.marchType==4) typeattack='Attack';
-                        if (march.marchType==1) typeattack='Transport';
-                        if (march.marchType==5) typeattack='Reassign';
-                        if (march.marchType==9) typeattack='Raid';
-	                   var now = new Date();
-	                   var statusm = march.marchStatus;
-	                   var Marchstatut="? ";
-	                   var arrivedans="0s";
-	   				if (statusm==1) { 
-					 Marchstatut="";
-					 if (march.marchType==3) 
-					  Marchstatut+='<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/scouting.jpg" align=absmiddle>';
-					 if (march.marchType==4) 
-					  Marchstatut+='<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg" align=absmiddle>';
-					 if (march.marchType==9) 
-					  Marchstatut+='<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg" align=absmiddle>';
-					 if (march.marchType==1) 
-					  Marchstatut+='<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg" align=absmiddle>';
-			                 if (march.marchType==5) 
-			                  Marchstatut+='<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg" align=absmiddle>';
-					  Marchstatut+="&nbsp;Marching"; 
-					  arrivedans = unsafeWindow.timestr(parseInt(march.destinationUnixTime - unixTime()));
+        for (k in Seed.queue_atkinc) {
+          if(Seed.queue_atkinc.length !=0){
+				var now = unixTime();
+				var icon, status, FROM, cityname, FROMmight, marchdir, marchtime;
+				var marchType = parseInt(Seed.queue_atkinc[k]["marchType"]);
+				var marchStatus = parseInt(Seed.queue_atkinc[k]["marchStatus"]);
+				
+				for (var i=0; i<Seed.cities.length;i++) {
+					if (Seed.cities[i][0] == Seed.queue_atkinc[k]["toCityId"]) cityname = Seed.cities[i][1];
+				}   
+			
+				if (Seed.queue_atkinc[k]["destinationUnixTime"] < now || marchStatus == 8)
+					marchdir = "returning";
+				else
+					marchdir = "going";	
+				
+				var destinationUnixTime = Seed.queue_atkinc[k]["arrivalTime"] - now;
+				if(destinationUnixTime > 0)
+					marchtime = timestr(destinationUnixTime, true)
+				else
+					marchtime = 'Arrived';
+				
+				if (marchType != 3 && marchType !=4){
+					var player = Seed.players['u'+Seed.queue_atkinc[k]["fromPlayerId"]]
+					FROM = player.n;
+					FROMmight = player.m;
+				}
+				else {
+					for (players in Seed.players){
+						if (marchType == 3 || marchType == 4){ 
+							if (('u'+Seed.queue_atkinc[k]["pid"]) == players){ 
+							  FROM = Seed.players[players]["n"];
+							  FROMmight = Seed.players[players]["m"];
+							}
+						}
 					}
-			                if (statusm==8) { 
-			                  Marchstatut = '<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg" align=absmiddle>Returning';
-			                  arrivedans = unsafeWindow.timestr(march.returnUnixTime - unixTime());
-			                }
-			                if (statusm==2) { 
-			                   Marchstatut='<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg" align=absmiddle>Encamped';
-			                }
-			                if (statusm==5) { 
-			                   Marchstatut='<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg" align=absmiddle>Waiting for Report';
-			                }
-			                if (statusm==4) { 
-					   Marchstatut='<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/autoAttack/raid_resting.png" align=absmiddle>Unloading Loot';
-			                }
-			                if (statusm==3) { 
-					  Marchstatut='<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/autoAttack/raid_stopped_desat.png" align=absmiddle>R';
+				}
+				
+				if (marchType == 2 && marchStatus == 2) marchType = 102;
+				
+				switch (marchType) {
+					case 1: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status=uW.g_js_strings.commonstr.transport;break;
+					case 2: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status=uW.g_js_strings.commonstr.reinforce	;break;
+					case 3: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/scouting.jpg";status=uW.g_js_strings.commonstr.scout;break;
+					case 4: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status=uW.g_js_strings.commonstr.attack;break;
+					case 9: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status=uW.g_js_strings.commonstr.attack;break;
+					case 5: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status=uW.g_js_strings.commonstr.reassign;break;
+					case 100: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status=uW.g_js_strings.commonstr.returning;break;
+					case 102: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status=uW.g_js_strings.commonstr.encamped;break;
+				} 
+				
+				if(status == uW.g_js_strings.commonstr.encamped)
+					z += '<TD width="10px"><A onclick="r8x6Home('+ Seed.queue_atkinc[k].marchId +')"><img src='+ icon +'></a></td>';
+				else
+					z += '<TD width="10px"><img src='+ icon +'></td>';
+				z += '<TD width="40px">'+ status +'</td>';
+				z += '<TD>' + cityname + '</td>';
+				z += '<TD>'+ marchtime +'</td>';
+				z +='<TD>'+uW.g_js_strings.commonstr.from+': ' + FROM + '</td>';
+				z +='<TD>'+uW.g_js_strings.commonstr.might+': ' + addCommas(FROMmight) + '</td>';
+				if (Seed.queue_atkinc[k]["knt"] != undefined) z +='<TD>'+uW.g_js_strings.commonstr.knight+': '+ Seed.queue_atkinc[k]["knt"]["cbt"]+'</td>';
+				
+				if (Seed.queue_atkinc[k]["gold"] > 0) z += '<TD>'+uW.resourceinfo.rec0 +': '+ addCommas(Seed.queue_atkinc[k]["gold"]) +'</td>';
+				if (Seed.queue_atkinc[k]["resource1"] > 0) z += '<TD>'+uW.resourceinfo.rec1 +': '+ addCommas(Seed.queue_atkinc[k]["resource1"]) +'</td>';
+				if (Seed.queue_atkinc[k]["resource2"] > 0) z += '<TD>'+uW.resourceinfo.rec2 +': '+ addCommas(Seed.queue_atkinc[k]["resource2"]) +'</td>';
+				if (Seed.queue_atkinc[k]["resource3"] > 0) z += '<TD>'+uW.resourceinfo.rec3 +': '+ addCommas(Seed.queue_atkinc[k]["resource3"]) +'</td>';
+				if (Seed.queue_atkinc[k]["resource4"] > 0) z += '<TD>'+uW.resourceinfo.rec4 +': '+ addCommas(Seed.queue_atkinc[k]["resource4"]) +'</td>';
+        		    
+				for(i=1; i<13; i++){
+					if(Seed.queue_atkinc[k]["unit"+i+"Count"] > 0 && marchdir == "going") z += '<TD>'+ uW.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkinc[k]["unit"+i+"Count"]) +'</td>';
+					if(Seed.queue_atkinc[k]["unit"+i+"Return"] > 0 && marchdir == "returning") z += '<TD>'+ uW.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkinc[k]["unit"+i+"Return"]) +'</td>';
+				}
+        		
+				if (marchType == 3)
+					if (Seed.queue_atkinc[k]["unts"]["u3"] > 0) z += '<TD>'+uW.unitcost.unt3[0]+': '+ addCommas(Seed.queue_atkinc[k]["unts"]["u3"]) +'</td>';
+				if (marchType == 4){
+					for(ui=1; ui<13; ui++){
+						if (Seed.queue_atkinc[k]["unts"]["u"+ui] > 0) z += '<TD>'+ uW.unitcost['unt'+ui][0] +': '+ addCommas(Seed.queue_atkinc[k]["unts"]["u"+ui]) +'</td>';
+					}
+				}
+				
+				z += '</tr>';
+          } 
 		}
-	        couleur="";
-	        if (statusm==8) { 
-	         if (parseInt (march['unit'+ i +'Return']) > 0) {
-	           var dif=parseInt(march['unit'+ i +'Count']) - parseInt(march['unit'+ i +'Return']);
-	           if(dif>0) {
-	            couleur="style='background-colo:#EF9999";
-	           }
-	         }else {
-	          var dif=parseInt(march['unit'+ i +'Count']) - 0;
-		  if(dif>0) {
-		       couleur="style='background-colo:#EF9999";
-	           }
-	         }
-	        
-	        }
-	         s += '<TR align=left '+couleur+'><td align=left width=10% '+couleur+'>';
-	        if (march.marchType!=9 && statusm==1) s +='<A class=button20 onclick="pr58Recall('+ mid+')"><SPAN>Recall</span></a>';
-                       if (march.marchType!=9 && statusm==2) s +='<A class=button20 onclick="attack_recall('+ mid+', 1, '+Cities.cities[c].id+')"><span>Recall</span></a>';
-        if (march.marchType==9 && statusm==3) s +='<A class=button20 onclick="BOraid_delete('+ mid+','+Cities.cities[c].id+');return false;"><span>Delete</span></a>';
-             
-               s +='&nbsp;</td><td align=left width=10%>'+typeattack+'</td><td>'+arrivedans+'</td><td align=left width=15%>' + Marchstatut +'</td>\
-	      <TD align=left width=25%>' + player + ' <a class="coordinateLink" onclick="cm.utils.CoordinateLinkController.onClick(event)" href="javascript:void(0)">(' + march.toXCoord +','+ march.toYCoord +')</a>&nbsp;' + knight +' </td><td colspan=12 '+couleur+'>'
-	       for (i=1; i<13; i++) {
-	                  if (statusm==8) { 
-	                    if (parseInt (march['unit'+ i +'Return']) > 0) {
-	      	           s += names[i-1]+" :" + parseInt (march['unit'+ i +'Return']) + "<br>";
-	      	          tot[i] += parseInt (march['unit'+ i +'Return']);
-	                  }
-	                  
-	                  } else {
-	                   if (parseInt (march['unit'+ i +'Count']) > 0) {
-	                       s += names[i-1]+" :" + parseInt (march['unit'+ i +'Count']) + "<br>";
-	                       tot[i] += parseInt (march['unit'+ i +'Count']);
-	                   }
-	                  }
-                }
-	      
-
-	                   s += '</td><td style="font-size:11px">';
-	   		if (statusm==8) { // seulement le retour pour les barbares
-	   		 s += 'Gold : ' + addCommas(parseInt (march['gold'])) + '<br>Food: ' + addCommas(march['resource1']) + '<br>Wood: ' + addCommas(march['resource2']) + '<br>Stone: ' + addCommas(march['resource3']) + '<br>Ore: ' + addCommas(march['resource4']) + '</td>';         
-	         		} else {
-	         		
-	         		if (march.marchType!=9) {
-				      		  s += '<a  class=button20 onclick="view_march('+ mid+');return false;";><span>Details</span></a></td>';
-				      		  }else {
-				      		  s+='</td>';
-      		  }
-	         		}
-	                   s += '</tr>';
-	        }// fin de MarchType
-     } // fin k in que
-     s += '<TR><TD colspan=18><BR><BR></td></tr></table><TABLE cellspacing=0 cellpadding=2 width=100%><tr><td colspan=1></td>';
-     for (k=0; k<names.length; k++)  s += '<TD width=7% align=center><B>' + names[k] + '</b></td>';
-     s += '</tr>';
-     s += '<TR align=center><TD class="tot" align=left width=10%><B>TOTAL</b></td>';
-     for (i=1; i<13; i++) s+= '<TD class="tot">'+ tot[i] +'</td>';
-     s += '<td></td></tr></table>';
-     s += '<BR><BR><DIV style="font-size: 10px"></div>';
-    } else {
-     s= '<div class=ptstat>TROOP MOVEMENT</div><br>No Current Troop Movement.';
-    } 
-   } // Fin c=99
-   document.getElementById('showMarchDiv').innerHTML = s;
-   t.displayTimer = setTimeout (function() { t.showMarches(numville);   }, 1000);
-  },
-  ajaxDeleteRaid: function(marchId, cityId) {
-  
-    var villeencours=cityId;
-
-               var march = Seed.queue_atkp["city" + villeencours]["m" + marchId];
-               if (march == null){
-  
-                 alert("Marche non trouve");
-                 return;
-               }    
-               var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-               params.action="deleteMarch";
-               params.marchId = marchId;
-           params.ctrl="BotManager";
-           params.settings={cityId:villeencours}; 
-      	   unsafeWindow.ajax.Request(unsafeWindow.g_ajaxpath+"ajax/_dispatch.php"+unsafeWindow.g_ajaxsuffix,{method:"post",parameters:params,loading:true,
-onSuccess:function(transport) {
-  var m = eval("(" + transport.responseText + ")");
-   if (m.ok){        
-            var j=marchId;
-            var t=cityId;
-            var n=Seed.units["city"+t];
-            for(var o=0;o<13;++o){
-             if (m["unit"+o+"Return"]) {
-              var p=parseInt(m["unit"+o+"Return"]);
-              if(!isNaN(p)&&(p>0)){
-               n["unt"+o]=parseInt(n["unt"+o])+p;
-               }
-             }
-            }
-            unsafeWindow.cityinfo_army();
-            var s="city"+t;
-            // recherche de mon chevalier
-            var mymarch = unsafeWindow.seed.queue_atkp["city" + t]["m" + j];
-            var kngId= mymarch.knightId;
-            delete Seed.queue_atkp[s]["m"+j];
-            if(unsafeWindow.Object.keys(Seed.queue_atkp[s]).length==0){
-              Seed.queue_atkp[s]=[];
-            }
-            Seed.knights["city"+t]["knt"+kngId].knightStatus=1;          
-     } else {
-
-       
-     }
-    }, onFailure: function () {
-       
-    },
-   });
-
-  },
-  /***  REINFORCEMENTS SUBTAB  ***/
-  showReinforcementsOut : function (){
-      var rownum = 0;
-      var names = ['Supply Troop', 'Militiaman', 'Scout', 'Pikeman', 'Swordsman', 'Archer', 'Cavalry', 'H-Cavalry', 'Wagon', 'Ballista', 'Ram', 'Catapult'];
-      var t = Tabs.Marches;
-      clearTimeout (t.displayTimer);
-          
-      // TODO FIX:    Troops show as encamped even if they are here yet (check destinationUnixTime)
-         
-      var s = '<div class=ptstat>DEFENDING TROOPS</div>';
-      s += '<STYLE> .tot{background:#f0e0f8;} .city{background:#ffffaa;}</style>';
-      s += '<TABLE cellspacing=0 cellpadding=2 width=100%>';
-      tot = [];
-      for (i=0; i<13; i++)
-        tot[i] = 0;
-        
-      for (var c=0; c<Cities.numCities; c++){
-        var que = Seed.queue_atkp['city'+ Cities.cities[c].id];
-        if (matTypeof(que)=='array')
-          continue;
-
-        var a=0;
-        for (k in que){
-          march = que[k]; 
-          if (march.marchType==2) { /// Marche Type \\ 2= Defense / 3= Sscout / 4= Attack
-          a++;
-          if (a==1) {
-	   s+= '<TR><TD class="city" colspan=16 align=right><B>'+ Cities.cities[c].name +'</b></td></tr>';
-          }
-          var mid = k.substr(1);
-          knight = '';
-	  if (Seed.queue_atkp['city'+ Cities.cities[c].id][k]["knightId"] !=0){
-	  		  for (i in Seed.knights['city'+ Cities.cities[c].id]) {
-	  		    if (i == ("knt" + Seed.queue_atkp['city'+ Cities.cities[c].id][k]["knightId"]) ) knight = '' +Seed.knights['city'+ Cities.cities[c].id][i]["combat"] +'';
-	  		  }
-  	  } else knight = '';
-          if (parseInt(march.knightCombat)>0) knight=' ('+ march.knightCombat +')';
-	  try {
-	     player = Seed.players['u'+march.toPlayerId].n; //Seed.players['u'+k].n;
-	   } catch (err){
-	     player = 'Unknown';
-          }
-        
-          s += '<TR align=left><td align=left width=12%>';
-          var statusm = march.marchStatus;
-          var Marchstatut='';
-          var arrivedans="0s";
-          if (statusm==1) { Marchstatut='<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg" align=absmiddle>&nbsp;Marching';arrivedans = unsafeWindow.timestr(parseInt(march.destinationUnixTime - unixTime())); }
-          if (statusm==2) { Marchstatut='<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg" align=absmiddle>&nbsp;Encamped'; }
-          if (statusm==8) { Marchstatut='<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg" align=absmiddle>&nbsp;Returning';arrivedans = unsafeWindow.timestr(march.returnUnixTime - unixTime()); }
-          if (statusm==5) { Marchstatut='<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg" align=absmiddle>&nbsp;Waiting for Report';}
-          if (statusm==1){
-            s +='<A class=button20 onclick="pr56Recall('+ mid+')"><SPAN>Recall</span></a>';
-          }
-          if (statusm==2) { 
-             s +='<A class=button20 onclick="pr57Recall('+ mid+')"><SPAN>Recall</span></a>';
-          } else {
-            s += '&nbsp;';
-          }
-             
-          s+='</td><td align=left width=15%>'+Marchstatut+'</td><td>'+arrivedans+'</td><TD align=left width=30%>' + player + ' <a class="coordinateLink" onclick="cm.utils.CoordinateLinkController.onClick(event)" href="javascript:void(0)">(' + march.toXCoord +','+ march.toYCoord +')</a>&nbsp;' + knight +' </td><td colspan=12>'
-          for (i=1; i<13; i++) {
-            if (statusm==8) { 
-              if (parseInt (march['unit'+ i +'Return']) > 0) {
-	          s += " " + parseInt (march['unit'+ i +'Return']) + " "+names[i-1]+"<br>";
-	          tot[i] += parseInt (march['unit'+ i +'Return']);
-            }
-            
-            } else {
-             if (parseInt (march['unit'+ i +'Count']) > 0) {
-                s += " " + parseInt (march['unit'+ i +'Count']) + " "+names[i-1]+"<br>";
-                tot[i] += parseInt (march['unit'+ i +'Count']);
-             }
-            }
-          }
-          s += '</td></tr>';
-          }// fin de MarchType
-        }      
-      } 
+     z += '</table>';
+     t.marchDiv.innerHTML = z;
+    
+     t.displayTimer = setTimeout (t.showIncoming, 500);  
+   },   
       
-       s += '<TR><TD colspan=16><BR><BR></td></tr></table><TABLE cellspacing=0 cellpadding=2 width=100%><tr><td colspan=1></td>';
-            for (k=0; k<names.length; k++)
-              s += '<TD width=7% align=center><B>' + names[k] + '</b></td>';
-            s += '</tr>';
-            s += '<TR align=center><TD class="tot" align=left width=10%><B>TOTAL</b></td>';
-            for (i=1; i<13; i++)
-              s+= '<TD class="tot">'+ tot[i] +'</td>';
-      s += '</tr></table>';
-      t.marchDiv.innerHTML = s;
-      t.displayTimer = setTimeout (t.show, 1000);
-      return;
-  },
+        
+  /***   MARCHES SUBTAB  ***/
+    showMarches : function (){
+      var t = Tabs.Marches;
+      t.marchDiv.innerHTML =null;	
+      var updatemarch = Seed.queue_atkp;
      
+     var  m = '<TABLE id=pdmarches cellSpacing=10 width=200px height=0% class=pbTab>';
+     if (t.widescreen) m += '<TR><TD><INPUT id=Wide type=checkbox checked=true>Widescreen</td>';
+     else  m += '<TR><TD><INPUT id=Wide type=checkbox unchecked=true>Widescreen</td></tr></table>';
+     m+='<TABLE id=pdmarches cellSpacing=10 width=100% height=0% class=pbTab>';
+     for (var c=0; c< Seed.cities.length;c++) {
+     		cityname = Seed.cities[c][1];
+     		cityID = 'city' + Seed.cities[c][0];    
+    		number=0;	
+    		
+    		if (Seed.queue_atkp[cityID].length !=0) m+= '<TR><TD colspan=5 style=\'background: #99CCFF;\' align=center><B>' + cityname +': </b></td></tr>';
+  		    for (k in Seed.queue_atkp[cityID]){
+  				if (Seed.queue_atkp[cityID].length !=0) {
+  				    var marchID = new String(k);
+  				    marchID = marchID.substr(1);
+  				    var marchType = parseInt(Seed.queue_atkp[cityID][k]["marchType"]);
+  				    var marchStatus = parseInt(Seed.queue_atkp[cityID][k]["marchStatus"]);
+  				    var now = unixTime();
+  				    cityTo = null;
+  				    number++;
+					var icon, status, type, cityTo, knight, marchtime;
+  				    
+  				    for (var i=0; i<Seed.cities.length;i++) {
+  				    		if (Seed.cities[i][2] == Seed.queue_atkp[cityID][k]["toXCoord"] && Seed.cities[i][3] == Seed.queue_atkp[cityID][k]["toYCoord"]) cityTo = Seed.cities[i][1];
+  				    }
+  				    
+  				    //for (var i=0; i<Seed.cities.length;i++) {
+					//	if (Seed.cities[i][2] == Seed.queue_atkp[cityID][k]["toCityId"]) cityTo = Seed.cities[i][1];
+  				    //}
+  				    
+  				    var destinationUnixTime = Seed.queue_atkp[cityID][k]["destinationUnixTime"] - now;
+  				    var returnUnixTime = Seed.queue_atkp[cityID][k]["returnUnixTime"] - now;
+  				    var encampedUnixTime = now - Seed.queue_atkp[cityID][k]["destinationUnixTime"];
+					var restingUnixTime = now - Seed.queue_atkp[cityID][k]["returnUnixTime"];
+					
+  				    if (Seed.queue_atkp[cityID][k]["destinationUnixTime"] > now)
+						marchtime = timestr(destinationUnixTime, true);
+  				    else
+						marchtime = timestr(returnUnixTime, true);
+  				    
+  				    if (Seed.queue_atkp[cityID][k]["destinationUnixTime"] < now && marchType == 2)
+						marchtime = timestr(encampedUnixTime, true);
+					if (Seed.queue_atkp[cityID][k]["returnUnixTime"] < now && marchType == 9)
+						marchtime = timestr(restingUnixTime, true);
+  				  
+  				    if (Seed.queue_atkp[cityID][k]["destinationUnixTime"] < now || marchStatus == 8)
+						type = "returning";
+  				    else
+						type = "going";
+  				   
+					if(Seed.queue_atkp[cityID][k]["destinationUnixTime"] < now){
+						if (marchStatus == 8)
+							marchtime = timestr(returnUnixTime, true);
+						if (type =="returning" && marchType == 2 && marchStatus != 2)
+							marchtime = timestr(returnUnixTime, true);
+						if (type =="returning" && marchType == 4 && marchStatus == 2)
+							marchtime = timestr(returnUnixTime, true);
+						if (marchStatus == 2 && marchType !=2)
+							marchtime = timestr(returnUnixTime, true);
+					}
+  				    if (parseInt(Seed.queue_atkp[cityID][k]["marchType"]) == 4 && marchStatus == 2)
+						marchtime = timestr(destinationUnixTime, true);;
+  				    
+					
+					if (type =="returning" && marchType != 2)
+						marchType = 8;
+  				    if (type =="returning" && marchType == 2 && marchStatus == 2)
+						marchType = 102;
+  				    if (type =="returning" && marchType == 2 && marchStatus != 2)
+						marchType = 8;
+  				    if (marchStatus == 3)
+							marchType = 103;
+					if (marchStatus == 4)
+							marchType = 104;
+					
+					
+  				    if (parseInt(Seed.queue_atkp[cityID][k]["marchType"]) == 4 && marchStatus == 2) {
+  						marchType = 102;
+  						marchtime = timestr(encampedUnixTime, true)
+  				    }
+  
+  				    switch (marchType) {
+  					    case 1: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status=uW.g_js_strings.commonstr.transport;break;
+  					    case 2: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status=uW.g_js_strings.commonstr.reinforce;break;
+  					    case 3: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/scouting.jpg";status=uW.g_js_strings.commonstr.scout;break;
+  					    case 4: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status=uW.g_js_strings.commonstr.attack;break;
+  					    case 5: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status=uW.g_js_strings.commonstr.reassign;break;
+  					    case 8: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status=uW.g_js_strings.commonstr.returning;break;
+  					    case 9: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status=uW.g_js_strings.commonstr.raid;break;
+  					    case 102: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status=uW.g_js_strings.commonstr.encamped;break;
+						case 103: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/autoAttack/raid_stopped_desat.png";status=unsafeWindowg_js_strings.attack_generatequeue.raidstopped;break;
+						case 104: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/autoAttack/raid_resting.png";status=uW.g_js_strings.attack_generatequeue.raidresting;break;
+  				    } 
+  				      				    
+  				    if (Seed.queue_atkp[cityID][k]["knightId"] !=0){
+  				    	for (i in Seed.knights[cityID]) {
+  				    			if (i == ("knt" + Seed.queue_atkp[cityID][k]["knightId"]) ) knight = Seed.knights[cityID][i]["combat"];
+  				    	}
+  				    } else knight = null;
+  				    
+  				    m += '<TR><TD>'+ number +'</td>';
+  				   if (status=="Encamped" && !t.isMyself(Seed.queue_atkp[cityID][k].fromPlayerId))
+						m += '<TD><A onclick="r8x6Home('+ marchID +')"><img src='+ icon +'></a></td>';
+  				    else if(status=='Encamped' && t.isMyself(Seed.queue_atkp[cityID][k].fromPlayerId))
+						m += '<TD><A onclick="pr56Recall('+ marchID +')"><img src='+ icon +'></a></td>';
+					else if(status=='Returning' || status=="Stopped" || status=="Resting")
+						m += '<TD><img src='+ icon +'></td>';
+					else
+						m += '<TD><A onclick="cancelMarch('+ marchID +')"><img src='+ icon +'></a></td>';
+  				    m += '<TD width="40px">'+ status +'</td>';
+  				    m += '<TD>'+ marchtime +'</td>';
+  				    
+  				    if (cityTo == null)
+						m += '<TD style="padding-right:10px;">'+ coordLink(Seed.queue_atkp[cityID][k]["toXCoord"],Seed.queue_atkp[cityID][k]["toYCoord"]) + '</td>';
+  				    else
+						m += '<TD style="padding-right:10px;">'+ cityTo +'</td>';
+  				    
+  				    if (knight != null)  m += '<TD>'+uW.g_js_strings.commonstr.knight+': '+ knight +'</td>';
+  				    
+  				    if (Seed.queue_atkp[cityID][k]["toTileType"] == 11) m+='<TD>Lake Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
+  				    else if (Seed.queue_atkp[cityID][k]["toTileType"] == 20) m+='<TD>Grassland Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
+  				    else if (Seed.queue_atkp[cityID][k]["toTileType"] == 30) m+='<TD>Hills Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
+  				    else if (Seed.queue_atkp[cityID][k]["toTileType"] == 40) m+='<TD>Mountain Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
+  				    else if (Seed.queue_atkp[cityID][k]["toTileType"] == 50) m+='<TD>Plain Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
+  					else if (Seed.queue_atkp[cityID][k]["toCityId"] ==0) m +='<TD>'+uW.g_js_strings.commonstr.barbariancamp+' '+uW.g_js_strings.commonstr.lvl+': '+Seed.queue_atkp[cityID][k]["toTileLevel"]+'</td>';
+  		
+  				    if (Seed.queue_atkp[cityID][k]["gold"] > 0) m += '<TD>'+uW.resourceinfo.rec0 +': '+ Seed.queue_atkp[cityID][k]["gold"] +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["resource1"] > 0) m += '<TD>'+uW.resourceinfo.rec1 +': '+ addCommas(Seed.queue_atkp[cityID][k]["resource1"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["resource2"] > 0) m += '<TD>'+uW.resourceinfo.rec2 +': '+ addCommas(Seed.queue_atkp[cityID][k]["resource2"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["resource3"] > 0) m += '<TD>'+uW.resourceinfo.rec3 +': '+ addCommas(Seed.queue_atkp[cityID][k]["resource3"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["resource4"] > 0) m += '<TD>'+uW.resourceinfo.rec4 +': '+ addCommas(Seed.queue_atkp[cityID][k]["resource4"]) +'</td>';
+  				    
+  				    for(i=1; i<13; i++){
+						if(Seed.queue_atkp[cityID][k]["unit"+i+"Count"] > 0 && type == "going") m += '<TD>'+ uW.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkp[cityID][k]["unit"+i+"Count"]) +'</td>';
+						if(Seed.queue_atkp[cityID][k]["unit"+i+"Return"] > 0 && type == "returning") m += '<TD>'+ uW.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkp[cityID][k]["unit"+i+"Return"]) +'</td>';
+					}
+					m += '</tr>';
+				}
+  		    }
+  	}
+  	m += '</table>';
+  	t.marchDiv.innerHTML = m;
+  	
+  	if (t.widescreen==false) document.getElementById('ptMarchOutput').style.maxWidth = '740px';
+  	else document.getElementById('ptMarchOutput').style.maxWidth = '1100px';
+  	
+  	document.getElementById('Wide').addEventListener('click', function(){
+  		t.widescreen=document.getElementById('Wide').checked;	
+  	}, false);
+  	
+    t.displayTimer = setTimeout (t.showMarches, 500);  
+    },
+	
+	isMyself: function(userID){
+		if(!Seed.players["u"+userID])
+			return false;
+		if(Seed.players["u"+userID].n == Seed.player.name)
+			return true;
+		else
+			return false;
+		return false;
+	},
+    
+    butcancelmarch: function(marchID){
+    	 var t = Tabs.Marches;
+    	 	 var params = uW.Object.clone(uW.g_ajaxparams);
+    	 	 params.mid = marchID;
+     	 	 for (var c=0; c<Cities.numCities; c++){
+    	 	   var que = Seed.queue_atkp['city'+ Cities.cities[c].id];
+    	 	   if (matTypeof(que)=='array')
+    	 	     continue;
+    	 	   for (k in que){
+    	 	     if (k == 'm'+marchID){
+    	 	       params.cid = Cities.cities[c].id;
+    	 	       break;
+    	 	     }
+    	 	   }    
+    	 	 }    
+    	 	 
+    	 	 new AjaxRequest(uW.g_ajaxpath + "ajax/cancelMarch.php" + uW.g_ajaxsuffix, {
+    	 	     method: "post",
+    	 	     parameters: params,
+    	 	     onSuccess: function (rslt) {
+    	 	     var march = uW.seed.queue_atkp["city" + params.cid]["m" + params.mid];
+    	 	     march.marchStatus = 8;
+    	 	      var marchtime = parseInt(march.returnUnixTime) - parseInt(march.destinationUnixTime);
+    	 	      var ut = unixTime();
+    	 	      if (uW.seed.playerEffects.returnExpire > unixtime())
+    	 	        marchtime *= 0.5
+    	 	       march.returnUnixTime = ut + marchtime;
+    	 	       march.destinationUnixTime = ut;
+    	 	       march.marchUnixTime = ut - marchtime;
+    	 	       if (notify != null)
+    	 	         notify(rslt.errorMsg);
+    	 	     },
+    	 	     onFailure: function () {
+    	 	       if (notify != null)
+    	 	         notify(rslt.errorMsg);
+    	 	     },
+    	 	 });
+    	 	 
+    	 },    
+      
+  /***  REINFORCEMENTS SUBTAB  ***/
   showReinforcements : function (){
-   var rownum = 0;
-    var names = ['Supply Troop', 'Militiaman', 'Scout', 'Pikeman', 'Swordsman', 'Archer', 'Cavalry', 'H-Cavalry', 'Wagon', 'Ballista', 'Ram', 'Catapult'];
+    var rownum = 0;
+    var names = ['Supply', 'Mil', 'Scout', 'Pike', 'Sword', 'Archer', 'Cav', 'Heavy', 'Wagon', 'Balli', 'Ram', 'Cat'];
     var t = Tabs.Marches;
     clearTimeout (t.displayTimer);
-      
+    
+// TODO FIX:    Troops show as encamped even if they are here yet (check destinationUnixTime)
+
+/***    
+var s = 'OUTGOING:<BR>'; 
+for (var c=0; c<Cities.numCities; c++){
+  var que = Seed.queue_atkp['city'+ Cities.cities[c].id];
+  if (matTypeof(que)=='array')
+    continue;
+
+s += 'City: '+  Cities.cities[c].name + ': <BR>'; 
+
+  for (k in que){
+    march = que[k];
+    var mid = k.substr(1);
+    s += mid +' DEST: '+ march.toXCoord +','+ march.toYCoord + '  <INPUT type=submit value="Recall" onclick="pr56Recall('+ mid +')"><BR>'
+  }      
+} 
+t.cont.innerHTML = s;
+t.displayTimer = setTimeout (t.show, 10000);
+return;
+***/
+    
     function clickShowRemaining (){
       checkBox = document.getElementById('idCheck2');
       if (checkBox.checked)
@@ -8951,7 +8237,7 @@ onSuccess:function(transport) {
         Options.encRemaining = true;
       t.show ();
     }
-  
+        
     enc = {};
     numSlots = 0;
     
@@ -8969,8 +8255,6 @@ onSuccess:function(transport) {
           s = {};
           s.knight = parseInt (march.knightCombat);
           s.marchId = k.substr(1);
-          s.fromXCoord = march.fromXCoord;
-          s.fromYCoord = march.fromYCoord;
           s.troops = [];
           for (i=1; i<13; i++){
             if (Options.encRemaining)
@@ -8982,24 +8266,26 @@ onSuccess:function(transport) {
         }
       }
     }
-    s = '<div class=ptstat>TROOPS REINFORCED</div>';
+//logit ("enc: "+ inspect (enc, 6, 1));    
+    s = '<div class=ptstat>Showing troops encamped at each of your embassies.</div><BR>';
     if (numSlots == 0){
-      s += '<BR><CENTER><B>No Troops Reinforced At This Time..:/</b></center>';
+      s += '<BR><CENTER><B>No troops encamped.</b></center>';
     } else {
-      s += '<STYLE> .tot{background:#f0e0f8;} .city{background:#ffffaa;} .entete{background:#efa9a9;}</style>';
-      s += '<TABLE cellspacing=0 cellpadding=2 width=100%>\
-      <tr><td class="entete">Action</td><td class="entete">Coordinate</td><td class="entete">Player</td><td class="entete">Knight</td><td colspan=12 class="entete">Troops</td><td class="entete">Consumption</td></tr>';
+      s += '<STYLE> .tot{background:#f0e0f8;} .city{background:#ffffaa;}</style>';
+      s += '<TABLE cellspacing=0 width=100%><TR align=right><TD align=left width=16%><B>Player (knight)</b></td>';
+
+      for (k=0; k<names.length; k++)
+        s += '<TD width=7%><B>' + names[k] + '</b></td>';
+      s += '</tr>';
 
       tot = [];
-      totent= 0;
-      for (i=0; i<13; i++) {
+      for (i=0; i<13; i++)
         tot[i] = 0;
-        
-      }
       for (c in Cities.cities){
         dest = Cities.cities[c].id;
         if (enc[dest]){
-          s+= '<TR><TD class="city" colspan=17 align=right><B>'+ Cities.cities[c].name +'</b></td></tr>';
+          s+= '<TR><TD class=xtab><BR></td></tr>';
+          s+= '<TR><TD class="city" colspan=13 align=center><B>'+ Cities.cities[c].name +'</b></td></tr>';
           for (p in enc[dest]){
             try {
               player = Seed.players['u'+p].n;
@@ -9010,56 +8296,52 @@ onSuccess:function(transport) {
               var march = enc[dest][p][m];
               knight = '';
               if (march.knight > 0)
-                knight = ' '+ march.knight +'';
+                knight = ' ('+ march.knight +')';
 // TODO: Only allow 'send home' if troops are here now  (marchStatus = ?)              
-              s += '<TR align=left><td align=left width=12%><A class=button20 onclick="r8x6Home('+ march.marchId +')"><SPAN>Send Home</span></a></td>\
-              <TD align=left><a href="javascript:void(0)" onclick="cm.utils.CoordinateLinkController.onClick(event)" class="coordinateLink">('+march.fromXCoord+','+march.fromYCoord+')'+'</a></td>\
-              <TD align=left width=25%>'+ player +' </td><td align=left>'+ knight+'</td><td colspan=12>'
-              var g=0;
+              s += '<TR align=right><TD align=left>'+ player + knight +' <A><SPAN onclick="r8x6Home('+ march.marchId +')">X</span></a></td>'
               for (i=1; i<13; i++){
-               if (march.troops[i] > 0) {
-                s += ''+ march.troops[i]  +' '+ names[i-1]  +'<br>';
-               }
-               tot[i] += march.troops[i];
-               g+=parseInt(march.troops[i])*parseInt(unsafeWindow.unitupkeeps[i]);
-               
+                s += '<TD>'+ march.troops[i]  +'</td>';
+                tot[i] += march.troops[i];
               }
-              totent += g;
-              s += '</td><td>';
-              s += addCommas(g) + '</td></tr>';
+              s += '</tr>';
+
             }
           }
         }
       }
-      s += '<TR><TD colspan=17><BR><BR></td></tr></table><TABLE cellspacing=0 cellpadding=2 width=100%><tr><td colspan=1></td>';
-      for (k=0; k<names.length; k++)
-        s += '<TD width=7% align=center><B>' + names[k] + '</b></td>';
-      s += '</tr>';
-      s += '<TR align=center><TD class="tot" align=left width=10% rowspan=2><B>TOTAL</b></td>';
+      s += '<TR><TD colspan=13><BR><BR></td></tr><TR align=right><TD class="tot" align=left><B>TOTALS:</b></td>';
       for (i=1; i<13; i++)
         s+= '<TD class="tot">'+ tot[i] +'</td>';
-      s += '</tr><td colspan=12>You have a total consumption of <span class=boldRed> '+addCommas(totent)+' </span> food per hour</td></table>';
+      s += '</tr></table>';
     }
 
-    s += '<BR><BR><INPUT type=CHECKBOX id=idCheck2 '+ (Options.encRemaining?'':' CHECKED ') +'>Show original Troops';
-    s += '<BR><BR><DIV style="font-size: 10px"><u><b>NOTE</b></u>: You may need to refresh to see reinforced troops</div>';
+    s += '<BR><BR><INPUT type=CHECKBOX id=idCheck2 '+ (Options.encRemaining?'':' CHECKED ') +'> Show Original Troops';
+    s += '<BR><BR><DIV style="font-size: 10px">NOTE: You will need to refresh KofC to show new encampments or remaining troops after a battle.</div>';
     t.marchDiv.innerHTML = s;
     checkBox = document.getElementById('idCheck2');
     checkBox.addEventListener('click', clickShowRemaining, false);
     t.displayTimer = setTimeout (t.show, 10000);
   },
+
   
-  
+  butRecall : function (marchId){
+    var t = Tabs.Marches;
+    logit ("CANCELLING: "+ marchId); 
+    t.ajaxRecall (marchId); 
+  },
+
   butSendHome : function (marchId){
-        var t = Tabs.Marches;
-        //logit ("SEND HOME: "+ marchId); 
-        t.ajaxSendHome (marchId, function(r){t.show(); }); 
-   },
+    var t = Tabs.Marches;
+    //alert("Sent Home march#"+marchId);
+    logit ("SEND HOME: "+ marchId); 
+    t.ajaxSendHome (marchId, function(r){t.show(); logit("AJAX RESULT: "+ r)}); 
+  },
+
 
   /***  
   // not working, returns 'invalid parameters' :(  
   ajaxCancelMarch : function (marchId, notify){
-    var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    var params = uW.Object.clone(uW.g_ajaxparams);
 logit ('ajaxCancelMarch: '+ marchId);    
     for (var c=0; c<Cities.numCities; c++){
       var que = Seed.queue_atkp['city'+ Cities.cities[c].id];
@@ -9076,7 +8358,7 @@ logit ('ajaxCancelMarch: '+ marchId);
     params.marchId = marchId;
     params.mid = 'm'+ marchId;
     params.requestType = "CANCEL_MARCH";
-    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/cancelMarch.php" + unsafeWindow.g_ajaxsuffix, {
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/cancelMarch.php" + uW.g_ajaxsuffix, {
         method: "post",
         parameters: params,
         onSuccess: function (rslt) {
@@ -9092,191 +8374,134 @@ logit ('ajaxCancelMarch: '+ marchId);
 ***/  
  
 
-  repairList:[],
-  fixLateMarch : function (march) {
-  //1. return knight
-       logit ("TBD fixLateMarch kid: "+march.knightId);
-  //2. return troops
-       //logit ("TBD fixLateMarch troops: "+returningTroops(march));
-  //3. delete march
-  //4. remove waiting reports
-  },
-  getScoutingReport : function (march) {
-     var t = Tabs.Marches;
-     var result='undefined';
-     if (t.scoutingReports.length > 0) {
-        for (var i=0; i<t.scoutingReports.length; i++){
-            var rptHead = t.scoutingReports[i].rptHead;
-            var report = t.scoutingReports[i].report;
-            if (rptHead.side0XCoord==march.toXCoord &&
-                rptHead.side0YCoord==march.toYCoord &&
-                (Math.abs(parseInt(rptHead.reportUnixTime)-parseInt(march.destinationUnixTime)) < 30) &&
-                march.marchType == rptHead.marchType)  {// match report, march
-               return report;
+
+
+
+  ajaxSendHome : function (marchId, notify){
+logit ('ajaxSendHome: '+ marchId);    
+    var march = Seed.queue_atkinc['m'+ marchId];
+    if (march == null){
+      notify ('March not found!'); 
+      return;
+    }    
+    var params = uW.Object.clone(uW.g_ajaxparams);
+    params.mid = marchId;
+    params.cid = march.toCityId;
+    params.fromUid = march.fromPlayerId;
+    params.fromCid = march.fromCityId;
+   
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/kickoutReinforcements.php" + uW.g_ajaxsuffix, {
+        method: "post",
+        parameters: params,
+        onSuccess: function (rslt) {
+          if (rslt.ok){
+            var upkeep = 0;
+            for (var i=1; i<13; i++)
+              upkeep += parseInt(march["unit" + i + "Return"]) * parseInt(uW.unitupkeeps[i])
+            uW.seed.resources["city"+ march.toCityId].rec1[3] -= upkeep;
+            if (parseInt(march.fromPlayerId) == parseInt(uW.tvuid)) {
+//logit ('FROM ME!'); 
+              var mymarch = uW.seed.queue_atkp["city" + march.fromCityId]["m" + marchId];
+              var marchtime = Math.abs(parseInt(mymarch.destinationUnixTime) - parseInt(mymarch.eventUnixTime));
+              mymarch.returnUnixTime = unixTime() + marchtime;
+              mymarch.marchStatus = 8;
             }
-        }
-     }
-     return result;
+            delete uW.seed.queue_atkinc["m" + marchId];
+            if (notify != null)
+              notify(null);
+          } else {
+            if (notify != null)
+              notify(rslt.errorMsg);
+          }
+        },
+        onFailure: function () {
+          if (notify != null)
+            notify(rslt.errorMsg);
+        },
+    });
   },
-  counts:[],
-  getMarchCount : function (cityNum) {
-    var t = Tabs.Marches;
-    for(var i=0; i<Cities.numCities; i++) {   
-      cityId = 'city'+ Cities.cities[i].id;
-      t.counts[i] = 0;
-      for (var k in Seed.queue_atkp[cityId]){   
-        march = Seed.queue_atkp[cityId][k];
-        if (typeof (march) == 'object'){
-          t.counts[i]++;
-        }
+
+/*****
+
+      for (var b = 1; b < 13; b++) {
+        g += parseInt(e["unit" + b + "Return"]) * parseInt(unitupkeeps[b])
       }
-    }
-    return t.counts[cityNum];
-  },
-  showTroops : function (data) {
-     new CPopupDisplayData ('ptDisplayTroops',500,'Troops','troops',data);
 
-  },
-  showLoot : function (data) {
-     //logit ( "showLoot: "+data);
-     new CPopupDisplayData ('ptDisplayLoot',250,'Loot','loot',data);
-
-  },
-   ajaxSendHome : function (marchId, notify){ 
-     var march = Seed.queue_atkinc['m'+ marchId];
-     if (march == null){
-       notify ('March not found!'); 
-       return;
-     }    
-     var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-     params.mid = marchId;
-     params.cid = march.toCityId;
-     params.fromUid = march.fromPlayerId;
-     params.fromCid = march.fromCityId;
-    
-     new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/kickoutReinforcements.php" + unsafeWindow.g_ajaxsuffix, {
-         method: "post",
-         parameters: params,
-         onSuccess: function (rslt) {
-           if (rslt.ok){
-             var upkeep = 0;
-             for (var i=1; i<13; i++)
-               upkeep += parseInt(march["unit" + i + "Return"]) * parseInt(unsafeWindow.unitupkeeps[i]);
-             unsafeWindow.seed.resources["city"+ march.toCityId].rec1[3] -= upkeep;
-             if (parseInt(march.fromPlayerId) == parseInt(unsafeWindow.tvuid)) {
-               var mymarch = unsafeWindow.seed.queue_atkp["city" + march.fromCityId]["m" + marchId];
-               var marchtime = Math.abs(parseInt(mymarch.destinationUnixTime) - parseInt(mymarch.eventUnixTime));
-               mymarch.returnUnixTime = unixTime() + marchtime;
-               mymarch.marchStatus = 8;
-             }
-             delete unsafeWindow.seed.queue_atkinc["m" + marchId];
-             if (notify != null)
-               notify(null);
-           } else {
-             if (notify != null)
-               notify(rslt.errorMsg);
-           }
-         },
-         onFailure: function () {
-           if (notify != null)
-             notify(rslt.errorMsg);
-         },
-     });
-  },
-      butRecall : function (marchId){
-          var t = Tabs.Marches;
-          t.ajaxRecall (marchId); 
-      },
-      butRecall2 : function (marchId){
-                var t = Tabs.Marches;
-                t.ajaxRecall2 (marchId); 
+function kickout_allies(mid, cid, fromUid, fromCid, upkeep) {
+  var params = Object.clone(g_ajaxparams);
+  params.mid = mid;
+  params.cid = cid;
+  params.fromUid = fromUid;
+  params.fromCid = fromCid;
+  new Ajax.Request(g_ajaxpath + "ajax/kickoutReinforcements.php" + g_ajaxsuffix, {
+    method: "post",
+    parameters: params,
+    onSuccess: function(transport) {
+      var rslt = eval("(" + transport.responseText + ")");
+      if (rslt.ok) {
+        Modal.showAlert(g_js_strings.kickout_allies.troopshome);
+        seed.resources["city" + currentcityid].rec1[3] = parseInt(seed.resources["city" + currentcityid].rec1[3]) - upkeep;
+        Modal.hideModalAll();
+        if (parseInt(fromUid) == parseInt(tvuid)) {
+          var curmarch = seed.queue_atkp["city" + fromCid]["m" + mid];
+          var marchtime = Math.abs(parseInt(curmarch.destinationUnixTime) - parseInt(curmarch.eventUnixTime));
+          curmarch.returnUnixTime = unixtime() + marchtime;
+          curmarch.marchStatus = 8
+        }
+        delete seed.queue_atkinc["m" + mid]
+      } else {
+        Modal.showAlert(printLocalError((rslt.error_code || null), (rslt.msg || null), (rslt.feedback || null)))
+      }
     },
-  ajaxRecall2 : function (marchId, notify){
-  // rappele de troupes en défence chez allié
-  
-      var villeencours;
-          for (var c=0; c<Cities.numCities; c++){
-            var que = Seed.queue_atkp['city'+ Cities.cities[c].id];
-            if (matTypeof(que)=='array')
-              continue;
-            for (k in que){
-              if (k == 'm'+marchId){
-                villeencours = Cities.cities[c].id;
-                break;
-              }
-            }    
-        }  
-  
-  
-           var march = Seed.queue_atkp["city" + villeencours]["m" + marchId];
-           if (march == null){
-             //notify ('March not found!'); 
-             alert("Marche non trouve");
-             return;
-           }    
-           var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-           params.mid = marchId;
-           params.cid = villeencours; //march.toCityId;
-            
-           new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/undefend.php" + unsafeWindow.g_ajaxsuffix, {
-               method: "post",
-               parameters: params,
-               onSuccess: function (rslt) {
-                 if (rslt.ok){
- 
-                   var mymarch = unsafeWindow.seed.queue_atkp["city" + villeencours]["m" + marchId];
-                   var marchtime = Math.abs(parseInt(mymarch.destinationUnixTime) - parseInt(mymarch.eventUnixTime));
-                   mymarch.returnUnixTime = unixTime() + marchtime;
-                   mymarch.marchStatus = 8;
-     
-                 } else {
-                  
-                  
-                 }
-               },
-               onFailure: function () {
-               
-               
-               },
-     });
-          
-  },   
-  ajaxRecall : function (marchId, cid, notify){
-   // rappel des troupe en cours de marches
-     
-              var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-              params.mid = marchId;
-              params.cid = cid;
-               
-              new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/cancelMarch.php" + unsafeWindow.g_ajaxsuffix, {
-                  method: "post",
-                  parameters: params,
-                  onSuccess: function (rslt) {
-                    if (rslt.ok){
-                    
-                     if(rslt.updateSeed){
- 		       unsafeWindow.seed.queue_atkp["city"+params.cid]["m"+params.mid].marchStatus=8;   
- 		       var marchtime=parseInt(unsafeWindow.seed.queue_atkp["city"+params.cid]["m"+params.mid].returnUnixTime)-parseInt(unsafeWindow.seed.queue_atkp["city"+params.cid]["m"+params.mid].destinationUnixTime);
- 		       var ut=unsafeWindow.unixtime();
- 		       if(unsafeWindow.seed.playerEffects.returnExpire>unsafeWindow.unixtime()){marchtime*=0.5}
-		       unsafeWindow.seed.queue_atkp["city"+cid]["m"+marchId].destinationUnixTime=rslt.destinationUnixTime||ut;
-		       unsafeWindow.seed.queue_atkp["city"+cid]["m"+marchId].returnUnixTime=rslt.returnUnixTime||ut+marchtime*rslt.returnMultiplier;
-		       unsafeWindow.seed.queue_atkp["city"+cid]["m"+marchId].marchStatus=8;
- 		       unsafeWindow.update_seed(rslt.updateSeed);
-                     }
-                     for(var j=1;j<13;j++){
-		       unsafeWindow.seed.queue_atkp["city"+cid]["m"+marchId]["unit"+j+"Return"]=parseInt(unsafeWindow.seed.queue_atkp["city"+cid]["m"+marchId]["unit"+j+"Count"])
- 		     }
- 		    }
-                  },
-                  onFailure: function () {
-                  
-                  
-                  },
-     });
-
-  },
+    onFailure: function() {}
+  })
 };
+***/
+
+
+
+
+ 
+  ajaxRecall : function (marchId, notify){
+    var params = uW.Object.clone(uW.g_ajaxparams);
+    for (var c=0; c<Cities.numCities; c++){
+      var que = Seed.queue_atkp['city'+ Cities.cities[c].id];
+      if (matTypeof(que)=='array')
+        continue;
+      for (k in que){
+        if (k == 'm'+marchId){
+          params.cid = Cities.cities[c].id;
+          break;
+        }
+      }    
+    }    
+    params.mid = marchId;
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/undefend.php" + uW.g_ajaxsuffix, {
+        method: "post",
+        parameters: params,
+        onSuccess: function (rslt) {
+          var march = uW.seed.queue_atkp["city" + params.cid]["m" + params.mid];
+          march.marchStatus = 8;
+          var marchtime = parseInt(march.returnUnixTime) - parseInt(march.destinationUnixTime);
+          var ut = unixTime();
+          if (uW.seed.playerEffects.returnExpire > unixTime())
+            marchtime *= 0.5
+          march.returnUnixTime = ut + marchtime;
+          march.destinationUnixTime = ut;
+          march.marchUnixTime = ut - marchtime;
+          if (notify != null)
+            notify(rslt.errorMsg);
+        },
+        onFailure: function () {
+          if (notify != null)
+            notify(rslt.errorMsg);
+        },
+    });
+  },
+  
+};
+
+
 /*******************************************/
 
 var PageNavigator = {
@@ -9436,6 +8661,166 @@ function addScript (scriptText){
 addScript ('uwuwuwFunc = function (text){ eval (text);  }');  
 
 
+/************* Updater code *************/
+// Function for displaying a confirmation message modal popup similar to the default javascript confirm() function
+// but with the advantage being that it won't halt all other javascript being executed on the page.
+// Original Author: Thomas Chapin (April 6, 2011)
+function display_confirm(confirm_msg,ok_function,cancel_function){
+    if(!confirm_msg){confirm_msg="";}
+    
+    var container_div = document.getElementById('modal_js_confirm');
+    var div;
+    if(!container_div) {
+        container_div=document.createElement('div');
+        container_div.id='modal_js_confirm';
+        container_div.style.position='absolute';
+        container_div.style.top='0px';
+        container_div.style.left='0px';
+        container_div.style.width='100%';
+        container_div.style.height='1px';
+        container_div.style.overflow='visible';
+        container_div.style.zIndex=100000;
+        
+        div=document.createElement('div');
+        div.id='modal_js_confirm_contents';
+        div.style.zIndex=100000;
+        div.style.backgroundColor='#eee';
+        div.style.fontFamily='"lucida grande",tahoma,verdana,arial,sans-serif';
+        div.style.fontSize='11px';
+        div.style.textAlign='center';
+        div.style.color='#333333';
+        div.style.border='2px outset #666';
+        div.style.padding='10px';
+        div.style.position='relative';
+        div.style.width='300px';
+        div.style.height='100px';
+        div.style.margin='300px auto 0px auto';
+        div.style.display='block';
+        
+        container_div.appendChild(div);
+        document.body.appendChild(container_div);
+        
+        div.innerHTML = '<div style="text-align:center"><div>'+confirm_msg+'</div><br/><div>Press OK to continue.</div><br><button id="modal_js_confirm_ok_button">OK</button> <button id="modal_js_confirm_cancel_button">Cancel</button></div>';
+        var ok_button = document.getElementById('modal_js_confirm_ok_button');
+        ok_button.addEventListener('click',function() {
+            if(ok_function && typeof(ok_function) == "function"){
+           	 ok_function();
+            }
+            container_div.parentNode.removeChild(container_div);
+        },false);
+        var cancel_button = document.getElementById('modal_js_confirm_cancel_button');
+        cancel_button.addEventListener('click',function() {
+            if(cancel_function && typeof(cancel_function) == "function"){
+            	cancel_function();
+            }
+            container_div.parentNode.removeChild(container_div);
+        },false);
+	}
+}
+
+// The following code is released under public domain.
+
+var AutoUpdater_103659 = {
+    id: 103659,
+    days: 1,
+    name: "KOC Power Tools",
+    version: Version,
+	beta: GlobalOptions.ptupdatebeta,
+	betaUrl: 'https://koc-power-tools.googlecode.com/svn/trunk/koc_power_tools.user.js',
+    time: new Date().getTime(),
+    call: function(response, secure) {
+        GM_xmlhttpRequest({
+            method: 'GET',
+	     url: this.beta ? this.betaUrl : 'http'+(secure ? 's' : '')+'://userscripts.org/scripts/source/'+this.id+'.meta.js',
+	    onload: function(xpr) {AutoUpdater_103659.compare(xpr, response);},
+            onerror: function(xpr) {if (secure) AutoUpdater_103659.call(response, false);}
+        });
+    },
+    enable: function() {
+        GM_registerMenuCommand("Enable "+this.name+" updates", function() {
+            GM_setValue('updated_103659', new Date().getTime()+'');
+            AutoUpdater_103659.call(true, true)
+        });
+    },
+    compareVersion: function(r_version, l_version) {
+        var r_parts = r_version.split(''),
+            l_parts = l_version.split(''),
+            r_len = r_parts.length,
+            l_len = l_parts.length,
+            r = l = 0;
+        for(var i = 0, len = (r_len > l_len ? r_len : l_len); i < len && r == l; ++i) {
+            r = +(r_parts[i] || '0');
+            l = +(l_parts[i] || '0');
+        }
+        return (r !== l) ? r > l : false;
+    },
+    compare: function(xpr,response) {
+        this.xversion=/\/\/\s*@version\s+(.+)\s*\n/i.exec(xpr.responseText);
+        this.xname=/\/\/\s*@name\s+(.+)\s*\n/i.exec(xpr.responseText);
+        if ( (this.xversion) && (this.xname[1] == this.name) ) {
+            this.xversion = this.xversion[1];
+            this.xname = this.xname[1];
+        } else {
+            if ( (xpr.responseText.match("the page you requested doesn't exist")) || (this.xname[1] != this.name) ) {
+            	//GM_setValue('updated_103659', 'off');
+            }
+            return false;
+        }
+        var updated = this.compareVersion(this.xversion, this.version);
+        
+        if ( updated ) {
+                         
+            display_confirm('A new version of '+this.xname+' is available.\nDo you wish to install the latest version?',
+                // Ok
+                function(){
+                    try { 
+                        location.href = this.beta ? this.betaUrl :  'http://userscripts.org/scripts/source/'+this.id+'.user.js'; 
+                    } catch(e) {}
+                },
+                // Cancel
+                function(){
+                    if ( AutoUpdater_103659.xversion ) {
+                        if(confirm('Do you want to turn off auto updating for this script?')) {
+                            //GM_setValue('updated_103659', 'off');
+							GlobalOptions.ptupdate = false;
+							GM_setValue ('Options_??', JSON2.stringify(GlobalOptions));
+                            AutoUpdater_103659.enable();
+                            alert('Automatic updates can be re-enabled for this script from the User Script Commands submenu.');
+                        }
+                    }
+                }
+            );
+                                      
+        } else if (response){
+        	alert('No updates available for '+this.name);
+        }
+    },
+    check: function(tf) {
+        if (!tf){
+            this.enable();
+        } else {
+            if (+this.time > (+GM_getValue('updated_103659', 0) + 1000*60*60*24*this.days)) {
+                GM_setValue('updated_103659', this.time+'');
+                this.call(false, true);
+            }
+            GM_registerMenuCommand("Check "+this.name+" for updates", function() {
+                GM_setValue('updated_103659', new Date().getTime()+'');
+                AutoUpdater_103659.call(true, true)
+            });
+        }
+    }
+};
+if (typeof(GM_xmlhttpRequest) !== 'undefined' && typeof(GM_updatingEnabled) === 'undefined') { // has an updater?
+    try {
+        if (unsafeWindow.frameElement === null) {
+            AutoUpdater_103659.check(GlobalOptions.ptupdate);
+        }
+    } catch(e) {
+        AutoUpdater_103659.check(GlobalOptions.ptupdate);
+    }
+}
+    
+/********* End updater code *************/
 
 // TODO: Handle multiple instances altering same function!!   ****************************
 var CalterUwFunc = function (funcName, findReplace) {
@@ -9762,10 +9147,108 @@ function setCities(){
     city.y = parseInt(Seed.cities[i][3]);
     city.tileId = parseInt(Seed.cities[i][5]);
     city.provId = parseInt(Seed.cities[i][4]);
+	getTroopDefTrainEstimates('city'+ city.id, city);
     Cities.cities[i] = city;
     Cities.byID[Seed.cities[i][0]] = city;
   }
 }
+
+function getTroopDefTrainEstimates (cityID, city){
+	var b = Seed.buildings[cityID];
+	city.numBarracks = 0;
+	city.maxBarracks = 0;
+	city.totLevelsBarracks = 0;
+	city.blacksmithLevel = 0;
+	city.stableLevel = 0;
+	city.workshopLevel = 0;
+	city.wallLevel = 0;
+	for (var j=1; j<33; j++){
+		if (b['pos'+j]) {
+			var bname = parseInt(b['pos'+j][0]);
+			var blvl = parseInt(b['pos'+j][1]);
+			switch(bname){
+				case 13:
+					city.numBarracks++;
+					city.totLevelsBarracks += parseInt(blvl);
+					if (blvl>city.maxBarracks) city.maxBarracks=blvl;
+					break;
+				case 15:
+					city.blacksmithLevel = blvl;
+					break;
+				case 16:
+					city.workshopLevel = blvl;
+					break;
+				case 17:
+					city.stableLevel = blvl;
+					break;
+				case 19:
+					city.wallLevel = blvl;
+					break;
+			}
+		}
+	}
+
+	var now = unixTime();
+	city.marshallCombatScore = 0;
+	var s = Seed.knights[cityID];
+	if (s) {
+		s = s["knt" + Seed.leaders[cityID].combatKnightId];
+		if (s){
+			city.marshallCombatScore = s.combat;
+			if (s.combatBoostExpireUnixtime > now)
+				city.marshallCombatScore *= 1.25;
+		}
+	}
+	city.foremanBasePoliticsScore = 0;
+	var s = Seed.knights[cityID];
+	if (s) {
+		s = s["knt" + Seed.leaders[cityID].politicsKnightId];
+		if (s)
+			city.foremanBasePoliticsScore = s.basePolitics;
+	}
+
+	city.loggingLevel = parseInt(Seed.tech["tch2"]);
+	city.geometryLevel = parseInt(Seed.tech["tch5"]);
+	city.eagleEyesLevel = parseInt(Seed.tech["tch6"]);
+	city.poisonedEdgeLevel = parseInt(Seed.tech["tch8"]);
+	city.metalAlloysLevel = parseInt(Seed.tech["tch9"]);
+	city.featherweightPowderLevel = parseInt(Seed.tech["tch10"]);
+	city.alloyHorseshoesLevel = parseInt(Seed.tech["tch12"]);
+	city.fletchingLevel = parseInt(Seed.tech["tch13"]);
+	city.giantsStrengthLevel = parseInt(Seed.tech["tch16"]);
+
+	var bm = city.numBarracks + 0.1 * (city.totLevelsBarracks - city.numBarracks);
+	var mf = city.marshallCombatScore / 200;
+	var gf = city.geometryLevel / 10;
+	var sf = city.stableLevel / 10;
+	var wf = city.workshopLevel / 10;
+	var isf = bm * (1 + mf + gf);
+	var csf = bm * (1 + mf + gf + sf);
+	var ssf = bm * (1 + mf + gf + sf + wf);
+	var pf = city.foremanBasePoliticsScore / 200;
+	var gsf = city.giantsStrengthLevel / 10;
+	var dsf = 1 + pf + gsf;
+
+	
+	city.Troop1Time = ((city.maxBarracks > 0)?(50/isf):0);
+	city.Troop2Time = city.Troop1Time/2;
+	city.Troop3Time = ((city.maxBarracks > 1 && city.eagleEyesLevel > 0)?(100/isf):0);
+	city.Troop4Time = ((city.maxBarracks > 1 && city.poisonedEdgeLevel > 0)?(150/isf):0);
+	city.Troop5Time = ((city.maxBarracks > 2 && city.blacksmithLevel > 0 && city.metalAlloysLevel > 0)?(225/isf):0);
+	city.Troop6Time = ((city.maxBarracks > 3 && city.fletchingLevel > 0)?(350/isf):0);
+	city.Troop7Time = ((city.maxBarracks > 4 && city.stableLevel > 0 && city.alloyHorseshoesLevel > 0)?(500/csf):0);
+	city.Troop8Time = ((city.maxBarracks > 6 && city.blacksmithLevel > 4 && city.stableLevel > 4 && city.alloyHorseshoesLevel > 4)?(1500/csf):0);
+	city.Troop9Time = ((city.maxBarracks > 5 && city.stableLevel > 0 && city.workshopLevel > 2 && city.featherweightPowderLevel > 0)?(1000/ssf):0);
+	city.Troop10Time = ((city.maxBarracks > 7 && city.stableLevel > 1 && city.workshopLevel > 4 && city.geometryLevel > 4 && city.fletchingLevel > 5)?(3000/ssf):0);
+	city.Troop11Time = ((city.maxBarracks > 8 && city.blacksmithLevel > 4 && city.stableLevel > 2 && city.workshopLevel > 6 && city.metalAlloysLevel > 7 && city.geometryLevel > 6)?(4500/ssf):0);
+	city.Troop12Time = ((city.maxBarracks > 9 && city.stableLevel > 1 && city.workshopLevel > 8 && city.geometryLevel > 9 && city.fletchingLevel > 9)?(6000/ssf):0);
+	city.Def53Time = ((city.wallLevel > 5 && city.blacksmithLevel > 5 && city.fletchingLevel > 4)?(180/dsf):0);
+	city.Def55Time = ((city.wallLevel > 7 && city.blacksmithLevel > 7 && city.fletchingLevel > 6 && city.geometryLevel > 6)?(135/dsf):0);
+	city.Def60Time = ((city.wallLevel > 3 && city.blacksmithLevel > 3 && city.poisonedEdgeLevel > 1)?(90/dsf):0);
+	city.Def61Time = ((city.wallLevel > 0 && city.metalAlloysLevel > 0)?(30/dsf):0);
+	city.Def62Time = ((city.wallLevel > 1 && city.blacksmithLevel > 1 && city.loggingLevel > 1)?(60/dsf):0);
+}
+
 
 function officerId2String (oid){
   if (oid==null)
@@ -10325,18 +9808,29 @@ function readOptions (){
   }
 }
 
+function readGlobalOptions (){
+  GlobalOptions = JSON2.parse (GM_getValue ('Options_??', '{}'));
+}
+
 function saveColors (){
   var serverID = GetServerId();
-  GM_setValue ('Colors', JSON2.stringify(Colors));
+  GM_setValue ('Colors_'+serverID, JSON2.stringify(Colors));
 }
 
 function readColors (){
   var serverID = GetServerId();
-  s = GM_getValue ('Colors');
+  s = GM_getValue ('Colors_'+serverID);
   if (s != null){
     opts = JSON2.parse (s);
     for (k in opts)
       Colors[k] = opts[k];
+  }else{
+	s = GM_getValue ('Colors');
+	if (s != null){
+		opts = JSON2.parse (s);
+		for (k in opts)
+		  Colors[k] = opts[k];
+	}
   }
 }
 function readAutoTrainOptions (){
@@ -11346,112 +10840,6 @@ t.state = null;
   },
 };
 
-function getTroopTrainEstimates (cityID){
-
-  var b = Seed.buildings[cityID];
-  numBarracks = 0;
-  maxBarracks = 0;
-  totLevelsBarracks = 0;
-  blacksmithLevel = 0;
-  stableLevel = 0;
-  workshopLevel = 0;
-  for (var j=1; j<33; j++){
-    if (b['pos'+j]) {
-      var bname = parseInt(b['pos'+j][0]);
-      var blvl = parseInt(b['pos'+j][1]);
-      if (bname==13) {
-        numBarracks++;
-        totLevelsBarracks += parseInt(blvl);
-        if (blvl>maxBarracks) maxBarracks=blvl;
-      }
-      if (bname==15)
-        blacksmithLevel = blvl;
-      if (bname==17)
-        stableLevel = blvl;
-      if (bname==16)
-        workshopLevel = blvl;
-    }
-  }
-
-  var now = unixTime();
-  marshallCombatScore = 0;
-  var s = Seed.knights[cityID];
-  if (s) {
-    s = s["knt" + Seed.leaders[cityID].combatKnightId];
-    if (s){
-      marshallCombatScore = s.combat;
-      if (s.combatBoostExpireUnixtime > now)
-        marshallCombatScore *= 1.25;
-    }
-  }
-
-  geometryLevel            = parseInt(Seed.tech["tch5"]);
-  eagleEyesLevel           = parseInt(Seed.tech["tch6"]);
-  poisonedEdgeLevel        = parseInt(Seed.tech["tch8"]);
-  metalAlloysLevel         = parseInt(Seed.tech["tch9"]);
-  featherweightPowderLevel = parseInt(Seed.tech["tch10"]);
-  alloyHorseshoesLevel     = parseInt(Seed.tech["tch12"]);
-  fletchingLevel           = parseInt(Seed.tech["tch13"]);
-
-  var bm = numBarracks + 0.1 * (totLevelsBarracks - numBarracks);
-  var mf = marshallCombatScore / 200;
-  var gf = geometryLevel/10;
-  var sf = stableLevel/10;
-  var wf = workshopLevel/10;
-  var isf = bm * (1 + mf + gf);
-  var csf = bm * (1 + mf + gf + sf);
-  var ssf = bm * (1 + mf + gf + sf + wf);
-
-  if (maxBarracks > 0) {
-    rateSupplyTroop = 3600 * isf /   50;
-    rateMilitiaman  = 3600 * isf /   25;
-  } else {
-    rateSupplyTroop = 0;
-    rateMilitiaman  = 0;
-  }
-  if (maxBarracks > 1 && eagleEyesLevel > 0)
-    rateScout = 3600 * isf /  100;
-  else
-    rateScout = 0;
-  if (maxBarracks > 1 && poisonedEdgeLevel > 0)
-    ratePikeman = 3600 * isf /  150;
-  else
-    ratePikeman = 0;
-  if (maxBarracks > 2 && blacksmithLevel > 0 && metalAlloysLevel > 0)
-    rateSwordsman = 3600 * isf /  225;
-  else
-    rateSwordsman = 0;
-  if (maxBarracks > 3 && fletchingLevel > 0)
-    rateArcher = 3600 * isf /  350;
-  else
-    rateArcher = 0;
-  if (maxBarracks > 4 && stableLevel > 0 && alloyHorseshoesLevel > 0)
-    rateCavalry = 3600 * csf /  500;
-  else
-    rateCavalry = 0;
-  if (maxBarracks > 6 && blacksmithLevel > 4 && stableLevel > 4 && alloyHorseshoesLevel > 4)
-    rateHeavyCavalry = 3600 * csf / 1500;
-  else
-    rateHeavyCavalry = 0;
-  if (maxBarracks > 5 && stableLevel > 0 && workshopLevel > 2 && featherweightPowderLevel > 0)
-    rateSupplyWagon  = 3600 * ssf / 1000;
-  else
-    rateSupplyWagon = 0;
-  if (maxBarracks > 7 && stableLevel > 1 && workshopLevel > 4 && geometryLevel > 4 && fletchingLevel > 5)
-    rateBallista = 3600 * ssf / 3000;
-  else
-    rateBallista = 0;
-  if (maxBarracks > 8 && blacksmithLevel > 4 && stableLevel > 2 && workshopLevel > 6 && metalAlloysLevel > 7 && geometryLevel > 6)
-    rateBatteringRam = 3600 * ssf / 4500;
-  else
-    rateBatteringRam = 0;
-  if (maxBarracks > 9 && stableLevel > 1 && workshopLevel > 8 && geometryLevel > 9 && fletchingLevel > 9)
-    rateCatapult = 3600 * ssf / 6000;
-  else
-    rateCatapult = 0;
-
-}
-/**************/
 function reloadKOC (){
   var serverId = GetServerId();
   if(serverId == '??') window.location.reload(true);
