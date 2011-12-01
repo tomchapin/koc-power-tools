@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20111118a
+// @version        20111201a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20111118a';
+var Version = '20111201a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -7582,12 +7582,7 @@ Tabs.Alliance = {
     var m =  '<DIV class=ptstat>ALLIANCE FUNCTIONS</div><TABLE align=center cellpadding=1 cellspacing=0></table>';
     
 	m += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToAlliance" target="_blank">HELP</a></td></tr>';
-    m +='<TABLE class=ptTab><TD width=200px>List Alliance Members</td><TD>Sort by: <select id="searchAlli"><option value="name">Name</option>';
-    m += '<option value="might">Might</option>';
-    m += '<option value="login">'+uW.g_js_strings.modal_messages_viewreports_view.lastlogin+'</option>';
-    m += '<option value="cities">Cities</option>';
-    m += '<option value="position">Position</option>';
-    m += '<option value="dip">Days in position (dip)</option></select></td>';
+    m +='<TABLE class=ptTab><TD width=200px>List Alliance Members</td><TD>Sort by: '+ htmlSelector({Name:'Name',Might:'Might',glory:'Glory',Cities:'Cities',Position:'Position',dip:'Days in Position',uid:'User Id',fbuid:'Facebook id'},null,'id=searchAlli') +'</td>';
     m += '<TD><INPUT id=alList type=submit value="List"></td>';
     m += '<TD id=progress></td>';
     m += '<TR><TD width=200px>Show alliance diplomaties</td><TD><INPUT id=aldiplo type=submit value="List diplomaties"></td></tr></table>';
@@ -7625,103 +7620,63 @@ Tabs.Alliance = {
   
   
   paintMembers: function(){
-  var t = Tabs.Alliance; 
-	  		  if (document.getElementById('searchAlli').value == "name") {
-				  var sortmembers = t.alliancemembers.sort(function(a, b){
-				         var sortA=a.Name.toLowerCase(), sortB=b.Name.toLowerCase()
-				         if (sortA < sortB) 
-				          return -1
-				         if (sortA > sortB)
-				          return 1
-				         return 0 
-				        });
-			  }     
-			  if (document.getElementById('searchAlli').value == "might") {
-			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
-			  	         var sortA=parseInt(a.Might),sortB=parseInt(b.Might)
-			  	         if (sortA > sortB) 
-			  	          return -1
-			  	         if (sortA < sortB)
-			  	          return 1
-			  	         return 0 
-			  	        });
-			  }     
-			  if (document.getElementById('searchAlli').value == "login") {
-			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
-			  	         var sortA=a.LastLogin,sortB=b.LastLogin
-			  	         if (sortA < sortB) 
-			  	          return -1
-			  	         if (sortA > sortB)
-			  	          return 1
-			  	         return 0 
-			  	        });
-			  }     
-			  if (document.getElementById('searchAlli').value == "cities") {
-			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
-			  	         var sortA=a.Cities,sortB=b.Cities
-			  	         if (sortA < sortB) 
-			  	          return -1
-			  	         if (sortA > sortB)
-			  	          return 1
-			  	         return 0 
-			  	        });
-			  }     
-			  if (document.getElementById('searchAlli').value == "dip") {
-			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
-			  	         var sortA=a.dip,sortB=b.dip
-			  	         if (sortA < sortB) 
-			  	          return -1
-			  	         if (sortA > sortB)
-			  	          return 1
-			  	         return 0 
-			  	        });
-			  }     
-			  if (document.getElementById('searchAlli').value == "position") {
-			  	  var sortmembers = t.alliancemembers.sort(function(a, b){
-			  	         var sortA=a.Position,sortB=b.Position
-			  	         if (sortA < sortB) 
-			  	          return -1
-			  	         if (sortA > sortB)
-			  	          return 1
-			  	         return 0 
-			  	        });
-			  }      
-			  for (var y = (sortmembers.length-1); y >=0; y--) {
-			                      t._addTab(sortmembers[y].Name,sortmembers[y].Might,sortmembers[y].LastLogin,sortmembers[y].Position,sortmembers[y].dip,sortmembers[y].uid,sortmembers[y].fbuid,sortmembers[y].Cities);
-			                      t.myDiv.style.overflowY = 'scroll';
-			  }
-			 t._addTabHeader();
-   },
+	var t = Tabs.Alliance; 
+	var sortBy = document.getElementById('searchAlli').value;
+	var sortmembers = t.alliancemembers.sort(function(a, b){
+		 var sortA = a[sortBy],
+			 sortB = b[sortBy];
+		 if(typeof(sortA) == 'number' && typeof(sortB) == 'number'){
+			return sortA - sortB;
+		 } else {
+          return sortA.localeCompare(sortB);
+		 }
+	});
+	for (var y = (sortmembers.length-1); y >=0; y--) {
+		t._addTab(sortmembers[y].Name,sortmembers[y].Might,sortmembers[y].LastLogin,sortmembers[y].Position,sortmembers[y].dip,sortmembers[y].uid,sortmembers[y].fbuid,sortmembers[y].Cities,sortmembers[y].avatarurl,sortmembers[y].glory,sortmembers[y].dateJoined);
+		t.myDiv.style.overflowY = 'scroll';
+	}
+   t._addTabHeader();
+ },
   
-    _addTab: function(Name,Might,LastLogin,Position,dip,uid,fbuid,Cities){
-             var t = Tabs.Alliance;
-             var row = document.getElementById('alOverviewTab').insertRow(0);
-             row.vAlign = 'top';
-             row.insertCell(0).innerHTML ='<A target="_tab" href="http://www.facebook.com/profile.php?id='+ fbuid +'">profile</a>';
-             row.insertCell(1).innerHTML = Name;
-             var cell2 = row.insertCell(2);
-       		 cell2.width = "60" ;
-       		 cell2.align = "right" ;
-       		 cell2.vAlign = "top";
-       		 cell2.innerHTML = addCommas(Might);
-       		 row.insertCell(3).innerHTML = Cities;
-       		 row.insertCell(4).innerHTML = officerId2String (Position);
-       		 row.insertCell(5).innerHTML = dip;
-       		 row.insertCell(6).innerHTML = LastLogin;
-          }, 
+    _addTab: function(Name,Might,LastLogin,Position,dip,uid,fbuid,Cities,avatar,gloire,arrive){
+	var t = Tabs.Alliance;
+	var row = document.getElementById('alOverviewTab').insertRow(0);
+		row.vAlign = 'top';
+		row.insertCell(0).innerHTML ='<img width=25 src="'+ avatar +'">';
+		row.insertCell(1).innerHTML ='<A target="_tab" href="http://www.facebook.com/profile.php?id='+ fbuid +'">profile</a>';
+		row.insertCell(2).innerHTML = Name;
+		var cell2 = row.insertCell(3); 
+		cell2.width = "60" ;
+		cell2.align = "right" ;
+		cell2.vAlign = "top";
+		cell2.innerHTML = addCommas(Might);
+		var cell2 = row.insertCell(4);
+		cell2.width = "60" ;
+		cell2.align = "right" ;
+		cell2.vAlign = "top";
+		cell2.innerHTML = addCommas(gloire);
+		row.insertCell(5).innerHTML = Cities;
+		row.insertCell(6).innerHTML = officerId2String (Position);
+		row.insertCell(7).innerHTML = dip;
+		row.insertCell(8).innerHTML = LastLogin;
+		row.insertCell(9).innerHTML = arrive; 
+        },
           
     _addTabHeader: function() {
-    var t = Tabs.Alliance;
-        var row = document.getElementById('alOverviewTab').insertRow(0);
-        row.vAlign = 'top';
-         row.insertCell(0).innerHTML = "Facebook";
-        row.insertCell(1).innerHTML = "Name";
-        row.insertCell(2).innerHTML = "Might";
-        row.insertCell(3).innerHTML = "Cities";
-        row.insertCell(4).innerHTML = "Position";
-        row.insertCell(5).innerHTML = "DIP";
-        row.insertCell(6).innerHTML = "LastLogin";
-      },   
+	var t = Tabs.Alliance;
+	var row = document.getElementById('alOverviewTab').insertRow(0);
+		row.vAlign = 'top';
+		row.insertCell(0).innerHTML = "<u><b>Avatar</b></u>";
+		row.insertCell(1).innerHTML = "<u><b>Facebook</b></u>";
+		row.insertCell(2).innerHTML = "<u><b>Name</b></u>";
+		row.insertCell(3).innerHTML = "<u><b>Might</b></u>";
+		row.insertCell(4).innerHTML = "<u><b>Glory</b></u>";
+		row.insertCell(5).innerHTML = "<u><b>Cities</b></u>";
+		row.insertCell(6).innerHTML = "<u><b>Position</b></u>";
+		row.insertCell(7).innerHTML = "<u><b>DIP</b></u>";
+		row.insertCell(8).innerHTML = "<u><b>Last Login</b></u>";
+		row.insertCell(9).innerHTML = "<u><b>Joined</b></u>";
+      },
     
     
     paintDiplomacy : function () {
@@ -7781,13 +7736,16 @@ Tabs.Alliance = {
                          if ( info["memberInfo"][k]["might"] != undefined && !t.error){  
                            t.alliancemembers.push ({
                                Name: info["memberInfo"][k]["name"],
-                               Might: info["memberInfo"][k]["might"],
-                               Cities: info["memberInfo"][k]["cities"],
-                               Position : info["memberInfo"][k]["positionType"],
-                               dip : info["memberInfo"][k]["daysInPosition"],
+                               Might: parseInt(info["memberInfo"][k]["might"]),
+                               Cities: parseInt(info["memberInfo"][k]["cities"]),
+                               Position : parseInt(info["memberInfo"][k]["positionType"]),
+                               dip : parseInt(info["memberInfo"][k]["daysInPosition"]),
                                LastLogin : info["memberInfo"][k]["lastLogin"],
-                               uid : info["memberInfo"][k]["userId"],
-                               fbuid : info["memberInfo"][k]["fbuid"],	
+                               uid : parseInt(info["memberInfo"][k]["userId"]),
+                               fbuid : parseInt(info["memberInfo"][k]["fbuid"]),
+							   avatarurl : info["memberInfo"][k]["avatarurl"],
+							   glory : parseInt(info["memberInfo"][k]["glory"]),
+							   dateJoined : info["memberInfo"][k]["dateJoined"], 							   
                            });
                           }
                            document.getElementById('alOverviewTab').innerHTML ="";
