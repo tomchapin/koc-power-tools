@@ -1,6 +1,22 @@
 REVISION HISTORY:
 ----------------
 
+20120111a
+    Changed to two rows tab display
+    Fixed whisper alert
+    Updated knights tab
+    Added 8th city crest info
+    Added troop train time estimates in info tab
+    Added march tab
+    Added glory to alliance tab
+20111118a
+    Fixed display battle rounds
+    Fixed display delete and post to chat buttons
+    Fixed chat colors gone
+    Enhanced tournament tab
+    Added check update now button
+    Add enhanced view members option
+    Fixed unit might undefined
 20110903a
    *Fixed bugs with firefox 7
    *Fixed subtabs not saving
