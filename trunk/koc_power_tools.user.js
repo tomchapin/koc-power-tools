@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20111211a
+// @version        20120111a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20111211a';
+var Version = '20120111a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -634,13 +634,16 @@ msg = msg.replace (/\bhttps\:\/\/[-a-z].*jpg/i, 'data:image/png;base64,iVBORw0KG
        m[2] = m[2].replace(/\'/g,"Â°Â°");
        msg = msg.replace (/<img (.*?>)/img, '<A onclick=\"ptChatIconClicked(\''+ m[2] +'\')\"><img class=\"ptChatIcon\" $1</a>');
      if (whisp.indexOf('whispers to') >= 0 && Options.enableWhisperAlert) {
-     	if (whisp.indexOf('says to the alliance') < 0) msg +='<span id="dummy"><iframe src="http://koc.god-like.info/doorbell.html" height="0" width="0"></iframe></span>';
+     	// if (whisp.indexOf('says to the alliance') < 0) msg +='<span id="dummy"><iframe src="http://koc.god-like.info/doorbell.html" height="0" width="0"></iframe></span>';
+     	if (whisp.indexOf('says to the alliance') < 0) msg +='<span><object type="application/x-shockwave-flash" data="http://koc.god-like.org/power/swf/pdxminiplayer.swf" width="160" height="20"><param name="wmode" value="transparent" /><param name="movie" value="http://koc.god-like.org/power/swf/pdxminiplayer.swf" /><param name="flashvars" value="mp3=http://koc.god-like.org/power/sounds/default/fluestersound.mp3&amp;autostart=1&amp;showtime=1&amp;volume=100" /></object></span>';
      } 
      if (whisp.indexOf('My embassy has') >= 0 && Options.enableTowerAlert) {
-       	msg +='<span id="dummy"><iframe src="http://koc.god-like.info/alarm2.html" height="0" width="0"></iframe></span>';
+       	// msg +='<span id="dummy"><iframe src="http://koc.god-like.info/alarm2.html" height="0" width="0"></iframe></span>';
+       	msg +='<span><object type="application/x-shockwave-flash" data="http://koc.god-like.org/power/swf/pdxminiplayer.swf" width="160" height="20"><param name="wmode" value="transparent" /><param name="movie" value="http://koc.god-like.org/power/swf/pdxminiplayer.swf" /><param name="flashvars" value="mp3=http://koc.god-like.org/power/sounds/default/sirene.mp3&amp;autostart=1&amp;showtime=1&amp;volume=100" /></object></span>';
      } 
      if (whisp.indexOf('My wilderness at') >= 0 && Options.enableTowerAlert) {
-       	msg +='<span id="dummy"><iframe src="http://koc.god-like.info/alarm2.html" height="0" width="0"></iframe></span>';
+       	// msg +='<span id="dummy"><iframe src="http://koc.god-like.info/alarm2.html" height="0" width="0"></iframe></span>';
+       	msg +='<span><object type="application/x-shockwave-flash" data="http://koc.god-like.org/power/swf/pdxminiplayer.swf" width="160" height="20"><param name="wmode" value="transparent" /><param name="movie" value="http://koc.god-like.org/power/swf/pdxminiplayer.swf" /><param name="flashvars" value="mp3=http://koc.god-like.org/power/sounds/default/sirene.mp3&amp;autostart=1&amp;showtime=1&amp;volume=100" /></object></span>';
      }
      return msg;
    },
