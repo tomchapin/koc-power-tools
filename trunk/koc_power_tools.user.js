@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20120112a
+// @version        20120116a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20120112a';
+var Version = '20120116a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -1918,10 +1918,10 @@ Tabs.Knights = {
             var sty = 'padding-left:1px;';
             if (i == rid)   // bold it
               sty += 'font-weight:bold;color:#116654';
-            if (t.action==1) {   
+            if (t.action==2) {   
 	          t.clickedAssignPoints(null,cid,knight.knightId,i);
             }
-            if (t.action==2) {   
+            if (t.action==1) {   
 	      	  t.clickedAssignPoints(null,cid,knight.knightId,1);
             }
             ass += '<TD class=ptentry align=left style="'+ sty +'" ><A style="'+ sty +'" onclick="ptAssignSkill(this,' + cid +','+ knight.knightId +','+ i +')">['+ knightRoles[i][2] +'] &nbsp;</a></td>'; 
@@ -6391,8 +6391,8 @@ Tabs.OverView = {
       			cityID = 'city'+ Cities.cities[i].id;
       			u += "<TD align=center valign=bottom width=60px><B>" + Cities.cities[i].name.substr(0,10)  + "</B></TD>";
       			// getTroopDefTrainEstimates(cityID);
-      			infoRows[0][i] = Cities.cities[i].numBarracks;
-      			infoRows[1][i] = Cities.cities[i].totLevelsBarracks;
+      			infoRows[0][i] = Cities.cities[i].numCottages;
+      			infoRows[1][i] = Cities.cities[i].numBarracks;
       			infoRows[2][i] = Cities.cities[i].foremanBasePoliticsScore;
       			infoRows[3][i] = Cities.cities[i].marshallCombatScore;
       			infoRows[5][i] = Cities.cities[i].stableLevel;
@@ -8394,6 +8394,8 @@ Tabs.Alliance = {
   number:0,
   totalmembers:0,
   error:false,
+  sortType: 1,
+  sortBy: 'Name',
   
   init : function (div){    
     var t = Tabs.Alliance;      
@@ -8444,17 +8446,29 @@ Tabs.Alliance = {
   //window.addEventListener('unload', t.onUnload, false);
   },
   
-  
   paintMembers: function(){
-	var t = Tabs.Alliance; 
-	var sortBy = document.getElementById('searchAlli').value;
+	var t = Tabs.Alliance;
+	if(document.getElementById('searchAlli').value == t.sortBy){
+		t.sortType *= -1;
+	} else {
+		t.sortType = 1;
+	}
+	t.sortBy = document.getElementById('searchAlli').value;
 	var sortmembers = t.alliancemembers.sort(function(a, b){
-		 var sortA = a[sortBy],
-			 sortB = b[sortBy];
-		 if(typeof(sortA) == 'number' && typeof(sortB) == 'number'){
-			return sortA - sortB;
+		 var sortA = a[t.sortBy],
+			 sortB = b[t.sortBy];
+		 if(t.sortType > 0){
+			 if(typeof(sortA) == 'number' && typeof(sortB) == 'number'){
+				return sortA - sortB;
+			 } else {
+			  return sortA.localeCompare(sortB);
+			 }
 		 } else {
-          return sortA.localeCompare(sortB);
+			 if(typeof(sortA) == 'number' && typeof(sortB) == 'number'){
+				return sortB - sortA;
+			 } else {
+			  return sortB.localeCompare(sortA);
+			 }
 		 }
 	});
 	for (var y = (sortmembers.length-1); y >=0; y--) {
@@ -9943,6 +9957,7 @@ function setCities(){
 
 function getTroopDefTrainEstimates (cityID, city){
 	var b = Seed.buildings[cityID];
+	city.numCottages = 0;
 	city.numBarracks = 0;
 	city.maxBarracks = 0;
 	city.totLevelsBarracks = 0;
@@ -9959,6 +9974,9 @@ function getTroopDefTrainEstimates (cityID, city){
 					city.numBarracks++;
 					city.totLevelsBarracks += parseInt(blvl);
 					if (blvl>city.maxBarracks) city.maxBarracks=blvl;
+					break;
+				case 5:
+					city.numCottages++;
 					break;
 				case 15:
 					city.blacksmithLevel = blvl;
@@ -9991,8 +10009,11 @@ function getTroopDefTrainEstimates (cityID, city){
 	var s = Seed.knights[cityID];
 	if (s) {
 		s = s["knt" + Seed.leaders[cityID].politicsKnightId];
-		if (s)
-			city.foremanBasePoliticsScore = s.basePolitics;
+		if (s){
+			city.foremanBasePoliticsScore = s.politics;
+			if (s.politicsBoostExpireUnixtime > now)
+				city.foremanBasePoliticsScore *= 1.25;
+		}
 	}
 
 	city.loggingLevel = parseInt(Seed.tech["tch2"]);
