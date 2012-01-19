@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20120119c
+// @version        20120119d
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20120119c';
+var Version = '20120119d';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -8048,27 +8048,33 @@ Tabs.Rpt = {
 							closestNum=c+1;
 						}
 					}
-					t.content += '<tr><td align=right>'+rpt.page+'</td><td>'+formatUnixTime(rpt.reportUnixTime,'24hour')+'</td>';
+					if (rpt.marchName == 'Anti-Scout' || rpt.marchName == 'Defend')
+					 style=' style="background-color:#EF9999;"';
+					else if (rpt.marchName == 'Reinforce')
+					 style=' style="background-color:#99EF99;"';
+					else
+					 style="";
+					t.content += '<tr><td align=right '+style+'>'+rpt.page+'</td><td '+style+'>'+formatUnixTime(rpt.reportUnixTime,'24hour')+'</td>';
 					if (Options.enableReportNumber)
-						t.content += '<td>' + reportId + '</td>';
+						t.content += '<td '+style+'>' + reportId + '</td>';
 					if (rpt.marchName == 'Desertion') {
-						t.content += '<td></td><td></td>';
+						t.content += '<td '+style+'></td><td '+style+'></td>';
 						if (Options.arAttacker != 'Us')
-							t.content += '<td></td>';
-						t.content += '<td>'+rpt.marchName+'</td><td></td><td></td><td></td>';
+							t.content += '<td '+style+'></td>';
+						t.content += '<td '+style+'>'+rpt.marchName+'</td><td '+style+'></td><td '+style+'></td><td '+style+'></td>';
 						if (Options.arAttacker != 'Us')
-							t.content += '<td></td>';
-						t.content += '<td></td><td></td>';
+							t.content += '<td '+style+'></td>';
+						t.content += '<td '+style+'></td><td '+style+'></td>';
 						} else {
-						t.content += '<td>'+rpt.side1Name+'</td><td align=center><A onclick="ptGotoMap('+ rpt.side1XCoord +','+ rpt.side1YCoord +')">'+ rpt.side1XCoord +','+ rpt.side1YCoord +'</a></td>';
+						t.content += '<td '+style+'>'+rpt.side1Name+'</td><td align=center '+style+'><A onclick="ptGotoMap('+ rpt.side1XCoord +','+ rpt.side1YCoord +')">'+ rpt.side1XCoord +','+ rpt.side1YCoord +'</a></td>';
 						if (Options.arAttacker != 'Us')
-							t.content += '<td>'+rpt.side1AllianceName+'</td>';
-						t.content += '<td><A><SPAN onclick="getReport('+ reportId+')">'+rpt.marchName+'</span></a></td>';
-						t.content += '<td>'+rpt.side0Name+'</td><td>'+rpt.side0TileTypeLevel+'</td>';
-						t.content += '<td align=center><A onclick="ptGotoMap('+ rpt.side0XCoord +','+ rpt.side0YCoord +')">'+ rpt.side0XCoord +','+ rpt.side0YCoord +'</a></td>';
+							t.content += '<td '+style+'>'+rpt.side1AllianceName+'</td>';
+						t.content += '<td '+style+'><A><SPAN onclick="getReport('+ reportId+')">'+rpt.marchName+'</span></a></td>';
+						t.content += '<td '+style+'>'+rpt.side0Name+'</td><td>'+rpt.side0TileTypeLevel+'</td>';
+						t.content += '<td align=center '+style+'><A onclick="ptGotoMap('+ rpt.side0XCoord +','+ rpt.side0YCoord +')">'+ rpt.side0XCoord +','+ rpt.side0YCoord +'</a></td>';
 						if (Options.arTarget != 'Us')
-							t.content += '<td>'+rpt.side0AllianceName+'</td>';
-						t.content += '<td align=right>'+Math.floor(closestDist)+'</td><td align=center><A onclick=\"ptGotoCity(' + closestNum + ')\">' + closestLoc + '</a></td></tr>';
+							t.content += '<td '+style+'>'+rpt.side0AllianceName+'</td>';
+						t.content += '<td align=right '+style+'>'+Math.floor(closestDist)+'</td><td align=center '+style+'><A onclick=\"ptGotoCity(' + closestNum + ')\">' + closestLoc + '</a></td></tr>';
 					}
 				}
 			}
