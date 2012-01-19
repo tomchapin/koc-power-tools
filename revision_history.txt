@@ -1,6 +1,17 @@
 REVISION HISTORY:
 ----------------
 
+20120119d
+   Fixed whisper and tower alert to use locally cached file
+   Fixed battle rounds not showing in alliance report
+   Fixed kocscripters logo displaying incorrectly
+   Removed old bugfixes (that have been fixed by kabam)
+   Fixed info tab cottage and barracks total display
+   Fix info tab foreman politics display
+   Added reassign to march tab
+   Fixed march tab messing up resource info
+   Added color code to reports tab
+   Added sort ascending and descending for alliance tab
 20120111a
     Changed to two rows tab display
     Fixed whisper alert
