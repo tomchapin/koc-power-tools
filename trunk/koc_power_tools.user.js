@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20120119a
+// @version        20120119b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20120119a';
+var Version = '20120119b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -387,7 +387,7 @@ setTimeout ( function(){
 var battleReports = {
   init : function (){
     var t = battleReports; 
-    t.getReportDisplayFunc = new CalterUwFunc ('getReportDisplay', [['return t.join("")', 'var themsg=t.join(""); themsg=getReportDisplay_hook(themsg, arguments[1]); return themsg']]); //Alliance report battle rounds function
+    t.getReportDisplayFunc = new CalterUwFunc ('getReportDisplay', [['return K.join("")', 'var themsg=K.join(""); themsg=getReportDisplay_hook(themsg, arguments[1]); return themsg']]); //Alliance report battle rounds function
     uW.getReportDisplay_hook = t.hook;
     t.getReportDisplayFunc.setEnable (true);
     t.renderBattleReportFunc = new CalterUwFunc ('Messages.viewMarchReport', [['$("modal_msg_list").innerHTML = cm.MarchReportController.getMarchReport(m, r);','var msg = cm.MarchReportController.getMarchReport(m, r); $("modal_msg_list").innerHTML = renderBattleReport_hook(msg,m,r);']]); //March reports battle rounds function
@@ -400,7 +400,7 @@ var battleReports = {
 
   isRoundsAvailable : function (){
     var t = battleReports; 
-    return t.getReportDisplayFunc.isAvailable();
+    return t.getReportDisplayFunc.isAvailable() || t.renderBattleReportFunc.isAvailable();
   },
   
   e_deleteReport : function (rptid){
@@ -4224,17 +4224,13 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=togAllRpts type=checkbox /></td><TD>Enable enhanced Alliance Reports.</td></tr>';
 	  m+='<TR><TD><INPUT id=togAllowAlter type=checkbox /></td><TD>Allow other scripts to change format of Alliance Reports.</td></tr>';
 	  m+='<TR><TD><INPUT id=togAllMembers type=checkbox /></td><TD>Enable enhanced alliance members view.</td></tr>';
-	  m+='<TR><TD><INPUT id=togEnhanceMsging type=checkbox /></td><TD>Enable enhanced messaging ("forward" and "all officers" buttons).</td></tr>';
 	  m+='<TR><TD><INPUT id=togPageNav type=checkbox /></td><TD>Enhanced page navigation for messages and reports.</td></tr>';
-	  m+='<TR><TD><INPUT id=togWarnZero type=checkbox /></td><TD>Warn if attempting to march to location 0,0.</td></tr>';
 	  m+='<TR><TD><INPUT id=togGmtClock type=checkbox /></td><TD>Enable GMT clock next to "Camelot Time" </td></tr>';
 	  m+='<TR><TD><INPUT id=togAttackPicker type=checkbox /></td><TD>Enable target city picker in attack dialog (reinforce, reassign and transport)</td></tr>';
 	  m+='<TR><TD><INPUT id=togBatRounds type=checkbox /></td><TD>Display # of rounds in battle reports</td></tr>';
 	  m+='<TR><TD><INPUT id=togAtkDelete type=checkbox /></td><TD>Enable delete button when displaying battle report</td></tr>';
 	  m+='<TR><TD colspan=2><BR><BR><B>KofC Bug Fixes:</b></td></tr>';
 	  m+='<TR><TD><INPUT id=togTowerFix type=checkbox /></td><TD>Fix tower report to show exact target (city, wild or invalid)</td></tr>';
-	  m+='<TR><TD><INPUT id=togMapDistFix type=checkbox /></td><TD>Fix map to show distances from currently selected city, instead of always the first city.</td></tr>';
-	  m+='<TR><TD><INPUT id=togTowerFix2 type=checkbox /></td><TD>Fix false attack alerts created from scouting missions.</td></tr>';
 	  m+='<TR><TD><INPUT id=togKnightSelect type=checkbox /></td><TD>Do not automatically select a knight when changing march type to scout, transport or reassign</td></tr>';
 	  m+='<TR><TD><INPUT id=togCoordBox type=checkbox /></td><TD>Keep map coordinate box/bookmarks on top of troop activity</td></tr>';
 	  m+='<TR><TD colspan=2><B>Auto Training:</b></td></tr>';
@@ -4253,14 +4249,10 @@ Tabs.Options = {
       t.togOpt ('togAllRpts', 'enhanceARpts', AllianceReports.enable);
       t.togOpt ('togAllMembers', 'enhanceViewMembers', AllianceReports.enable_viewmembers);
       t.togOpt ('togTowerFix', 'fixTower', TowerAlerts.enableFixTarget, TowerAlerts.isFixTargetAvailable);
-      t.togOpt ('togTowerFix2', 'fixTower2', TowerAlerts.enableFixFalseReports, TowerAlerts.isFixFalseReportsAvailable);
-      t.togOpt ('togMapDistFix', 'fixMapDistance', MapDistanceFix.enable, MapDistanceFix.isAvailable);
-      t.togOpt ('togWarnZero', 'fixWarnZero', WarnZeroAttack.setEnable, WarnZeroAttack.isAvailable);
       t.togOpt ('togPageNav', 'fixPageNav', PageNavigator.enable, PageNavigator.isAvailable);
       t.togOpt ('togGmtClock', 'gmtClock', GMTclock.setEnable);
       t.togOpt ('togKnightSelect', 'fixKnightSelect', AttackDialog.setEnable, AttackDialog.isKnightSelectAvailable);
       t.togOpt ('togAttackPicker', 'attackCityPicker', AttackDialog.setEnable, AttackDialog.isCityPickerAvailable);
-      t.togOpt ('togEnhanceMsging', 'enhanceMsging', messageNav.setEnable, messageNav.isAvailable);
       t.togOpt ('togCoordBox', 'mapCoordsTop', CoordBox.setEnable, CoordBox.isAvailable);
       t.togOpt ('togBatRounds', 'dispBattleRounds', null, battleReports.isRoundsAvailable);
       t.togOpt ('togAtkDelete', 'reportDeleteButton', null, battleReports.isRoundsAvailable);
@@ -9749,7 +9741,7 @@ var CalterUwFunc = function (funcName, findReplace) {
 //      	scr.innerHTML = funcName +' = '+ t.funcNew;
 //      	document.body.appendChild(scr);
 //        setTimeout ( function (){document.body.removeChild(scr);}, 500);
-uW.uwuwuwFunc(funcName +' = '+ t.funcNew);
+		uW.uwuwuwFunc(funcName +' = '+ t.funcNew);
       	t.isEnabled = true;
       } else {
       var x = funcName.split('.');
