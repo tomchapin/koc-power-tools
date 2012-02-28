@@ -652,7 +652,7 @@ msg = msg.replace (/\bhttps\:\/\/[-a-z].*\'\/\>/i, 'data:image/png;base64,iVBORw
      if (m != null)
        m[2] = m[2].replace(/\'/g,"Â°Â°");
        msg = msg.replace (/<img (.*?>)/img, '<A onclick=\"ptChatIconClicked(\''+ m[2] +'\')\"><img class=\"ptChatIcon\" $1</a>');
-     if (whisp.indexOf('whispers to') >= 0 && Options.enableWhisperAlert) {
+     if (whisp.indexOf('\> whispers to you:\<\/b\> \<span class') >= 0 && Options.enableWhisperAlert) {
 		if (whisp.indexOf('says to the alliance') < 0){
 			AudioManager.setSource(SOUND_FILES.whisper);
 			AudioManager.play();
