@@ -387,8 +387,10 @@ setTimeout ( function(){
 var battleReports = {
   init : function (){
     var t = battleReports; 
-    t.getReportDisplayFunc = new CalterUwFunc ('getReportDisplay', [['return K.join("")', 'var themsg=K.join(""); themsg=getReportDisplay_hook(themsg, arguments[1]); return themsg']]); //Alliance report battle rounds function
+//    t.getReportDisplayFunc = new CalterUwFunc ('getReportDisplay', [['return K.join("")', 'var themsg=K.join(""); themsg=getReportDisplay_hook(themsg, arguments[1]); return themsg']]); //Alliance report battle rounds function
+    t.getReportDisplayFunc = new CalterUwFunc ('getReportDisplay', [['return K.join("")', 'var themsg=K.join(""); themsg=getReportDisplay_hook(themsg, arguments[1]); themsg=getReportDisplay_hookz(themsg, arguments[1]); return themsg']]); //Alliance report battle rounds function
     uW.getReportDisplay_hook = t.hook;
+    uW.getReportDisplay_hookz = t.hookz;
     t.getReportDisplayFunc.setEnable (true);
     t.renderBattleReportFunc = new CalterUwFunc ('Messages.viewMarchReport', [['$("modal_msg_list").innerHTML = cm.MarchReportController.getMarchReport(m, r);','var msg = cm.MarchReportController.getMarchReport(m, r); $("modal_msg_list").innerHTML = renderBattleReport_hook(msg,m,r);']]); //March reports battle rounds function
     uW.renderBattleReport_hook = t.hook2;
@@ -397,6 +399,7 @@ var battleReports = {
     uW.MoreReport = t.e_MoreReport;
     uW.PostReport = t.e_PostReport;
   },
+
 
   isRoundsAvailable : function (){
     var t = battleReports; 
@@ -447,6 +450,11 @@ var battleReports = {
     });
   },
   
+  hookz : function (msg, rslt) {
+    msg = msg.replace (/(\bReport\sNo\:\s([0-9]+))/g, '<a onclick=\'ptChatReportClicked($2,0)\'>$1</a>');
+  return msg;
+  },
+
   hook2 : function (msg, args, rslt){
 	//alert('hook2 '+rslt);
     if (rslt.rnds && Options.dispBattleRounds){
