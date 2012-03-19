@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20120313a
+// @version        20120318a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20120313a';
+var Version = '20120318a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -845,7 +845,7 @@ var Rpt = {
 				},
 			}, false);
 	},
-	//ripped off from anime tools
+ 	//ripped off from anime tools
 	ReportPopup: function (rslt, rpt, reportId) {
 		var t = Rpt;
 		var popReport = null;
@@ -864,6 +864,105 @@ var Rpt = {
 		woodImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/wood_30.png></TD><TD>Wood';
 		stoneImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/stone_30.png></TD><TD>Stone';
 		oreImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/iron_30.png></TD><TD>Ore';
+		astoneImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/aetherstone_30.png></TD><TD>Aetherstone';
+
+		var trEffect = [];
+		trEffect[1] = 'Attack';
+		trEffect[2] = 'Defense';
+		trEffect[3] = 'Life';
+		trEffect[4] = 'Combat Speed';
+		trEffect[5] = 'Range';
+		trEffect[6] = 'Load';
+		trEffect[7] = 'Accuracy';
+		trEffect[8] = 'Bonus to PvP on Defense';
+		trEffect[9] = 'Bonus to PvP on Offense';
+		trEffect[10] = 'Bonus vs. Wilds';
+		trEffect[11] = 'Bonus vs. Barbarian Camps';
+		trEffect[12] = 'Bonus vs. Dark Forests';
+		trEffect[13] = 'Bonus to Traps';
+		trEffect[14] = 'Bonus to Spiked Barriers';
+		trEffect[15] = 'Bonus to Wall Mounted Crossbows';
+		trEffect[16] = 'Bonus to Wall';
+		trEffect[17] = 'Attack Debuff';
+		trEffect[18] = 'Defense Debuff';
+		trEffect[19] = 'Life Debuff';
+		trEffect[20] = 'Combat Speed Debuff';
+		trEffect[21] = 'Range Debuff';
+		trEffect[22] = 'Load Debuff';
+		trEffect[23] = 'Accuracy Debuff';
+		trEffect[24] = 'Infantry Attack';
+		trEffect[25] = 'Infantry Defense';
+		trEffect[26] = 'Infantry Life';
+		trEffect[27] = 'Infantry Combat Speed';
+		trEffect[28] = 'Infantry Accuracy Bonus';
+		trEffect[29] = 'Infantry Attack Debuff';
+		trEffect[30] = 'Infantry Defense Debuff';
+		trEffect[31] = 'Infantry Life Debuff';
+		trEffect[32] = 'Infantry Combat Speed Debuff';
+		trEffect[33] = 'Infantry Accuracy Bonus Debuff';
+		trEffect[34] = 'Ranged Attack';
+		trEffect[35] = 'Ranged Defense';
+		trEffect[36] = 'Ranged Life';
+		trEffect[37] = 'Ranged Range';
+		trEffect[38] = 'Ranged Accuracy Bonus';
+		trEffect[39] = 'Ranged Attack Debuff';
+		trEffect[40] = 'Ranged Defense Debuff';
+		trEffect[41] = 'Ranged Life Debuff';
+		trEffect[42] = 'Ranged Range Debuff';
+		trEffect[43] = 'Ranged Accuracy Bonus Debuff';
+		trEffect[44] = 'Horsed Attack';
+		trEffect[45] = 'Horsed Defense';
+		trEffect[46] = 'Horsed Life';
+		trEffect[47] = 'Horsed Combat Speed';
+		trEffect[48] = 'Horsed Load';
+		trEffect[49] = 'Horsed Accuracy Bonus';
+		trEffect[50] = 'Horsed Attack Debuff';
+		trEffect[51] = 'Horsed Defense Debuff';
+		trEffect[52] = 'Horsed Life Debuff';
+		trEffect[53] = 'Horsed Combat Speed Debuff';
+		trEffect[54] = 'Horsed Load Debuff';
+		trEffect[55] = 'Horsed Accuracy Bonus Debuff';
+		trEffect[56] = 'Siege Attack';
+		trEffect[57] = 'Siege Combat Speed';
+		trEffect[58] = 'Siege Range';
+		trEffect[59] = 'Siege Load';
+		trEffect[60] = 'Siege Accuracy';
+		trEffect[61] = 'Siege Attack Debuff';
+		trEffect[62] = 'Siege Combat Speed Debuff';
+		trEffect[63] = 'Siege Range Debuff';
+		trEffect[64] = 'Siege Load Debuff';
+		trEffect[65] = 'Siege Accuracy Debuff';
+		trEffect[66] = 'March Size';
+		trEffect[67] = 'March Speed';
+		trEffect[68] = 'Attack March Speed';
+		trEffect[69] = 'Reinforcement March Speed';
+		trEffect[70] = 'Transport March Speed';
+		trEffect[71] = 'Reassign March Speed';
+		trEffect[72] = 'Scout March Speed';
+		trEffect[73] = 'Combat';
+		trEffect[74] = 'Intelligence';
+		trEffect[75] = 'Politics';
+		trEffect[76] = 'Resourcefulness';
+		trEffect[77] = 'Troop Training Speed';
+		trEffect[78] = 'Construction Speed';
+		trEffect[79] = 'Upkeep Reduction';
+		trEffect[80] = 'Research Speed';
+		trEffect[81] = 'Crafting Speed';
+		trEffect[82] = 'Resource Production';
+		trEffect[83] = 'Food Production';
+		trEffect[84] = 'Wood Production';
+		trEffect[85] = 'Stone Production';
+		trEffect[86] = 'Ore Production';
+		trEffect[87] = 'Broad Resource Cap';
+		trEffect[88] = 'Aetherstone Cap';
+		trEffect[89] = 'Storehouse Protection';
+		trEffect[90] = 'Morale Boost';
+		trEffect[91] = 'Chance to Find Items';
+		trEffect[92] = 'Chance to Find Items in Dark Forests';
+		trEffect[93] = 'Chance to Find Items in PvP';
+
+
+
 		if (rpt.marchType == 0)
 			rpt.marchName = 'Desertion';
 		else if (rpt.marchType == 1)
@@ -982,6 +1081,8 @@ var Rpt = {
 						tc+='<TR><TD>'+stoneImg+'</TD><TD align=right>'+addCommasInt(rslt['rsc']['r3'])+'</TD></TR>';
 					if (rslt['rsc']['r4'] > 0)
 						tc+='<TR><TD>'+oreImg+'</TD><TD align=right>'+addCommasInt(rslt['rsc']['r4'])+'</TD></TR>';
+					if (rslt['rsc']['r5'] > 0)
+						tc+='<TR><TD>'+astoneImg+'</TD><TD align=right>'+addCommasInt(rslt['rsc']['r5'])+'</TD></TR>';
 					tf='</TABLE>';
 				}
 			}
@@ -1161,9 +1262,10 @@ var Rpt = {
 			}
 			if (rslt['tch']) {
 				m+='<TABLE class=ptTab><TR><TH colspan=2 align=left>Research</TH></TR>';
-				for (var tl in rslt.tch)
+				for (var tl in rslt.tch) {
 					tid = /[0-9]/.exec(tl);
 					m+='</TD></TR><TR><TD>'+uW.techcost['tch'+tid[0]][0]+'</TD><TD align=right>' + rslt.tch[tl] + '</TD></TR>';
+				}
 				m+='</TABLE>';
 			}
 			m+='</TD></TR></TABLE>';
@@ -1180,6 +1282,15 @@ var Rpt = {
 				m+='<TR><TD colspan=4>Knight Combat Skill: ' + rslt['s1KCombatLv'] + '</TD></TR>';
 			m+='<TR><TD colspan=4>Attack Boosted: ' + 100*rslt['s1atkBoost'] + '%</TD></TR>';
 			m+='<TR><TD colspan=4>Defense Boosted: ' + 100*rslt['s1defBoost'] + '%</TD></TR>';
+
+			if (rslt['s1ThroneRoomBoosts']) {
+				for (var i=1;i<99;i++) {
+					if (rslt['s1ThroneRoomBoosts'][i]) {
+						m+='<TR><TD colspan=4>' + trEffect[i] +': ' + rslt['s1ThroneRoomBoosts'][i] + '%</TD></TR>';
+					}
+				}
+			}
+
 			m+='<TR><TD colspan=4>(<A onclick="ptGotoMap('+ rpt.side1XCoord +','+ rpt.side1YCoord +')">'+ rpt.side1XCoord +','+ rpt.side1YCoord +'</a>) ' + rpt.side1CityName + '</TD></TR>';
 			if (rslt['fght']["s1"]) {
 				m+='<TR><TH></TH><TH align=left>Troops</TH><TH align=right>Fought</TH><TH align=right>Survived</TH></TR>';
@@ -1213,6 +1324,16 @@ var Rpt = {
 				m+='<TR><TD colspan=4>Defense Boosted: ' + 100*rslt['s0defBoost'] + '%</TD></TR>';
 			else
 				m+='<TR><TD colspan=4>&nbsp;</TD></TR>';
+
+			if (rslt['s0ThroneRoomBoosts']) {
+				for (var i=1;i<99;i++) {
+					if (rslt['s0ThroneRoomBoosts'][i]) {
+						m+='<TR><TD colspan=4>' + trEffect[i] +': ' + rslt['s0ThroneRoomBoosts'][i] + '%</TD></TR>';
+					}
+				}
+			}
+
+
 			m+='<TR><TD colspan=4>Rounds: ' + rslt['rnds'] + '</TD></TR>';
 			if (rslt['fght']["s0"]) {
 				m+='<TR><TH></TH><TH align=left>Troops</TH><TH align=right>Fought</TH><TH align=right>Survived</TH></TR>';
