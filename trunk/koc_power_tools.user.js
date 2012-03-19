@@ -1279,7 +1279,7 @@ var Rpt = {
 			m+='</TD></TR></TABLE>';
 		}
 
-		if (rslt['fght']){ // not Reinforce or Transport, so we have a table with 2 columns: 1 for Attackers, 1 for Defenders
+ 		if (rslt['fght']){ // not Reinforce or Transport, so we have a table with 2 columns: 1 for Attackers, 1 for Defenders
 			m+='<TABLE class=ptTab width=100%><TR><TD width=50% align=left valign=top>';
 			m+='<TABLE class=ptTab width=100%>';
 			m+='<TR><TD colspan=4><B>Attackers</B> ('+rpt.side1Name+')';
@@ -1290,15 +1290,18 @@ var Rpt = {
 				m+='<TR><TD colspan=4>Knight Combat Skill: ' + rslt['s1KCombatLv'] + '</TD></TR>';
 			m+='<TR><TD colspan=4>Attack Boosted: ' + 100*rslt['s1atkBoost'] + '%</TD></TR>';
 			m+='<TR><TD colspan=4>Defense Boosted: ' + 100*rslt['s1defBoost'] + '%</TD></TR>';
-
+			<TR></TR>
 			if (rslt['s1ThroneRoomBoosts']) {
+				m+='<TR><TD colspan=4> </TD></TR>';
+				m+='<TR><TD colspan=4><b>Throne Room Bonuses:</b></TD></TR>';
 				for (var i=1;i<99;i++) {
 					if (rslt['s1ThroneRoomBoosts'][i]) {
 						m+='<TR><TD colspan=4>' + trEffect[i] +': ' + rslt['s1ThroneRoomBoosts'][i] + '%</TD></TR>';
 					}
 				}
 			}
-
+			m+='<TR><TD colspan=4> </TD></TR>';	
+			m+='<TR><TD colspan=4><b>Attack Results:</b></TD></TR>';
 			m+='<TR><TD colspan=4>(<A onclick="ptGotoMap('+ rpt.side1XCoord +','+ rpt.side1YCoord +')">'+ rpt.side1XCoord +','+ rpt.side1YCoord +'</a>) ' + rpt.side1CityName + '</TD></TR>';
 			if (rslt['fght']["s1"]) {
 				m+='<TR><TH></TH><TH align=left>Troops</TH><TH align=right>Fought</TH><TH align=right>Survived</TH></TR>';
@@ -1334,6 +1337,8 @@ var Rpt = {
 				m+='<TR><TD colspan=4>&nbsp;</TD></TR>';
 
 			if (rslt['s0ThroneRoomBoosts']) {
+				m+='<TR><TD colspan=4> </TD></TR>';
+				m+='<TR><TD colspan=4><b>Throne Room Bonuses:</b></TD></TR>';
 				for (var i=1;i<99;i++) {
 					if (rslt['s0ThroneRoomBoosts'][i]) {
 						m+='<TR><TD colspan=4>' + trEffect[i] +': ' + rslt['s0ThroneRoomBoosts'][i] + '%</TD></TR>';
@@ -1341,7 +1346,8 @@ var Rpt = {
 				}
 			}
 
-
+			m+='<TR><TD colspan=4> </TD></TR>';	
+			m+='<TR><TD colspan=4><b>Defense Results:</b></TD></TR>';
 			m+='<TR><TD colspan=4>Rounds: ' + rslt['rnds'] + '</TD></TR>';
 			if (rslt['fght']["s0"]) {
 				m+='<TR><TH></TH><TH align=left>Troops</TH><TH align=right>Fought</TH><TH align=right>Survived</TH></TR>';
