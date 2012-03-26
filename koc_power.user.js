@@ -70,11 +70,6 @@ var CHAT_BG_IMAGE = "data:image/gif;base64,R0lGODlhagHQAvcAAP%2F%2F5v%2F%2F1v%2F
 var JSON;if(!JSON){JSON={};}(function(){"use strict";function f(n){return n<10?'0'+n:n;}if(typeof Date.prototype.toJSON!=='function'){Date.prototype.toJSON=function(key){return isFinite(this.valueOf())?this.getUTCFullYear()+'-'+f(this.getUTCMonth()+1)+'-'+f(this.getUTCDate())+'T'+f(this.getUTCHours())+':'+f(this.getUTCMinutes())+':'+f(this.getUTCSeconds())+'Z':null;};String.prototype.toJSON=Number.prototype.toJSON=Boolean.prototype.toJSON=function(key){return this.valueOf();};}var cx=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,escapable=/[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,gap,indent,meta={'\b':'\\b','\t':'\\t','\n':'\\n','\f':'\\f','\r':'\\r','"':'\\"','\\':'\\\\'},rep;function quote(string){escapable.lastIndex=0;return escapable.test(string)?'"'+string.replace(escapable,function(a){var c=meta[a];return typeof c==='string'?c:'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4);})+'"':'"'+string+'"';}function str(key,holder){var i,k,v,length,mind=gap,partial,value=holder[key];if(value&&typeof value==='object'&&typeof value.toJSON==='function'){value=value.toJSON(key);}if(typeof rep==='function'){value=rep.call(holder,key,value);}switch(typeof value){case'string':return quote(value);case'number':return isFinite(value)?String(value):'null';case'boolean':case'null':return String(value);case'object':if(!value){return'null';}gap+=indent;partial=[];if(Object.prototype.toString.apply(value)==='[object Array]'){length=value.length;for(i=0;i<length;i+=1){partial[i]=str(i,value)||'null';}v=partial.length===0?'[]':gap?'[\n'+gap+partial.join(',\n'+gap)+'\n'+mind+']':'['+partial.join(',')+']';gap=mind;return v;}if(rep&&typeof rep==='object'){length=rep.length;for(i=0;i<length;i+=1){k=rep[i];if(typeof k==='string'){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v);}}}}else{for(k in value){if(Object.hasOwnProperty.call(value,k)){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v);}}}}v=partial.length===0?'{}':gap?'{\n'+gap+partial.join(',\n'+gap)+'\n'+mind+'}':'{'+partial.join(',')+'}';gap=mind;return v;}}if(typeof JSON.stringify!=='function'){JSON.stringify=function(value,replacer,space){var i;gap='';indent='';if(typeof space==='number'){for(i=0;i<space;i+=1){indent+=' ';}}else if(typeof space==='string'){indent=space;}rep=replacer;if(replacer&&typeof replacer!=='function'&&(typeof replacer!=='object'||typeof replacer.length!=='number')){throw new Error('JSON.stringify');}return str('',{'':value});};}if(typeof JSON.parse!=='function'){JSON.parse=function(text,reviver){var j;function walk(holder,key){var k,v,value=holder[key];if(value&&typeof value==='object'){for(k in value){if(Object.hasOwnProperty.call(value,k)){v=walk(value,k);if(v!==undefined){value[k]=v;}else{delete value[k];}}}}return reviver.call(holder,key,value);}text=String(text);cx.lastIndex=0;if(cx.test(text)){text=text.replace(cx,function(a){return'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4);});}if(/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,'@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']').replace(/(?:^|:|,)(?:\s*\[)+/g,''))){j=eval('('+text+')');return typeof reviver==='function'?walk({'':j},''):j;}throw new SyntaxError('JSON.parse');};}}());
 var JSON2 = JSON;
 
-var GlobalOptions = {
-  ptupdate : true,
-  ptupdatebeta : 0,
-};
-    
 var Options = {
   includeCity	: true,
   includeMarching:true,
@@ -236,6 +231,8 @@ var GlobalOptions = {
   autoPublishPrivacySetting : 80,
   pbupdate : true,
   pbupdatebeta : 0,
+  ptupdate : true,
+  ptupdatebeta : 0,
 };
 
 var CrestOptions = {
@@ -272,10 +269,9 @@ var CrestOptions = {
   R2Cat			:	0,
 };
 
-
 var CrestData = new Array();
 
-	function CrestFunc (Arr) {
+function CrestFunc (Arr) {
 	
 		if (Arr == undefined)
 			Arr = CrestOptions;
@@ -463,7 +459,6 @@ if (document.URL.search(/kabam.com\/kingdoms-of-camelot\/play/i) >= 0 || documen
   kabamStandAlone ();
   return;
 }
-
 if (document.URL.search(/facebook.com/i) >= 0){
 	if(document.URL.search(/connect\/uiserver.php/i) >= 0 ||
 	   document.URL.search(/serverfbml/i) >= 0 ||
@@ -709,20 +704,19 @@ function ptStartup (){
     hr.ptThin {padding:0px; margin:0px}\
     input.pbSubtab {cursor:pointer; width:10em; margin-right:15px;}\
     input.pbSubtabSel {background-color:'+Colors.ButtonSelected+'; color:white; font-weight:bold; cursor:none !important}\
-    table.ptMainTab {empty-cells: show;  margin-left: 5px;  margin-top: 4px; padding: 1px;  padding-left:30px; }\
+    table.ptMainTab { empty-cells: show;  margin-left: 5px;  margin-top: 4px; padding: 1px;  padding-left:5px;}\
     table.ptMainTab tr td a {color:inherit }\
     table.ptMainTab tr td   {height:60%; empty-cells:show; padding: 0px 4px 0px 4px;  margin-top:5px; white-space:nowrap; border: 1px solid; border-style: none none solid none; -moz-border-radius:5px; }\
-    table.ptMainTab tr td.spacer {padding: 0px 1.5px;}\
-    table.ptMainTab tr td.sel {font-weight:bold; font-size:13px; border: 1px solid #000000; background: -moz-linear-gradient(top, #cfeef7 0%, #73cee7 24%, #0aaad6 44%, #53c2e1 79%, #88d5ea 100%);}\
-    table.ptMainTab tr td.notSel {font-weight:bold; font-size:13px; color: #ffffff; border: 1px solid #000000; background: -moz-linear-gradient(top, #cfeef7 0%, #73cee7 24%, #0aaad6 44%, #53c2e1 79%, #88d5ea 100%);}\
+	table.ptMainTab tr td.spacer {padding: 0px 0px;}\
+    table.ptMainTab tr td.sel    {font-weight:bold; font-size:13px; border: 1px solid #000000; background: -moz-linear-gradient(top,#00a045 0%,#94eb9a 0%,#045c28);}\
+	table.ptMainTab tr td.notSel {font-weight:bold; font-size:13px; color: #ffffff; border: 1px solid #000000; background: -moz-linear-gradient(top,#00a045 0%,#94eb9a 0%,#045c28);}\
     tr.ptPopTop td { background-color:transparent; border:none; height: 21px;  padding:0px; }\
+    tr.ptMainPopTop td { background-color:#ded; border:none; height: 42px;  padding:0px; }\
     tr.ptretry_ptPopTop td { background-color:#a00; color:#fff; border:none; height: 21px; padding:0px; }\
     tr.pbretry_pbMainPopTop td { background-color:#a00; color:#fff; border:none; height: 42px;  padding:0px; }\
-    .pbPopMain  { border:1px solid #000000; -moz-box-shadow:inset 0px 0px 10px #6a6a6a; -moz-border-radius-bottomright: 20px; -moz-border-radius-bottomleft: 20px;}\
-    .pbPopup  {border:5px ridge #666; opacity:'+Options.Opacity+'; -moz-border-radius:25px; -moz-box-shadow: 1px 1px 5px #000000;}\
     input.ptButCancel {background-color:#a00; font-weight:bold; color:#fff}\
     .CPopMain { border:1px solid #000000; -moz-box-shadow:inset 0px 0px 10px #6a6a6a; -moz-border-radius-bottomright: 20px; -moz-border-radius-bottomleft: 20px;}\
-    .CPopup  {border:5px ridge #666; opacity:'+Colors.Opacity+'; -moz-border-radius:25px; -moz-box-shadow: 1px 1px 5px #000000;}';
+    .CPopup  {border:5px ridge #666; opacity:'+Options.Opacity+'; -moz-border-radius:25px; -moz-box-shadow: 1px 1px 5px #000000;}';
       
   logit ("* KOCpowerTools v"+ Version +" Loaded");
   
@@ -763,6 +757,9 @@ if (TEST_WIDE){
   mainPop.autoHeight (true);
   GM_addStyle (gmstyles);  
   mainPop.getMainDiv().innerHTML = '<STYLE>'+ styles +'</style>';
+  AddMainTabLink('TOOLS', eventHideShow, mouseMainTab); 
+  tabManager.init (mainPop.getMainDiv());
+  actionLog ("KOC Power Bot v"+ Version +" Loaded  (KofC version: "+ anticd.getKOCversion() +")");
   FoodAlerts.init();
   TowerAlerts.init();
   MapDistanceFix.init ();
@@ -783,8 +780,6 @@ if (TEST_WIDE){
   CoordBox.init ();
   GMTclock.init ();
   TestSomething.init (); 
-  tabManager.init (mainPop.getMainDiv());
-  
   AudioManager.init();
 
   if (Options.fixTower)
@@ -802,9 +797,8 @@ if (TEST_WIDE){
   WideScreen.setChatOnRight (Options.pbChatOnRight);
   WideScreen.useWideMap (Options.pbWideMap);
   setInterval (DrawLevelIcons,1250);
-  }
+}
 
-  AddMainTabLink('TOOLS', eventHideShow, mouseMainTab); 
 //setInterval (function(){logit (inspect (getClientCoords (mainPop.getMainDiv()), 3, 1))}, 2000);  
 
 
@@ -11164,8 +11158,6 @@ function KOCnotFound(secs){
   }
 }
 
-
-
 var WideScreen = {
   chatIsRight : false,
   useWideMap : false,
@@ -11953,7 +11945,7 @@ var tabManager = {
     }
 
 	sorter.sort (function (a,b){return a[0]-b[0]});
-    var m = '<TABLE cellspacing=3 class=pbMainTab><TR>';
+    var m = '<TABLE cellspacing=2 class=ptMainTab><TR>';
     for (var i=0; i<sorter.length; i++) {
       m += '<TD class=spacer></td><TD align=center class=notSel id=pbtc'+ sorter[i][1].name +' ><A><SPAN>'+ sorter[i][1].label +'</span></a></td>';
       //m += '<TD align=center class=notSel id=pbtc'+ sorter[i][1].name +' ><A><SPAN>'+ sorter[i][1].label +'</span></a></td>';
@@ -21659,154 +21651,6 @@ function kickout_allies(mid, cid, fromUid, fromCid, upkeep) {
   
 };
 
-function pbPopup (prefix, x, y, width, height, enableDrag, onClose) {
-  var pop = WinManager.get(prefix);
-  if (pop){
-    pop.show (false);
-    return pop;
-  }
-  this.BASE_ZINDEX = 111111;
-    
-  // protos ...
-  this.show = show;
-  this.toggleHide = toggleHide;
-  this.getTopDiv = getTopDiv;
-  this.getMainTopDiv = getMainTopDiv;
-  this.getMainDiv = getMainDiv;
-  this.getLayer = getLayer;
-  this.setLayer = setLayer;
-  this.setEnableDrag = setEnableDrag;
-  this.getLocation = getLocation;
-  this.setLocation = setLocation;
-  this.focusMe = focusMe;
-  this.isShown = isShown;
-  this.unfocusMe = unfocusMe;
-  this.centerMe = centerMe;
-  this.destroy = destroy;
-  this.autoHeight = autoHeight;
-
-  // object vars ...
-  this.div = document.createElement('div');
-  this.prefix = prefix;
-  this.onClose = onClose;
-  
-  var t = this;
-  this.div.className = 'pbPopup '+ prefix +'_pbPopup';
-  this.div.id = prefix +'_outer';
-  this.div.style.background = "#fff";
-  this.div.style.zIndex = this.BASE_ZINDEX        // KOC modal is 100210 ?
-  this.div.style.display = 'none';
-  this.div.style.width = width + 'px';
-  this.div.style.height = height + 'px';
-  this.div.style.maxHeight = height + 'px';
-  this.div.style.overflowY = 'show';
-  this.div.style.position = "absolute";
-  this.div.style.top = y +'px';
-  this.div.style.left = x + 'px';
-  
-  if (pbPopUpTopClass==null)
-    topClass = 'pbPopupTop '+ prefix +'_pbPopupTop';
-  else
-    topClass = pbPopUpTopClass +' '+ prefix +'_'+ pbPopUpTopClass;
-    
-  var m = '<TABLE cellspacing=0 width=100% height=100%><TR id="'+ prefix +'_bar" class="'+ topClass +'"><TD width=99% valign=bottom><SPAN id="'+ prefix +'_top"></span></td>\
-      <TD id='+ prefix +'_X align=right valign=middle onmouseover="this.style.cursor=\'pointer\'" style="color:#fff; background:#333; font-weight:bold; font-size:14px; padding:0px 5px; -moz-border-radius-topright: 20px;">x</td></tr>\
-      <TR><TD height=100% valign=top class="pbPopMain '+ prefix +'_pbPopMain" colspan=2 id="'+ prefix +'_main"></td></tr></table>';
-  document.body.appendChild(this.div);
-  this.div.innerHTML = m;
-  document.getElementById(prefix+'_X').addEventListener ('click', e_XClose, false);
-  this.dragger = new CWinDrag (document.getElementById(prefix+'_bar'), this.div, enableDrag);
-  
-  this.div.addEventListener ('mousedown', e_divClicked, false);
-  WinManager.add(prefix, this);
-  
-  function e_divClicked (){
-    t.focusMe();
-  }  
-  function e_XClose (){
-    t.show(false);
-    if (t.onClose != null)
-      t.onClose();
-  }
-  function autoHeight (onoff){
-    if (onoff)
-      t.div.style.height = '';  
-    else
-      t.div.style.height = t.div.style.maxHeight;
-  }
-  function focusMe (){
-    t.setLayer(5);
-    for (k in unsafeWindow.cpopupWins){
-      if (k != t.prefix)
-        unsafeWindow.cpopupWins[k].unfocusMe();
-    }
-  }
-  function unfocusMe (){
-    t.setLayer(-5);
-  }
-  function getLocation (){
-    return {x: parseInt(this.div.style.left), y: parseInt(this.div.style.top)};
-  }
-  function setLocation (loc){
-    t.div.style.left = loc.x +'px';
-    t.div.style.top = loc.y +'px';
-  }
-  function destroy (){
-    document.body.removeChild(t.div);
-    WinManager.delete (t.prefix);
-  }
-  function centerMe (parent){
-    if (parent == null){
-      var coords = getClientCoords(document.body);
-    } else
-      var coords = getClientCoords(parent);
-    var x = ((coords.width - parseInt(t.div.style.width)) / 2) + coords.x;
-    var y = ((coords.height - parseInt(t.div.style.height)) / 2) + coords.y;
-    if (x<0)
-      x = 0;
-    if (y<0)
-      y = 0;
-    t.div.style.left = x +'px';
-    t.div.style.top = y +'px';
-  }
-  function setEnableDrag (tf){
-    t.dragger.setEnable(tf);
-  }
-  function setLayer(zi){
-    t.div.style.zIndex = ''+ (this.BASE_ZINDEX + zi);
-  }
-  function getLayer(){
-    return parseInt(t.div.style.zIndex) - this.BASE_ZINDEX;
-  }
-  function getTopDiv(){
-    return document.getElementById(this.prefix+'_top');
-  }
-  function getMainDiv(){
-    return document.getElementById(this.prefix+'_main');
-  }
-  function getMainTopDiv(){
-  	return document.getElementById(this.prefix+'_top');
-  }
-  function isShown (){
-    return t.div.style.display == 'block';
-  }
-  function show(tf){
-    if (tf){
-      t.div.style.display = 'block';
-      t.focusMe ();
-    } else {
-      t.div.style.display = 'none';
-    }
-    return tf;
-  }
-  function toggleHide(t){
-    if (t.div.style.display == 'block') {
-      return t.show (false);
-    } else {
-      return t.show (true);
-    }
-  }
-}
 
 
 /*******************************************/
@@ -22261,99 +22105,6 @@ var MapDistanceFix = {
   },
 }
 
-var tabManager = {
-  tabList : {},           // {name, obj, div}
-  currentTab : null,
-  
-  init : function (mainDiv){
-    var t = tabManager;
-    var sorter = [];
-    for (k in Tabs){
-      if (!Tabs[k].tabDisabled){  
-        t.tabList[k] = {};
-        t.tabList[k].name = k;
-        t.tabList[k].obj = Tabs[k];
-        if (Tabs[k].tabLabel != null)
-          t.tabList[k].label = Tabs[k].tabLabel;
-        else
-          t.tabList[k].label = k;
-        if (Tabs[k].tabOrder != null)
-          sorter.push([Tabs[k].tabOrder, t.tabList[k]]);
-        else
-          sorter.push([1000, t.tabList[k]]);
-        t.tabList[k].div = document.createElement('div');
-      }
-    }
-
-    sorter.sort (function (a,b){return a[0]-b[0]});
-    var m = '<TABLE cellspacing=1 class=ptMainTab><TR>';
-	for (var i=0; i<sorter.length; i++) {
-      m += '<TD align=center class=notSel id=pttc'+ sorter[i][1].name +' ><A><SPAN>'+ sorter[i][1].label +'</span></a></td>';
-      //m += '<TD align=center class=notSel id=pttc'+ sorter[i][1].name +' ><A><SPAN>'+ sorter[i][1].label +'</span></a></td>';
-      if (i==14) m+='</tr><TR>';
-    }
-	m+='</tr></table>';
-    //m += '<TD class=spacer width=60% align=right>'+ Version +'&nbsp;</td></tr></table>';
-    mainPop.getTopDiv().innerHTML = m;
-    
-    t.currentTab = null;
-    for (k in t.tabList) {
-      if (t.tabList[k].name == Options.currentTab)
-        t.currentTab = t.tabList[k] ;
-      document.getElementById('pttc'+ k).addEventListener('click', this.e_clickedTab, false);
-      var div = t.tabList[k].div; 
-      div.style.display = 'none';
-      div.style.height = '100%';
-      div.style.maxWidth = '1200px';
-      div.style.overflowX = 'auto';
-      mainDiv.appendChild(div);
-      try {
-        t.tabList[k].obj.init(div);
-      } catch (e){
-        div.innerHTML = "INIT ERROR: "+ e;
-      }
-    }
-    if (t.currentTab == null)
-      t.currentTab = sorter[0][1];    
-    t.setTabStyle (document.getElementById ('pttc'+ t.currentTab.name), true);
-    t.currentTab.div.style.display = 'block';
-  },
-  
-  hideTab : function (){
-    var t = tabManager;
-    t.currentTab.obj.hide();
-  },
-  
-  showTab : function (){
-    var t = tabManager;
-    t.currentTab.obj.show();
-  },
-    
-  setTabStyle : function (e, selected){
-    if (selected){
-      e.className = 'sel';
-    } else {
-      e.className = 'notSel';
-    }
-  },
-  
-  e_clickedTab : function (e){
-    var t = tabManager;
-    var newTab = t.tabList[e.target.parentNode.parentNode.id.substring(4)];
-    if (t.currentTab.name != newTab.name){
-      t.setTabStyle (document.getElementById ('pttc'+ t.currentTab.name), false);
-      t.setTabStyle (document.getElementById ('pttc'+ newTab.name), true);
-      t.currentTab.obj.hide ();
-      t.currentTab.div.style.display = 'none';
-      t.currentTab = newTab;
-      newTab.div.style.display = 'block';
-      Options.currentTab = newTab.name;      
-    }
-    newTab.obj.show();
-  },
-}
-
-
 function setTabStyle (e, selected){
   if (selected){
     e.className = 'matTabSel';
@@ -22386,33 +22137,6 @@ function mouseMainTab (me){
     mainPop.setLocation ({x: c.x+4, y: c.y+c.height});
   }
 }
-
-function eventHideShow (){
-  if (mainPop.toggleHide(mainPop)){
-    tabManager.showTab();
-    Options.ptWinIsOpen = true;
-  } else {
-    tabManager.hideTab();
-    Options.ptWinIsOpen = false;
-  }
-  saveOptions();
-}
-
-function hideMe (){
-  if (!Options.ptWinIsOpen)
-    return;
-  mainPop.show (false);
-  tabManager.showTab();
-  Options.ptWinIsOpen = false;
-  saveOptions();
-}
-function showMe (){
-  mainPop.show (true);
-  tabManager.showTab();
-  Options.ptWinIsOpen = true;
-  saveOptions();
-}
-
 
 function addMyFunction (func){      // add function to run in our own scope
   unsafeWindow[func.name] = func;
@@ -23667,6 +23391,7 @@ function CPopup (prefix, x, y, width, height, enableDrag, onClose) {
   this.show = show;
   this.toggleHide = toggleHide;
   this.getTopDiv = getTopDiv;
+  this.getMainTopDiv = getMainTopDiv;
   this.getMainDiv = getMainDiv;
   this.getLayer = getLayer;
   this.setLayer = setLayer;
@@ -23674,6 +23399,7 @@ function CPopup (prefix, x, y, width, height, enableDrag, onClose) {
   this.getLocation = getLocation;
   this.setLocation = setLocation;
   this.focusMe = focusMe;
+  this.isShown = isShown;
   this.unfocusMe = unfocusMe;
   this.centerMe = centerMe;
   this.destroy = destroy;
@@ -23692,6 +23418,8 @@ function CPopup (prefix, x, y, width, height, enableDrag, onClose) {
   this.div.style.display = 'none';
   this.div.style.width = width + 'px';
   this.div.style.height = height + 'px';
+  this.div.style.maxHeight = height + 'px';
+  this.div.style.overflowY = 'show';
   this.div.style.position = "absolute";
   this.div.style.top = y +'px';
   this.div.style.left = x + 'px';
@@ -23709,7 +23437,7 @@ function CPopup (prefix, x, y, width, height, enableDrag, onClose) {
   document.getElementById(prefix+'_X').addEventListener ('click', e_XClose, false);
   this.dragger = new CWinDrag (document.getElementById(prefix+'_bar'), this.div, enableDrag);
   
-  this.div.addEventListener ('mousedown', e_divClicked, false);
+   this.div.addEventListener ('mousedown', e_divClicked, false);
   WinManager.add(prefix, this);
   
   function e_divClicked (){
@@ -23728,9 +23456,9 @@ function CPopup (prefix, x, y, width, height, enableDrag, onClose) {
   }
   function focusMe (){
     t.setLayer(5);
-    for (k in uW.cpopupWins){
+    for (k in unsafeWindow.cpopupWins){
       if (k != t.prefix)
-        uW.cpopupWins[k].unfocusMe(); 
+        unsafeWindow.cpopupWins[k].unfocusMe();
     }
   }
   function unfocusMe (){
@@ -23775,6 +23503,12 @@ function CPopup (prefix, x, y, width, height, enableDrag, onClose) {
   }
   function getMainDiv(){
     return document.getElementById(this.prefix+'_main');
+  }
+  function getMainTopDiv(){
+  	return document.getElementById(this.prefix+'_top');
+  }
+  function isShown (){
+    return t.div.style.display == 'block';
   }
   function show(tf){
     if (tf){
@@ -24487,7 +24221,7 @@ Tabs.Gifts = {
         gifts which are available will be listed. After accepting gifts, be sure to \'Check for Gifts\' again to see if more show up!<p>\
         <LI>If you choose not to delete gifts after accepting them, they may be available to get again! After the process is complete, just press the\
         \'Check for Gifts\' button again to see what gifts are available.</ul>';
-    var pop = new pbPopup ('giftHelp', 0, 0, 500, 400, true);
+    var pop = new CPopup ('giftHelp', 0, 0, 500, 400, true);
     pop.centerMe (mainPop.getMainDiv());  
     pop.getMainDiv().innerHTML = helpText;
     pop.getTopDiv().innerHTML = '<CENTER><B>Power Bot Help</b>: Accepting gifts</center>';
@@ -25264,7 +24998,7 @@ function decode_utf8( s ){
 }
 
 function CdialogCancelContinue (msg, canNotify, contNotify, centerElement){
-  var pop = new pbPopup ('ptcancont', 10, 10, 400,200, true, canNotify);
+  var pop = new CPopup ('ptcancont', 10, 10, 400,200, true, canNotify);
   if (centerElement)
     pop.centerMe(centerElement);
   else
@@ -25277,7 +25011,7 @@ function CdialogCancelContinue (msg, canNotify, contNotify, centerElement){
 }
 
 function CdialogConfirm (msg, canNotify, contNotify, centerElement){
-  var pop = new pbPopup ('ptcancont', 10, 10, 400,200, true, canNotify);
+  var pop = new CPopup ('ptcancont', 10, 10, 400,200, true, canNotify);
   if (centerElement)
     pop.centerMe(centerElement);
   else
@@ -25916,7 +25650,7 @@ Tabs.Combat = {
 	
 	e_research : function(side){
 		var t = Tabs.Combat;
-		t.pop = new pbPopup ('pbcombatresearch', 0, 0, 270, 300, true, function(){t.c_ratio(); t.pop.destroy();});
+		t.pop = new CPopup ('pbcombatresearch', 0, 0, 270, 300, true, function(){t.c_ratio(); t.pop.destroy();});
 		t.pop.centerMe (mainPop.getMainDiv()); 
 		t.pop.getTopDiv().innerHTML = '<CENTER><B>Research Levels</b>: '+ (side?'Attacker':'Defender') +'</center>';
 		var m = '<DIV><TABLE>';
@@ -26525,7 +26259,7 @@ Tabs.Combat = {
     helpText += '<TR><TD>9</td><TD>599 MM + 1Bal</td><TD>13000 archers + 900 Bal</td><TD>1st Wave + 2 Archer</td><TD>10</td></tr>';
     helpText += '<TR><TD>10</td><TD>1199 MM + 1Cat</td><TD>35000 archers + 2500 Cat</td><TD>1st Wave + 6 Archer + 50 Cat</td><TD>10</td></tr></table>';
     
-    var pop = new pbPopup ('giftHelp', 0, 0, 650, 400, true);
+    var pop = new CPopup ('giftHelp', 0, 0, 650, 400, true);
     pop.centerMe (mainPop.getMainDiv());  
     pop.getMainDiv().innerHTML = helpText;
     pop.getTopDiv().innerHTML = '<CENTER><B>Power Bot Help: Cresting</b></center>';
@@ -26553,7 +26287,7 @@ Tabs.Combat = {
     showCrestRoute : function () {
 		var t = Tabs.Crest;
 		var popCrestTargets = null;
-		t.popCrestTargets = new pbPopup('pbShowCrestTargets', 0, 0, 1100, 500, true, function() {clearTimeout (1000);});
+		t.popCrestTargets = new CPopup('pbShowCrestTargets', 0, 0, 1100, 500, true, function() {clearTimeout (1000);});
 		var m = '<DIV style="max-height:460px; height:460px; overflow-y:auto"><TABLE align=center cellpadding=0 cellspacing=0 width=100% class="pbShowCrestTargets" id="pbCrestTargets">';       
 		t.popCrestTargets.getMainDiv().innerHTML = '</table></div>' + m;
 		t.popCrestTargets.getTopDiv().innerHTML = '<TD><B>Crest Targets:</td>';
