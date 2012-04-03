@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20120318a
+// @version        20120403a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20120318a';
+var Version = '20120403a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -660,18 +660,18 @@ msg = msg.replace (/\bhttps\:\/\/[-a-z].*\'\/\>/i, 'data:image/png;base64,iVBORw
 		if (whisp.indexOf('says to the alliance') < 0){
 			AudioManager.setSource(SOUND_FILES.whisper);
 			AudioManager.play();
-			setTimeout(function(){AudioManager.stop();}, 5000);
+			setTimeout(function(){AudioManager.stop();}, 2500);
 		}
      } 
      if (whisp.indexOf('My embassy has') >= 0 && Options.enableTowerAlert) {
 		AudioManager.setSource(SOUND_FILES.alert);
 		AudioManager.play();
-		setTimeout(function(){AudioManager.stop();}, 10000);
+		setTimeout(function(){AudioManager.stop();}, 5000);
      } 
      if (whisp.indexOf('My wilderness at') >= 0 && Options.enableTowerAlert) {
 		AudioManager.setSource(SOUND_FILES.alert);
 		AudioManager.play();
-		setTimeout(function(){AudioManager.stop();}, 10000);
+		setTimeout(function(){AudioManager.stop();}, 5000);
      }
      return msg;
    },
@@ -5750,7 +5750,7 @@ Tabs.OverView = {
     main +='<TD><INPUT class=pbSubtab ID=ptmrchSubB type=submit value='+uW.g_js_strings.commonstr.troops+'></td>';
     main +='<TD><INPUT class=pbSubtab ID=ptmrchSubC type=submit value='+uW.g_js_strings.modaltitles.buildings+'></td>';
     main +='<TD><INPUT class=pbSubtab ID=ptmrchSubD type=submit value='+uW.g_js_strings.commonstr.info+'></td></tr></table><BR><BR>';
-    main +='<DIV id=ptOverOutput align=left style="margin-top:10px; background-color:"#F8F8F8"; height:680px; overflow:scroll;"></div>';
+    main +='<DIV id=ptOverOutput align=left style="margin-top:10px; background-color:#F8F8F8; height:680px;"></div>';
 	main += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToOverview" target="_blank">HELP</a></td></tr>';
             
     t.cont.innerHTML = main;
@@ -6679,9 +6679,8 @@ Tabs.OverView = {
     clearTimeout (Tabs.OverView.displayTimer);
     t.Overv.innerHTML = null;
     t.Overv.style.maxHeight = '650px';
-    t.Overv.style.overflowY = 'scroll';
-    t.Overv.style.maxWidth = '745px';
-    t.Overv.style.overflowX = 'scroll';
+    t.Overv.style.overflowX = Options.overviewAllowOverflow?'show':'scroll';
+	t.Overv.style.width = Options.overviewAllowOverflow?'':'745px';
     function _row (name, row, noTotal){
       var t = Tabs.OverView;
       if (rownum++ % 2)
