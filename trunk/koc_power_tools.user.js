@@ -6679,8 +6679,9 @@ Tabs.OverView = {
     clearTimeout (Tabs.OverView.displayTimer);
     t.Overv.innerHTML = null;
     t.Overv.style.maxHeight = '650px';
-    t.Overv.style.overflowX = Options.overviewAllowOverflow?'show':'scroll';
+    t.Overv.style.overflowX = Options.overviewAllowOverflow?'visible':'scroll';
 	t.Overv.style.width = Options.overviewAllowOverflow?'':'745px';
+	t.Overv.style.maxWidth = Options.overviewAllowOverflow?'':'745px';
     function _row (name, row, noTotal){
       var t = Tabs.OverView;
       if (rownum++ % 2)
