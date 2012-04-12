@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20120412b
+// @version        20120412c
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20120412b';
+var Version = '20120412c';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -7016,6 +7016,7 @@ Tabs.Attaque = {
          m = "<DIV class=ptstat><b>QUICK MARCH TOOL</b></div>";
          m +="<div id='statpourRAA'></div>";       
          m += "<TABLE width=600 class=ptTab border=0 align=center>\
+           <tr><td><INPUT type=checkbox id=ptmarch_autoknight "+(Options.marchautoknight?'CHECKED':'')+" /> Auto select knight</td></tr>\
            <tr><td colspan=4 align=center><input type=button id=REEaction value='Scout'>&nbsp;<input type=button id=RAAaction value='Attack'>&nbsp<input type=button id=RARaction value='Reassign'>&nbsp;<input type=button id=RENaction value='Reinforce'>&nbsp;<input type=button id=RENBaction value='Reinforce + Max Food'></td></tr><tr align=center valign=top><td width=130><b><u>Source</b></u><br><span id=RAAsrcRptspeedcity></span></td>\
            <td><b><u>Destination</b></u><br>X:<input type=text id=RAAtypetrpx size=3>&nbsp;Y:<input type=text id=RAAtypetrpy size=3><br><a href='javascript:void(0);' id='BOchargelistelieux'>Fetch Members</a> : <select id='listeFavori'></select></td>\
            <td><b><u>Distance</u></b><br><span id='BOEstimationD'>&nbsp;</span><td><b><u>Closest City</u></b><br><span id=BOVilleProche></span>\
@@ -7048,6 +7049,11 @@ Tabs.Attaque = {
 	          t.Favoris.innerHTML+="<option value='"+m+"'>"+lis[0]+"</option>";
       	       }  
 	}
+	ById("ptmarch_autoknight").addEventListener('click', function(){
+		Options.marchautoknight = this.checked;
+		saveOptions();
+		t.show();
+	},false);
        ById("BO_AT_Fav_RESET").addEventListener ('click', function() {
 		 Options.AttackFav={};
 		 saveOptions(); 
@@ -7128,7 +7134,6 @@ Tabs.Attaque = {
         t.destinationCityx.addEventListener ('change', function () { t.estimerRes(); }, false);
         t.destinationCityy.addEventListener ('change', function () { t.estimerRes(); }, false);       
         var dcp0 = new CdispCityPicker ('ptRAA0', ById('RAAsrcRptspeedcity'), false, t.clickRAACitySourceSelect, Cities.byID[unsafeWindow.currentcityid].idx);
-        t.state = 1;
         t.estimerRes();
         t.BOAttackProg = ById ('BOAttackProg');
         t.BOHorloge = ById ('BOHorloge');
@@ -7166,9 +7171,33 @@ Tabs.Attaque = {
           t.BOActiveAttack.value='ACTIVER : ON';
     	  t.activeAttack();
         }
+        t.clickRAACitySourceSelect(t.sourceCity);
+        var closestNum = t.getclosestcity();
+		t.dcp1 = new CdispCityPicker ('ptmarch_citydest', ById('BOVilleProche'), false, t.estimerRes, closestNum).bindToXYboxes(ById("RAAtypetrpx"),ById("RAAtypetrpx"));
        }
 
     },
+    getclosestcity : function (){
+     var t = Tabs.Attaque;
+	 var x1 = parseInt(t.sourceCity.x);
+	 var x2 = parseInt(t.destinationCityx.value);
+	 var y1 = parseInt(t.sourceCity.y);
+	 var y2 = parseInt(t.destinationCityy.value);
+	 var dist = distance (x1, y1, x2, y2);
+	 var closestDist=999999;
+	 var closestLoc=null;
+	 var closestNum=1;
+	 for (var c=0; c<Cities.numCities; c++){
+		var city = Cities.cities[c];
+		var dist=distance(city.x,city.y,x2,y2);
+		if(dist<closestDist) {
+		 closestDist=dist;
+		 closestLoc=city.x +','+ city.y;
+		 closestNum=c;
+		}
+	 }
+	 return closestNum;
+	},
     AutoattackOnOff:function() {
      // click click sur le bouton Activer le compte Ãƒ  rebour !
      var t = Tabs.Attaque;
@@ -7452,24 +7481,20 @@ Tabs.Attaque = {
 								typeattaque="March successful";
 						}
      	 		   t.statutRAA.innerHTML = "<center><font size='3px'><b>"+typeattaque+"</b></font></center>";
-	                   t.actionRAA.disabled=false;
-	                   t.actionREE.disabled=false;
-      			   t.actionREN.disabled=false;	
       			   t.clickRAACitySourceSelect(t.sourceCity);
 	                  } else {
-			    t.statutRAA.innerHTML ="<font color=red size='3px'><b>Error sending march!<b></font>";
-			     if (rslt.msg) {
-			       t.statutRAA.innerHTML +="<br><font color=black size='2px'>" + rslt.msg +"</font>";
-	         	     
-	                     t.actionRAA.disabled=false;
+						 t.statutRAA.innerHTML ="<font color=red size='3px'><b>Error sending march!<b></font>";
+						 if (rslt.msg) {
+						   t.statutRAA.innerHTML +="<br><font color=black size='2px'>" + rslt.msg +"</font>";
+						 }else{
+						   t.statutRAA.innerHTML +="<br>Waiting for 2 seconds!</font>";
+						   //setTimeout(function() { t.clickATTAQUEDo(); }, 2000);
+						 }
+	                 }
+	                 t.actionRAA.disabled=false;
       			     t.actionREN.disabled=false;
       			     t.actionREE.disabled=false;
-      			     }else{
-      			      t.statutRAA.innerHTML +="<br>Waiting for 2 seconds!</font>";
-         	     	      setTimeout(function() { t.clickATTAQUEDo(); }, 2000);
-      			     }
-	                  }
-	                  },
+	              },
 	                  onFailure: function () {
 	                    var t = Tabs.Attaque;
 	                    t.statutRAA.innerHTML ="<font color=red size='3px'><b>Error communicating with server!<b></font>";
@@ -7496,19 +7521,6 @@ Tabs.Attaque = {
         ById("BOEstimationTT"+r).innerHTML = "<b>" + m.etaStr + "</b>";
         ById("BOEstimationTZ"+r).innerHTML = "<b>" + m.friendEtaStr + "</b>";
      }
-    var closestDist=999999;
-	var closestLoc=null;
-	var closestNum=1;
-	for (var c=0; c<Cities.numCities; c++){
-	var city = Cities.cities[c];
-	var dist=distance(city.x,city.y,x2,y2);
-	if(dist<closestDist) {
-	 closestDist=dist;
-	 closestLoc=city.x +','+ city.y;
-	 closestNum=c+1;
-	}
-	}
-	ById("BOVilleProche").innerHTML='<input type="submit" value="'+closestNum+'" class="ptcastleBut ptcastleButNon">'		
     },
     SelectFavoris:function() {
       var t = Tabs.Attaque;
@@ -7609,7 +7621,8 @@ Tabs.Attaque = {
          }
      
       if (ById('RAApiKnight').options.length>0) {
-       ById('RAApiKnight').selectedIndex=1;
+		  if(Options.marchautoknight)
+			ById('RAApiKnight').selectedIndex=1;
       } 
       
       var itemlist=[55,57,931,932];
@@ -7662,6 +7675,9 @@ Tabs.Attaque = {
            }
      }
      t.estimerRes();
+     var closestNum = t.getclosestcity();
+     if(t.dcp1)
+		t.dcp1.selectBut(closestNum);
    },
  
  
