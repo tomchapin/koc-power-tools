@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20120412c
+// @version        20120412d
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20120412c';
+var Version = '20120412d';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -3179,7 +3179,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
         cl = 'class=ptOddrow ';
       else
         cl = '';
-      m += '<TR '+ cl +'valign=top><TD>'+ u.genderAndName +'</td><TD><A target="_tab" href="http://koc.dunno.com/index.sjs?f=ServersByUser&user_id='+ u.userId +'">' + u.userId + '</a></td><TD align=right>'+ addCommasInt(u.might) +'</td>\
+      m += '<TR '+ cl +'valign=top><TD>'+ u.genderAndName +'</td><TD><A target="_tab" href="http://kocmon.com/'+GetServerId()+'/players/'+ u.userId +'">' + u.userId + '</a></td><TD align=right>'+ addCommasInt(u.might) +'</td>\
           <TD>'+ (rslt.data[u.userId]?"&nbsp;<SPAN class=boldDarkRed>"+uW.g_js_strings.commonstr.online+"</span>":"") +'</td>\
           <TD align=center><A target="_tab" href="http://www.facebook.com/profile.php?id='+ u.fbuid +'">'+uW.g_js_strings.commonstr.profile+'</a></td>\
           <TD><SPAN onclick="PTpd(this, '+ u.userId +')"><A>'+uW.g_js_strings.modaltitles.memberdetails+'</a> &nbsp; <BR></span><SPAN onclick="PTpl2(this,'+ u.userId+','+rslt.data[u.userId]+')"><A>'+uW.g_js_strings.modaltitles.leaderboard+'</a><BR></span><SPAN onclick="PCplo(this, \''+ u.userId +'\')"><A>'+uW.g_js_strings.modal_messages_viewreports_view.lastlogin+'</a></span></td></tr>';
