@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20120412a
+// @version        20120412b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20120412a';
+var Version = '20120412b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -618,11 +618,13 @@ var ChatStuff = {
        var m = /div class='info'>.*<\/div>/im.exec(msg);
        if (m == null)
          return msg;
-       if(type.indexOf('says to the alliance') > 0){
-		   alliance = true;
-	   }
-	   if(type.indexOf('whispers to you') > 0){
-		   whisper = true;
+       if(type != null){
+		   if(type.indexOf('says to the alliance') > 0){
+			   alliance = true;
+		   }
+		   if(type.indexOf('whispers to you') > 0){
+			   whisper = true;
+		   }
 	   }
        var whisp = m[0];
        
