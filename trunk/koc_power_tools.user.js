@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20120403a
+// @version        20120412a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20120403a';
+var Version = '20120412a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -580,7 +580,7 @@ var ChatStuff = {
     var t = ChatStuff;
 	if(getMyAlliance()[0] > 0)
 		t.getAllianceLeaders();
-    t.chatDivContentFunc = new CalterUwFunc ('Chat.chatDivContent', [['return f.join("");', 'var msg = f.join("");\n msg=chatDivContent_hook(msg);\n return msg;']]);
+    t.chatDivContentFunc = new CalterUwFunc ('Chat.chatDivContent', [['return f.join("");', 'var msg = f.join("");\n msg=chatDivContent_hook(msg,d);\n return msg;']]);
     uW.chatDivContent_hook = t.chatDivContentHook;
     uW.ptChatIconClicked = t.e_iconClicked;
     uW.ptChatReportClicked = Rpt.FindReport;
@@ -610,16 +610,24 @@ var ChatStuff = {
     e.value = '@'+ name +' ';
   },
 
- chatDivContentHook : function (msg){
+ chatDivContentHook : function (msg,type){
        var t = ChatStuff; 
        var element_class = '';
+       var alliance = false;
+       var whisper = false;
        var m = /div class='info'>.*<\/div>/im.exec(msg);
        if (m == null)
          return msg;
+       if(type.indexOf('says to the alliance') > 0){
+		   alliance = true;
+	   }
+	   if(type.indexOf('whispers to you') > 0){
+		   whisper = true;
+	   }
        var whisp = m[0];
        
        
-    if (m[0].indexOf('whispers to') >= 0) {
+    if (whisper) {
 		if (Options.chatwhisper) {
 			element_class += ' ptChatWhisper ';
 		}
@@ -645,34 +653,36 @@ msg = msg.replace (/\bhttps\:\/\/[-a-z].*\'\/\>/i, 'data:image/png;base64,iVBORw
 		//Phouse msg = msg.replace (/\bhttp\:\/\/[-a-z].*jpg/i, 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAIAAABLixI0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAASYSURBVEhLlVRvUFRVFL9vd3nP3WWX3W0Q2EhdAjOhwBybzEJNoQgUkMkx0QqnSesDNvYhBnQYnXQmacrKqclpkmGmETHHwAmFmpRkJChrGRJYVBZYZEVRlt237L7/nfveYwEzms6H9+5975zf+Z3fuedq0X+ZIdqENDqSoniOndtXO/fvN8sPdUxE6ZOXT5ri8/NyXX/8Oof/XFg5r719uqN3Q0k5bXzSp13g6mnLWJZ+69pfq9bnePwcMlqWpKaNjXgi6MS/5Sk5cOT49z8Vbt91vkcfCgexGz2IBprSH0vqdLkRxEkIP6+cjSA8mFfBnoO1TZeKtr5+7po1xPCI0CGJR6QFUaZRt9Ma9/DGkgqzY9XwyDCyxiJvnwL3AF4Zr+529vUfPlrzwYk+v39CTSuGkSQgkYOtw8K5x8L4e2gY3fw9P8lQf+ok7DT31WhevQWAyquqy77pCdCT+C/UgoGmHEXGfU9EkjT9ZerPLCwA8tPBkrIvD9VcETlaklmoBgUoWwWUIJB0/xFR9XohZ6M7ZjFFkvlvHfi2uX8qQg4TGXkrIZHHZRKijAj1SnjtGyL8o0o3Ma9oi62PsJnNppffqKhruYm4O7uf11XmxZkNWpyckJmIsAAIdvUivjI/iSIpvNVQ0I1xSxJpNGGsKIqKfjrX7liStW1f7QU3SLMuRfpkx1r32CQXGkPMLcTcxk9uHAmgt+YOa12TumDo8yKZq4TiM0a5aHLZSzAaxP5jJ75uarekFXVd9+K2aqnKF/Vr0lPXfvhb8XLdVzvXRxTjBbG6dfDd461RrJc5XaHZ/JnKF173hrJTbZoNmSs8Aze6zh5GE06cByfH2iKB0Wk1Biqq+peBqh9cR865zAaqNHvxmdJnOF6WDBfOIXYCDV5CgcF3XsnRZK54ykJqdDotYsEDmi2mJNqDLI/Xcs+++NG1/7vOvXXOqvp22OavXApNBFMbyoMnejQxoTgvW0MH/L62eoc9Tu4Olx4fKs5cerChF6suCTgG+igECN7HhvFx8wUZRJpZXsh6wq6yk9CN+mNBOqCLyIFbLrDn9272jtNtPcO4TDiPktRcngWRdquZjNLSYa6wqhGJwscN7Q1lBfotVVgWpdGzzz2wlRJ2nUywRj/3uA0PoGx2m3nRfCsAwXrbp40tVz2IC7xfuDJuh6y9nFKxGbwgA1Aj0JnL3XuykluvQluxpb13qtujrpEIgvL4rCHkn2Rkf+ClYs2YIZAGMUhiOgdGLDFWPINIkEWESDk5QMBxl6lgHQWZOA9ToYLNnEeF69TQYge5X9B4QIGnBJ8E6I/NSKpMZIKRgZvGIgTgjGNqWrrXpiZc2JfX7HQTmz7qHr6rsgOCIrd9Xfrd2sqLXf3qbGupCC+VXkrBzusThBTziHJbOmKNC+NsbS4vAwdNccGXDC7QMT9mYfxDF//sxXSAtT4R9Tcqt6uKlbG11Nl/m0jeJLE+lT/+qcHTCygzTZFMNmJerORpMrCjk61101jP5hZd9rJIb/nn7TgLaOZGEYulHdqgu+PnaSxYGU3mYEgZxv9h8ygyHKSVgL8BxwEUOe4NZoMAAAAASUVORK5CYII=');
 
 		element_class += ' ptChatScripter';
-	}
-   	if (m[0].indexOf('My embassy has') >= 0 && Options.chatAttack)
-     	element_class = ' ptChatAttack';
-    if (m[0].indexOf('My wilderness at') >= 0 && Options.chatAttack)
-       	element_class = ' ptChatAttack';
-       msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
-		msg = msg.replace (/(\bReport\sNo\:\s([0-9]+))/g, '<a onclick=\'ptChatReportClicked($2,0)\'>$1</a>');
+	 }
+	 if(alliance){
+		 if (m[0].indexOf('My embassy has') >= 0 && Options.chatAttack)
+			element_class = ' ptChatAttack';
+		 if (m[0].indexOf('My wilderness at') >= 0 && Options.chatAttack)
+			element_class = ' ptChatAttack';
+	 }
+     msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
+	 msg = msg.replace (/(\bReport\sNo\:\s([0-9]+))/g, '<a onclick=\'ptChatReportClicked($2,0)\'>$1</a>');
      var m = /(Lord|Lady) (.*?)</im.exec(msg);
      if (m != null)
        m[2] = m[2].replace(/\'/g,"Ã‚Â°Ã‚Â°");
-       msg = msg.replace (/<img (.*?>)/img, '<A onclick=\"ptChatIconClicked(\''+ m[2] +'\')\"><img class=\"ptChatIcon\" $1</a>');
-     if (whisp.indexOf('\> whispers to you:\<\/b\> \<span class') >= 0 && Options.enableWhisperAlert) {
-		if (whisp.indexOf('says to the alliance') < 0){
-			AudioManager.setSource(SOUND_FILES.whisper);
+     msg = msg.replace (/<img (.*?>)/img, '<A onclick=\"ptChatIconClicked(\''+ m[2] +'\')\"><img class=\"ptChatIcon\" $1</a>');
+     if (whisper && Options.enableWhisperAlert) {
+		AudioManager.setSource(SOUND_FILES.whisper);
+		AudioManager.play();
+		setTimeout(function(){AudioManager.stop();}, 2500);
+     } 
+     if(alliance){
+		 if (whisp.indexOf('My embassy has') >= 0 && Options.enableTowerAlert) {
+			AudioManager.setSource(SOUND_FILES.alert);
 			AudioManager.play();
-			setTimeout(function(){AudioManager.stop();}, 2500);
-		}
-     } 
-     if (whisp.indexOf('My embassy has') >= 0 && Options.enableTowerAlert) {
-		AudioManager.setSource(SOUND_FILES.alert);
-		AudioManager.play();
-		setTimeout(function(){AudioManager.stop();}, 5000);
-     } 
-     if (whisp.indexOf('My wilderness at') >= 0 && Options.enableTowerAlert) {
-		AudioManager.setSource(SOUND_FILES.alert);
-		AudioManager.play();
-		setTimeout(function(){AudioManager.stop();}, 5000);
-     }
+			setTimeout(function(){AudioManager.stop();}, 5000);
+		 } 
+		 if (whisp.indexOf('My wilderness at') >= 0 && Options.enableTowerAlert) {
+			AudioManager.setSource(SOUND_FILES.alert);
+			AudioManager.play();
+			setTimeout(function(){AudioManager.stop();}, 5000);
+		 }
+	 }
      return msg;
    },
    
@@ -4446,7 +4456,7 @@ Tabs.Options = {
       m+='<TR><TD>General - Button Selected: </td><TD><INPUT id=togButClick type=text size=7 maxlength=7 value="'+Colors.ButtonSelected+'"></td>&nbsp;<TD style="background-color:'+Colors.ButtonSelected+'" width=30px>&nbsp;</td></tr>';
      
       m+='<TR><TD>Overview - Dark Rows:</td><TD><INPUT id=togOverDarkRow type=text size=7 maxlength=7 value="'+Colors.OverviewDarkRow+'"></td>&nbsp;<TD style="background-color:'+Colors.OverviewDarkRow+'" width=30px>&nbsp;</td></tr>';
-	  m+='<TR><TD>Transparency:&nbsp;&nbsp;<span style="color:#800;"><sup>(0.7 - 0.9)</sup></span></td><TD><INPUT id=togOpacity type=text size=3 maxlength=3 value="'+Colors.Opacity+'"/></td><TD></tr>';
+	  m+='<TR><TD>Transparency:&nbsp;&nbsp;<span style="color:#800;"><sup>(0.7 - 2)</sup></span></td><TD><INPUT id=togOpacity type=text size=3 maxlength=3 value="'+Colors.Opacity+'"/></td><TD></tr>';
 	  
       m+='</table><BR><BR><DIV>HTML colors:&nbsp;&nbsp;&nbsp;';
       m+='<a href="http://www.colorpicker.com/" target="_blank">Color Picker</a>&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;';
