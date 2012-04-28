@@ -1,6 +1,16 @@
 REVISION HISTORY:
 ----------------
 
+20120428a
+   Added delete gifts button in inbox
+   Fixed transparency not working
+   Added throne room display in alliance reports
+   Fixed tower alarm going off in global
+   Fixed whisper alert
+   Fixed knights tab adding more than 255 skill points
+   Add city picker in march tab
+   Add option for auto select knight in march tab
+   Fixed overview tab overflow option not working
 20120119d
    Fixed whisper and tower alert to use locally cached file
    Fixed battle rounds not showing in alliance report
