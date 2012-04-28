@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20120412d
+// @version        20120428a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20120412d';
+var Version = '20120428a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -122,6 +122,7 @@ var Options = {
   AttackCibleX : 0,
   AttackCibleY : 0,
   AttackKnight : 0,
+  enhancedinbox : true,
 };
 
 var Colors ={
@@ -292,6 +293,7 @@ if (TEST_WIDE){
   tabManager.init (mainPop.getMainDiv());
   
   AudioManager.init();
+  DispReport.init();
   
   if (Options.ptWinIsOpen){
     mainPop.show (true);
@@ -2251,6 +2253,8 @@ Tabs.Knights = {
       sk[i] = parseInt(knight[knightRoles[i][1]]);
       if (i == rid)
         sk[i] += unassigned;
+      if(sk[i] > 255)
+		sk[i] = 255;
     }
 	if (unassigned==0) return;
     if (e!=null) {
@@ -2480,6 +2484,75 @@ var AttackDialog = {
   },  
 }
 
+var DispReport = {
+  init : function (){
+    var t = DispReport;
+    t.modal_InboxFunc = new CalterUwFunc ('modal_messages_listshow', [['msghtml.join("");', 'msghtml.join("");dispInbox_hook(rslt,boxType,msghtml);']]);
+    uW.dispInbox_hook = t.ModalInboxHook;
+    t.modal_InboxFunc.setEnable (Options.enhancedinbox);
+  },
+  
+  setEnable : function (tf){
+    var t = DispReport;
+    t.modal_InboxFunc.setEnable (tf);
+  },
+
+  isDispReportAvailable : function (){
+    var t = DispReport;
+    return t.modal_InboxFunc.isAvailable();
+  },
+    
+  ModalInboxHook : function (rslt,boxType,msghtml){
+    var t = DispReport;
+    if(boxType == 'inbox'){
+		msgBody = document.getElementById('modal_msg_list');
+		var a = document.createElement('a');
+			a.className='buttonDown20';
+			a.innerHTML='<span>Delete Gift Report</span>';
+			a.style.float = 'left';
+			a.addEventListener('click', t.checkinbox, false);
+		var div = document.createElement('span');
+		div.appendChild(a);
+		msgBody.appendChild(div);
+	}
+  },
+  
+  checkinbox : function(){
+    var t = DispReport;
+    var body = document.getElementById('tbl_messages');
+    var trs=body.getElementsByTagName('tr');
+    var reports = [];
+	for(var i=0; i<trs.length; i++){
+		var tds = trs[i].getElementsByTagName('td');
+		for(var j=0; j<tds.length; j++){
+			if(tds[j].className == 'chkcol'){
+				var checkbox = tds[j];
+			}
+			if(tds[j].className == 'nmcol'){
+				var sender = tds[j];
+			}
+			if(tds[j].className == 'subjcol'){
+				var subject = tds[j];
+			}
+		}
+		reports.push({checkbox:checkbox,sender:sender,subject:subject});
+	}
+	t.parseGiftReport(reports);
+  },
+  
+  parseGiftReport : function(rpts){
+    var t = DispReport;
+    for(var i=0; i<rpts.length; i++){
+		logit(inspect(rpts[i].subject));
+		logit(inspect(rpts[i].sender));
+		if(rpts[i].subject.innerHTML.indexOf('New Gift Received!') >= 0 && rpts[i].sender.innerHTML.indexOf('Kingdoms Of Camelot') >= 0){
+			rpts[i].checkbox.firstChild.checked = true;
+		}
+	}
+	uW.messages_action("delete","tbl_messages"); 
+  }
+
+}
 
 var AllianceReports = {
   checkPeriod : 300,
@@ -4374,6 +4447,7 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=togAttackPicker type=checkbox /></td><TD>Enable target city picker in attack dialog (reinforce, reassign and transport)</td></tr>';
 	  m+='<TR><TD><INPUT id=togBatRounds type=checkbox /></td><TD>Display # of rounds in battle reports</td></tr>';
 	  m+='<TR><TD><INPUT id=togAtkDelete type=checkbox /></td><TD>Enable delete button when displaying battle report</td></tr>';
+	  m+='<TR><TD><INPUT id=togRptGift type=checkbox /></td><TD>Enable delete gifts report button in inbox</td></tr>';
 	  m+='<TR><TD colspan=2><BR><BR><B>KofC Bug Fixes:</b></td></tr>';
 	  m+='<TR><TD><INPUT id=togTowerFix type=checkbox /></td><TD>Fix tower report to show exact target (city, wild or invalid)</td></tr>';
 	  m+='<TR><TD><INPUT id=togKnightSelect type=checkbox /></td><TD>Do not automatically select a knight when changing march type to scout, transport or reassign</td></tr>';
@@ -4398,6 +4472,7 @@ Tabs.Options = {
       t.togOpt ('togGmtClock', 'gmtClock', GMTclock.setEnable);
       t.togOpt ('togKnightSelect', 'fixKnightSelect', AttackDialog.setEnable, AttackDialog.isKnightSelectAvailable);
       t.togOpt ('togAttackPicker', 'attackCityPicker', AttackDialog.setEnable, AttackDialog.isCityPickerAvailable);
+      t.togOpt ('togRptGift', 'enhancedinbox', DispReport.setEnable, DispReport.isDispReportAvailable);
       t.togOpt ('togCoordBox', 'mapCoordsTop', CoordBox.setEnable, CoordBox.isAvailable);
       t.togOpt ('togBatRounds', 'dispBattleRounds', null, battleReports.isRoundsAvailable);
       t.togOpt ('togAtkDelete', 'reportDeleteButton', null, battleReports.isRoundsAvailable);
@@ -7173,7 +7248,7 @@ Tabs.Attaque = {
         }
         t.clickRAACitySourceSelect(t.sourceCity);
         var closestNum = t.getclosestcity();
-		t.dcp1 = new CdispCityPicker ('ptmarch_citydest', ById('BOVilleProche'), false, t.estimerRes, closestNum).bindToXYboxes(ById("RAAtypetrpx"),ById("RAAtypetrpx"));
+		t.dcp1 = new CdispCityPicker ('ptmarch_citydest', ById('BOVilleProche'), false, t.estimerRes, null).bindToXYboxes(ById("RAAtypetrpx"),ById("RAAtypetrpy"));
        }
 
     },
@@ -7676,8 +7751,8 @@ Tabs.Attaque = {
      }
      t.estimerRes();
      var closestNum = t.getclosestcity();
-     if(t.dcp1)
-		t.dcp1.selectBut(closestNum);
+     //if(t.dcp1)
+		//t.dcp1.selectBut(closestNum);
    },
  
  
