@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20120428a
+// @version        20120702a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20120428a';
+var Version = '20120702a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -294,6 +294,7 @@ if (TEST_WIDE){
   
   AudioManager.init();
   DispReport.init();
+  mapinfoFix.init();
   
   if (Options.ptWinIsOpen){
     mainPop.show (true);
@@ -476,6 +477,23 @@ var battleReports = {
     }
     return msg;
   },
+}
+
+var mapinfoFix = {
+	init : function(){
+		var t = mapinfoFix;
+		t.calcButtonInfo = new CalterUwFunc ('cm.ContextMenuMapController.prototype.calcButtonInfo', [['case "reassign":b.text = g_js_strings.commonstr.reassign;b.color = "blue";b.action = function () {modal_attack(2, e.tile.x, e.tile.y);};d.push(b);break;', 'case "reassign":b.text = g_js_strings.commonstr.reassign;b.color = "blue";b.action = function () {modal_attack(5, e.tile.x, e.tile.y);};d.push(b);break;']]);
+		t.calcButtonInfo.setEnable(Options.mapInfo);
+	},
+	setEnable : function(tf){
+		var t = mapinfoFix;
+		t.calcButtonInfo.setEnable(tf);
+	},
+	isAvailable : function(){
+		var t = mapinfoFix;
+		return t.calcButtonInfo.isAvailable;
+	},
+	
 }
 
 var anticd = {
@@ -4452,6 +4470,7 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=togTowerFix type=checkbox /></td><TD>Fix tower report to show exact target (city, wild or invalid)</td></tr>';
 	  m+='<TR><TD><INPUT id=togKnightSelect type=checkbox /></td><TD>Do not automatically select a knight when changing march type to scout, transport or reassign</td></tr>';
 	  m+='<TR><TD><INPUT id=togCoordBox type=checkbox /></td><TD>Keep map coordinate box/bookmarks on top of troop activity</td></tr>';
+	  m+='<TR><TD><INPUT id=togMapInfo type=checkbox /></td><TD>Fix reassign button on maptile info</td></tr>';
 	  m+='<TR><TD colspan=2><B>Auto Training:</b></td></tr>';
 	  m+='<TR><TD></TD><TD><INPUT id=optAutoTrainMins type=text size=1 value="'+ parseInt(AutoTrainOptions.intervalSecs/60) +'"> minutes between auto-training.</td></tr>';
 	  m+='</table><BR><BR><HR>Note that if a checkbox is greyed out there has probably been a change of KofC\'s code, rendering the option inoperable.';
@@ -4474,6 +4493,7 @@ Tabs.Options = {
       t.togOpt ('togAttackPicker', 'attackCityPicker', AttackDialog.setEnable, AttackDialog.isCityPickerAvailable);
       t.togOpt ('togRptGift', 'enhancedinbox', DispReport.setEnable, DispReport.isDispReportAvailable);
       t.togOpt ('togCoordBox', 'mapCoordsTop', CoordBox.setEnable, CoordBox.isAvailable);
+      t.togOpt ('togMapInfo', 'mapInfo', mapinfoFix.setEnable, mapinfoFix.isAvailable);
       t.togOpt ('togBatRounds', 'dispBattleRounds', null, battleReports.isRoundsAvailable);
       t.togOpt ('togAtkDelete', 'reportDeleteButton', null, battleReports.isRoundsAvailable);
       document.getElementById('ptupdate').addEventListener ('change', t.e_updateChanged, false);
