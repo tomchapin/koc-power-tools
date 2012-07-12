@@ -881,7 +881,6 @@ var Rpt = {
 
 
  	ReportPopup: function (rslt, rpt, reportId) {
-		alert(rpt.side0Name);
 		var t = Rpt;
 		var popReport = null;
 		//need the info from the list query
