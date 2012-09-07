@@ -1251,7 +1251,7 @@ rslt['unts']['u6'] != undefined || rslt['unts']['u7'] != undefined || rslt['unts
 			if (rslt['loot'][3] > 0)
 				m+='<TR><TD>'+stoneImg+'</TD><TD align=right>'+addCommas(rslt['loot'][3])+'</TD></TR>';
 			if (rslt['loot'][4] > 0)
-				m+='<TR><TD>'+oreImg+'</TD><TD align=right>'+addCommas(				m+='<TR><TD>'+oreImg+'</TD><TD align=right>'+addCommas(rslt['loot'][4])+'</TD></TR>';
+				m+='<TR><TD>'+oreImg+'</TD><TD align=right>'+addCommas( rslt['loot'][4])+'</TD></TR>';
 			if (rslt['loot'][5]) {
 				for (var crest=1101; crest < 1116; crest++) {
 					if (rslt['loot'][5][crest] == 1)
