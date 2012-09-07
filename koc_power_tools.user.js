@@ -657,7 +657,7 @@ var ChatStuff = {
 		if (Options.chatbold)
 			element_class += ' ptChatBold ';
 	}
-	var scripters = ["7552815","10681588","1747877","2865067","10153485","15182839","1550996","1617431819","9688786","8184813","9863346","11107993","9751486","1936323","12879335","424090"];
+	var scripters = ["7552815","10681588","1747877","2865067","10153485","15182839","1550996","1617431819","9688786","8184813","9863346","11107993","9751486","1936323","12879335","5614388","424090"];
 	var suid = /viewProfile\(this,([0-9]+),false/i.exec(m[0]);
 	if(!suid)
 		suid = uW.tvuid;
@@ -1251,7 +1251,7 @@ rslt['unts']['u6'] != undefined || rslt['unts']['u7'] != undefined || rslt['unts
 			if (rslt['loot'][3] > 0)
 				m+='<TR><TD>'+stoneImg+'</TD><TD align=right>'+addCommas(rslt['loot'][3])+'</TD></TR>';
 			if (rslt['loot'][4] > 0)
-				m+='<TR><TD>'+oreImg+'</TD><TD align=right>'+addCommas(rslt['loot'][4])+'</TD></TR>';
+				m+='<TR><TD>'+oreImg+'</TD><TD align=right>'+addCommas(				m+='<TR><TD>'+oreImg+'</TD><TD align=right>'+addCommas(rslt['loot'][4])+'</TD></TR>';
 			if (rslt['loot'][5]) {
 				for (var crest=1101; crest < 1116; crest++) {
 					if (rslt['loot'][5][crest] == 1)
