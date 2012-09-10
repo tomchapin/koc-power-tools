@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20120712b
+// @version        20120909a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
@@ -20,6 +20,7 @@ var ENABLE_TEST_TAB = false;
 var SEND_ALERT_AS_WHISPER = false;
 var TEST_WIDE = false;
 var TEST_WIDE_CITIES = 7;
+var ENABLE_ALERT_TO_CHAT = false;
 var History=[];
 
 if (typeof SOUND_FILES == 'undefined') var SOUND_FILES = new Object();
@@ -104,7 +105,8 @@ var Options = {
   enableWhisperAlert : true,
   enableTowerAlert : true,
   OverViewShowExtra : 'maximum',
-  //alertConfig  : {aChat:false, aPrefix:'** I\'m being attacked! **', scouting:false, wilds:false, minTroops:10000, spamLimit:10 },
+  alertConfig  : {aChat:false, aPrefix:'** I\'m being attacked! **', scouting:false, wilds:false, minTroops:10000, spamLimit:10 },
+  celltext     : {atext:false, provider:0, num1:"000", num2:"000", num3:"0000"},
   rptType:'alliance',
   arAttacker:'Them',
   arTarget:'Them',
@@ -2265,15 +2267,18 @@ Tabs.Knights = {
       return; 
     }
     sk = [];
-    var unassigned = parseInt(Math.sqrt(parseInt(knight.experience)/75)) + 1  - parseInt(knight.skillPointsApplied);        
+    var unassigned = parseInt(Math.sqrt(parseInt(knight.experience)/75)) + 1  - parseInt(knight.skillPointsApplied);
+	var overassigned = 0;
     for (var i=0; i<4; i++){
       sk[i] = parseInt(knight[knightRoles[i][1]]);
       if (i == rid)
         sk[i] += unassigned;
-      if(sk[i] > 255)
+      if(sk[i] > 255){
+		overassigned = sk[i] - 255;
 		sk[i] = 255;
+	  }
     }
-	if (unassigned==0) return;
+	if (unassigned==0 || overassigned>0) return;
     if (e!=null) {
 		var row = e.parentNode.parentNode;
 		for (i=row.cells.length-1; i>=1; i--)
@@ -12022,6 +12027,423 @@ t.state = null;
     }
   },
 };
+
+/***** tower tab edits *****/
+Tabs.Tower = {
+  tabOrder : 41,
+  cont : null,
+  fixAvailable : {},
+  tabDisabled : !ENABLE_ALERT_TO_CHAT,
+  Providers : {
+		0: { 'country': "--Country--", 'provider': "--Provider--" },
+        1: { 'country': "AUSTRALIA", 'provider': "T-Mobile" },
+        2: { 'country': "AUSTRALIA", 'provider': "Optus Zoo" },
+        3: { 'country': "AUSTRIA", 'provider': "T-Mobile" },
+        4: { 'country': "BULGARIA", 'provider': "Mtel" },
+        5: { 'country': "BULGARIA", 'provider': "Globul" },
+        6: { 'country': "CANADA", 'provider': "Aliant" },
+        7: { 'country': "CANADA", 'provider': "Bell Mobility" },
+        8: { 'country': "CANADA", 'provider': "Fido" },
+        9: { 'country': "CANADA", 'provider': "MTS Mobility" },
+        10: { 'country': "CANADA", 'provider': "Rogers Wireless" },
+        11: { 'country': "CANADA", 'provider': "Sasktel Mobility" },
+        12: { 'country': "CANADA", 'provider': "Telus" },
+        13: { 'country': "CANADA", 'provider': "Virgin Mobile" },
+        14: { 'country': "CANADA", 'provider': "Presidents Choice" },
+        15: { 'country': "GERMANY", 'provider': "T-Mobile" },
+        16: { 'country': "GERMANY", 'provider': "Vodafone" },
+        17: { 'country': "GERMANY", 'provider': "O2" },
+        18: { 'country': "GERMANY", 'provider': "E-Plus" },
+        19: { 'country': "ICELAND", 'provider': "OgVodafone" },
+        20: { 'country': "ICELAND", 'provider': "Siminn" },
+        21: { 'country': "INDIA", 'provider': "Andhra Pradesh AirTel" },
+        22: { 'country': "INDIA", 'provider': "Andhra Pradesh Idea Cellular" },
+        23: { 'country': "INDIA", 'provider': "Chennal Skycell Airtel" },
+        24: { 'country': "INDIA", 'provider': "Chennel RPG Cellular" },
+        25: { 'country': "INDIA", 'provider': "Delhi Airtel" },
+        26: { 'country': "INDIA", 'provider': "Delhi Hutch" },
+        27: { 'country': "INDIA", 'provider': "Gujarat Idea Cellular" },
+        28: { 'country': "INDIA", 'provider': "Gujaret Airtel" },
+        29: { 'country': "INDIA", 'provider': "Gujaret Celforce" },
+        30: { 'country': "INDIA", 'provider': "Goa Airtel" },
+        31: { 'country': "INDIA", 'provider': "Goa BPL Mobile" },
+        32: { 'country': "INDIA", 'provider': "Goa Idea Cellular" },
+        33: { 'country': "INDIA", 'provider': "Haryana Airtel" },
+        34: { 'country': "INDIA", 'provider': "Haryana Escotel" },
+        35: { 'country': "INDIA", 'provider': "Himachal Pradesh Airtel" },
+        36: { 'country': "INDIA", 'provider': "Karnataka Airtel" },
+        37: { 'country': "INDIA", 'provider': "Kerala Airtel" },
+        38: { 'country': "INDIA", 'provider': "Kerala Escotel" },
+        39: { 'country': "INDIA", 'provider': "Kerala BPL Mobile" },
+        40: { 'country': "INDIA", 'provider': "Kolkata Airtel" },
+        41: { 'country': "INDIA", 'provider': "Madhya Pradesh Airtel" },
+        42: { 'country': "INDIA", 'provider': "Maharashtra Airtel" },
+        43: { 'country': "INDIA", 'provider': "Maharashtra BPL Mobile" },
+        44: { 'country': "INDIA", 'provider': "Maharashtra Idea Cellular" },
+        45: { 'country': "INDIA", 'provider': "Mumbai Airtel" },
+        46: { 'country': "INDIA", 'provider': "Mumbai BPL Mobile" },
+        47: { 'country': "INDIA", 'provider': "Punjab Airtel" },
+        48: { 'country': "INDIA", 'provider': "Pondicherry BPL Mobile" },
+        49: { 'country': "INDIA", 'provider': "Tamil Nadu Airtel" },
+        50: { 'country': "INDIA", 'provider': "Tamil Nadu BPL Mobile" },
+        51: { 'country': "INDIA", 'provider': "Tamil Nadu Aircel" },
+        52: { 'country': "INDIA", 'provider': "Uttar Pradesh West Escotel" },
+        53: { 'country': "IRELAND", 'provider': "Meteor" },
+        54: { 'country': "IRELAND", 'provider': "Meteor MMS" },
+        55: { 'country': "ITALY", 'provider': "TIM" },
+        56: { 'country': "ITALY", 'provider': "Vodafone" },
+        57: { 'country': "JAPAN", 'provider': "AU by KDDI" },
+        58: { 'country': "JAPAN", 'provider': "NTT DoCoMo" },
+        59: { 'country': "JAPAN", 'provider': "Vodafone Chuugoku/Western" },
+        60: { 'country': "JAPAN", 'provider': "Vodafone Hokkaido" },
+        61: { 'country': "JAPAN", 'provider': "Vodafone Hokuriko/Central North" },
+        62: { 'country': "JAPAN", 'provider': "Vodafone Kansai/West, including Osaka" },
+        63: { 'country': "JAPAN", 'provider': "Vodafone Kanto/Koushin/East including Tokyo" },
+        64: { 'country': "JAPAN", 'provider': "Vodafone Kyuushu/Okinawa" },
+        65: { 'country': "JAPAN", 'provider': "Vodafone Shikoku" },
+        66: { 'country': "JAPAN", 'provider': "Vodafone Touhoku/Niigata/North" },
+        67: { 'country': "JAPAN", 'provider': "Vodafone Toukai/Central" },
+        68: { 'country': "JAPAN", 'provider': "Willcom" },
+        69: { 'country': "JAPAN", 'provider': "Willcom di" },
+        70: { 'country': "JAPAN", 'provider': "Willcom dj" },
+        71: { 'country': "JAPAN", 'provider': "Willcom dk" },
+        72: { 'country': "NETHERLANDS", 'provider': "T-Mobile" },
+        73: { 'country': "NETHERLANDS", 'provider': "Orange" },
+        74: { 'country': "SINGAPORE", 'provider': "M1" },
+        75: { 'country': "SOUTH AFRICA", 'provider': "Vodacom" },
+        76: { 'country': "SPAIN", 'provider': "Telefonica Movistar" },
+        77: { 'country': "SPAIN", 'provider': "Vodafone" },
+        78: { 'country': "SWEDEN", 'provider': "Tele2" },
+        79: { 'country': "UNITED STATES", 'provider': "Teleflip" },
+        80: { 'country': "UNITED STATES", 'provider': "Alltel" },
+        81: { 'country': "UNITED STATES", 'provider': "Ameritech" },
+        82: { 'country': "UNITED STATES", 'provider': "ATT Wireless" },
+        83: { 'country': "UNITED STATES", 'provider': "Bellsouth" },
+        84: { 'country': "UNITED STATES", 'provider': "Boost" },
+        85: { 'country': "UNITED STATES", 'provider': "CellularOne" },
+        86: { 'country': "UNITED STATES", 'provider': "CellularOne MMS" },
+        87: { 'country': "UNITED STATES", 'provider': "Cingular" },
+        88: { 'country': "UNITED STATES", 'provider': "Edge Wireless" },
+        89: { 'country': "UNITED STATES", 'provider': "Sprint PCS" },
+        90: { 'country': "UNITED STATES", 'provider': "T-Mobile" },
+        91: { 'country': "UNITED STATES", 'provider': "Metro PCS" },
+        92: { 'country': "UNITED STATES", 'provider': "Nextel" },
+        93: { 'country': "UNITED STATES", 'provider': "O2" },
+        94: { 'country': "UNITED STATES", 'provider': "Orange" },
+        95: { 'country': "UNITED STATES", 'provider': "Qwest" },
+        96: { 'country': "UNITED STATES", 'provider': "Rogers Wireless" },
+        97: { 'country': "UNITED STATES", 'provider': "Telus Mobility" },
+        98: { 'country': "UNITED STATES", 'provider': "US Cellular" },
+        99: { 'country': "UNITED STATES", 'provider': "Verizon" },
+        100: { 'country': "UNITED STATES", 'provider': "Virgin Mobile" },
+        101: { 'country': "UNITED KINGDOM", 'provider': "O2 1" },
+        102: { 'country': "UNITED KINGDOM", 'provider': "O2 2" },
+        103: { 'country': "UNITED KINGDOM", 'provider': "Orange" },
+        104: { 'country': "UNITED KINGDOM", 'provider': "T-Mobile" },
+        105: { 'country': "UNITED KINGDOM", 'provider': "Virgin Mobile" },
+        106: { 'country': "UNITED KINGDOM", 'provider': "Vodafone" },
+        107: { 'country': "BELGIUM", 'provider': "mobistar" },
+        108: { 'country': "GERMANY", 'provider': "1und1" },
+        109: { 'country': "UNITED STATES", 'provider': "MyCricket" }
+    },
+
+  init : function (div){
+    var t = Tabs.Tower;
+    t.cont = div;
+    
+    try {      
+      m = '<TABLE class=ptTab><TR><TD colspan=2><B>KofC Features:</b></td></tr>';
+	 m += '<TR><TD><INPUT id=alertEnable type=checkbox '+ (Options.alertConfig.aChat?'CHECKED ':'') +'/></td><TD>Automatically post incoming attacks to alliance chat.</td></tr>\
+          <TR><TD></td><TD><TABLE cellpadding=0 cellspacing=0>\
+          <TR><TD align=right>Message Prefix: &nbsp; </td><TD><INPUT id=alertPrefix type=text size=60 maxlength=120 value="'+ Options.alertConfig.aPrefix +'" \></td></tr>\
+          <TR><TD align=right>Alert on scouting: &nbsp; </td><TD><INPUT id=alertScout type=checkbox '+ (Options.alertConfig.scouting?'CHECKED ':'') +'/></td></tr>\
+          <TR><TD align=right>Alert on wild attack: &nbsp; </td><TD><INPUT id=alertWild type=checkbox '+ (Options.alertConfig.wilds?'CHECKED ':'') +'/></td></tr>\
+          <TR><TD align=right>Post attacker alliance diplomacy: &nbsp; </td><TD><INPUT id=alertAlliance type=checkbox '+ (Options.alertConfig.includealliance?'CHECKED ':'') +'/></td></tr>\
+          <TR><TD align=right>Post attacker might: &nbsp; </td><TD><INPUT id=alertMight type=checkbox '+ (Options.alertConfig.includemight?'CHECKED ':'') +'/></td></tr>\
+          <TR><TD align=right>Sound alert on impending: &nbsp; </td><TD><INPUT id=alertSound type=checkbox '+ (Options.alertConfig.sound?'CHECKED ':'') +'/></td></tr>\
+          <TR><TD align=right>Send text on impending: &nbsp; </td><TD><INPUT id=alerttext type=checkbox '+ (Options.celltext.enable?'CHECKED ':'') +'/></td></tr>\
+          <TR><TD colspan=5><table><tr><td align=left>Text message incoming attack to: <INPUT id=ptnum1 type=text size=4 maxlength=4 value="'+ Options.celltext.num1 +'"  '+(Options.celltext.provider==0?'DISABLED':'')+'\>\
+&nbsp;<INPUT id=ptnum2 type=text size=3 maxlength=3 value="'+ Options.celltext.num2 +'"  '+(Options.celltext.provider==0?'DISABLED':'')+'\>\
+&nbsp;<INPUT id=ptnum3 type=text size=4 maxlength=4 value="'+ Options.celltext.num3 +'"  '+(Options.celltext.provider==0?'DISABLED':'')+'\></td></tr><tr>\
+    <TD align=left>Country: <select id="ptfrmcountry">';
+    for (var i in t.Providers) {
+       var ret=m.indexOf(t.Providers[i].country);
+       if (ret==-1) {
+         if (t.Providers[i].country==t.Providers[Options.celltext.provider].country) {
+           m += '<option value="'+t.Providers[i].country+'" selected="selected">'+t.Providers[i].country+'</option>'; // Load Previous Provider Selection
+         }
+         else {
+           m += '<option value="'+t.Providers[i].country+'">'+t.Providers[i].country+'</option>';
+         }
+       }
+    }
+
+    m += '</select>\
+    <select id="ptfrmprovider" '+(Options.celltext.provider==0?'DISABLED':'')+'><option value=0 >--Provider--</option>';
+    for (var i in t.Providers) {
+ if(t.Providers[i].country == t.Providers[Options.celltext.provider].country)
+		if(Options.celltext.provider == i)
+			m += '<option value="'+i+'" selected="selected">'+t.Providers[i].provider+'</option>'; // Load Previous Provider Selection
+		else
+           m += '<option value="'+i+'">'+t.Providers[i].provider+'</option>';
+    }
+    m += '</select></td><tr></table></td></tr>\
+          <TR><TD align=right>Minimum # of troops: &nbsp; </td><TD><INPUT id=alertTroops type=text size=7 value="'+ Options.alertConfig.minTroops +'" \> &nbsp; &nbsp; <span id=alerterr></span></td></tr>\
+          </table></td></tr>'
+      m += '<TR><TD><INPUT id=togEnhanceAR type=checkbox /></td><TD>Enable post of Alliance Reports to Alliance Chat</td></tr>\
+		</table>';
+      t.cont.innerHTML = m;	  
+
+        document.getElementById('alertEnable').addEventListener ('change', e_alertOptChanged, false);
+        document.getElementById('alertPrefix').addEventListener ('change', e_alertOptChanged, false);
+        document.getElementById('alertScout').addEventListener ('change', e_alertOptChanged, false);
+        document.getElementById('alertWild').addEventListener ('change', e_alertOptChanged, false);
+        document.getElementById('alertTroops').addEventListener ('change', e_alertOptChanged, false);
+        document.getElementById('alertAlliance').addEventListener ('change', e_alertOptChanged, false);
+        document.getElementById('alertMight').addEventListener ('change', e_alertOptChanged, false);
+        document.getElementById('alertSound').addEventListener ('change', e_alertOptChanged, false);
+        document.getElementById('alertFacebook').addEventListener ('change', e_alertOptChanged, false);
+		document.getElementById('alerttext').addEventListener ('change', function (e){Options.celltext.enable = e.target.checked;}, false);
+		document.getElementById('ptfrmcountry').addEventListener ('change', t.setCountry, false);
+		document.getElementById('ptfrmprovider').addEventListener ('change', t.setProvider, false);
+		document.getElementById('ptnum1').addEventListener ('change', t.phonenum, false);
+		document.getElementById('ptnum2').addEventListener ('change', t.phonenum, false);
+		document.getElementById('ptnum3').addEventListener ('change', t.phonenum, false);
+	  t.togOpt ('togEnhanceAR', 'EnhanceAR', AllianceReportsCheck.enable);
+      
+    } catch (e) {
+      t.cont.innerHTML = '<PRE>'+ e.name +' : '+ e.message +'</pre>';  
+    }
+	
+	function e_alertOptChanged (){
+      Options.alertConfig.aChat = document.getElementById('alertEnable').checked;
+      Options.alertConfig.aPrefix=document.getElementById('alertPrefix').value;      
+      Options.alertConfig.scouting=document.getElementById('alertScout').checked;      
+      Options.alertConfig.wilds=document.getElementById('alertWild').checked;
+      Options.alertConfig.includealliance=document.getElementById('alertAlliance').checked;
+      Options.alertConfig.includemight=document.getElementById('alertMight').checked;
+      Options.alertConfig.sound=document.getElementById('alertSound').checked;
+      var mt = parseInt(document.getElementById('alertTroops').value);
+      if (mt<1 || mt>225000){
+        document.getElementById('alertTroops').value = Options.alertConfig.minTroops;
+        document.getElementById('alerterr').innerHTML = '<font color=#600000><B>INVALID</b></font>';
+        setTimeout (function (){document.getElementById('alerterr').innerHTML =''}, 2000);
+        return;
+      } 
+      Options.alertConfig.minTroops = mt;
+      saveOptions();
+      TowerAlerts.setPostToChatOptions (Options.alertConfig);
+    }
+  },
+
+  phonenum : function() {
+   Options.celltext.num1 = document.getElementById('ptnum1').value;
+   Options.celltext.num2 = document.getElementById('ptnum2').value;
+   Options.celltext.num3 = document.getElementById('ptnum3').value;
+  },
+
+  setCountry : function(){
+    var t = Tabs.Tower;
+    var myselect=document.getElementById("ptfrmprovider");
+// GM_log(document.getElementById("pbfrmprovider").value);
+// GM_log(document.getElementById("pbfrmcountry").value);
+	myselect.innerHTML = '<option value=0 >--Provider--</option>';
+	myselect.disabled = true;
+    for (var i in t.Providers) {
+     if (t.Providers[i].country == document.getElementById("ptfrmcountry").value){
+		var addoption = document.createElement('option');
+		addoption.value = i;
+		addoption.text = t.Providers[i].provider;
+      myselect.add(addoption, null) //add new option to end of "Providers"
+     }
+    }
+	myselect.disabled = false;
+   },
+
+  setProvider : function(){
+    var ddProvider = document.getElementById("ptfrmprovider").wrappedJSObject;
+     Options.celltext.provider=ddProvider.options[ddProvider.selectedIndex].value;
+	if(ddProvider.selectedIndex > 0){
+		document.getElementById("ptnum1").disabled = false;
+		document.getElementById("ptnum2").disabled = false;
+		document.getElementById("ptnum3").disabled = false;
+	} else {
+		document.getElementById("ptnum1").disabled = true;
+		document.getElementById("ptnum2").disabled = true;
+		document.getElementById("ptnum3").disabled = true;
+	}
+    //alert(Options.celltext.provider);
+   },
+  
+  hide : function (){
+  },
+
+  show : function (){
+  },
+  
+  togOpt : function (checkboxId, optionName, callEnable, callIsAvailable){
+    var t = Tabs.Tower;
+    var checkbox = document.getElementById(checkboxId);
+    
+    if (callIsAvailable && callIsAvailable()==false){
+      checkbox.disabled = true;
+      return;
+    }
+    if (Options[optionName])
+      checkbox.checked = true;
+    checkbox.addEventListener ('change', new eventToggle(checkboxId, optionName, callEnable).handler, false);
+    function eventToggle (checkboxId, optionName, callOnChange){
+      this.handler = handler;
+      var optName = optionName;
+      var callback = callOnChange;
+      function handler(event){
+        Options[optionName] = this.checked;
+        saveOptions();
+        if (callback != null)
+          callback (this.checked);
+      }
+    }
+  },
+}
+
+var AllianceReportsCheck = {
+	aRpt:{},
+	
+  init : function (){
+    var t = AllianceReportsCheck;
+	var b = GM_getValue ('allianceRpt_'+GetServerId());
+    if(b!=null)
+		t.aRpt = JSON2.parse (b);  
+	else{
+		t.aRpt = {};
+	}
+    t.enable (Options.EnhanceAR);
+  },
+
+
+  enable : function (tf){
+    var t = AllianceReportsCheck;
+	if (Options.EnhanceAR)
+			t.checkAllianceReport();
+    setTimeout(function(){ 
+		t.enable(Options.EnhaceAR);
+	}, parseInt((Math.random()*10*1000)+(20*1000)));
+  },
+  
+  checkAllianceReport : function (){
+  var t = AllianceReportsCheck;
+var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+    params.group = "a";
+    new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/listReports.php" + unsafeWindow.g_ajaxsuffix, {
+      method: "post",
+      parameters: params,
+      onSuccess: function (rslt) {
+        t.parseAReports (rslt.arReports, rslt.arPlayerNames, rslt.arAllianceNames, rslt.arCityNames, rslt.totalPages);
+      },
+      onFailure: function (rslt) {
+      },
+    }, false);
+  },
+
+   parseAReports : function (ar, playerNames, allianceNames, cityNames, totalPages){
+    var t = AllianceReportsCheck;
+	var myAllianceId = getMyAlliance()[0];
+	var rptkeys = unsafeWindow.Object.keys(ar);
+      if (matTypeof(ar) != 'array'){
+	  for (var i = 0; i < rptkeys.length; i++) {
+          var rpt = ar[rptkeys[i]];
+          rpt.side0AllianceId = parseInt(rpt.side0AllianceId);
+          var targetDiplomacy = getDiplomacy (rpt.side0AllianceId);
+          if (rpt.side1AllianceId != myAllianceId){
+	var ID = rpt.reportId;
+	   if(t.aRpt["a"+ID] != null)
+		return;
+			  if (rpt.marchType == 3)
+				atkType = 'scouted';
+			  else if (rpt.marchType == 4)
+				atkType = 'attacked';
+			  if (rpt.side0TileType > 50)
+				target = "city";
+			  else if (rpt.side0TileType <= 50)
+				target = "wild";
+			  if(rpt.side1AllianceId == 0)
+				var allianceName = 'Undefined';
+			  else
+				var allianceName = allianceNames["a"+rpt.side1AllianceId];
+	  var date=unsafeWindow.formatDateByUnixTime(rpt.reportUnixTime);
+	   var msg = 'Report No: '+rpt.reportId+' '+date+' : '+playerNames['p'+rpt.side0PlayerId]+'\'s '+target+' at '+rpt.side0XCoord+','+rpt.side0YCoord+' has been '+atkType+' by '+playerNames["p"+rpt.side1PlayerId]+' at '+rpt.side1XCoord+','+rpt.side1YCoord+' of '+allianceName+'('+getDiplomacy(rpt.side1AllianceId)+')';
+ var automsg = sendChat('/a '+msg);
+ if(Options.celltext.enable)
+ t.postToCell(rpt, playerNames, cityNames);
+	if(Options.alertConfig.sound)
+		AudioAlert.sound(true);
+	t.addAllianceReport(rpt);
+		logit(msg);
+          }
+		 }
+		}	  
+ },
+  
+  addAllianceReport : function (rpt){
+  t = AllianceReportsCheck;
+  var ID = rpt.reportId;
+  t.aRpt["a"+ID] = rpt.reportUnixTime;
+  var now = unixTime() - (5*24*60*60);
+  for(k in t.aRpt){
+	if(t.aRpt[k] < now)
+		delete t.aRpt[k];
+  }
+  var string = JSON2.stringify(t.aRpt);
+  //t.towerMarches['m'+m.mid]
+    setTimeout(function() {
+  GM_setValue("allianceRpt_"+GetServerId(), string);
+  }, 0);
+
+},
+
+postToCell : function (m, playerNames, cityNames){
+    var t = AllianceReportsCheck;
+    var data = [];
+    if (m.marchType == 3){
+      data.atkType = 'scout';
+    } else if (m.marchType == 4){
+      data.atkType = 'atk';
+    } else {
+      return;
+    }
+
+    if (m.side0TileType > 50)
+      data.target = 'city ('+ m.side0XCoord +','+ m.side0YCoord+')';
+    else {
+      data.target = 'wild ('+ m.side0XCoord +','+ m.side0YCoord+')';
+    }
+	
+      data.who = playerNames["p"+m.side1PlayerId]+' ('+m.side1XCoord+','+m.side1YCoord+')';
+
+     //data.arrival = unsafeWindow.timestr(parseInt(m.reportUnixTime - unixTime()));
+     data.arrival = unsafeWindow.formatDateByUnixTime(m.reportUnixTime);
+
+    data.totTroops = ' ';
+
+    data.provider = Options.celltext.provider;
+    data.num1 = Options.celltext.num1;
+    data.num2 = Options.celltext.num2;
+    data.num3 = Options.celltext.num3;
+    data.serverId = GetServerId();
+    data.player = playerNames['p'+m.side0PlayerId];
+    data.city = cityNames['c'+m.side0CityId];
+
+  GM_xmlhttpRequest({
+    method: 'POST',
+    url: 'http://hs151.digitalweb.net/index.php',
+	headers: {
+		'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    },
+	data: implodeUrlArgs(data),
+
+	})
+  },
+}
 
 function reloadKOC (){
   var serverId = GetServerId();
