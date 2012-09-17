@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20120909a
+// @version        20120917a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20120712b';
+var Version = '20120917a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -20,7 +20,7 @@ var ENABLE_TEST_TAB = false;
 var SEND_ALERT_AS_WHISPER = false;
 var TEST_WIDE = false;
 var TEST_WIDE_CITIES = 7;
-var ENABLE_ALERT_TO_CHAT = false;
+var ENABLE_ALERT_TO_CHAT = true;
 var History=[];
 
 if (typeof SOUND_FILES == 'undefined') var SOUND_FILES = new Object();
@@ -106,6 +106,7 @@ var Options = {
   enableTowerAlert : true,
   OverViewShowExtra : 'maximum',
   alertConfig  : {aChat:false, aPrefix:'** I\'m being attacked! **', scouting:false, wilds:false, minTroops:10000, spamLimit:10 },
+  alertinterval : 10,
   celltext     : {atext:false, provider:0, num1:"000", num2:"000", num3:"0000"},
   rptType:'alliance',
   arAttacker:'Them',
@@ -296,6 +297,7 @@ if (TEST_WIDE){
   
   AudioManager.init();
   DispReport.init();
+  AllianceReportsCheck.init();
   mapinfoFix.init();
   
   if (Options.ptWinIsOpen){
@@ -310,7 +312,7 @@ if (TEST_WIDE){
     TowerAlerts.enableFixFalseReports(true);
   
   AddMainTabLink('TOOLS', eventHideShow, mouseMainTab);
-TestSomething.init ();  
+// TestSomething.init ();  
 //setInterval (function(){logit (inspect (getClientCoords (mainPop.getMainDiv()), 3, 1))}, 2000);  
 }
 
@@ -1434,7 +1436,6 @@ rslt['unts']['u6'] != undefined || rslt['unts']['u7'] != undefined || rslt['unts
 	},
 	
 };
-
 
 /********************** Tournament Tab *******************************************/
 
@@ -12152,87 +12153,47 @@ Tabs.Tower = {
     t.cont = div;
     
     try {      
-      m = '<TABLE class=ptTab><TR><TD colspan=2><B>KofC Features:</b></td></tr>';
-	 m += '<TR><TD><INPUT id=alertEnable type=checkbox '+ (Options.alertConfig.aChat?'CHECKED ':'') +'/></td><TD>Automatically post incoming attacks to alliance chat.</td></tr>\
-          <TR><TD></td><TD><TABLE cellpadding=0 cellspacing=0>\
-          <TR><TD align=right>Message Prefix: &nbsp; </td><TD><INPUT id=alertPrefix type=text size=60 maxlength=120 value="'+ Options.alertConfig.aPrefix +'" \></td></tr>\
-          <TR><TD align=right>Alert on scouting: &nbsp; </td><TD><INPUT id=alertScout type=checkbox '+ (Options.alertConfig.scouting?'CHECKED ':'') +'/></td></tr>\
-          <TR><TD align=right>Alert on wild attack: &nbsp; </td><TD><INPUT id=alertWild type=checkbox '+ (Options.alertConfig.wilds?'CHECKED ':'') +'/></td></tr>\
-          <TR><TD align=right>Post attacker alliance diplomacy: &nbsp; </td><TD><INPUT id=alertAlliance type=checkbox '+ (Options.alertConfig.includealliance?'CHECKED ':'') +'/></td></tr>\
-          <TR><TD align=right>Post attacker might: &nbsp; </td><TD><INPUT id=alertMight type=checkbox '+ (Options.alertConfig.includemight?'CHECKED ':'') +'/></td></tr>\
-          <TR><TD align=right>Sound alert on impending: &nbsp; </td><TD><INPUT id=alertSound type=checkbox '+ (Options.alertConfig.sound?'CHECKED ':'') +'/></td></tr>\
-          <TR><TD align=right>Send text on impending: &nbsp; </td><TD><INPUT id=alerttext type=checkbox '+ (Options.celltext.enable?'CHECKED ':'') +'/></td></tr>\
-          <TR><TD colspan=5><table><tr><td align=left>Text message incoming attack to: <INPUT id=ptnum1 type=text size=4 maxlength=4 value="'+ Options.celltext.num1 +'"  '+(Options.celltext.provider==0?'DISABLED':'')+'\>\
-&nbsp;<INPUT id=ptnum2 type=text size=3 maxlength=3 value="'+ Options.celltext.num2 +'"  '+(Options.celltext.provider==0?'DISABLED':'')+'\>\
-&nbsp;<INPUT id=ptnum3 type=text size=4 maxlength=4 value="'+ Options.celltext.num3 +'"  '+(Options.celltext.provider==0?'DISABLED':'')+'\></td></tr><tr>\
-    <TD align=left>Country: <select id="ptfrmcountry">';
-    for (var i in t.Providers) {
-       var ret=m.indexOf(t.Providers[i].country);
-       if (ret==-1) {
-         if (t.Providers[i].country==t.Providers[Options.celltext.provider].country) {
-           m += '<option value="'+t.Providers[i].country+'" selected="selected">'+t.Providers[i].country+'</option>'; // Load Previous Provider Selection
-         }
-         else {
-           m += '<option value="'+t.Providers[i].country+'">'+t.Providers[i].country+'</option>';
-         }
-       }
-    }
-
-    m += '</select>\
-    <select id="ptfrmprovider" '+(Options.celltext.provider==0?'DISABLED':'')+'><option value=0 >--Provider--</option>';
-    for (var i in t.Providers) {
- if(t.Providers[i].country == t.Providers[Options.celltext.provider].country)
-		if(Options.celltext.provider == i)
-			m += '<option value="'+i+'" selected="selected">'+t.Providers[i].provider+'</option>'; // Load Previous Provider Selection
-		else
-           m += '<option value="'+i+'">'+t.Providers[i].provider+'</option>';
-    }
-    m += '</select></td><tr></table></td></tr>\
-          <TR><TD align=right>Minimum # of troops: &nbsp; </td><TD><INPUT id=alertTroops type=text size=7 value="'+ Options.alertConfig.minTroops +'" \> &nbsp; &nbsp; <span id=alerterr></span></td></tr>\
-          </table></td></tr>'
-      m += '<TR><TD><INPUT id=togEnhanceAR type=checkbox /></td><TD>Enable post of Alliance Reports to Alliance Chat</td></tr>\
-		</table>';
-      t.cont.innerHTML = m;	  
-
-        document.getElementById('alertEnable').addEventListener ('change', e_alertOptChanged, false);
-        document.getElementById('alertPrefix').addEventListener ('change', e_alertOptChanged, false);
-        document.getElementById('alertScout').addEventListener ('change', e_alertOptChanged, false);
-        document.getElementById('alertWild').addEventListener ('change', e_alertOptChanged, false);
-        document.getElementById('alertTroops').addEventListener ('change', e_alertOptChanged, false);
-        document.getElementById('alertAlliance').addEventListener ('change', e_alertOptChanged, false);
-        document.getElementById('alertMight').addEventListener ('change', e_alertOptChanged, false);
-        document.getElementById('alertSound').addEventListener ('change', e_alertOptChanged, false);
-        document.getElementById('alertFacebook').addEventListener ('change', e_alertOptChanged, false);
-		document.getElementById('alerttext').addEventListener ('change', function (e){Options.celltext.enable = e.target.checked;}, false);
+      m = '<TABLE class=ptTab><TR><TD colspan=2><B>Alliance Report Scanner:</b></td></tr>';
+	 m += '<TR><TD><INPUT id=togEnhanceAR type=checkbox /></td><TD>Enable post of Alliance Reports to Alliance Chat</td></tr>\
+		   <TR><TD></td><TD><TABLE>\
+			<TR><TD>Scan interval: <INPUT id=ptalertinterval type=text size=3 value='+Options.alertinterval+' /> seconds\
+			<TR><TD><INPUT id=ptalerttext type=checkbox '+ (Options.celltext.enable?'CHECKED ':'') +'/> Send text on alert</td></tr>\
+			<TR><TD colspan=2><table><tr><td align=left>Text message alert to: <INPUT id=ptnum1 type=text size=4 maxlength=4 value="'+ Options.celltext.num1 +'"  '+(Options.celltext.provider==0?'DISABLED':'')+'\> &nbsp;<INPUT id=ptnum2 type=text size=3 maxlength=3 value="'+ Options.celltext.num2 +'"  '+(Options.celltext.provider==0?'DISABLED':'')+'\> &nbsp;<INPUT id=ptnum3 type=text size=4 maxlength=4 value="'+ Options.celltext.num3 +'"  '+(Options.celltext.provider==0?'DISABLED':'')+'\></td></tr>\
+			<TR><TD align=left>Country: <select id="ptfrmcountry">';
+			for (var i in t.Providers) {
+			   var ret=m.indexOf(t.Providers[i].country);
+			   if (ret==-1) {
+				 if (t.Providers[i].country==t.Providers[Options.celltext.provider].country) {
+				   m += '<option value="'+t.Providers[i].country+'" selected="selected">'+t.Providers[i].country+'</option>'; // Load Previous Provider Selection
+				 }
+				 else {
+				   m += '<option value="'+t.Providers[i].country+'">'+t.Providers[i].country+'</option>';
+				 }
+			   }
+			}
+			m += '</select>\
+			<select id="ptfrmprovider" '+(Options.celltext.provider==0?'DISABLED':'')+'><option value=0 >--Provider--</option>';
+			for (var i in t.Providers) {
+				if(t.Providers[i].country == t.Providers[Options.celltext.provider].country)
+					if(Options.celltext.provider == i)
+						m += '<option value="'+i+'" selected="selected">'+t.Providers[i].provider+'</option>'; // Load Previous Provider Selection
+					else
+					   m += '<option value="'+i+'">'+t.Providers[i].provider+'</option>';
+			}
+			m += '</select></td></tr></table></td></tr></table></td></tr></table>';
+		t.cont.innerHTML = m;
+	  
+		document.getElementById('ptalerttext').addEventListener ('change', function (e){Options.celltext.enable = e.target.checked;}, false);
 		document.getElementById('ptfrmcountry').addEventListener ('change', t.setCountry, false);
 		document.getElementById('ptfrmprovider').addEventListener ('change', t.setProvider, false);
 		document.getElementById('ptnum1').addEventListener ('change', t.phonenum, false);
 		document.getElementById('ptnum2').addEventListener ('change', t.phonenum, false);
 		document.getElementById('ptnum3').addEventListener ('change', t.phonenum, false);
-	  t.togOpt ('togEnhanceAR', 'EnhanceAR', AllianceReportsCheck.enable);
+		document.getElementById('ptalertinterval').addEventListener ('change', function(e){Options.alertinterval = parseInt(e.target.value);}, false);
+		t.togOpt ('togEnhanceAR', 'EnhanceAR', AllianceReportsCheck.enable);
       
     } catch (e) {
       t.cont.innerHTML = '<PRE>'+ e.name +' : '+ e.message +'</pre>';  
-    }
-	
-	function e_alertOptChanged (){
-      Options.alertConfig.aChat = document.getElementById('alertEnable').checked;
-      Options.alertConfig.aPrefix=document.getElementById('alertPrefix').value;      
-      Options.alertConfig.scouting=document.getElementById('alertScout').checked;      
-      Options.alertConfig.wilds=document.getElementById('alertWild').checked;
-      Options.alertConfig.includealliance=document.getElementById('alertAlliance').checked;
-      Options.alertConfig.includemight=document.getElementById('alertMight').checked;
-      Options.alertConfig.sound=document.getElementById('alertSound').checked;
-      var mt = parseInt(document.getElementById('alertTroops').value);
-      if (mt<1 || mt>225000){
-        document.getElementById('alertTroops').value = Options.alertConfig.minTroops;
-        document.getElementById('alerterr').innerHTML = '<font color=#600000><B>INVALID</b></font>';
-        setTimeout (function (){document.getElementById('alerterr').innerHTML =''}, 2000);
-        return;
-      } 
-      Options.alertConfig.minTroops = mt;
-      saveOptions();
-      TowerAlerts.setPostToChatOptions (Options.alertConfig);
     }
   },
 
@@ -12245,8 +12206,6 @@ Tabs.Tower = {
   setCountry : function(){
     var t = Tabs.Tower;
     var myselect=document.getElementById("ptfrmprovider");
-// GM_log(document.getElementById("pbfrmprovider").value);
-// GM_log(document.getElementById("pbfrmcountry").value);
 	myselect.innerHTML = '<option value=0 >--Provider--</option>';
 	myselect.disabled = true;
     for (var i in t.Providers) {
@@ -12307,7 +12266,7 @@ Tabs.Tower = {
 }
 
 var AllianceReportsCheck = {
-	aRpt:{},
+  aRpt:{},
 	
   init : function (){
     var t = AllianceReportsCheck;
@@ -12327,12 +12286,12 @@ var AllianceReportsCheck = {
 			t.checkAllianceReport();
     setTimeout(function(){ 
 		t.enable(Options.EnhaceAR);
-	}, parseInt((Math.random()*10*1000)+(20*1000)));
+	}, parseInt((Math.random()*15*1000)+(Options.alertinterval*1000)));
   },
   
   checkAllianceReport : function (){
   var t = AllianceReportsCheck;
-var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+  var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
     params.group = "a";
     new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/listReports.php" + unsafeWindow.g_ajaxsuffix, {
       method: "post",
