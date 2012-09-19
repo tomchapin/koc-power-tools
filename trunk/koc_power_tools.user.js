@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20120917a
+// @version        20120919a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20120917a';
+var Version = '20120919a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -312,7 +312,7 @@ if (TEST_WIDE){
     TowerAlerts.enableFixFalseReports(true);
   
   AddMainTabLink('TOOLS', eventHideShow, mouseMainTab);
-// TestSomething.init ();  
+//TestSomething.init ();  
 //setInterval (function(){logit (inspect (getClientCoords (mainPop.getMainDiv()), 3, 1))}, 2000);  
 }
 
@@ -1436,6 +1436,7 @@ rslt['unts']['u6'] != undefined || rslt['unts']['u7'] != undefined || rslt['unts
 	},
 	
 };
+
 
 /********************** Tournament Tab *******************************************/
 
@@ -6108,7 +6109,7 @@ Tabs.OverView = {
            for(i=0; i<Cities.numCities; i++) {
              n += "<TD width=81 style='background: #FFFFFF'><B>"+ Cities.cities[i].name.substring(0,11) +'</b><BR>'+ coordLink (Cities.cities[i].x, Cities.cities[i].y) +"<BR>"+ uW.provincenames['p'+ Cities.cities[i].provId] +"</td>";
            }
-   	  for(a=1;a<13;a++) {
+   	  for(a=1;a<14;a++) {
    	        var total=0;
    	        var marching = 0;
    	        var raiding = 0;
@@ -6719,7 +6720,7 @@ Tabs.OverView = {
       		}
 		  u += '<DIV class=ptstat>TROOP TRAIN TIMES ESTIMATES</div><TABLE align=center cellpadding=1 cellspacing=0><TR align=right><TD></td>';
 	      infoRows = [];
-      		for (r=0; r<24; r++)
+      		for (r=0; r<25; r++)
       			infoRows[r] = [];
       		for(i=0; i<Cities.numCities; i++) {
       			cityID = 'city'+ Cities.cities[i].id;
@@ -6731,23 +6732,23 @@ Tabs.OverView = {
       			infoRows[3][i] = Cities.cities[i].marshallCombatScore;
       			infoRows[5][i] = Cities.cities[i].stableLevel;
       			infoRows[6][i] = Cities.cities[i].workshopLevel;
-      			for (var j=1; j<13; j++)
+      			for (var j=1; j<14; j++)
       				infoRows[j+6][i] = ((Cities.cities[i]['Troop'+j+'Time'] > 0)?(3600 / Cities.cities[i]['Troop'+j+'Time']):0);
-      			infoRows[19][i] = Cities.cities[i]['Def53Time'];
-      			if (infoRows[19][i] > 0)
-      				infoRows[19][i] = 3600 / infoRows[19][i];
-      			infoRows[20][i] = Cities.cities[i]['Def55Time'];
+      			infoRows[20][i] = Cities.cities[i]['Def53Time'];
       			if (infoRows[20][i] > 0)
-      				infoRows[20][i] = 3600 / infoRows[20][i];
-      			infoRows[21][i] = Cities.cities[i]['Def60Time'];
+      				infoRows[20][i] = 3600 / infoRows[19][i];
+      			infoRows[21][i] = Cities.cities[i]['Def55Time'];
       			if (infoRows[21][i] > 0)
-      				infoRows[21][i] = 3600 / infoRows[21][i];
-      			infoRows[22][i] = Cities.cities[i]['Def61Time'];
+      				infoRows[21][i] = 3600 / infoRows[20][i];
+      			infoRows[22][i] = Cities.cities[i]['Def60Time'];
       			if (infoRows[22][i] > 0)
-      				infoRows[22][i] = 3600 / infoRows[22][i];
-      			infoRows[23][i] = Cities.cities[i]['Def62Time'];
+      				infoRows[22][i] = 3600 / infoRows[21][i];
+      			infoRows[23][i] = Cities.cities[i]['Def61Time'];
       			if (infoRows[23][i] > 0)
-      				infoRows[23][i] = 3600 / infoRows[23][i];
+      				infoRows[23][i] = 3600 / infoRows[22][i];
+      			infoRows[24][i] = Cities.cities[i]['Def62Time'];
+      			if (infoRows[24][i] > 0)
+      				infoRows[24][i] = 3600 / infoRows[23][i];
       		}
       		u += "<td align=center valign=bottom width=60px><b>Total</td></tr>";
       		 var rownum = 0;
@@ -6770,12 +6771,13 @@ Tabs.OverView = {
       		_displayrow ("Balista", infoRows[16]);
       		_displayrow ("Ram", infoRows[17]);
       		_displayrow ("Catapult", infoRows[18]);
+      		_displayrow ("Bloodthorn", infoRows[19]);
       		u += "<TR><TD></TD><TD nowrap align=center colspan="+(Cities.numCities)+"><B>Wall Defense Hourly Production</B></TD></TR>";
-      		_displayrow ("XBow", infoRows[19]);
-      		_displayrow ("Trebuchet", infoRows[20]);
-      		_displayrow ("Spike", infoRows[21]);
-      		_displayrow ("Trap", infoRows[22]);
-      		_displayrow ("Caltrop", infoRows[23]);
+      		_displayrow ("XBow", infoRows[20]);
+      		_displayrow ("Trebuchet", infoRows[21]);
+      		_displayrow ("Spike", infoRows[22]);
+      		_displayrow ("Trap", infoRows[23]);
+      		_displayrow ("Caltrop", infoRows[24]);
 		  u += '</tr></table>';
 	      u += '<DIV class=ptstat>MISC INFO</div><TABLE><TR><TD width="200px" style="background-color:#FFFFFF; border:none">KofC client version: '+ KOCversion +'</td>';
 	      u += '<TD style="background-color:#FFFFFF; border:none"><INPUT id=ptButDebug type=submit name="SEED" value="DEBUG"></tr></td></table></div>';
@@ -6895,7 +6897,7 @@ Tabs.OverView = {
       str += _row ('Ore', rows[4]);
       str += _row ('Aetherstone', rows[5]);
       str += '<TR><TD colspan=11><BR></td></tr>';
-      for (r=1; r<13; r++){
+      for (r=1; r<14; r++){
         rows[r] = [];
         for(i=0; i<Cities.numCities; i++) {
           cityID = 'city'+ Cities.cities[i].id;
@@ -6905,13 +6907,13 @@ Tabs.OverView = {
 	  
 	  var colnum = Cities.numCities;
       if (Options.includeMarching){
-        for (var i=0; i<13; i++){
+        for (var i=0; i<14; i++){
           rows[i][colnum] = march.marchUnits[i];
 		}
 		colnum++;
       }
 	  if(Options.includeTrainingExt){
-		for (var i=0; i<13; i++){
+		for (var i=0; i<14; i++){
 		  rows[i][colnum] = train.trainUnts[i];
 		}
 	  }
@@ -6938,6 +6940,7 @@ Tabs.OverView = {
       str += _row ('Ballista', rows[10]);
       str += _row ('Ram', rows[11]);
       str += _row ('Catapult', rows[12]);
+      str += _row ('Bloodthorn', rows[13]);
       str += '<TR><TD colspan=11><BR></td></tr>';
       
       row = [];
