@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20120919a
+// @version        20120921a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20120919a';
+var Version = '20120921a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -639,7 +639,7 @@ var ChatStuff = {
        var element_class = '';
        var alliance = false;
        var whisper = false;
-       var m = /div class='info'>.*<\/div>/im.exec(msg);
+       var m = /div class=\'info\'>.*<\/div>/im.exec(msg);
        if (m == null)
          return msg;
        if(type != null){
@@ -651,7 +651,6 @@ var ChatStuff = {
 		   }
 	   }
        var whisp = m[0];
-       
        
     if (whisper) {
 		if (Options.chatwhisper) {
@@ -686,7 +685,7 @@ msg = msg.replace (/\bhttps\:\/\/[-a-z].*\'\/\>/i, 'data:image/png;base64,iVBORw
 		 if (m[0].indexOf('My wilderness at') >= 0 && Options.chatAttack)
 			element_class = ' ptChatAttack';
 	 }
-     msg = msg.replace ("class='content'", "class='content "+ element_class +"'");
+     msg = msg.replace ("class=\'content\'", "class='content "+ element_class +"'");
 	 msg = msg.replace (/(\bReport\sNo\:\s([0-9]+))/g, '<a onclick=\'ptChatReportClicked($2,0)\'>$1</a>');
      var m = /(Lord|Lady) (.*?)</im.exec(msg);
      if (m != null)
@@ -1436,7 +1435,6 @@ rslt['unts']['u6'] != undefined || rslt['unts']['u7'] != undefined || rslt['unts
 	},
 	
 };
-
 
 /********************** Tournament Tab *******************************************/
 
@@ -7173,8 +7171,8 @@ Tabs.Attaque = {
        }
        }, false); 
  	  ById("BO_RAZ_Units").addEventListener ('click', function() {
-  	for (r=1; r<13; r++) ById("RAAnbunit"+r).value=0; 
- 	}, false); 
+		for (r=1; r<13; r++) ById("RAAnbunit"+r).value=0; 
+		}, false); 
        ById("BO_AT_Fav_ajou").addEventListener ('click', function() {
         if (ById("BO_AT_Fav_Nom").value=="") {
          alert("Please fill in a name!");
@@ -7734,34 +7732,40 @@ Tabs.Attaque = {
       }
      for (r=1; r<13; r++){
        ById("RAApdestunit"+r).addEventListener ('click', function() {
-         var nomcha=this.id.replace("RAApdest","RAAdest");
-         var nomcha2=this.id.replace("RAApdestunit","RAAnbunit");
-         ById(nomcha2).value=0; 
-         var e=1;
-         var f=unsafeWindow.unixtime();
-         if(Seed.playerEffects.aurasExpire){if(Seed.playerEffects.aurasExpire>f){e=1.15}}
-	 if(Seed.playerEffects.auras2Expire){if(Seed.playerEffects.auras2Expire>f){e=1.3}}
+			 var nomcha=this.id.replace("RAApdest","RAAdest");
+			 var nomcha2=this.id.replace("RAApdestunit","RAAnbunit");
+			 ById(nomcha2).value=0; 
+			 var e=1;
+			 var f=unsafeWindow.unixtime();
+			 if(Seed.playerEffects.aurasExpire){if(Seed.playerEffects.aurasExpire>f){e=1.15}}
+			 if(Seed.playerEffects.auras2Expire){if(Seed.playerEffects.auras2Expire>f){e=1.3}}
 
-         var l_elem=ById("BOitem_931");
-	 if(l_elem&&l_elem.checked&&parseInt(Seed.items["i931"])>0){	        e+=0.25;	 }
-	 var l_elem=ById("BOitem_932");
-	 if(l_elem&&l_elem.checked&&parseInt(Seed.items["i932"])>0){	        e+=0.5;     }
+			 var l_elem=ById("BOitem_931");
+			 if(l_elem&&l_elem.checked&&parseInt(Seed.items["i931"])>0)
+				e+=0.25;
+			 var l_elem=ById("BOitem_932");
+			 if(l_elem&&l_elem.checked&&parseInt(Seed.items["i932"])>0)
+				e+=0.5;
+				
+			 var trmarchsizebuff = equippedthronestats(66);
+			 if(trmarchsizebuff > 0)
+				e+=(trmarchsizebuff/100);
 
-         var niveauPointRall=parseInt(getCityBuilding (t.sourceCity.id, 12).maxLevel); // 12=Point de ralliement
-         var maxtroupe=parseInt(niveauPointRall*10000*e);
-         if (niveauPointRall==11) maxtroupe=parseInt(150000*e);
-         if (niveauPointRall==12) maxtroupe=parseInt(200000*e);
-         var nbunitto=0;
-         for (r=1; r<13; r++) {
-           nbunitto+=parseInt(ById("RAAnbunit"+r).value);
-	 }
-         var libre = parseInt(maxtroupe - nbunitto);
-         if (ById(nomcha).value>=libre) {
-           ById(nomcha2).value = libre;
-         }  else {
-           ById(nomcha2).value= ById(nomcha).value;
-         }
-        }, false);
+			 var niveauPointRall=parseInt(getCityBuilding (t.sourceCity.id, 12).maxLevel); // 12=Point de ralliement
+			 var maxtroupe=parseInt(niveauPointRall*10000*e);
+			 if (niveauPointRall==11) maxtroupe=parseInt(150000*e);
+			 if (niveauPointRall==12) maxtroupe=parseInt(200000*e);
+			 var nbunitto=0;
+			 for (r=1; r<13; r++) {
+			   nbunitto+=parseInt(ById("RAAnbunit"+r).value);
+			 }
+			 var libre = parseInt(maxtroupe - nbunitto);
+			 if (ById(nomcha).value>=libre) {
+			   ById(nomcha2).value = libre;
+			 }  else {
+			   ById(nomcha2).value= ById(nomcha).value;
+			 }
+       }, false);
      }
      if (t.sourceCity!=city) {
            for (r=1; r<13; r++){
@@ -7784,6 +7788,27 @@ Tabs.Attaque = {
    },
  
  
+}
+
+function equippedthronestats (stat_id){
+	var equip_items = Seed.throne.slotEquip[1];
+	var total = 0;
+	for(var k = 0; k<equip_items.length; k++){
+		var item_id = equip_items[k];
+		var item = uW.kocThroneItems[item_id];
+		logit(inspect(item,3,1));
+		for(var i = 1; i<=item.quality; i++){
+			var id = item["effects"]["slot"+i]["id"];
+			if(id == stat_id){
+				var tier = parseInt(item["effects"]["slot"+i]["tier"]);
+				var level = item["level"];
+				var p = uW.cm.thronestats.tiers[id][tier];
+				var Percent = p.base + ((level * level + level) * p.growth * 0.5);
+				total += Percent;
+			}
+		}
+	}
+	return total;
 }
 
 
@@ -11746,11 +11771,17 @@ Array.prototype.compare = function(testArr) {
     }
     return true;
 }
-String.prototype.entityTrans = { '&':'&amp;', '<':'&lt;',  '>':'&gt;',  '\"':'&quot;' };
+String.prototype.entityTrans = { '&':'&amp;', '<':'&lt;',  '>':'&gt;',  '\"':'&quot;', '\'':'&#039', '<':'\\u003c', '/':'\\/', '\\':'\\\\', '\"':'\\\"','{':'&#123;','}':'&#125;'};
 String.prototype.htmlEntities = function() {
   var ret = this.toString();
   for (k in this.entityTrans)
      ret  = ret.split(k).join(this.entityTrans[k]);
+  return ret;
+}
+String.prototype.htmlSpecialCharsDecode = function() {
+  var ret = this.toString();
+  for (k in this.entityTrans)
+     ret = ret.split(this.entityTrans[k]).join(k);
   return ret;
 }
 
