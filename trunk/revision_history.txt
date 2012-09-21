@@ -1,6 +1,14 @@
 REVISION HISTORY:
 ----------------
-
+20120921a
+   Add report scanner
+   Fix knight tab adding 0 skill points
+   Add bloodthorn troop to resource view
+   Fix march tab account for TR march size buff
+20120712b
+   Fixed fetch report hyperlink issue
+20120702a
+   KOC bugfix for reassign button on map
 20120428a
    Added delete gifts button in inbox
    Fixed transparency not working
