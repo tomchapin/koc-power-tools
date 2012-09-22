@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20120921a
+// @version        20120922a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20120921a';
+var Version = '20120922a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -487,15 +487,34 @@ var mapinfoFix = {
 	init : function(){
 		var t = mapinfoFix;
 		t.calcButtonInfo = new CalterUwFunc ('cm.ContextMenuMapController.prototype.calcButtonInfo', [['case "reassign":b.text = g_js_strings.commonstr.reassign;b.color = "blue";b.action = function () {modal_attack(2, e.tile.x, e.tile.y);};d.push(b);break;', 'case "reassign":b.text = g_js_strings.commonstr.reassign;b.color = "blue";b.action = function () {modal_attack(5, e.tile.x, e.tile.y);};d.push(b);break;']]);
+		t.MapContextMenus = new CalterUwFunc ('cm.ContextMenuMapController.prototype.calcCityType', [['return c', 'c = calcCityTypeFix(c,d);return c']]);
 		t.calcButtonInfo.setEnable(Options.mapInfo);
+		t.MapContextMenus.setEnable(Options.mapInfo2);
+		uW.cm.ContextMenuMapController.prototype.MapContextMenus.City["2"] = ["profile", "throne", "transport", "reinforce", "reassign", "reinforcements", "message", "bookmark"];
+		uW.calcCityTypeFix = t.calcCityType_hook;
+		// logit(uW.cm.ContextMenuMapController.prototype.MapContextMenus.City["3"]);
+		// logit(uW.cm.ContextMenuMapController.prototype.calcCityType);
 	},
 	setEnable : function(tf){
 		var t = mapinfoFix;
 		t.calcButtonInfo.setEnable(tf);
 	},
+	setEnable2 : function(tf){
+		var t = mapinfoFix;
+		t.MapContextMenus.setEnable(tf);
+	},
+	calcCityType_hook : function (c,d){
+		if(Cities.byID[d.city.id] && c != 1)
+			c = uW.cm.CITY_STATUS.MY_CITY_AND_NOT_CURRENT_CITY;
+		return c;
+	},
 	isAvailable : function(){
 		var t = mapinfoFix;
 		return t.calcButtonInfo.isAvailable;
+	},
+	isAvailable2 : function(){
+		var t = mapinfoFix;
+		return t.MapContextMenus.isAvailable;
 	},
 	
 }
@@ -604,8 +623,9 @@ var ChatStuff = {
     var t = ChatStuff;
 	if(getMyAlliance()[0] > 0)
 		t.getAllianceLeaders();
-    t.chatDivContentFunc = new CalterUwFunc ('Chat.chatDivContent', [['return f.join("");', 'var msg = f.join("");\n msg=chatDivContent_hook(msg,d);\n return msg;']]);
+    t.chatDivContentFunc = new CalterUwFunc ('Chat.chatDivContent', [['h = cm.formatModel.exe(h, true);','h=chatDivContent_hook2(h);h = cm.formatModel.exe(h, true);'],['return f.join("");', 'var msg = f.join("");\n msg=chatDivContent_hook(msg,d);\n return msg;']]);
     uW.chatDivContent_hook = t.chatDivContentHook;
+    uW.chatDivContent_hook2 = t.chatDivContentHook2;
     uW.ptChatIconClicked = t.e_iconClicked;
     uW.ptChatReportClicked = Rpt.FindReport;
     t.setEnable (Options.chatEnhance);
@@ -632,6 +652,14 @@ var ChatStuff = {
     var e = document.getElementById('mod_comm_input');
     name = name.replace(/Ã‚Â°Ã‚Â°/g,"'");
     e.value = '@'+ name +' ';
+  },
+  
+  chatDivContentHook2 : function (msg){
+		var div = document.createElement('div');
+		div.innerHTML = msg;
+		div.innerText = div.innerHTML;
+		msg = div.innerHTML.toString();
+		return msg.htmlSpecialCharsDecode();
   },
 
  chatDivContentHook : function (msg,type){
@@ -4475,6 +4503,7 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=togKnightSelect type=checkbox /></td><TD>Do not automatically select a knight when changing march type to scout, transport or reassign</td></tr>';
 	  m+='<TR><TD><INPUT id=togCoordBox type=checkbox /></td><TD>Keep map coordinate box/bookmarks on top of troop activity</td></tr>';
 	  m+='<TR><TD><INPUT id=togMapInfo type=checkbox /></td><TD>Fix reassign button on maptile info</td></tr>';
+	  m+='<TR><TD><INPUT id=togMapInfo2 type=checkbox /></td><TD>Add reassign button when clicked on own city</td></tr>';
 	  m+='<TR><TD colspan=2><B>Auto Training:</b></td></tr>';
 	  m+='<TR><TD></TD><TD><INPUT id=optAutoTrainMins type=text size=1 value="'+ parseInt(AutoTrainOptions.intervalSecs/60) +'"> minutes between auto-training.</td></tr>';
 	  m+='</table><BR><BR><HR>Note that if a checkbox is greyed out there has probably been a change of KofC\'s code, rendering the option inoperable.';
@@ -4498,6 +4527,7 @@ Tabs.Options = {
       t.togOpt ('togRptGift', 'enhancedinbox', DispReport.setEnable, DispReport.isDispReportAvailable);
       t.togOpt ('togCoordBox', 'mapCoordsTop', CoordBox.setEnable, CoordBox.isAvailable);
       t.togOpt ('togMapInfo', 'mapInfo', mapinfoFix.setEnable, mapinfoFix.isAvailable);
+      t.togOpt ('togMapInfo2', 'mapInfo2', mapinfoFix.setEnable2, mapinfoFix.isAvailable2);
       t.togOpt ('togBatRounds', 'dispBattleRounds', null, battleReports.isRoundsAvailable);
       t.togOpt ('togAtkDelete', 'reportDeleteButton', null, battleReports.isRoundsAvailable);
       document.getElementById('ptupdate').addEventListener ('change', t.e_updateChanged, false);
