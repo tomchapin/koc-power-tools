@@ -1025,7 +1025,7 @@ var Rpt = {
 		trEffect[91] = 'Chance to Find Items';
 		trEffect[92] = 'Chance to Find Items in Dark Forests';
 		trEffect[93] = 'Chance to Find Items in PvP';
-
+		
 
 
 		if (rpt.marchType == 0)
@@ -1064,7 +1064,7 @@ var Rpt = {
 			rpt.side0TileTypeText='City';
 
 		function buildHeader () {
-			var h='<TABLE class=ptTab width=100%>';
+			var h='<TABLE class=ptTab width=auto>';
 			h+='<TR valign=top><TD align=left width=10%><B>';
 			if (rpt.marchName == 'Anti-Scout' || rpt.marchName == 'Scout')
 				h+=rpt.marchName+'ing at';
@@ -1115,11 +1115,7 @@ var Rpt = {
 			if (rslt['unts'] != undefined) {
 				if (rpt.marchName == 'Reinforce')
 					th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Troops Reinforced</TH></TR>';
-				else if (rslt['unts']['u1'] != undefined || rslt['unts']['u2'] != undefined || rslt['unts']['u3'] != undefined || rslt['unts']['u4'] != undefined || rslt['unts']['u5'] != undefined || 
-
-rslt['unts']['u6'] != undefined || rslt['unts']['u7'] != undefined || rslt['unts']['u8'] != undefined || rslt['unts']['u9'] != undefined || rslt['unts']['u10'] != undefined || rslt['unts']['u11'] != undefined || rslt
-
-['unts']['u12'] != undefined)
+				else if (rslt['unts']['u1'] != undefined || rslt['unts']['u2'] != undefined || rslt['unts']['u3'] != undefined || rslt['unts']['u4'] != undefined || rslt['unts']['u5'] != undefined || rslt['unts']['u6'] != undefined || rslt['unts']['u7'] != undefined || rslt['unts']['u8'] != undefined || rslt['unts']['u9'] != undefined || rslt['unts']['u10'] != undefined || rslt['unts']['u11'] != undefined || rslt['unts']['u12'] != undefined)
 					th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Troops Found</TH></TR>';
 				for (var i=1;i<13;i++)
 					if (rslt['unts']['u'+i] != undefined)
@@ -1364,21 +1360,41 @@ rslt['unts']['u6'] != undefined || rslt['unts']['u7'] != undefined || rslt['unts
 			m+='<TR><TD colspan=4> </TD></TR>';	
 			m+='<TR><TD colspan=4><b>Attack Results:</b></TD></TR>';
 			m+='<TR><TD colspan=4>(<A onclick="ptGotoMap('+ rpt.side1XCoord +','+ rpt.side1YCoord +')">'+ rpt.side1XCoord +','+ rpt.side1YCoord +'</a>) ' + rpt.side1CityName + '</TD></TR>';
+			
 			if (rslt['fght']["s1"]) {
-				m+='<TR><TH></TH><TH align=left>Troops</TH><TH align=right>Fought</TH><TH align=right>Survived</TH></TR>';
-				for (var i=1;i<13;i++) {
+				m+='<TR><TH></TH><TH align=left>Troops (M = Might)</TH><TH align=right>Fought</TH><TH align=right>Survived</TH><TH align=right>Might</TH></TR>'; 
+				//<TH align=right>Train Time</th> 
+				var totalMightAtt = 0;
+				var totalTrainingTime = 0;
+				var cityNum = 0;
+        for (var i=1;i<13;i++) {
+        
 					if (rslt['fght']["s1"]['u'+i]) {
+          var mightStuff = {
+			might : null,
+			diedAtt :null,
+			diedDef : null,
+      		mightLossAtt : null,
+      	}
+                    		mightStuff.might = parseInt(unsafeWindow.unitmight['unt'+i])
 						if (rslt['fght']["s1"]['u'+i][0] > rslt['fght']["s1"]['u'+i][1]) {
-							m+='<TR><TD>' + unitImg[i] + '</td>';
+
+           		mightStuff.diedAtt = parseInt(rslt['fght']["s1"]['u'+i][0]) - parseInt( rslt['fght']["s1"]['u'+i][1]);
+           		mightStuff.mightLossAtt = mightStuff.might * mightStuff.diedAtt   
+							m+='<TR><TD>' + unitImg[i] + '(M = ' + mightStuff.might + ')' + '</td>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s1"]['u'+i][0])+ '</td>';
+							m+='<TD align=right><FONT color="#CC0000">'+ addCommas(rslt['fght']["s1"]['u'+i][1])+'</FONT></td>';
+							m+='<TD align=right><FONT color="#CC0000">'+ '-' + addCommas(mightStuff.mightLossAtt) +'</FONT></td>';
+						  	totalMightAtt += mightStuff.mightLossAtt
+						  	}else {
+							m+='<TR><TD>' + unitImg[i] +  '(M = ' + mightStuff.might + ')' +'</td>';
 							m+='<TD align=right>'+addCommas(rslt['fght']["s1"]['u'+i][0])+'</td>';
-							m+='<TD align=right><FONT color="#CC0000">'+addCommas(rslt['fght']["s1"]['u'+i][1])+'</FONT></td></tr>';
-						} else {
-							m+='<TR><TD>' + unitImg[i] + '</td>';
-							m+='<TD align=right>'+addCommas(rslt['fght']["s1"]['u'+i][0])+'</td>';
-							m+='<TD align=right>'+addCommas(rslt['fght']["s1"]['u'+i][1])+'</td></tr>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s1"]['u'+i][1])+'</td>';
+							m+='<TD align=right><FONT color="#0A9106">0</font></td>';
 						}
 					}
 				}
+      		m+='<TR><FONT color="#CC0000"><TH>Loss</TH><TD>' + addCommas(totalMightAtt) + '</font></tr>';
 			}
 			m+='</TABLE></TD><TD width=50% align=right valign=top>';
 			m+='<TABLE class=ptTab width=100%>';
@@ -1406,51 +1422,92 @@ rslt['unts']['u6'] != undefined || rslt['unts']['u7'] != undefined || rslt['unts
 					}
 				}
 			}
-
 			m+='<TR><TD colspan=4> </TD></TR>';	
 			m+='<TR><TD colspan=4><b>Defense Results:</b></TD></TR>';
 			m+='<TR><TD colspan=4>Rounds: ' + rslt['rnds'] + '</TD></TR>';
 			if (rslt['fght']["s0"]) {
-				m+='<TR><TH></TH><TH align=left>Troops</TH><TH align=right>Fought</TH><TH align=right>Survived</TH></TR>';
-				for (var i=1;i<13;i++) {
+				m+='<TR><TH></TH><TH align=left>Troops</TH><TH align=right>Fought</TH><TH align=right>Survived</TH><TH align=right>Might</TH></TR>'; 
+				var totalMightDef = 0;
+				var totalTrainingTimeDef = 0;
+        for (var i=1;i<13;i++) {
+       
 					if (rslt['fght']["s0"]['u'+i]) {
+          	var mightStuff2 = {
+			    might : null,
+			    diedAtt :null,
+			    diedDef : null,
+      		 	mightLossAtt : null,
+      			mightLossDef : null,
+			}
+			
+									mightStuff2.might = parseInt(unsafeWindow.unitmight['unt'+i])
+
 						if (rslt['fght']["s0"]['u'+i][0] > rslt['fght']["s0"]['u'+i][1]) {
-							m+='<TR><TD>' + unitImg[i] + '</td>';
+                     
+              mightStuff2.diedDef = parseInt(rslt['fght']["s0"]['u'+i][0]) - parseInt( rslt['fght']["s0"]['u'+i][1]);
+              mightStuff2.mightLossDef = mightStuff2.might * mightStuff2.diedDef 
+           		trainTimeStuff2.troopTrainingTime = ((mightStuff2.diedAtt * trainTimeStuff2['u' + i])/Seed.cities.length);
+							m+='<TR><TD>' + unitImg[i] +  '(M = ' + mightStuff2.might + ')' +'</td>';
 							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['u'+i][0])+'</td>';
-							m+='<TD align=right><FONT color="#CC0000">'+addCommas(rslt['fght']["s0"]['u'+i][1])+'</FONT></td></tr>';
+							m+='<TD align=right><FONT color="#CC0000">'+addCommas(rslt['fght']["s0"]['u'+i][1])+'</FONT></td>';
+							m+='<TD align=right><FONT color="#CC0000">'+ '-'+addCommas(mightStuff2.mightLossDef)+'</FONT></td>';
+							totalMightDef += mightStuff2.mightLossDef
 						} else {
-							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TR><TD>' + unitImg[i] +  '(M = ' + mightStuff2.might + ')' +'</td>';
 							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['u'+i][0])+'</td>';
-							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['u'+i][1])+'</td></tr>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['u'+i][1])+'</td>';
+							m+='<TD align=right><FONT color="#0A9106">0</font></td>';
 						}
 					}
 				}
+				var fortStuff = {
+					might:0,
+					diedDef:0,
+					mightKilledDef : 0,
+
+				}
+							      
 				for (var i=53;i<=55;i++) {
+					fortStuff.might = parseInt(fortmight['u'+i])
 					if (rslt['fght']["s0"]['f'+i]) {
 						if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) {
-							m+='<TR><TD>' + unitImg[i] + '</td>';
+							fortStuff.diedDef = parseInt(rslt['fght']["s0"]['f'+i][0] - rslt['fght']["s0"]['f'+i][1]);
+              fortStuff.mightKilledDef = fortStuff.might * fortStuff.diedDef
+							m+='<TR><TD>' + unitImg[i] + i + '(M = ' + fortStuff.might + ')' +'</td>';
 							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
-							m+='<TD align=right><FONT color="#CC0000">'+addCommas(rslt['fght']["s0"]['f'+i][1])+'</font></td></tr>';
+							m+='<TD align=right><FONT color="#CC0000">'+ addCommas(rslt['fght']["s0"]['f'+i][1])+'</font></td>';
+							m+='<TD align=right><FONT color="#CC0000">'+'-'+ addCommas(fortStuff.mightKilledDef)+'</FONT></td>';
+							totalTrainingTimeDef += trainTimeStuff2.troopTrainingTime
+							totalMightDef += fortStuff.mightKilledDef
 						} else {
-							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TR><TD>' + unitImg[i] + i +'(M = ' + fortStuff.might + ')' +'</td>';
 							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
-							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][1])+'</td></tr>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][1])+'</td>';
+							m+='<TD align=right><FONT color="#0A9106">0</font></td>';
 						}
 					}
 				}
-				for (var i=60;i<=63;i++) {
+     				for (var i=60;i<=63;i++) {
+					fortStuff.might = parseInt(fortmight['u'+i])
 					if (rslt['fght']["s0"]['f'+i]) {
 						if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) {
-							m+='<TR><TD>' + unitImg[i] + '</td>';
+							fortStuff.diedDef = parseInt(rslt['fght']["s0"]['f'+i][0] - rslt['fght']["s0"]['f'+i][1]);
+              fortStuff.mightKilledDef = fortStuff.might * fortStuff.diedDef
+							m+='<TR><TD>' + unitImg[i] + i + '(M = ' + fortStuff.might + ')' +'</td>';
 							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
-							m+='<TD align=right><FONT color="#CC0000">'+addCommas(rslt['fght']["s0"]['f'+i][1])+'</font></td></tr>';
+							m+='<TD align=right><FONT color="#CC0000">'+ addCommas(rslt['fght']["s0"]['f'+i][1])+'</font></td>';
+							m+='<TD align=right><FONT color="#CC0000">'+'-'+ addCommas(fortStuff.mightKilledDef)+'</FONT></td>';
+							totalTrainingTimeDef += trainTimeStuff2.troopTrainingTime
+							totalMightDef += fortStuff.mightKilledDef
 						} else {
-							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TR><TD>' + unitImg[i] + i +'(M = ' + fortStuff.might + ')' +'</td>';
 							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
-							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][1])+'</td></tr>';
+							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][1])+'</td>';
+							m+='<TD align=right><FONT color="#0A9106">0</font></td>';
 						}
 					}
 				}
+				 m+='<TR><FONT color="#CC0000"><TH>Loss</TH><TD>' + addCommas(totalMightDef) + '</font></tr>';  
 			} else
 				m+='<TR><TD>No Troops Defended</TD></TR>';
 			m+='</TABLE></TD></TR></TABLE>';
