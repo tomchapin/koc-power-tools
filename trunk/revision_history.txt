@@ -1,5 +1,7 @@
 REVISION HISTORY:
 ----------------
+20120923a
+   Fix bug march tab march size buff check
 20120921a
    Add report scanner
    Fix knight tab adding 0 skill points
