@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20120922a
+// @version        20120923a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20120922a';
+var Version = '20120923a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -7488,6 +7488,10 @@ Tabs.Attaque = {
      if(l_elem&&l_elem.checked&&parseInt(Seed.items["i932"])>0){
        e+=0.5;
      }
+	 
+	 var trmarchsizebuff = equippedthronestats(66);
+	 if(trmarchsizebuff > 0)
+		e+=(trmarchsizebuff/100);
        
       var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
       
@@ -11898,6 +11902,15 @@ function htmlSelector (valNameObj, curVal, tags){
 
 }
 
+function toUnicode(theString) {
+  var unicodeString = '';
+  for (var i=0; i < theString.length; i++) {
+    var theUnicode = theString.charCodeAt(i);
+    theUnicode = '&#' + theUnicode +';';
+    unicodeString += theUnicode;
+  }
+  return unicodeString;
+}
 
 function unixTime (){
   return parseInt (new Date().getTime() / 1000) + uW.g_timeoff;
