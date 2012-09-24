@@ -4958,9 +4958,10 @@ Tabs.Train = {
   		var TotalTimeArthur = TroopTime * 0.5;
   		var TotalTimeMerlin = TroopTime * 0.3;
   		var TotalTTS = unsafeWindow.cm.ThroneController.effectBonus(77);
+  		var baseTime = t.calcBaseTrainTime(TroopTypeID,NumOfTroops);
 
   		message =  '<TABLE align=center><TR>';
-  		//message += '<TR><TD><B>Throne boost: '+ TotalTTS +'% </b></td></tr>';
+  		message += '<TR><TD><B>Base Time NO TR: '+ timestr(baseTime,true) +' </b></td></tr>';
   		message += '<TR><TD>Time with ' + TotalTTS + '% Throne Boost : </td><TD>' + timestr(TroopTime,true) + '</td></tr>';
   		message += '<TR><TD>Time with Lacelot\'s : </td><TD>'+timestr(TotalTimeLancelot,true)+' </td></tr>';
   		message += '<TR><TD>Time with Arthur\'s : </td><TD>'+timestr(TotalTimeArthur,true)+' </td></tr>';
@@ -4969,9 +4970,59 @@ Tabs.Train = {
   		message += '<TR><TD>Time with 4x Reso : </td><TD>'+ timestr(TotalTime4x25,true) + ' - ' + timestr(TotalTime4x10,true) + ' </td></tr></table>';
   		
   		document.getElementById('pbTroopTimeEst').innerHTML = message;
-  		
   },
- 
+ calcBaseTrainTime:function(d, f) {
+ 	var uw = unsafeWindow
+    var c = +(uw.unitcost["unt" + d][7]) * f,
+        e, k = {}, h = uw.seed.buildings["city" + uw.currentcityid],
+        j = {}, l = uw.seed.knights["city" + uw.currentcityid],
+        a, g = uw.seed.leaders["city" + uw.currentcityid];
+    k.barracks = 0;
+    k.workshop = 0;
+    k.stable = 0;
+    k.tech = 0;
+    k.knight = 0;
+    k.ultimate = 0;
+    unsafeWindow.jQuery.each(h, function (n, m) {
+        m.id = +(m[0]);
+        m.level = +(m[1]);
+        if (m.id === 13 && m.level > 0) {
+            k.barracks += (m.level + 9)
+        }
+        if (m.id === 16 && m.level > 0) {
+            if (+(d) >= 9) {
+                k.workshop = m.level
+            }
+        }
+        if (m.id === 17 && m.level > k.stable) {
+            if (+(d) >= 7) {
+                k.stable = m.level
+            }
+        }
+    });
+    e = k.barracks / 10;
+    c = Math.max(1, Math.ceil(c / e));
+    e = 1;
+    if (l) {
+        a = l["knt" + g.combatKnightId];
+        if (a) {
+            k.knight = (+(a.combatBoostExpireUnixtime) - uw.unixtime() > 0) ? (a.combat * 1.25) : a.combat
+        } else {
+            k.knight = 0
+        }
+    }
+    if (uw.seed.tech) {
+        k.tech = uw.seed.tech.tch5
+    }
+    k.ultimate = k.workshop + k.stable + k.tech;
+    e = e * (1 + (0.1 * k.ultimate) + (0.005 * k.knight));
+    if (uw.cm.WorldSettings.isOn("GUARDIAN_MARCH_EFFECT")) {
+        var b = uw.cm.guardianModalModel.getStoneTrainingSpeedBonus();
+        e = e * (1 + b)
+    }
+    c = Math.max(1, Math.ceil(c / e));
+    return c
+},
   calcTRBoosts : function (StatID){
 		var equipped = Seed.throne.slotEquip[1];
 		var total = 0;
