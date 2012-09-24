@@ -4803,6 +4803,7 @@ Tabs.Train = {
   timer : null,
   stats : {},
   selectedCity : {},
+  cityNum :0,
   trainTimer : null,
   running : false,
   gamble : {"1":{"min":"5","max":"15","cost":"2"},"2":{"min":"10","max":"25","cost":"4"}},
@@ -4846,6 +4847,7 @@ Tabs.Train = {
 		<option value=2>Use "+ t.gamble[2].cost+"x resources ("+ t.gamble[2].min+" - "+t.gamble[2].max+"%)</option>\
 		</select>\
 		</td></tr>\
+		<TR><TD colspan=3 align=center><DIV id=pbTroopTimeEst></div></td></tr>\
       <TR><TD colspan=3 align=center><DIV style='height:10px'></div><INPUT id='ptttButDo' type=submit value='"+uW.g_js_strings.modal_openBarracks.trainttl+"'\
       ></td></tr>\
       </table></td><TD width=20></td><TD style='border-left:solid 2px;' width=50% align=center>\
@@ -4885,7 +4887,19 @@ Tabs.Train = {
         <TD width=50% style='padding-left:15px; padding-right:15px'><DIV style='text-align:center'><B>"+uW.g_js_strings.modal_openWalls.defqueue+"&nbsp; (<SPAN\ id=statDTtot></span>)</b><BR><HR></div><DIV id=divSTright style='overflow-y: auto; height:210px; max-height:210px'></div></td></tr>\
       </div></div>";
     t.cont.innerHTML = s;
-
+    document.getElementById('ptttInpPS').addEventListener('keyup',function(){
+        if (document.getElementById('ptttInpPS').value != ""){
+            t.dispTroopTrainTimes();
+        }else{
+            document.getElementById('ptttInpPS').value = "0"
+            t.dispTroopTrainTimes();
+        }
+    });
+    document.getElementById('ptttType').addEventListener('change',function(){
+        if (document.getElementById('ptttInpPS').value > 0){
+            t.dispTroopTrainTimes()
+        }
+    });
     var dcp = new CdispCityPicker ('ptspeed', document.getElementById('ptspeedcity'), true, t.clickCitySelect, 0);
     t.TTspMax = document.getElementById ('ptttSpMax');
     t.TTspMaxPS = document.getElementById ('ptttSpMaxPS');
@@ -4930,8 +4944,53 @@ Tabs.Train = {
     t.changeDefSelect();
      t.doAutoTrain(1);
   },
+  dispTroopTrainTimes:function(){
+  		var t = Tabs.Train;
+  		var TroopTypeID = parseInt(document.getElementById('ptttType').value);
+  		var NumOfTroops = parseInt(document.getElementById('ptttInpPS').value); 
+  		var TroopTime = unsafeWindow.modal_barracks_traintime(TroopTypeID,NumOfTroops);
+  		var TroopName = unsafeWindow.unitcost['unt'+ TroopTypeID][0];
+  		var TotalTime2x5 = TroopTime * 0.95;
+  		var TotalTime2x15 = TroopTime * 0.85;
+  		var TotalTime4x10 = TroopTime * 0.9;
+  		var TotalTime4x25 = TroopTime * 0.75;
+  		var TotalTimeLancelot = TroopTime * 0.7;
+  		var TotalTimeArthur = TroopTime * 0.5;
+  		var TotalTimeMerlin = TroopTime * 0.3;
+  		var TotalTTS = unsafeWindow.cm.ThroneController.effectBonus(77);
 
-
+  		message =  '<TABLE align=center><TR>';
+  		//message += '<TR><TD><B>Throne boost: '+ TotalTTS +'% </b></td></tr>';
+  		message += '<TR><TD>Time with ' + TotalTTS + '% Throne Boost : </td><TD>' + timestr(TroopTime,true) + '</td></tr>';
+  		message += '<TR><TD>Time with Lacelot\'s : </td><TD>'+timestr(TotalTimeLancelot,true)+' </td></tr>';
+  		message += '<TR><TD>Time with Arthur\'s : </td><TD>'+timestr(TotalTimeArthur,true)+' </td></tr>';
+  		message += '<TR><TD>Time with Merlin\'s : </td><TD>'+timestr(TotalTimeMerlin,true)+'</td></tr>';
+  		message += '<TR><TD>Time with 2x Reso : </td><TD>'+ timestr(TotalTime2x15,true) + ' - ' + timestr(TotalTime2x5,true) + ' </td></tr>'; 
+  		message += '<TR><TD>Time with 4x Reso : </td><TD>'+ timestr(TotalTime4x25,true) + ' - ' + timestr(TotalTime4x10,true) + ' </td></tr></table>';
+  		
+  		document.getElementById('pbTroopTimeEst').innerHTML = message;
+  		
+  },
+ 
+  calcTRBoosts : function (StatID){
+		var equipped = Seed.throne.slotEquip[1];
+		var total = 0;
+		for(var k = 0; k<equipped.length; k++){
+			var item_id = equipped[k];
+			var item = unsafeWindow.kocThroneItems[item_id];
+			for(var i = 1; i<=item.quality; i++){
+				var id = item['effects']['slot'+i]['id'];
+				if(id == StatID){
+					var tier = parseInt(item["effects"]["slot"+i]["tier"]);
+					var level = item["level"];
+					var p = unsafeWindow.cm.thronestats.tiers[id][tier];
+					var Percent = p.base + ((level * level + level) * p.growth * 0.5);
+					total += Percent;
+				}
+			}
+		}
+		return total;
+	},
   hide : function (){
     var t = Tabs.Train;
     clearTimeout (t.timer);
@@ -4945,6 +5004,7 @@ Tabs.Train = {
     t.changeDefSelect();
     t.timer = setTimeout (t.show, 2000);
   },
+
 
 /*******  TROOPS  ******/  
   
@@ -4969,6 +5029,7 @@ Tabs.Train = {
       t.TTinpPerSlot.value = 0;
     else
       t.TTinpPerSlot.value = parseInt(t.stats.MaxTrain / slots);
+    t.dispTroopTrainTimes();
   },
 
   clickTroopMaxSlots : function (){
