@@ -6453,7 +6453,7 @@ Tabs.OverView = {
     			  9:37,
     			  10:40,
     			  11:41,
-    			  12:40};
+    			  12:42};
     			  		   
     fertilizer = Seed.tech['tch1'];
     logging = Seed.tech['tch2'];
