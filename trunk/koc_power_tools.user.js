@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20120923a
+// @version        20120924c
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20120923a';
+var Version = '20120924c';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -6628,7 +6628,7 @@ Tabs.OverView = {
     	var count=0;
     	city = 'city'+Seed.cities[i][0];
     	for (y in Seed.buildings[city]) {
-    		if (Seed.buildings[city][y][0] >=5 && Seed.buildings[city][y][0] <19) count++;
+    		if (Seed.buildings[city][y][0] >=5 && Seed.buildings[city][y][0] <=21 && Seed.buildings[city][y][0] !=19) count++;
     	}
     	if (count == 31) m+='<TD width=79 style="background:#FFFFFF"><FONT COLOR= "669900">';
     	else m+='<TD width=79 style="background:#FFFFFF"><FONT COLOR= "CC0000">';
@@ -6650,7 +6650,7 @@ Tabs.OverView = {
     	m+= count + '</font> ('+FieldSpace[castle]+')</td>';
     }
     m+='</tr>';
-    for (b=0;b<20;b++){
+    for (b=0;b<=21;b++){
     	m+='<TR valign=top align=right><TD width=85 style="background-color:'+Colors.OverviewDarkRow+';">'+uW.buildingcost['bdg' + b][0]+'</td>';
         for (c=0;c<Seed.cities.length;c++){
         	m+='<TD style="width:79px; max-width:79px; word-wrap: break-word; background:#FFFFFF">';
