@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20120924c
+// @version        20120927a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20120924c';
+var Version = '20120927a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -1927,6 +1927,7 @@ Tabs.Wilds = {
     uW.ptButMaxTraps = t.e_butMaxTraps;
     uW.ptInpWildTraps = t.e_inpTraps;
     uW.ptButWildSet = t.e_butWildSet;
+    uW.ptButAbandon = t.e_abandon;
     t.cont.innerHTML = '<DIV id=wildContent style="maxheight:700px; height:700px; overflow-y:auto">';
 //    t.show ();
   },
@@ -1960,7 +1961,7 @@ Tabs.Wilds = {
       var sortem = [];
 
       if (matTypeof(cWilds) != 'array') {
-        m += '<TR style="background-color:white; font-weight:bold;" align=right><TD align=left>Wild Type</td><TD></td><TD align=left>Coords</td><TD>Traps</td><TD align=left>Mercenaries</td>\
+        m += '<TR style="background-color:white; font-weight:bold;" align=right><TD align=left>Wild Type</td><TD></td><TD align=left>Coords</td><TD>Traps</td><TD align=left>Mercs</td><TD>Abandon</td>\
          <TD width=15></td><TD colspan=3 class=entry>'+ htmlTitleLine(' CHANGE DEFENSES ') +'</td></tr>';
         for (var k in Seed.wilderness['city'+city.id])
           sortem.push (Seed.wilderness['city'+city.id][k]);
@@ -1977,9 +1978,10 @@ Tabs.Wilds = {
           var maxTraps = parseInt(wild.tileLevel)*100;
           var maxBuild = maxTraps - parseInt(wildDef.fort60Count);
           t.wildList[c][i] = [wild.tileId, maxBuild];          
+          //
           m += '<TR align=right'+ (row++%2?'':' class=ptOddrow') +'><TD align=left>'+ wildNames[wild.tileType] +'</td>\
             <TD>'+ wild.tileLevel +'</td><TD align=center><A onclick="ptGotoMap('+ wild.xCoord +','+ wild.yCoord +')">'+ wild.xCoord +','+ wild.yCoord +'</a></td>\
-            <TD align=right><B>'+ wildDef.fort60Count +'</b></td><TD align=center><B>'+ mercNames[wildDef.mercLevel] +'</b></td>\
+            <TD align=right><B>'+ wildDef.fort60Count +'</b></td><TD align=center><B>'+ mercNames[wildDef.mercLevel] +'</b></td><TD align=center>'+strButton14('Abandon', 'onclick="ptButAbandon('+wild.tileId+','+wild.xCoord+','+wild.yCoord+','+city.id+ ')" id=tileId_'+wild.tileId) + '</td>\
             <TD></td><TD align=left class=ptentry><B>Build Traps:</b> <INPUT onchange="ptInpWildTraps(this)" id=ptwt_'+ c +'_'+ i 
               + (maxBuild==0?' DISABLED ':'')+' style="margin:0px; padding:0px" type=text size=3 maxlength=4></td>'
           if (wildDef.fort60Count < maxTraps)
@@ -1988,7 +1990,7 @@ Tabs.Wilds = {
             m += '<TD class=ptentry></td>';
           m += '<TD class=ptentry> &nbsp; &nbsp; <B>Mercs:</b> ' + htmlSelector(mercNames, wildDef.mercLevel, 'id=ptwm_'+ c +'_'+ i) +' &nbsp; &nbsp; </td></tr>';
         }
-        m += '<TR><TD colspan=6></td><TD class=ptentry align=center colspan=3><TABLE><TR><TD width=40% align=left>Cost: <SPAN id=ptwgc_'+ c +'>0</span></td>\
+        m += '<TR><TD colspan=6></td><TD></td><TD class=ptentry align=center colspan=3><TABLE><TR><TD width=40% align=left>Cost: <SPAN id=ptwgc_'+ c +'>0</span></td>\
             <TD width=10%>'+ strButton20("SET DEFENSES", 'onclick="ptButWildSet('+ c +')"') +'<TD width=40% align=right>Gold: <SPAN id=ptwgt_'+ c +'>0</span></td></td></tr></table></td></tr>';
       } else {
         m+= '<TR><TD colspan=9> &nbsp; </td></tr>';
@@ -1998,7 +2000,30 @@ Tabs.Wilds = {
     document.getElementById('ptwref').addEventListener ('click', t.show, false);
     t.updateGold ();
   },
-    
+  
+  e_abandon:function(tileId,xCoord,yCoord,cityId){
+  	var t = Tabs.Wilds;
+  	var params = uW.Object.clone(uW.g_ajaxparams);
+    params.tid = tileId;
+    params.x = xCoord;
+    params.y = yCoord;
+    params.cid = cityId; 
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/abandonWilderness.php" + uW.g_ajaxsuffix, {
+    	method: "post",
+    	parameters: params,
+    	onSuccess: function (rslt) {
+    		if (rslt.ok){
+   				delete Seed.wilderness["city"+cityId]["t" + tileId];
+   				t.show();
+    			if (rslt.updateSeed){
+    				uW.update_seed(rslt.updateSeed);
+    			}
+    		}
+    	},  
+    	onFailure: function () {},
+    });
+  },
+
   e_butWildSet : function (c){
     var t = Tabs.Wilds;
     var totTraps = 0;  
@@ -2224,7 +2249,8 @@ Tabs.Knights = {
     var t = Tabs.Knights;
     t.cont = div;
     uW.ptAssignSkill = t.clickedAssignPoints;
-    uW.ptAssignTunes = t.clickedAssignTune;  
+    uW.ptAssignTunes = t.clickedAssignTune; 
+    uW.ptButDismiss = t.postDismissKnight; 
     t.cont.innerHTML = '<STYLE>table.ptTabPad tr.ptwpad {background-color:#ffffff; padding-left:15px}</style>\
        <DIV id=ptknightdiv style="max-height:736px; height:736px; max-width:745px; width:745px; overflow-y:auto">';
   },
@@ -2292,7 +2318,7 @@ Tabs.Knights = {
         if (Seed.items.i231) item231='<a onclick="citysel_click(document.getElementById(\'citysel_'+ (numcid+1)+'\'));setTimeout (function (){ boost_modal(3,'+ knight.knightId +');return false;}, 500);">'+Seed.items.i231+'</a>';
         if (Seed.items.i241) item241='<a onclick="citysel_click(document.getElementById(\'citysel_'+ (numcid+1)+'\'));setTimeout (function (){ boost_modal(4,'+ knight.knightId +');return false;}, 500);">'+Seed.items.i241+'</a>';
 		
-        m += '<a title="Assigner un role" onclick="citysel_click(document.getElementById(\'citysel_'+ (numcid+1)+'\'));setTimeout (function (){ assign_role_modal('+ knight.knightId +');return false;}, 500);">'+knight.knightName + '</td><TD>'+ skills[0] +' ('+item211+')</td><TD>'+ skills[1] +' ('+item221+')</td><TD>'+ skills[2] +' ('+item231+')</td><TD>' + skills[3] +' ('+item241+')</td><TD class=ptentry>'+ unpoints +'</td>'+ ass +'<TD><a title="EXP Boost" onclick="citysel_click(document.getElementById(\'citysel_'+ (numcid+1)+'\'));setTimeout (function (){  xpBoost_modal('+ knight.knightId +');return false; }, 500);">'+ level +'</a></td><td><a onclick="citysel_click(document.getElementById(\'citysel_'+ (numcid+1)+'\'));setTimeout (function (){ loyalBoost_modal('+ knight.knightId +');return false;}, 500);">'+knight.loyalty+'</a></td><TD>'+ addCommas(salary) +'</td></tr>';
+        m += '<a title="Assigner un role" onclick="citysel_click(document.getElementById(\'citysel_'+ (numcid+1)+'\'));setTimeout (function (){ assign_role_modal('+ knight.knightId +');return false;}, 500);">'+knight.knightName + '</td><TD>'+strButton14('Dismiss', 'onclick="ptButDismiss('+knight.knightId + ','+cid+')" id=tileId_') +'</td><TD>'+ skills[0] +' ('+item211+')</td><TD>'+ skills[1] +' ('+item221+')</td><TD>'+ skills[2] +' ('+item231+')</td><TD>' + skills[3] +' ('+item241+')</td><TD class=ptentry>'+ unpoints +'</td>'+ ass +'<TD><a title="EXP Boost" onclick="citysel_click(document.getElementById(\'citysel_'+ (numcid+1)+'\'));setTimeout (function (){  xpBoost_modal('+ knight.knightId +');return false; }, 500);">'+ level +'</a></td><td><a onclick="citysel_click(document.getElementById(\'citysel_'+ (numcid+1)+'\'));setTimeout (function (){ loyalBoost_modal('+ knight.knightId +');return false;}, 500);">'+knight.loyalty+'</a></td><TD>'+ addCommas(salary) +'</td></tr>';
       }
       return m;
     }          
@@ -2303,7 +2329,7 @@ Tabs.Knights = {
     for (var c=0; c<Cities.numCities; c++) {
       var cid = Cities.cities[c].id;
       m += '<TR><TD colspan=15><DIV class=ptstat>'+ Cities.cities[c].name +'</div></td></tr>\
-          <TR class=ptwpad style="font-weight:bold" align=right><TD width=70>Role</td><TD width=140 align=center>Name</td><TD width=26>Pol</td><TD width=26>Com</td>\
+          <TR class=ptwpad style="font-weight:bold" align=right><TD width=70>Role</td><TD width=140 align=center>Name</td><TD widith=70>Dismiss</td><TD width=26>Pol</td><TD width=26>Com</td>\
           <TD width=26>Int</td><TD width=26>Res</td><TD width=90 align=center colspan=5>--- Unassigned ---</td><TD width=35>Level</td><td>Loyalty</td><TD width=40 align=right> Salary </td></tr>';
       totSalary = 0;
       var did = {}; 
@@ -2324,7 +2350,7 @@ Tabs.Knights = {
       }
       list.sort (function (a,b){return parseInt(b.combat)-parseInt(a.combat)});
       for (i=0; i<list.length; i++)
-        m += _dispKnight (null, list[i], c);
+        m += _dispKnight (null, list[i], c,cid);
       m += '<TR align=right><TD colspan=13><B>Total Salary:</b></td><TD>'+ addCommas(totSalary) +'</td></tr>';        
     }
     document.getElementById('ptknightdiv').innerHTML = m +'</tbody></table></div>';
@@ -2339,6 +2365,29 @@ Tabs.Knights = {
     }, false);
     t.displayTimer = setTimeout (t.show, 10000);
   },
+  postDismissKnight:function(kid,cid){
+  	var t = Tabs.Knights;
+  	var params = uW.Object.clone(uW.g_ajaxparams);
+    params.cid = cid;
+    params.kid = kid;
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/fireKnight.php" + uW.g_ajaxsuffix, {
+      method: "post",
+      parameters: params,
+      onSuccess: function (rslt) {
+        if (rslt.ok) {
+        	if (rslt.updateSeed){
+        		delete Seed.knights["city" + cid]["knt" + kid];
+        		if (rslt.updateSeed) {
+                    uW.update_seed(rslt.updateSeed)
+                }
+        		t.show();
+        	}
+        } 
+      },
+      onFailure: function () {},
+    });
+  },
+
 
 
   clickedAssignPoints : function (e, cid, kid, rid){
