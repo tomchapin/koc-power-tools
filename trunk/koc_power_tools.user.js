@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20120927a
+// @version        20120930a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20120927a';
+var Version = '20120930a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -4872,7 +4872,7 @@ Tabs.Train = {
 	  <TABLE class=ptTab width=100%><TR valign=top><TD width=50%>\
       <TABLE align=center><TR><TD align=right>"+uW.g_js_strings.modal_messages_viewdesertionreports.trooptypes+": </td><TD colspan=2>\
       <SELECT id=ptttType>";
-     for (i=1;i<=12;i++){
+     for (i=1;i<=13;i++){
       	  s+='<option value='+i+'>'+uW.unitcost['unt'+i][0]+'</option>';
       }
       s+="</select> &nbsp; ("+uW.g_js_strings.commonstr.max+" <span id=ptttSpMax></span>)</td></tr>\
@@ -5105,7 +5105,6 @@ Tabs.Train = {
     t.timer = setTimeout (t.show, 2000);
   },
 
-
 /*******  TROOPS  ******/  
   
   updateTopTroops : function (){
@@ -5252,7 +5251,22 @@ Tabs.Train = {
       t.stats.MaxTrain = 0;
     if (matTypeof(uc[8]) == 'object'){
       for (k in uc[8]){  // check building requirement
+		var isPrestige = getCityPrestige(cityId);
         var b = getCityBuilding (cityId, k.substr(1));
+		if(isPrestige){
+			var bid = parseInt(k.substr(1));
+			logit(bid);
+			switch(bid){
+				case 17: //Stable
+					b.maxLevel = 12;
+				case 16: //Workshop
+					b.maxLevel = 12;
+				case 15: //Blacksmith
+					b.maxLevel = 12;
+			}
+		}
+		logit(isPrestige);
+		logit(inspect(b,3,1));
         if (b.maxLevel < uc[8][k][1]){
           t.stats.MaxTrain = 0;
           t.limitingFactor = null;
@@ -5269,10 +5283,10 @@ Tabs.Train = {
         }
       }
     }
-if (t.limitingFactor){
-  document.getElementById('ptttr_'+ t.limitingFactor).className = 'boldRed';
-  document.getElementById('ptttr2_'+ t.limitingFactor).className = 'boldRed';
-}    
+	if (t.limitingFactor){
+	  document.getElementById('ptttr_'+ t.limitingFactor).className = 'boldRed';
+	  document.getElementById('ptttr2_'+ t.limitingFactor).className = 'boldRed';
+	}    
     t.updateTopTroops();
   },
 
@@ -7147,20 +7161,20 @@ Tabs.OverView = {
         rows[r] = [];
         for(i=0; i<Cities.numCities; i++) {
           cityID = 'city'+ Cities.cities[i].id;
-          rows[r][i] = parseInt(Seed.units[cityID]['unt'+r]);
+          rows[r][i] = parseIntNan(Seed.units[cityID]['unt'+r]);
         }
       }
 	  
 	  var colnum = Cities.numCities;
       if (Options.includeMarching){
         for (var i=0; i<14; i++){
-          rows[i][colnum] = march.marchUnits[i];
+          rows[i][colnum] = parseIntNan(march.marchUnits[i]);
 		}
 		colnum++;
       }
 	  if(Options.includeTrainingExt){
 		for (var i=0; i<14; i++){
-		  rows[i][colnum] = train.trainUnts[i];
+		  rows[i][colnum] = parseIntNan(train.trainUnts[i]);
 		}
 	  }
       if (Options.includeTraining){
@@ -7169,7 +7183,7 @@ Tabs.OverView = {
           q = Seed.queue_unt['city'+ Cities.cities[i].id];
           if (q && q.length>0){
             for (qi=0; qi<q.length; qi++)
-              rows[q[qi][0]][i] += parseInt(q[qi][1]);
+              rows[q[qi][0]][i] += parseIntNan(q[qi][1]);
           }    
         }
       }
@@ -11117,6 +11131,9 @@ function getCityBuilding (cityId, buildingId){
     }
   }
   return ret;
+}
+function getCityPrestige (cityId){
+	return Seed.cityData.city[cityId].isPrestigeCity;
 }
 
 // example: http://www150.kingdomsofcamelot.com
