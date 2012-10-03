@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20120930a
+// @version        20121003a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20120930a';
+var Version = '20121003a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -1429,6 +1429,9 @@ var Rpt = {
 				m+='<TR><TH></TH><TH align=left>Troops</TH><TH align=right>Fought</TH><TH align=right>Survived</TH><TH align=right>Might</TH></TR>'; 
 				var totalMightDef = 0;
 				var totalTrainingTimeDef = 0;
+			var trainTimeStuff2 = {
+				troopTrainingTime : 0,
+			};
         for (var i=1;i<13;i++) {
        
 					if (rslt['fght']["s0"]['u'+i]) {
@@ -1438,14 +1441,14 @@ var Rpt = {
 			    diedDef : null,
       		 	mightLossAtt : null,
       			mightLossDef : null,
-			}
+			};
 			
 									mightStuff2.might = parseInt(unsafeWindow.unitmight['unt'+i])
 
 						if (rslt['fght']["s0"]['u'+i][0] > rslt['fght']["s0"]['u'+i][1]) {
                      
               mightStuff2.diedDef = parseInt(rslt['fght']["s0"]['u'+i][0]) - parseInt( rslt['fght']["s0"]['u'+i][1]);
-              mightStuff2.mightLossDef = mightStuff2.might * mightStuff2.diedDef 
+              mightStuff2.mightLossDef = mightStuff2.might * mightStuff2.diedDef;
            		trainTimeStuff2.troopTrainingTime = ((mightStuff2.diedAtt * trainTimeStuff2['u' + i])/Seed.cities.length);
 							m+='<TR><TD>' + unitImg[i] +  '(M = ' + mightStuff2.might + ')' +'</td>';
 							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['u'+i][0])+'</td>';
