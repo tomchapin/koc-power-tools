@@ -1,4 +1,4 @@
-// ==UserScript==
+﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
 // @version        20121003a
@@ -919,6 +919,7 @@ var Rpt = {
 		var unitImg = [];
 		for (var i=1;i<13;i++)
 			unitImg[i] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_'+i+'_30.png></TD><TD>' + uW.unitcost['unt'+i][0];
+		unitImg[13] = '<img src=http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/units/unit_13_30_s34.jpg></TD><TD>Bloodthorn';
 		unitImg[53] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_53_30.png></TD><TD>Crossbows';
 		unitImg[55] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_55_30.png></TD><TD>Trebuchet';
 		unitImg[60] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_60_30.png></TD><TD>Trap';
@@ -930,6 +931,16 @@ var Rpt = {
 		stoneImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/stone_30.png></TD><TD>Stone';
 		oreImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/iron_30.png></TD><TD>Ore';
 		astoneImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/aetherstone_30.png></TD><TD>Aetherstone';
+
+		var unitImg2 = [];
+		for (var i=1;i<13;i++)
+			unitImg2[i] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_'+i+'_30.png></TD><TD>';
+		unitImg2[13] = '<img src=http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/units/unit_13_30_s34.jpg></TD><TD>';
+		unitImg2[53] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_53_30.png></TD><TD>';
+		unitImg2[55] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_55_30.png></TD><TD>';
+		unitImg2[60] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_60_30.png></TD><TD>';
+		unitImg2[61] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_61_30.png></TD><TD>';
+		unitImg2[62] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_62_30.png></TD><TD>';
 
 		var trEffect = [];
 		trEffect[1] = 'Attack';
@@ -1025,7 +1036,10 @@ var Rpt = {
 		trEffect[91] = 'Chance to Find Items';
 		trEffect[92] = 'Chance to Find Items in Dark Forests';
 		trEffect[93] = 'Chance to Find Items in PvP';
-		
+		trEffect[94] = 'Druid Bonus 1'	
+		trEffect[95] = 'Fey Bonus 1'
+		trEffect[96] = 'Briton Bonus 1'
+
 
 
 		if (rpt.marchType == 0)
@@ -1064,7 +1078,7 @@ var Rpt = {
 			rpt.side0TileTypeText='City';
 
 		function buildHeader () {
-			var h='<TABLE class=ptTab width=auto>';
+			var h='<TABLE class=ptTab width=100%>';
 			h+='<TR valign=top><TD align=left width=10%><B>';
 			if (rpt.marchName == 'Anti-Scout' || rpt.marchName == 'Scout')
 				h+=rpt.marchName+'ing at';
@@ -1110,6 +1124,7 @@ var Rpt = {
 			return h;
 		}
 
+
 		function handleunts () { // Troops sent to Reinforce or troops found on a Scout
 			var hunts = '', th = '', tc = '', tf = '';
 			if (rslt['unts'] != undefined) {
@@ -1117,7 +1132,7 @@ var Rpt = {
 					th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Troops Reinforced</TH></TR>';
 				else if (rslt['unts']['u1'] != undefined || rslt['unts']['u2'] != undefined || rslt['unts']['u3'] != undefined || rslt['unts']['u4'] != undefined || rslt['unts']['u5'] != undefined || rslt['unts']['u6'] != undefined || rslt['unts']['u7'] != undefined || rslt['unts']['u8'] != undefined || rslt['unts']['u9'] != undefined || rslt['unts']['u10'] != undefined || rslt['unts']['u11'] != undefined || rslt['unts']['u12'] != undefined)
 					th='<TABLE class=ptTab><TR><TH colspan=3 align=left>Troops Found</TH></TR>';
-				for (var i=1;i<13;i++)
+				for (var i=1;i<14;i++)
 					if (rslt['unts']['u'+i] != undefined)
 						tc+='<TR><TD>' + unitImg[i] + '</TD><TD align=right>'+addCommas(rslt['unts']['u'+i])+'</TD></TR>';
 				tf='</TABLE>';
@@ -1221,7 +1236,7 @@ var Rpt = {
 			t.popReport = new CPopup('pbShowOther', 0, 0, 550, 740, true, function() {clearTimeout (1000);});
 			m+= '<DIV style="max-height:705px; height:705px; overflow-y:scroll">';
 		} else {
-			t.popReport = new CPopup('pbShowOther', 0, 0, 550, 680, true, function() {clearTimeout (1000);});
+			t.popReport = new CPopup('pbShowOther', 0, 0, 700, 680, true, function() {clearTimeout (1000);});
 			m+= '<DIV style="max-height:645px; height:645px; overflow-y:scroll">';
 		}
 		t.popReport.centerMe (mainPop.getMainDiv());
@@ -1267,8 +1282,13 @@ var Rpt = {
 		}
 		m+= '</TABLE><BR />';
 
+		m+='<TABLE class=ptTab>';
+		m+='<TR><TD><b>Glory Gained: </b></TD><TD align=right>'+addCommas(rslt['glory'])+'</TD></TR>';
+		m+='</TABLE>';
+
 		if (rslt['loot']) {
 			m+='<TABLE class=ptTab>';
+			m+='<TR><TD></TR></TD><TR><TD></TR></TD><TR><TD></TR></TD><TR><TD><b>Loot:</b></TR></TD>';
 			if (rslt['loot'][0] > 0)
 				m+='<TR><TD>'+goldImg+'</TD><TD align=right>'+addCommas(rslt['loot'][0])+'</TD></TR>';
 			if (rslt['loot'][1] > 0)
@@ -1348,6 +1368,68 @@ var Rpt = {
 			m+='<TR><TD colspan=4>Attack Boosted: ' + 100*rslt['s1atkBoost'] + '%</TD></TR>';
 			m+='<TR><TD colspan=4>Defense Boosted: ' + 100*rslt['s1defBoost'] + '%</TD></TR>';
 			<TR></TR>
+
+			m+='<TR><TD colspan=4> </TD></TR>';	
+			m+='<TR><TD colspan=4><b>Attack Results:</b></TD></TR>';
+			if (rslt['fght']["s1"]) {
+				var atkmight = 0;
+				for (var i=1;i<14;i++) {
+					if (rslt['fght']["s1"]['u'+i]) {
+						if (rslt['fght']["s1"]['u'+i][0] > rslt['fght']["s1"]['u'+i][1]) {
+							if (i == 1) {atkmight += (parseInt(rslt['fght']["s1"]['u1'][0]) - parseInt(rslt['fght']["s1"]['u1'][1]))};
+							if (i == 2) {atkmight += (parseInt(rslt['fght']["s1"]['u2'][0]) - parseInt(rslt['fght']["s1"]['u2'][1]))};
+							if (i == 3) {atkmight += 2*(parseInt(rslt['fght']["s1"]['u3'][0]) - parseInt(rslt['fght']["s1"]['u3'][1]))};
+							if (i == 4) {atkmight += 3*(parseInt(rslt['fght']["s1"]['u4'][0]) - parseInt(rslt['fght']["s1"]['u4'][1]))};
+							if (i == 5) {atkmight += 3*(parseInt(rslt['fght']["s1"]['u5'][0]) - parseInt(rslt['fght']["s1"]['u5'][1]))};
+							if (i == 6) {atkmight += 4*(parseInt(rslt['fght']["s1"]['u6'][0]) - parseInt(rslt['fght']["s1"]['u6'][1]))};
+							if (i == 7) {atkmight += 5*(parseInt(rslt['fght']["s1"]['u7'][0]) - parseInt(rslt['fght']["s1"]['u7'][1]))};
+							if (i == 8) {atkmight += 7*(parseInt(rslt['fght']["s1"]['u8'][0]) - parseInt(rslt['fght']["s1"]['u8'][1]))};
+							if (i == 9) {atkmight += 6*(parseInt(rslt['fght']["s1"]['u9'][0]) - parseInt(rslt['fght']["s1"]['u9'][1]))};
+							if (i == 10) {atkmight += 9*(parseInt(rslt['fght']["s1"]['u10'][0]) - parseInt(rslt['fght']["s1"]['u10'][1]))};
+							if (i == 11) {atkmight += 9*(parseInt(rslt['fght']["s1"]['u11'][0]) - parseInt(rslt['fght']["s1"]['u11'][1]))};
+							if (i == 12) {atkmight += 10*(parseInt(rslt['fght']["s1"]['u12'][0]) - parseInt(rslt['fght']["s1"]['u12'][1]))};
+							if (i == 13) {atkmight += 13*(parseInt(rslt['fght']["s1"]['u13'][0]) - parseInt(rslt['fght']["s1"]['u13'][1]))};
+						} else {atkmight += 0;}
+					}
+				}
+			}
+			m+='<TR><TD colspan=4>Might Lost: '+addCommas(atkmight)+'</td></tr>';
+			m+='<TR><TD colspan=4>(<A onclick="ptGotoMap('+ rpt.side1XCoord +','+ rpt.side1YCoord +')">'+ rpt.side1XCoord +','+ rpt.side1YCoord +'</a>) ' + rpt.side1CityName + '</TD></TR>';
+			if (rslt['fght']["s1"]) {
+				m+='<TR><TH></TH><TH align=left>Troops</TH><TH align=center>Fought</TH><TH align=center>Survived</TH><TH align=center>Killed</TH></TR>';
+				for (var i=1;i<14;i++) {
+					if (rslt['fght']["s1"]['u'+i]) {
+						if (rslt['fght']["s1"]['u'+i][0] > rslt['fght']["s1"]['u'+i][1]) {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=center>'+addCommas(rslt['fght']["s1"]['u'+i][0])+'</td>';
+							m+='<TD align=center><font color="#CC0000">'+addCommas(rslt['fght']["s1"]['u'+i][1])+'</font></td>';
+							m+='<TD align=center><font color="#CC0000">('+addCommas((rslt['fght']["s1"]['u'+i][0]) - (rslt['fght']["s1"]['u'+i][1]))+')</font></td></tr>';
+						} else {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=center>'+addCommas(rslt['fght']["s1"]['u'+i][0])+'</td>';
+							m+='<TD align=center>'+addCommas(rslt['fght']["s1"]['u'+i][1])+'</td></tr>';
+						}
+					}
+				}
+			}
+
+
+			if (rslt['fght']["s1"]) {
+				m+='<TR><TD colspan=4> </TD></TR>';
+				m+='<TR><TD colspan=4> </TD></TR>';
+				m+='<TR><TD colspan=4><b>Unit Stats:</b></TD></TR>';
+				for (var i=1;i<14;i++) {
+					if (rslt['fght']["s1"]['u'+i]) {
+						m+='<TR><TD>' + unitImg2[i] + '<font size="1"><b>HP: </b>'+addCommas(rslt['bonus']['mod']['s1']['u'+i]['hp'][1])+'<b>     Atk: </b>'+addCommas(rslt['bonus']['mod']['s1']['u'+i]['atk'][1])+'</font></td>';
+						m+='<TD align=left><font size="1"><b>Def: </b>'+addCommas(rslt['bonus']['mod']['s1']['u'+i]['def'][1])+'</font></td>';
+						m+='<TD align=left><font size="1"><b>Spd: </b>'+addCommas(rslt['bonus']['mod']['s1']['u'+i]['spd'][1])+'</font></td>';
+						m+='<TD align=left><font size="1"><b>Rng: </b>'+addCommas(rslt['bonus']['mod']['s1']['u'+i]['rng'][1])+'</font></td></tr>';
+					}
+				}
+			}
+
+
+
 			if (rslt['s1ThroneRoomBoosts']) {
 				m+='<TR><TD colspan=4> </TD></TR>';
 				m+='<TR><TD colspan=4><b>Throne Room Bonuses:</b></TD></TR>';
@@ -1356,45 +1438,6 @@ var Rpt = {
 						m+='<TR><TD colspan=4>' + trEffect[i] +': ' + rslt['s1ThroneRoomBoosts'][i] + '%</TD></TR>';
 					}
 				}
-			}
-			m+='<TR><TD colspan=4> </TD></TR>';	
-			m+='<TR><TD colspan=4><b>Attack Results:</b></TD></TR>';
-			m+='<TR><TD colspan=4>(<A onclick="ptGotoMap('+ rpt.side1XCoord +','+ rpt.side1YCoord +')">'+ rpt.side1XCoord +','+ rpt.side1YCoord +'</a>) ' + rpt.side1CityName + '</TD></TR>';
-			
-			if (rslt['fght']["s1"]) {
-				m+='<TR><TH></TH><TH align=left>Troops (M = Might)</TH><TH align=right>Fought</TH><TH align=right>Survived</TH><TH align=right>Might</TH></TR>'; 
-				//<TH align=right>Train Time</th> 
-				var totalMightAtt = 0;
-				var totalTrainingTime = 0;
-				var cityNum = 0;
-        for (var i=1;i<13;i++) {
-        
-					if (rslt['fght']["s1"]['u'+i]) {
-          var mightStuff = {
-			might : null,
-			diedAtt :null,
-			diedDef : null,
-      		mightLossAtt : null,
-      	}
-                    		mightStuff.might = parseInt(unsafeWindow.unitmight['unt'+i])
-						if (rslt['fght']["s1"]['u'+i][0] > rslt['fght']["s1"]['u'+i][1]) {
-
-           		mightStuff.diedAtt = parseInt(rslt['fght']["s1"]['u'+i][0]) - parseInt( rslt['fght']["s1"]['u'+i][1]);
-           		mightStuff.mightLossAtt = mightStuff.might * mightStuff.diedAtt   
-							m+='<TR><TD>' + unitImg[i] + '(M = ' + mightStuff.might + ')' + '</td>';
-							m+='<TD align=right>'+addCommas(rslt['fght']["s1"]['u'+i][0])+ '</td>';
-							m+='<TD align=right><FONT color="#CC0000">'+ addCommas(rslt['fght']["s1"]['u'+i][1])+'</FONT></td>';
-							m+='<TD align=right><FONT color="#CC0000">'+ '-' + addCommas(mightStuff.mightLossAtt) +'</FONT></td>';
-						  	totalMightAtt += mightStuff.mightLossAtt
-						  	}else {
-							m+='<TR><TD>' + unitImg[i] +  '(M = ' + mightStuff.might + ')' +'</td>';
-							m+='<TD align=right>'+addCommas(rslt['fght']["s1"]['u'+i][0])+'</td>';
-							m+='<TD align=right>'+addCommas(rslt['fght']["s1"]['u'+i][1])+'</td>';
-							m+='<TD align=right><FONT color="#0A9106">0</font></td>';
-						}
-					}
-				}
-      		m+='<TR><FONT color="#CC0000"><TH>Loss</TH><TD>' + addCommas(totalMightAtt) + '</font></tr>';
 			}
 			m+='</TABLE></TD><TD width=50% align=right valign=top>';
 			m+='<TABLE class=ptTab width=100%>';
@@ -1413,6 +1456,210 @@ var Rpt = {
 			else
 				m+='<TR><TD colspan=4>&nbsp;</TD></TR>';
 
+
+			m+='<TR><TD colspan=4> </TD></TR>';	
+			m+='<TR><TD colspan=4><b>Defense Results:</b></TD></TR>';
+			if (rslt['fght']["s0"]) {
+				var defmight = 0;
+				if (rslt.overwhelmed) {
+					for (var i=1;i<14;i++) {
+						if (rslt['fght']["s0"]['u'+i]) {
+							if (rslt['fght']["s0"]['u'+i][0] > rslt['fght']["s0"]['u'+i][1]) {
+								if (i == 1) {defmight += parseInt(rslt['fght']["s0"]['u1'][0])};
+								if (i == 2) {defmight += parseInt(rslt['fght']["s0"]['u2'][0])};
+								if (i == 3) {defmight += 2*(parseInt(rslt['fght']["s0"]['u3'][0]))};
+								if (i == 4) {defmight += 3*(parseInt(rslt['fght']["s0"]['u4'][0]))};
+								if (i == 5) {defmight += 3*(parseInt(rslt['fght']["s0"]['u5'][0]))};
+								if (i == 6) {defmight += 4*(parseInt(rslt['fght']["s0"]['u6'][0]))};
+								if (i == 7) {defmight += 5*(parseInt(rslt['fght']["s0"]['u7'][0]))};
+								if (i == 8) {defmight += 7*(parseInt(rslt['fght']["s0"]['u8'][0]))};
+								if (i == 9) {defmight += 6*(parseInt(rslt['fght']["s0"]['u9'][0]))};
+								if (i == 10) {defmight += 9*(parseInt(rslt['fght']["s0"]['u10'][0]))};
+								if (i == 11) {defmight += 9*(parseInt(rslt['fght']["s0"]['u11'][0]))};
+								if (i == 12) {defmight += 10*(parseInt(rslt['fght']["s0"]['u12'][0]))};
+								if (i == 13) {defmight += 13*(parseInt(rslt['fght']["s0"]['u13'][0]))};
+							} else {defmight += 0;}
+						}
+					}
+					for (var i=53;i<=55;i++) {
+						if (rslt['fght']["s0"]['f'+i]) {
+							if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) {
+								if (i == 53) {defmight += 4*(parseInt(rslt['fght']["s0"]['f53'][0]))};
+								if (i == 55) {defmight += 7*(parseInt(rslt['fght']["s0"]['f55'][0]))};
+							} else {defmight += 0;}
+						}
+					}
+					for (var i=60;i<63;i++) {
+						if (rslt['fght']["s0"]['f'+i]) {
+							if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) {
+								if (i == 60) {defmight += 3*(parseInt(rslt['fght']["s0"]['f60'][0]))};
+								if (i == 61) {defmight += (parseInt(rslt['fght']["s0"]['f61'][0]))};
+								if (i == 62) {defmight += 2*(parseInt(rslt['fght']["s0"]['f62'][0]))};
+							} else {defmight += 0;}
+						}
+					}
+				} else {
+					for (var i=1;i<14;i++) {
+						if (rslt['fght']["s0"]['u'+i]) {
+							if (rslt['fght']["s0"]['u'+i][0] > rslt['fght']["s0"]['u'+i][1]) {
+								if (i == 1) {defmight += (parseInt(rslt['fght']["s0"]['u1'][0]) - parseInt(rslt['fght']["s0"]['u1'][1]))};
+								if (i == 2) {defmight += (parseInt(rslt['fght']["s0"]['u2'][0]) - parseInt(rslt['fght']["s0"]['u2'][1]))};
+								if (i == 3) {defmight += 2*(parseInt(rslt['fght']["s0"]['u3'][0]) - parseInt(rslt['fght']["s0"]['u3'][1]))};
+								if (i == 4) {defmight += 3*(parseInt(rslt['fght']["s0"]['u4'][0]) - parseInt(rslt['fght']["s0"]['u4'][1]))};
+								if (i == 5) {defmight += 3*(parseInt(rslt['fght']["s0"]['u5'][0]) - parseInt(rslt['fght']["s0"]['u5'][1]))};
+								if (i == 6) {defmight += 4*(parseInt(rslt['fght']["s0"]['u6'][0]) - parseInt(rslt['fght']["s0"]['u6'][1]))};
+								if (i == 7) {defmight += 5*(parseInt(rslt['fght']["s0"]['u7'][0]) - parseInt(rslt['fght']["s0"]['u7'][1]))};
+								if (i == 8) {defmight += 7*(parseInt(rslt['fght']["s0"]['u8'][0]) - parseInt(rslt['fght']["s0"]['u8'][1]))};
+								if (i == 9) {defmight += 6*(parseInt(rslt['fght']["s0"]['u9'][0]) - parseInt(rslt['fght']["s0"]['u9'][1]))};
+								if (i == 10) {defmight += 9*(parseInt(rslt['fght']["s0"]['u10'][0]) - parseInt(rslt['fght']["s0"]['u10'][1]))};
+								if (i == 11) {defmight += 9*(parseInt(rslt['fght']["s0"]['u11'][0]) - parseInt(rslt['fght']["s0"]['u11'][1]))};
+								if (i == 12) {defmight += 10*(parseInt(rslt['fght']["s0"]['u12'][0]) - parseInt(rslt['fght']["s0"]['u12'][1]))};
+								if (i == 13) {defmight += 13*(parseInt(rslt['fght']["s0"]['u13'][0]) - parseInt(rslt['fght']["s0"]['u13'][1]))};
+							} else {defmight += 0;}
+						}
+					}
+					for (var i=53;i<=55;i++) {
+						if (rslt['fght']["s0"]['f'+i]) {
+							if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) {
+								if (i == 53) {defmight += 4*(parseInt(rslt['fght']["s0"]['f53'][0]) - parseInt(rslt['fght']["s0"]['f53'][1]))};
+								if (i == 55) {defmight += 7*(parseInt(rslt['fght']["s0"]['f55'][0]) - parseInt(rslt['fght']["s0"]['f55'][1]))};
+							} else {defmight += 0;}
+						}
+					}
+					for (var i=60;i<63;i++) {
+						if (rslt['fght']["s0"]['f'+i]) {
+							if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) {
+								if (i == 60) {defmight += 3*(parseInt(rslt['fght']["s0"]['f60'][0]) - parseInt(rslt['fght']["s0"]['f60'][1]))};
+								if (i == 61) {defmight += (parseInt(rslt['fght']["s0"]['f61'][0]) - parseInt(rslt['fght']["s0"]['f61'][1]))};
+								if (i == 62) {defmight += 2*(parseInt(rslt['fght']["s0"]['f62'][0]) - parseInt(rslt['fght']["s0"]['f62'][1]))};
+							} else {defmight += 0;}
+						}
+					}
+				}
+			}
+			m+='<TR><TD colspan=4>Might Lost: '+addCommas(defmight)+'</td></tr>';
+			m+='<TR><TD colspan=4>Rounds: ' + rslt['rnds'] + '</TD></TR>';
+			if (rslt['fght']["s0"]) {
+				if (rslt.overwhelmed) {
+					m+='<TR><TH></TH><TH align=left>Troops</TH><TH align=center>Fought</TH><TH align=center>Survived</TH><TH align=center>Killed</TH></TR>';
+					for (var i=1;i<14;i++) {
+						if (rslt['fght']["s0"]['u'+i]) {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=center>???</td>';
+							m+='<TD align=center>???</td>';
+								if(rslt['fght']["s0"]['u'+i][0] > 0) {
+									m+='<TD align=center><FONT color="#CC0000">('+addCommas(rslt['fght']["s0"]['u'+i][0])+')</FONT></td></tr>';
+								} else {
+									m+='<TD align=center>0</td></tr>';
+								}
+						}
+					}
+					for (var i=53;i<=55;i++) {
+						if (rslt['fght']["s0"]['f'+i]) {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=center>???</td>';
+							m+='<TD align=center>???</td>';
+								if(rslt['fght']["s0"]['f'+i][0] > 0) {
+									m+=m+='<TD align=center><FONT color="#CC0000">('+addCommas(rslt['fght']["s0"]['f'+i][0])+')</FONT></td></tr>';
+								} else {
+									m+='<TD align=center>0</td></tr>';
+								}
+						}
+					}
+					for (var i=60;i<=63;i++) {
+						if (rslt['fght']["s0"]['f'+i]) {
+							m+='<TR><TD>' + unitImg[i] + '</td>';
+							m+='<TD align=center>???</td>';
+							m+='<TD align=center>???</td>';
+								if(rslt['fght']["s0"]['f'+i][0] > 0) {
+									m+='<TD align=center><FONT color="#CC0000">('+addCommas(rslt['fght']["s0"]['f'+i][0])+')</font></td></tr>';
+								} else {
+									m+='<TD align=center>0</td></tr>';
+								}
+							
+						}
+					}
+				} else {
+					m+='<TR><TH></TH><TH align=left>Troops</TH><TH align=center>Fought</TH><TH align=center>Survived</TH><TH align=center>Killed</TH></TR>';
+					for (var i=1;i<14;i++) {
+						if (rslt['fght']["s0"]['u'+i]) {
+							if (rslt['fght']["s0"]['u'+i][0] > rslt['fght']["s0"]['u'+i][1]) {
+								m+='<TR><TD>' + unitImg[i] + '</td>';
+								m+='<TD align=center>'+addCommas(rslt['fght']["s0"]['u'+i][0])+'</td>';
+								m+='<TD align=center><FONT color="#CC0000">'+addCommas(rslt['fght']["s0"]['u'+i][1])+'</FONT></td>';
+								m+='<TD align=center><FONT color="#CC0000">('+addCommas((rslt['fght']["s0"]['u'+i][0]) - (rslt['fght']["s0"]['u'+i][1]))+')</FONT></td></tr>';
+							} else {
+								m+='<TR><TD>' + unitImg[i] + '</td>';
+								m+='<TD align=center>'+addCommas(rslt['fght']["s0"]['u'+i][0])+'</td>';
+								m+='<TD align=center>'+addCommas(rslt['fght']["s0"]['u'+i][1])+'</td></tr>';
+							}
+						}
+					}
+					for (var i=53;i<=55;i++) {
+						if (rslt['fght']["s0"]['f'+i]) {
+							if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) {
+								m+='<TR><TD>' + unitImg[i] + '</td>';
+								m+='<TD align=center>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
+								m+='<TD align=center><FONT color="#CC0000">'+addCommas(rslt['fght']["s0"]['f'+i][1])+'</font></td>';
+								m+='<TD align=center><FONT color="#CC0000">('+addCommas((rslt['fght']["s0"]['f'+i][0]) - (rslt['fght']["s0"]['f'+i][1]))+')</FONT></td></tr>';
+							} else {
+								m+='<TR><TD>' + unitImg[i] + '</td>';
+								m+='<TD align=center>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
+								m+='<TD align=center>'+addCommas(rslt['fght']["s0"]['f'+i][1])+'</td></tr>';
+							}
+						}
+					}
+					for (var i=60;i<=63;i++) {
+						if (rslt['fght']["s0"]['f'+i]) {
+							if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) {
+								m+='<TR><TD>' + unitImg[i] + '</td>';
+								m+='<TD align=center>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
+								m+='<TD align=center><FONT color="#CC0000">'+addCommas(rslt['fght']["s0"]['f'+i][1])+'</font></td>';
+								m+='<TD align=center><FONT color="#CC0000">('+addCommas((rslt['fght']["s0"]['f'+i][0]) - (rslt['fght']["s0"]['f'+i][1]))+')</FONT></td></tr>';
+							} else {
+								m+='<TR><TD>' + unitImg[i] + '</td>';
+								m+='<TD align=center>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
+								m+='<TD align=center>'+addCommas(rslt['fght']["s0"]['f'+i][1])+'</td></tr>';
+							}
+						}
+					}
+				}
+			} else
+				m+='<TR><TD>No Troops Defended</TD></TR>';
+
+
+
+			if (rslt['fght']["s0"]) {
+				m+='<TR><TD colspan=4> </TD></TR>';
+				m+='<TR><TD colspan=4> </TD></TR>';
+				m+='<TR><TD colspan=4><b>Unit Stats:</b></TD></TR>';
+				for (var i=1;i<14;i++) {
+					if (rslt['fght']["s0"]['u'+i]) {
+						m+='<TR><TD>' + unitImg2[i] + '<font size="1"><b>HP: </b>'+addCommas(rslt['bonus']['mod']['s0']['u'+i]['hp'][1])+'<b>     Atk: </b>'+addCommas(rslt['bonus']['mod']['s0']['u'+i]['atk'][1])+'</font></td>';
+						m+='<TD align=left><font size="1"><b>Def: </b>'+addCommas(rslt['bonus']['mod']['s0']['u'+i]['def'][1])+'</font></td>';
+						m+='<TD align=left><font size="1"><b>Spd: </b>'+addCommas(rslt['bonus']['mod']['s0']['u'+i]['spd'][1])+'</font></td>';
+						m+='<TD align=left><font size="1"><b>Rng: </b>'+addCommas(rslt['bonus']['mod']['s0']['u'+i]['rng'][1])+'</font></td></tr>';
+					}
+				}
+				for (var i=53;i<=55;i++) {
+					if (rslt['fght']["s0"]['f'+i]) {
+						m+='<TR><TD>' + unitImg2[i] + '<font size="1"><b>HP: </b>'+addCommas(rslt['bonus']['mod']['s0']['f'+i]['hp'][1])+'<b>     Atk: </b>'+addCommas(rslt['bonus']['mod']['s0']['f'+i]['atk'][1])+'</font></td>';
+						m+='<TD align=left><font size="1"><b>Def: </b>'+addCommas(rslt['bonus']['mod']['s0']['f'+i]['def'][1])+'</font></td>';
+						m+='<TD align=left><font size="1"><b>Spd: </b>'+addCommas(rslt['bonus']['mod']['s0']['f'+i]['spd'][1])+'</font></td>';
+						m+='<TD align=left><font size="1"><b>Rng: </b>'+addCommas(rslt['bonus']['mod']['s0']['f'+i]['rng'][1])+'</font></td></tr>';
+					}
+				}
+				for (var i=60;i<=63;i++) {
+					if (rslt['fght']["s0"]['f'+i]) {
+						m+='<TR><TD>' + unitImg2[i] + '<font size="1"><b>HP: </b>'+addCommas(rslt['bonus']['mod']['s0']['f'+i]['hp'][1])+'<b>     Atk: </b>'+addCommas(rslt['bonus']['mod']['s0']['f'+i]['atk'][1])+'</font></td>';
+						m+='<TD align=left><font size="1"><b>Def: </b>'+addCommas(rslt['bonus']['mod']['s0']['f'+i]['def'][1])+'</font></td>';
+						m+='<TD align=left><font size="1"><b>Spd: </b>'+addCommas(rslt['bonus']['mod']['s0']['f'+i]['spd'][1])+'</font></td>';
+						m+='<TD align=left><font size="1"><b>Rng: </b>'+addCommas(rslt['bonus']['mod']['s0']['f'+i]['rng'][1])+'</font></td></tr>';
+					}
+				}
+			}
+
+
 			if (rslt['s0ThroneRoomBoosts']) {
 				m+='<TR><TD colspan=4> </TD></TR>';
 				m+='<TR><TD colspan=4><b>Throne Room Bonuses:</b></TD></TR>';
@@ -1421,98 +1668,9 @@ var Rpt = {
 						m+='<TR><TD colspan=4>' + trEffect[i] +': ' + rslt['s0ThroneRoomBoosts'][i] + '%</TD></TR>';
 					}
 				}
+
 			}
-			m+='<TR><TD colspan=4> </TD></TR>';	
-			m+='<TR><TD colspan=4><b>Defense Results:</b></TD></TR>';
-			m+='<TR><TD colspan=4>Rounds: ' + rslt['rnds'] + '</TD></TR>';
-			if (rslt['fght']["s0"]) {
-				m+='<TR><TH></TH><TH align=left>Troops</TH><TH align=right>Fought</TH><TH align=right>Survived</TH><TH align=right>Might</TH></TR>'; 
-				var totalMightDef = 0;
-				var totalTrainingTimeDef = 0;
-			var trainTimeStuff2 = {
-				troopTrainingTime : 0,
-			};
-        for (var i=1;i<13;i++) {
-       
-					if (rslt['fght']["s0"]['u'+i]) {
-          	var mightStuff2 = {
-			    might : null,
-			    diedAtt :null,
-			    diedDef : null,
-      		 	mightLossAtt : null,
-      			mightLossDef : null,
-			};
-			
-									mightStuff2.might = parseInt(unsafeWindow.unitmight['unt'+i])
 
-						if (rslt['fght']["s0"]['u'+i][0] > rslt['fght']["s0"]['u'+i][1]) {
-                     
-              mightStuff2.diedDef = parseInt(rslt['fght']["s0"]['u'+i][0]) - parseInt( rslt['fght']["s0"]['u'+i][1]);
-              mightStuff2.mightLossDef = mightStuff2.might * mightStuff2.diedDef;
-           		trainTimeStuff2.troopTrainingTime = ((mightStuff2.diedAtt * trainTimeStuff2['u' + i])/Seed.cities.length);
-							m+='<TR><TD>' + unitImg[i] +  '(M = ' + mightStuff2.might + ')' +'</td>';
-							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['u'+i][0])+'</td>';
-							m+='<TD align=right><FONT color="#CC0000">'+addCommas(rslt['fght']["s0"]['u'+i][1])+'</FONT></td>';
-							m+='<TD align=right><FONT color="#CC0000">'+ '-'+addCommas(mightStuff2.mightLossDef)+'</FONT></td>';
-							totalMightDef += mightStuff2.mightLossDef
-						} else {
-							m+='<TR><TD>' + unitImg[i] +  '(M = ' + mightStuff2.might + ')' +'</td>';
-							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['u'+i][0])+'</td>';
-							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['u'+i][1])+'</td>';
-							m+='<TD align=right><FONT color="#0A9106">0</font></td>';
-						}
-					}
-				}
-				var fortStuff = {
-					might:0,
-					diedDef:0,
-					mightKilledDef : 0,
-
-				}
-							      
-				for (var i=53;i<=55;i++) {
-					fortStuff.might = parseInt(fortmight['u'+i])
-					if (rslt['fght']["s0"]['f'+i]) {
-						if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) {
-							fortStuff.diedDef = parseInt(rslt['fght']["s0"]['f'+i][0] - rslt['fght']["s0"]['f'+i][1]);
-              fortStuff.mightKilledDef = fortStuff.might * fortStuff.diedDef
-							m+='<TR><TD>' + unitImg[i] + i + '(M = ' + fortStuff.might + ')' +'</td>';
-							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
-							m+='<TD align=right><FONT color="#CC0000">'+ addCommas(rslt['fght']["s0"]['f'+i][1])+'</font></td>';
-							m+='<TD align=right><FONT color="#CC0000">'+'-'+ addCommas(fortStuff.mightKilledDef)+'</FONT></td>';
-							totalTrainingTimeDef += trainTimeStuff2.troopTrainingTime
-							totalMightDef += fortStuff.mightKilledDef
-						} else {
-							m+='<TR><TD>' + unitImg[i] + i +'(M = ' + fortStuff.might + ')' +'</td>';
-							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
-							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][1])+'</td>';
-							m+='<TD align=right><FONT color="#0A9106">0</font></td>';
-						}
-					}
-				}
-     				for (var i=60;i<=63;i++) {
-					fortStuff.might = parseInt(fortmight['u'+i])
-					if (rslt['fght']["s0"]['f'+i]) {
-						if (rslt['fght']["s0"]['f'+i][0] > rslt['fght']["s0"]['f'+i][1]) {
-							fortStuff.diedDef = parseInt(rslt['fght']["s0"]['f'+i][0] - rslt['fght']["s0"]['f'+i][1]);
-              fortStuff.mightKilledDef = fortStuff.might * fortStuff.diedDef
-							m+='<TR><TD>' + unitImg[i] + i + '(M = ' + fortStuff.might + ')' +'</td>';
-							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
-							m+='<TD align=right><FONT color="#CC0000">'+ addCommas(rslt['fght']["s0"]['f'+i][1])+'</font></td>';
-							m+='<TD align=right><FONT color="#CC0000">'+'-'+ addCommas(fortStuff.mightKilledDef)+'</FONT></td>';
-							totalTrainingTimeDef += trainTimeStuff2.troopTrainingTime
-							totalMightDef += fortStuff.mightKilledDef
-						} else {
-							m+='<TR><TD>' + unitImg[i] + i +'(M = ' + fortStuff.might + ')' +'</td>';
-							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][0])+'</td>';
-							m+='<TD align=right>'+addCommas(rslt['fght']["s0"]['f'+i][1])+'</td>';
-							m+='<TD align=right><FONT color="#0A9106">0</font></td>';
-						}
-					}
-				}
-				 m+='<TR><FONT color="#CC0000"><TH>Loss</TH><TD>' + addCommas(totalMightDef) + '</font></tr>';  
-			} else
-				m+='<TR><TD>No Troops Defended</TD></TR>';
 			m+='</TABLE></TD></TR></TABLE>';
 		}
 
