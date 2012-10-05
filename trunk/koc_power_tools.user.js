@@ -1560,7 +1560,7 @@ var Rpt = {
 							m+='<TD align=center>???</td>';
 							m+='<TD align=center>???</td>';
 								if(rslt['fght']["s0"]['f'+i][0] > 0) {
-									m+=m+='<TD align=center><FONT color="#CC0000">('+addCommas(rslt['fght']["s0"]['f'+i][0])+')</FONT></td></tr>';
+									m+='<TD align=center><FONT color="#CC0000">('+addCommas(rslt['fght']["s0"]['f'+i][0])+')</FONT></td></tr>';
 								} else {
 									m+='<TD align=center>0</td></tr>';
 								}
