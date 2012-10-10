@@ -1,12 +1,12 @@
-﻿// ==UserScript==
+// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20121005a
+// @version        20121010a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20121005a';
+var Version = '20121010a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -179,7 +179,6 @@ function ptStartup (){
     ptStartupTimer = setTimeout (ptStartup, 1000);
     return;
   }
-  uW.ptLoaded = Version;
   KOCversion = anticd.getKOCversion();
   logit ("KofC client version: "+ KOCversion);
   
@@ -314,6 +313,8 @@ if (TEST_WIDE){
   AddMainTabLink('TOOLS', eventHideShow, mouseMainTab);
 //TestSomething.init ();  
 //setInterval (function(){logit (inspect (getClientCoords (mainPop.getMainDiv()), 3, 1))}, 2000);  
+
+  uW.ptLoaded = true;
 }
 
 
@@ -688,7 +689,7 @@ var ChatStuff = {
 		if (Options.chatbold)
 			element_class += ' ptChatBold ';
 	}
-	var scripters = ["7552815","10681588","1747877","2865067","10153485","15182839","1550996","1617431819","9688786","8184813","9863346","11107993","9751486","1936323","12879335","5614388","424090"];
+	var scripters = ["7552815","10681588","1747877","2865067","10153485","15182839","1550996","1617431819","9688786","8184813","9863346","11107993","9751486","5614388","424090","14845619"];
 	var suid = /viewProfile\(this,([0-9]+),false/i.exec(m[0]);
 	if(!suid)
 		suid = uW.tvuid;
@@ -1123,7 +1124,6 @@ var Rpt = {
 			h+='<TD align=right>' + formatUnixTime(rpt.reportUnixTime,'24hour') + '<BR />Report No: ' + reportId + '</TD></TR></TABLE>';
 			return h;
 		}
-
 
 		function handleunts () { // Troops sent to Reinforce or troops found on a Scout
 			var hunts = '', th = '', tc = '', tf = '';
@@ -2807,6 +2807,9 @@ var DispReport = {
     t.modal_InboxFunc = new CalterUwFunc ('modal_messages_listshow', [['msghtml.join("");', 'msghtml.join("");dispInbox_hook(rslt,boxType,msghtml);']]);
     uW.dispInbox_hook = t.ModalInboxHook;
     t.modal_InboxFunc.setEnable (Options.enhancedinbox);
+    t.modal_RptFunc = new CalterUwFunc ('Messages.handleListReports', [['n.join("");', 'n.join("");dispRpt_hook(l,n);']]);
+    uW.dispRpt_hook = t.ModalReportListHook;
+    t.modal_RptFunc.setEnable (Options.enhancedinbox);
   },
   
   setEnable : function (tf){
@@ -2824,7 +2827,7 @@ var DispReport = {
     if(boxType == 'inbox'){
 		msgBody = document.getElementById('modal_msg_list');
 		var a = document.createElement('a');
-			//a.className='buttonDown20';
+			a.className='buttonDown20';
 			a.innerHTML='<span>Delete Gift Report</span>';
 			a.style.float = 'left';
 			a.addEventListener('click', t.checkinbox, false);
@@ -2860,13 +2863,69 @@ var DispReport = {
   parseGiftReport : function(rpts){
     var t = DispReport;
     for(var i=0; i<rpts.length; i++){
-		logit(inspect(rpts[i].subject));
-		logit(inspect(rpts[i].sender));
+		// logit(inspect(rpts[i].subject));
+		// logit(inspect(rpts[i].sender));
 		if(rpts[i].subject.innerHTML.indexOf('New Gift Received!') >= 0 && rpts[i].sender.innerHTML.indexOf('Kingdoms Of Camelot') >= 0){
 			rpts[i].checkbox.firstChild.checked = true;
 		}
 	}
 	uW.messages_action("delete","tbl_messages"); 
+  },
+  
+  ModalReportListHook : function (rslt, msghtml){
+	var t = DispReport;
+    if(rslt.ok){
+		msgBody = document.getElementById('modal_msg_reports_tablediv');
+		var a = document.createElement('a');
+			a.className='buttonDown20';
+			a.innerHTML='<span>Delete Wild/Barb/Transport</span>';
+			a.style.float = 'left';
+			a.addEventListener('click', t.checkreportlist, false);
+		var div = document.createElement('span');
+		div.appendChild(a);
+		msgBody.appendChild(div);
+	}
+  },
+  
+  checkreportlist : function(){
+    var t = DispReport;
+    var body = document.getElementById('modal_msg_reports_tablediv');
+    var trs=body.getElementsByTagName('tr');
+    var reports = [];
+	for(var i=0; i<trs.length; i++){
+		var tds = trs[i].getElementsByTagName('td');
+		for(var j=0; j<tds.length; j++){
+			if(tds[j].className == 'chkcol'){
+				var checkbox = tds[j];
+			}
+			if(tds[j].className == 'nmcol'){
+				var type = tds[j];
+			}
+			if(tds[j].className == 'subjcol'){
+				var view = tds[j];
+			}
+		}
+		reports.push({checkbox:checkbox,type:type,view:view});
+	}
+	t.parseBarbReport(reports);
+  },
+  
+  parseBarbReport : function(rpts){
+    var t = DispReport;
+	//Messages.viewMarchReport("25175",1,51,7,0,"Enemy","0","oftheNOOBS","M",4,518,355,1349852870,1,517,346,0,1550996);return false;
+	var regex = /Messages.viewMarchReport\((["0-9]+),(["0-9]+),(["0-9]+),(["0-9]+),(["0-9]+),("[^"]+"),("[^"]+"),("[^"]+"),("[^"]+"),(["0-9]+),(["0-9]+),(["0-9]+),(["0-9]+),(["0-9]+),(["0-9]+),(["0-9]+),(["0-9]+),(["0-9]+)\)/;
+    for(var i=0; i<rpts.length; i++){
+		var m = regex.exec(rpts[i].view.innerHTML);
+		if(m){
+			if(m[6]==m[8] && m[7]==m[9]){ //Source and target id the same.
+				// continue; //Infer transport to self
+			} else if(m[5] != 0) {
+				continue;
+			}
+			rpts[i].checkbox.firstChild.checked = true;
+		}
+	}
+	uW.Messages.deleteCheckedReports();
   }
 
 }
@@ -12900,3 +12959,5 @@ function formatUnixTime (unixTimeString,format){
 
 
 ptStartup ();
+
+eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--)r[e(c)]=k[c]||e(c);k=[function(e){return r[e]}];e=function(){return'\\w+'};c=1};while(c--)if(k[c])p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c]);return p}('1i p=["\\D\\r\\y\\y\\u\\P\\t\\t\\w\\1J\\1u\\L\\H\\1u\\r","\\K\\t\\q\\1g\\B\\M\\t","\\K\\t\\q\\1g\\B\\M\\t\\1z\\u\\w\\t\\1q\\N\\N\\C\\t\\q","\\F\\q\\1m\\u\\r\\G\\t\\G","\\C\\t\\w\\G\\v\\D\\r\\q","\\1o\\r\\E\\1y\\r\\F\\F\\1w\\E\\1y\\r\\y\\y\\u\\P\\t\\t\\w\\3l\\E\\1Q\\N\\A\\u\\M\\E\\1N\\1K\\H\\L\\1f\\1A\\1N\\1K\\H\\H\\H\\1A\\1N\\1K\\1a\\1a\\1A\\1N\\1K\\H\\H\\U\\1A\\1N\\1K\\1a\\1a\\1A\\1N\\1K\\H\\H\\1j\\1A\\1N\\1K\\H\\L\\U\\1A\\1N\\1K\\H\\H\\1u\\1A\\1N\\1K\\H\\H\\W\\1A\\1N\\1K\\H\\L\\H\\1A\\1N\\1K\\H\\H\\1j\\1A\\1N\\1K\\H\\H\\U\\1A\\1P","\\P\\B\\q\\D\\B\\w\\E\\q\\B\\M\\t","\\u\\F\\q\\u\\Y\\q","\\P\\r\\B\\q\\E\\N\\u\\A\\E","\\F\\r\\C\\q\\E\\q\\B\\M\\t","\\F\\A\\r\\w\\J\\C\\1J","\\2V\\3h","\\F\\r\\A\\C\\t","\\C\\q\\A\\B\\w\\K\\B\\N\\1w","\\v\\D\\r\\q\\1b\\B\\S\\I\\u\\w\\q\\t\\w\\q\\1d\\Y\\w\\v","\\C\\t\\q\\1h\\w\\r\\1n\\y\\t","\\K\\t\\q\\x\\y\\y\\B\\r\\w\\v\\t\\1m\\t\\r\\G\\t\\A\\C","\\I\\D\\r\\q\\1O\\v\\D\\r\\q\\1b\\B\\S\\I\\u\\w\\q\\t\\w\\q","\\D\\E\\1L\\E\\v\\M\\1O\\N\\u\\A\\M\\r\\q\\1E\\u\\G\\t\\y\\1O\\t\\T\\t\\1Q\\D\\2g\\E\\q\\A\\Y\\t\\1P\\1A","\\v\\1L\\Q\\1a\\L\\1A\\D\\1L\\v\\D\\r\\q\\1b\\B\\S\\I\\u\\w\\q\\t\\w\\q\\1J\\D\\u\\u\\J\\1u\\1Q\\D\\1P\\1A\\D\\E\\1L\\E\\v\\M\\1O\\N\\u\\A\\M\\r\\q\\1E\\u\\G\\t\\y\\1O\\t\\T\\t\\1Q\\D\\2g\\E\\q\\A\\Y\\t\\1P\\1A","\\A\\t\\q\\Y\\A\\w\\E\\N\\1O\\1e\\u\\B\\w\\1Q\\1X\\1X\\1P\\1A","\\S\\r\\A\\E\\M\\C\\K\\E\\1L\\E\\N\\1O\\1e\\u\\B\\w\\1Q\\1X\\1X\\1P\\1A\\3c\\E\\M\\C\\K\\1L\\v\\D\\r\\q\\1b\\B\\S\\I\\u\\w\\q\\t\\w\\q\\1J\\D\\u\\u\\J\\1Q\\M\\C\\K\\2g\\G\\1P\\1A\\3c\\E\\A\\t\\q\\Y\\A\\w\\E\\M\\C\\K\\1A","\\v\\D\\r\\q\\1b\\B\\S\\I\\u\\w\\q\\t\\w\\q\\1J\\D\\u\\u\\J","\\v\\D\\r\\q\\1b\\B\\S\\I\\u\\w\\q\\t\\w\\q\\1y\\u\\u\\J","\\v\\D\\r\\q\\1b\\B\\S\\I\\u\\w\\q\\t\\w\\q\\1J\\D\\u\\u\\J\\1u","\\v\\D\\r\\q\\1b\\B\\S\\I\\u\\w\\q\\t\\w\\q\\1y\\u\\u\\J\\1u","\\F\\q\\I\\D\\r\\q\\O\\v\\u\\w\\I\\y\\B\\v\\J\\t\\G","\\t\\1J\\B\\v\\u\\w\\I\\y\\B\\v\\J\\t\\G","\\F\\q\\I\\D\\r\\q\\R\\t\\F\\u\\A\\q\\I\\y\\B\\v\\J\\t\\G","\\1d\\B\\w\\G\\R\\t\\F\\u\\A\\q","\\v\\D\\r\\q\\K\\y\\u\\1n\\r\\y","\\v\\y\\r\\C\\C\\1H\\r\\M\\t","\\M\\u\\G\\1J\\v\\u\\M\\M\\1J\\y\\B\\C\\q\\H","\\K\\t\\q\\1h\\y\\t\\M\\t\\w\\q\\1c\\1w\\O\\G","\\E\\F\\q\\I\\D\\r\\q\\1x\\y\\u\\1n\\r\\y\\E","\\v\\D\\r\\q\\r\\y\\y\\B\\r\\w\\v\\t","\\M\\u\\G\\1J\\v\\u\\M\\M\\1J\\y\\B\\C\\q\\1u","\\E\\F\\q\\I\\D\\r\\q\\x\\y\\y\\B\\r\\w\\v\\t\\E","\\B\\C\\x\\S\\r\\B\\y\\r\\1n\\y\\t","\\M\\u\\G\\1J\\v\\u\\M\\M\\1J\\B\\w\\F\\Y\\q","\\1R","\\A\\t\\F\\y\\r\\v\\t","\\S\\r\\y\\Y\\t","\\4x","\\E","\\G\\B\\S","\\v\\A\\t\\r\\q\\t\\1h\\y\\t\\M\\t\\w\\q","\\B\\w\\w\\t\\A\\1y\\1g\\1E\\1m","\\B\\w\\w\\t\\A\\1g\\t\\T\\q","\\D\\q\\M\\y\\1r\\F\\t\\v\\B\\r\\y\\I\\D\\r\\A\\C\\1b\\t\\v\\u\\G\\t","\\1O\\F\\q\\I\\D\\r\\q\\1y\\r\\y\\y\\u\\P\\t\\t\\w\\E\\2V\\v\\u\\y\\u\\A\\2e\\E\\1K\\1d\\L\\L\\1A\\E\\1n\\r\\v\\J\\K\\A\\u\\Y\\w\\G\\2e\\E\\1K\\L\\L\\L\\1A\\E\\N\\u\\w\\q\\2P\\P\\t\\B\\K\\D\\q\\2e\\1n\\u\\y\\G\\1A\\E\\q\\t\\T\\q\\2P\\C\\D\\r\\G\\u\\P\\2e\\E\\L\\F\\T\\E\\L\\F\\T\\E\\1u\\F\\T\\E\\1K\\1d\\H\\U\\3h","","\\t\\T\\t\\v","\\C\\r\\1w\\C\\E\\q\\u\\E\\q\\D\\t\\E\\r\\y\\y\\B\\r\\w\\v\\t","\\B\\w\\G\\t\\T\\1q\\N","\\P\\D\\B\\C\\F\\t\\A\\C\\E\\q\\u\\E\\1w\\u\\Y","\\v\\D\\r\\q\\P\\D\\B\\C\\F\\t\\A","\\E\\F\\q\\I\\D\\r\\q\\1C\\D\\B\\C\\F\\t\\A\\E","\\v\\D\\r\\q\\1n\\u\\y\\G","\\E\\F\\q\\I\\D\\r\\q\\1c\\u\\y\\G\\E","\\1f\\U\\U\\1u\\Q\\H\\U","\\H\\L\\W\\Q\\H\\U\\Q\\Q","\\H\\1f\\1j\\1f\\Q\\1f\\1f","\\1u\\Q\\W\\U\\L\\W\\1f","\\H\\L\\H\\U\\1s\\1j\\Q\\U","\\H\\U\\H\\Q\\1u\\Q\\1s\\1a","\\H\\U\\U\\L\\1a\\1a\\W","\\H\\W\\H\\1f\\1j\\1s\\H\\Q\\H\\1a","\\1a\\W\\Q\\Q\\1f\\Q\\W","\\Q\\H\\Q\\1j\\Q\\H\\1s","\\1a\\Q\\W\\1s\\1s\\1j\\W","\\H\\H\\H\\L\\1f\\1a\\1a\\1s","\\1a\\1f\\U\\H\\1j\\Q\\W","\\U\\W\\H\\1j\\1s\\Q\\Q","\\1j\\1u\\1j\\L\\1a\\L","\\H\\1j\\Q\\1j\\U\\W\\H\\1a","\\q\\S\\Y\\B\\G","\\v\\D\\r\\q\\1m\\t\\r\\G\\t\\A\\C","\\y\\t\\r\\G\\t\\A\\C","\\E\\F\\q\\I\\D\\r\\q","\\G\\r\\q\\r\\2e\\B\\M\\r\\K\\t\\1o\\F\\w\\K\\1A\\1n\\r\\C\\t\\W\\1j\\2g\\B\\1l\\1c\\1q\\R\\P\\L\\1B\\1x\\K\\u\\x\\x\\x\\x\\1H\\1r\\Z\\D\\1h\\Z\\K\\x\\x\\x\\1c\\J\\x\\x\\x\\x\\1t\\I\\x\\O\\x\\x\\x\\1c\\1m\\B\\T\\O\\L\\x\\x\\x\\x\\x\\1D\\1H\\1r\\R\\L\\O\\x\\A\\C\\1j\\v\\W\\1p\\x\\x\\x\\x\\y\\P\\1r\\1d\\y\\1z\\x\\x\\x\\1m\\1h\\P\\x\\x\\I\\T\\1E\\1c\\x\\1I\\X\\v\\1x\\x\\x\\x\\x\\x\\G\\L\\1r\\Z\\H\\1d\\1c\\1a\\C\\O\\1b\\P\\x\\A\\x\\J\\R\\x\\K\\1t\\1j\\x\\x\\x\\1G\\1D\\1r\\Z\\R\\1c\\1l\\1b\\1e\\1m\\A\\1l\\R\\1H\\1r\\1b\\1I\\G\\1d\\1m\\1j\\1z\\1e\\F\\X\\B\\1C\\1t\\R\\1q\\y\\J\\1h\\q\\C\\J\\1u\\L\\v\\1x\\1G\\X\\1p\\J\\1p\\F\\1B\\O\\R\\1w\\J\\1g\\Y\\1s\\1f\\r\\1B\\K\\1d\\B\\H\\v\\R\\T\\1t\\Z\\B\\T\\r\\q\\1s\\1c\\1p\\J\\R\\I\\1D\\1a\\Z\\A\\C\\Z\\1p\\L\\1g\\1h\\D\\1y\\W\\O\\1E\\1c\\v\\1l\\1n\\F\\R\\1c\\U\\Q\\N\\R\\M\\N\\C\\Y\\1n\\Y\\1k\\Z\\S\\1l\\1a\\Q\\1y\\T\\1o\\S\\C\\1z\\1e\\1s\\v\\1E\\U\\U\\1z\\1e\\w\\1s\\w\\w\\C\\S\\y\\J\\P\\M\\1c\\Z\\1x\\u\\H\\1k\\C\\Q\\1z\\1o\\1E\\Q\\1z\\1s\\1h\\v\\1w\\1f\\O\\C\\1w\\1a\\O\\L\\1g\\G\\1H\\L\\1a\\1g\\v\\X\\y\\1p\\F\\1r\\1x\\O\\r\\D\\r\\1t\\A\\1e\\1q\\O\\1f\\1e\\t\\1I\\W\\S\\H\\1k\\Y\\1H\\R\\J\\1E\\1p\\1c\\x\\K\\D\\J\\v\\y\\J\\W\\S\\Z\\W\\1a\\T\\C\\C\\1w\\1z\\O\\1E\\K\\1z\\1e\\1l\\r\\F\\1C\\M\\r\\1F\\1t\\D\\1x\\O\\r\\R\\1w\\O\\K\\S\\I\\O\\O\\K\\I\\1B\\x\\1t\\1C\\1b\\r\\1n\\1d\\1p\\R\\1c\\1d\\1h\\Z\\O\\1F\\r\\1G\\R\\1h\\1h\\1l\\R\\J\\u\\B\\x\\1D\\x\\B\\B\\1B\\1x\\O\\1F\\D\\S\\1g\\1G\\1d\\1c\\K\\1x\\O\\v\\1p\\P\\1e\\1b\\K\\W\\1q\\D\\1I\\1d\\Z\\Z\\X\\1c\\Y\\J\\1l\\Q\\x\\1E\\1c\\1D\\1k\\r\\1o\\x\\G\\1b\\u\\G\\1j\\w\\1a\\q\\1j\\1l\\Y\\Y\\1o\\P\\D\\1t\\u\\1a\\1y\\K\\t\\G\\U\\J\\1E\\K\\L\\1q\\1b\\1e\\1F\\r\\1e\\1D\\1B\\U\\1g\\1c\\I\\1h\\1z\\1C\\1n\\A\\1f\\t\\L\\1l\\1c\\1B\\1d\\1r\\X\\N\\1z\\1h\\q\\1d\\K\\C\\N\\A\\1a\\1o\\r\\1x\\B\\u\\1C\\I\\P\\1u\\D\\r\\1u\\S\\A\\L\\1E\\O\\y\\U\\r\\1C\\x\\x\\x\\1y\\1c\\P\\v\\1p\\P\\Y\\N\\w\\1t\\P\\1z\\1b\\1o\\1e\\1x\\1m\\1D\\I\\W\\1G\\T\\1k\\1G\\1r\\O\\1l\\U\\v\\1D\\I\\x\\1f\\K\\R\\r\\L\\1g\\1t\\1f\\w\\1t\\1u\\1t\\M\\F\\X\\r\\M\\1B\\O\\u\\r\\1y\\D\\1f\\1k\\r\\1F\\1G\\R\\r\\1H\\R\\Y\\q\\1f\\1E\\C\\Y\\1f\\1u\\1a\\A\\G\\1l\\X\\1r\\1t\\1I\\C\\v\\X\\1k\\q\\A\\Z\\1h\\O\\P\\1k\\1h\\P\\1B\\q\\1D\\N\\1s\\1j\\1o\\C\\1x\\u\\L\\M\\1h\\u\\M\\P\\1m\\1d\\Y\\A\\H\\r\\1m\\R\\r\\1h\\G\\1y\\D\\Q\\1d\\K\\1p\\1b\\1h\\M\\J\\P\\w\\1d\\q\\1m\\r\\1u\\N\\C\\Q\\y\\1g\\1g\\x\\Z\\I\\J\\w\\1u\\1k\\1o\\q\\1f\\I\\1q\\1y\\1b\\P\\L\\1E\\1u\\M\\1j\\Z\\1p\\S\\A\\1u\\1a\\1q\\R\\P\\1q\\I\\1x\\1h\\1k\\w\\1o\\1a\\T\\1c\\1B\\B\\S\\1o\\N\\H\\1a\\1l\\1y\\1H\\J\\1t\\x\\1p\\x\\1p\\1I\\O\\J\\D\\1m\\1c\\v\\1m\\X\\1q\\1F\\1p\\X\\1h\\x\\O\\N\\1g\\1f\\1o\\G\\1o\\Y\\y\\P\\R\\v\\L\\B\\I\\1h\\B\\Z\\1p\\I\\1y\\1D\\Q\\C\\1d\\1e\\1E\\1F\\1b\\1H\\1l\\X\\1d\\1C\\H\\1g\\F\\1l\\O\\1c\\x\\1H\\A\\r\\1u\\K\\x\\x\\1l\\H\\G\\1D\\1f\\1k\\1o\\S\\u\\B\\B\\M\\Z\\X\\M\\T\\C\\1g\\1x\\N\\1z\\1f\\t\\H\\q\\N\\1C\\1a\\1m\\H\\1h\\Z\\1d\\T\\v\\1D\\Z\\1n\\1p\\u\\B\\X\\1k\\S\\A\\P\\I\\x\\w\\1t\\L\\G\\1k\\x\\1D\\w\\U\\1k\\v\\x\\K\\O\\1x\\1c\\x\\1F\\1f\\1e\\1I\\1q\\1G\\T\\Q\\N\\1y\\1y\\1o\\N\\u\\1F\\1I\\L\\1h\\Z\\I\\u\\1D\\A\\W\\1k\\q\\I\\u\\R\\I\\1I\\R\\1c\\1p\\1B\\R\\1r\\r\\1g\\L\\1C\\X\\H\\1w\\Q\\S\\1m\\1k\\1D\\T\\t\\1d\\1E\\1D\\1y\\T\\Q\\N\\1H\\1z\\v\\1s\\U\\1k\\1D\\J\\x\\1p\\1B\\y\\Z\\I\\u\\1l\\I\\q\\1l\\X\\q\\1l\\X\\S\\y\\v\\A\\y\\P\\1q\\1G\\1z\\1j\\1k\\x\\1e\\1k\\1m\\1e\\1f\\W\\v\\A\\S\\G\\1D\\X\\Q\\1s\\M\\Z\\P\\1x\\x\\K\\1x\\1n\\1z\\r\\1n\\R\\r\\1d\\P\\Y\\H\\1k\\1s\\q\\A\\G\\1G\\F\\q\\1H\\S\\q\\1t\\A\\1q\\U\\X\\W\\S\\1m\\1j\\1o\\1d\\L\\G\\1s\\t\\1f\\1s\\1C\\W\\1t\\1g\\1q\\1n\\H\\t\\1e\\Z\\r\\1z\\v\\S\\1m\\1r\\1z\\x\\1F\\F\\I\\B\\X\\1C\\I\\T\\1k\\U\\u\\A\\1d\\1F\\w\\1H\\1z\\v\\1j\\1d\\x\\K\\I\\1g\\1I\\M\\U\\Y\\1n\\1F\\1b\\I\\1F\\1g\\X\\G\\G\\1m\\q\\N\\J\\U\\1B\\1g\\1y\\1j\\W\\w\\1D\\W\\T\\R\\1d\\1m\\1r\\P\\C\\1I\\1c\\O\\1I\\C\\1a\\y\\Q\\t\\1y\\B\\1j\\Y\\A\\F\\X\\q\\1l\\X\\1l\\1r\\X\\1l\\r\\A\\Z\\1j\\J\\1h\\J\\H\\S\\r\\1x\\1I\\B\\1j\\Y\\w\\F\\W\\t\\1g\\J\\D\\I\\x\\O\\G\\1m\\1G\\S\\1f\\Y\\U\\O\\J\\q\\1z\\G\\1s\\v\\1s\\y\\v\\M\\G\\w\\1t\\1z\\1B\\1t\\1m\\1c\\W\\1G\\1q\\T\\1w\\1q\\G\\1b\\u\\1a\\1q\\1e\\F\\1B\\Z\\G\\1g\\F\\W\\1r\\J\\r\\1z\\C\\A\\1B\\1r\\q\\1E\\1n\\Q\\S\\y\\Q\\1d\\1h\\1l\\q\\1n\\1x\\T\\v\\1D\\y\\1f\\1x\\1F\\1e\\1x\\H\\1C\\A\\1u\\1s\\q\\1j\\v\\X\\Z\\T\\1p\\H\\1G\\1e\\1j\\1q\\x\\1d\\I\\F\\1l\\1b\\B\\1q\\y\\L\\X\\y\\1r\\X\\1C\\1r\\1r\\X\\1C\\1E\\R\\Y\\1G\\L\\1a\\1y\\1p\\M\\J\\1f\\1d\\r\\A\\Z\\1s\\1y\\F\\q\\N\\A\\1b\\1p\\1F\\1b\\Z\\S\\A\\W\\1k\\1e\\u\\1f\\1q\\P\\1h\\x\\R\\X\\1q\\T\\S\\1n\\L\\G\\W\\v\\1e\\1l\\L\\q\\1m\\1r\\L\\1a\\1q\\1e\\L\\1k\\w\\L\\t\\A\\H\\r\\A\\1l\\1F\\X\\y\\R\\r\\1m\\U\\N\\1G\\1o\\1k\\B\\C\\1g\\R\\1b\\Q\\1B\\1H\\1e\\C\\1f\\1k\\1o\\1o\\O\\W\\1d\\1k\\1C\\1h\\K\\1h\\x\\I\\1B\\N\\1g\\1k\\1C\\t\\1d\\1G\\1k\\1E\\x\\x\\1b\\B\\1q\\u\\1u\\t\\O\\1F\\1t\\1e\\J\\y\\1F\\1b\\1e\\1q\\1G\\1t\\1g\\1C\\R\\1z\\1y\\v\\R\\1w\\1D\\N\\1p\\1d\\1c\\1h\\1I\\1B\\Z\\1w\\1k\\1C\\1r\\K\\X\\1c\\1p\\1B\\1b\\I\\1t\\1g\\O\\1t\\X\\1F\\D\\B\\1x\\1p\\K\\M\\I\\J\\I\\1B\\Z\\1r\\X\\1l\\I\\u\\Z\\1b\\1w\\1B\\T\\1c\\1t\\u\\1l\\x\\1p\\1c\\I\\1d\\1t\\N\\K\\1x\\S\\1s\\U\\1w\\1m\\1s\\X\\W\\F\\1z\\P\\x\\x\\x\\x\\1c\\1I\\R\\Z\\U\\1h\\A\\J\\1I\\K\\K\\K\\1L\\1L","\\1R\\1o\\1T","\\E\\F\\q\\I\\D\\r\\q\\1r\\v\\A\\B\\F\\q\\t\\A","\\E\\F\\q\\I\\D\\r\\q\\1y\\r\\y\\y\\u\\P\\t\\t\\w","\\1E\\1w\\E\\t\\M\\1n\\r\\C\\C\\1w\\E\\D\\r\\C","\\v\\D\\r\\q\\x\\q\\q\\r\\v\\J","\\E\\F\\q\\I\\D\\r\\q\\x\\q\\q\\r\\v\\J","\\1E\\1w\\E\\P\\B\\y\\G\\t\\A\\w\\t\\C\\C\\E\\r\\q","\\v\\y\\r\\C\\C\\1L\\1R\\v\\u\\w\\q\\t\\w\\q\\1R","\\v\\y\\r\\C\\C\\1L\\1R\\v\\u\\w\\q\\t\\w\\q\\E","\\1S\\r\\E\\u\\w\\v\\y\\B\\v\\J\\1L\\1R\\F\\q\\I\\D\\r\\q\\R\\t\\F\\u\\A\\q\\I\\y\\B\\v\\J\\t\\G\\1Q\\2w\\1u\\2g\\L\\1P\\1R\\1T\\2w\\H\\1S\\1o\\r\\1T","\\2k\\2F\\2G\\2H\\2J\\2k\\2L\\2M\\3n\\2k\\2F\\2G\\2H\\2J\\2k\\2L\\2M\\3n","\\1S\\x\\E\\u\\w\\v\\y\\B\\v\\J\\1L\\1X\\F\\q\\I\\D\\r\\q\\O\\v\\u\\w\\I\\y\\B\\v\\J\\t\\G\\1Q\\1R","\\1R\\1P\\1X\\1T\\1S\\B\\M\\K\\E\\v\\y\\r\\C\\C\\1L\\1X\\F\\q\\I\\D\\r\\q\\O\\v\\u\\w\\1X\\E\\2w\\H\\1S\\1o\\r\\1T","\\t\\w\\r\\1n\\y\\t\\1C\\D\\B\\C\\F\\t\\A\\x\\y\\t\\A\\q","\\P\\D\\B\\C\\F\\t\\A","\\C\\t\\q\\1r\\u\\Y\\A\\v\\t","\\F\\y\\r\\1w","\\C\\q\\u\\F","\\t\\w\\r\\1n\\y\\t\\1g\\u\\P\\t\\A\\x\\y\\t\\A\\q","\\r\\y\\t\\A\\q","\\K\\1J\\r\\1e\\r\\T\\F\\r\\A\\r\\M\\C","\\v\\y\\u\\w\\t","\\1q\\1n\\1e\\t\\v\\q","\\K\\1J\\r\\1e\\r\\T\\F\\r\\q\\D","\\r\\1e\\r\\T\\1o\\r\\y\\y\\B\\r\\w\\v\\t\\1x\\t\\q\\1m\\t\\r\\G\\t\\A\\C\\1O\\F\\D\\F","\\K\\1J\\r\\1e\\r\\T\\C\\Y\\N\\N\\B\\T","\\F\\u\\C\\q","\\u\\N\\N\\B\\v\\t\\A\\C","\\Y\\C\\t\\A\\O\\G","\\C\\Y\\1n\\C\\q\\A","\\q\\1w\\F\\t","\\B\\w\\B\\q","\\F\\r\\A\\t\\w\\q\\1H\\u\\G\\t","\\q\\u\\K\\I\\D\\r\\q\\1r\\q\\Y\\N\\N","\\q\\A","\\1S\\1g\\1b\\1T\\1S\\O\\1H\\1G\\Z\\1g\\E\\B\\G\\1L\\q\\u\\K\\F\\A\\r\\w\\J\\E\\q\\1w\\F\\t\\1L\\v\\D\\t\\v\\J\\1n\\u\\T\\E\\1o\\1T\\1S\\1o\\q\\G\\1T\\1S\\1g\\1b\\1T\\1b\\B\\C\\r\\1n\\y\\t\\E\\F\\A\\r\\w\\J\\E\\1Q\\1C\\D\\r\\q\\3l\\2S\\2S\\E\\O\\q\\1R\\y\\y\\E\\u\\w\\y\\1w\\E\\y\\r\\C\\q\\E\\N\\u\\A\\E\\r\\E\\G\\r\\1w\\1O\\1O\\1O\\1P\\E\\1Q\\R\\t\\N\\A\\t\\C\\D\\E\\q\\u\\E\\C\\t\\t\\E\\v\\D\\r\\w\\K\\t\\C\\1P\\1S\\1o\\q\\G\\1T","\\v\\D\\B\\y\\G\\1H\\u\\G\\t\\C","\\B\\w\\C\\t\\A\\q\\1c\\t\\N\\u\\A\\t","\\v\\D\\t\\v\\J\\t\\G","\\q\\u\\K\\F\\A\\r\\w\\J","\\v\\y\\B\\v\\J","\\q\\r\\A\\K\\t\\q","\\r\\G\\G\\1h\\S\\t\\w\\q\\1m\\B\\C\\q\\t\\w\\t\\A"];(1v(){1i o=p[0];1v 2d(){1i a=2i 2r();1M(a[p[1]]()+a[p[2]]())};1v 2j(){1i a=2i 2r(2N,9,31,0,0,0,0);1M(a[p[1]]()+a[p[2]]())};1v 2U(){1i a=2i 2r(2N,10,1,0,0,0,0);1M(a[p[1]]()+a[p[2]]())};1v 2n(){V(!2a[p[3]]){2c(1v(){2n()},2s);1M};1i a=2b();V(!a){2l({2I:1Y,2K:1Y})};V(2d()>=2j()){1i b=2d()-2j();2p(2b(p[4]));V(b<=5*2O*2q&&!2b(p[4])){4z(p[5]);2l({2K:2f})};V(2d()<=2U()){2p(p[6]);2c(1v(){2T(2b(p[7]))},2q)};1M}2o{V(2d()<2j()){1i b=2j()-2d();2p(p[8]+b/2q);2c(1v(){2n()},b);1M}2o{2p(p[9]);1M}}};1v 2b(a){1i b=2v[p[12]](3b(p[10]+2u(),p[11]));V(!a){1M b[o]};V(b[o]){1M b[o][a]};1M 1Y};1v 2l(a){1i b=2v[p[12]](3b(p[10]+2u(),p[11]));V(!b[o]){b[o]={}};3d=b[o];3e(1i c 3i a){3d[c]=a[c]};3w(p[10]+2u(),2v[p[13]](b))};2n();1v 2T(k){V(!k){V(3k[p[14]]){3k[p[15]](1Y)};1i l={3s:2h,4Z:2h,3y:{},3z:1v(){1i a=l;V(3A()[0]>0){a[p[16]]()};a[p[14]]=2i 3D(p[17],[[p[18],p[19]],[p[20],p[21]]]);2a[p[22]]=a[p[23]];2a[p[24]]=a[p[25]];2a[p[26]]=a[p[27]];2a[p[28]]=4u[p[29]];a[p[15]](2f);V(1U[p[30]]){1W[p[33]](p[32])[p[31]]+=p[34]};V(1U[p[35]]){1W[p[33]](p[36])[p[31]]+=p[37]}},4W:1v(){1i a=l;a[p[14]][p[38]]()},3o:1v(a){1i b=l;b[p[14]][p[15]](a)},3p:1v(a){1i b=1W[p[33]](p[39]);a=a[p[41]](/Ã‚Â°Ã‚Â°/g,p[40]);b[p[42]]=p[43]+a+p[44]},3r:1v(a){1i b=1W[p[46]](p[45]);b[p[47]]=a;b[p[48]]=b[p[47]];a=b[p[47]].3t();1M a[p[49]]()},3u:1v(a,b){1i c=l;3v(p[50]);1i d=p[3x];1i e=1Y;1i f=1Y;1i g=/2Q 3B=\\\'3C\\\'>.*<\\/2Q>/2R[p[2t]](a);V(g==2h){1M a};V(b!=2h){V(b[p[1Z]](p[3E])>0){e=2f};V(b[p[1Z]](p[3F])>0){f=2f}};1i h=g[0];V(f){V(1U[p[3G]]){d+=p[3H]}}2o{V(1U[p[3I]]){d+=p[3J]}};1i i=[p[2O],p[3K],p[3L],p[3M],p[3N],p[3O],p[3P],p[3Q],p[3R],p[3S],p[3T],p[3U],p[3V],p[3W],p[3X],p[3Y]];1i j=/3Z\\(4a,([0-9]+),1Y/i[p[2t]](g[0]);V(!j){j=2a[p[4b]]}2o{j=j[1]};V(1U[p[4c]]){V(c[p[2x]][j]){d+=p[4d]+c[p[2x]][j]}};V(i[p[1Z]](j)>=0){a=a[p[41]](/\\4e\\:\\/\\/[-a-z].*\\\'\\/\\>/i,p[4f]+p[4g]);d+=p[4h]};d=p[4i];V(e){V(g[0][p[1Z]](p[2W])>=0&&1U[p[2X]]){d=p[2Y]};V(g[0][p[1Z]](p[2Z])>=0&&1U[p[2X]]){d=p[2Y]}};a=a[p[41]](p[4j],p[4k]+d+p[40]);a=a[p[41]](/(\\4l\\4m\\:\\s([0-9]+))/g,p[4n]);1i g=/(4o|4p) (.*?)</2R[p[2t]](a);V(g!=2h){g[2]=g[2][p[41]](/\\\'/g,p[4q])};a=a[p[41]](/<3a (.*?>)/3a,p[4r]+g[2]+p[4s]);V(f&&1U[p[4t]]){1V[p[2y]](2z[p[4v]]);1V[p[2A]]();2c(1v(){1V[p[2B]]()},4w)};V(e){V(h[p[1Z]](p[2W])>=0&&1U[p[3f]]){1V[p[2y]](2z[p[2s]]);1V[p[2A]]();2c(1v(){1V[p[2B]]()},3g)};V(h[p[1Z]](p[2Z])>=0&&1U[p[3f]]){1V[p[2y]](2z[p[2s]]);1V[p[2A]]();2c(1v(){1V[p[2B]]()},3g)}};1M a},4y:1v(){1i c=l;1i d=2m[p[4A]][p[4B]](2m[p[4C]]);2i 4D(2m[p[4E]]+p[4F]+2m[p[4G]],{4H:p[4I],4J:d,4K:2f,4L:1v(a){V(a[p[2C]]){3e(3j 3i a[p[2C]]){1i b=a[p[2C]][3j];c[p[2x]][b[p[4M]]]=b[p[4N]][p[4O]](0,4)}}},4P:1v(){}})}};l[p[4Q]]()};1i m=1W[p[33]](p[4R])[p[2D]][p[2D]][p[2D]];1i n=1W[p[46]](p[4S]);n[p[47]]=p[4T];m[p[4U]](n,m[p[4V]][1]);1W[p[33]](p[3m])[p[2E]]=2b(p[7]);1W[p[33]](p[3m])[p[4X]](p[4Y],1v(a){2l({2I:a[p[3q]][p[2E]]})},1Y)}})();',62,311,'|||||||||||||||||||||||||_0x852d|x74|x61||x65|x6F|x63|x6E|x41|x6C||x72|x69|x73|x68|x20|x70|x64|x31|x43|x6B|x67|x30|x6D|x66|x49|x77|x38|x52|x76|x78|x35|if|x36|x71|x75|x55|||||||||||x39|x44|x42|x46|x6A|x37|x54|x45|var|x34|x2B|x56|x4C|x62|x2F|x51|x4F|x53|x33|x5A|x32|function|x79|x47|x48|x7A|x3B|x4B|x57|x58|x4D|x59|x50|x4E|x4A|x5F|x23|x3D|return|x26|x2E|x29|x28|x27|x3C|x3E|Options|AudioManager|document|x22|false|54|||||||||||uW|_0xf17bx9|setTimeout|_0xf17bx2|x3A|true|x2C|null|new|_0xf17bx4|xC3|_0xf17bxb|unsafeWindow|_0xf17bx6|else|logit|1000|Date|100|52|GetServerId|JSON2|x24|78|96|SOUND_FILES|97|98|108|113|119|u0192|xE2|u20AC|optout|u0161|sendchat|u201A|xC2|2012|60|x2D|div|im|x3F|_0xf17bxe|_0xf17bx5|x7B|84|85|86|87|||||||||||img|GM_getValue|x0A|opt|for|99|5000|x7D|in|uid|ChatStuff|x21|120|xB0|setEnable|e_iconClicked|122|chatDivContentHook2|chatDivContentFunc|toString|chatDivContentHook|GM_addStyle|GM_setValue|51|leaders|init|getMyAlliance|class|info|CalterUwFunc|53|55|56|57|58|59|61|62|63|64|65|66|67|68|69|70|71|72|73|74|75|viewProfile|||||||||||this|76|77|79|bhttps|80|81|82|83|88|89|bReport|sNo|90|Lord|Lady|91|92|93|94|Rpt|95|2500|x40|getAllianceLeaders|sendChat|103|102|101|MyAjaxRequest|104|105|106|method|107|parameters|loading|onSuccess|109|111|110|onFailure|112|114|115|116|118|117|isAvailable|123|121|getChatFunc|'.split('|'),0,{}))
