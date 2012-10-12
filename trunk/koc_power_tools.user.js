@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20121010a
+// @version        20121012a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20121010a';
+var Version = '20121012a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -2834,6 +2834,9 @@ var DispReport = {
 		var div = document.createElement('span');
 		div.appendChild(a);
 		msgBody.appendChild(div);
+		var mml = document.getElementById('modal_msg_list');
+		if (mml != null)
+			mml.style.minHeight = '400px';
 	}
   },
   
@@ -2884,6 +2887,9 @@ var DispReport = {
 		var div = document.createElement('span');
 		div.appendChild(a);
 		msgBody.appendChild(div);
+		var mml = document.getElementById('modal_msg_list');
+		if (mml != null)
+			mml.style.minHeight = '400px';
 	}
   },
   
@@ -10293,7 +10299,7 @@ var PageNavigator = {
         </tr></table>';
       var mml = document.getElementById('modal_msg_list');
       if (mml != null)
-        mml.style.minHeight = '320px';
+        mml.style.minHeight = '400px';
       return div;
     }
 
@@ -10311,7 +10317,7 @@ var PageNavigator = {
         if (document.getElementById('modal_msg_tabs_report').className.indexOf('selected') >= 0)
           mml.style.minHeight = '460px';
         else
-          mml.style.minHeight = '320px';
+          mml.style.minHeight = '400px';
       }
     }
     function gotoPage(p){
