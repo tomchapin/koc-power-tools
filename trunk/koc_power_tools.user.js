@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20121012a
+// @version        20121017a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20121012a';
+var Version = '20121017a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -8283,7 +8283,8 @@ Tabs.Attaque = {
 }
 
 function equippedthronestats (stat_id){
-	var equip_items = Seed.throne.slotEquip[1];
+	var current_slot = Seed.throne.activeSlot;
+	var equip_items = Seed.throne.slotEquip[current_slot];
 	var total = 0;
 	for(var k = 0; k<equip_items.length; k++){
 		var item_id = equip_items[k];
