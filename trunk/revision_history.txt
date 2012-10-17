@@ -1,5 +1,18 @@
 REVISION HISTORY:
 ----------------
+20121017a
+   Updated scripters list
+   Addded bloodthorn to reports popup
+   Added glory gain to reports popup
+   Add troop stats in battle field
+   Add total might loss
+   Add abandon button in wilderness tab
+   Add dismiss knight button in knight tab
+   Add delete wild/barb/transport button
+   Add troop training time estimates
+   Fix train tab for ascended cities
+   Fixed wrong building id in overview tab
+   Fix march size buff only work on first preset
 20120923a
    Fix bug march tab march size buff check
 20120921a
