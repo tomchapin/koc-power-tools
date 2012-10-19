@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20121017a
+// @version        20121020a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20121017a';
+var Version = '20121020a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -3429,6 +3429,7 @@ Tabs.AllianceList = {
   tabLabel : uW.g_js_strings.commonstr.player,
   cont : null,
   dat : [],
+  clickedAlly:false,
   
 
 /***
@@ -3549,6 +3550,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
             <TD class="xtab ptErrText"><SPAN id=ptallErr></span></td></tr>\
            <TR><TD class=xtab><INPUT align=left id=allListSubmit type=submit value="'+uW.g_js_strings.commonstr.alliances+'" /></td>\
             <TD class=xtab><INPUT align=right id=idMyAllSubmit type=submit value="'+ getMyAlliance()[1] +'"/>\
+            <TD><INPUT id=pbShowFriendlies type=CHECKBOX>Show Friendlys &nbsp;<INPUT id=pbShowHostiles type=CHECKBOX>Show Hostiles</td>\
              <TD class=xtab></td><TD class=xtab><span align=right <b>'+uW.g_js_strings.attack_generateincoming.estimatedarrival+': </b></span>\
             <div><select id="idFindETASelect">\
         <option value="0,0" > -- Select -- </option>\
@@ -3566,11 +3568,26 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
         <option value="1,80" > '+uW.unitcost["unt12"][0]+' </option>\
         </select></div>\
         </td></tr>\
+        <TR><TD colspan=5><DIV id=pbFriendlyDivs style="max-width:725px; white-space:pre-wrap"></div></td>\
+        <TR><TD colspan=5><DIV id=pbHostilesDivs style="max-width:725px; white-space:pre-wrap"></div></td>\
          </table><span style="vertical-align:middle;" id=altInput></span></div><SPAN id=allListOut></span>';
       t.cont.innerHTML = m;
       document.getElementById('allPlayName').addEventListener ('keypress', function(e) {if ( e.which == 13)  document.getElementById('playSubmit').click();}, false);
       document.getElementById('allAllName').addEventListener ('keypress', function(e) {if ( e.which == 13)  document.getElementById('allSubmit').click();}, false);
-      
+      document.getElementById('pbShowFriendlies').addEventListener ('change',function(){
+      		if (this.checked){
+      			t.paintFriendlyDiv();
+      		}else{
+      			document.getElementById('pbFriendlyDivs').innerHTML = '';
+      		}
+      });
+	  document.getElementById('pbShowHostiles').addEventListener ('change',function(){
+	  		if (this.checked){
+	  			t.paintHostilesDiv();
+	  		}else{
+	  			document.getElementById('pbHostilesDivs').innerHTML = '';
+	  		}
+	  });
       document.getElementById('allSubmit').addEventListener ('click', t.eventSubmit, false);
       document.getElementById('playSubmit').addEventListener ('click', t.eventPlayerSubmit, false);
       document.getElementById('ffbuidsubmit').addEventListener ('click', t.eventPlayerUIDSubmit, false);
@@ -3586,7 +3603,35 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       t.state = 1;
     }
   },
-   	
+  paintFriendlyDiv : function () {
+  	var t = Tabs.AllianceList;
+  	var mess = ' ----- Friendlys ----- <BR>';
+  	for (k in Seed.allianceDiplomacies.friendly){
+  		mess += '<INPUT id=pbFriendly_'+k+' type=submit value="'+Seed.allianceDiplomacies.friendly[k].allianceName+'">&nbsp;'; //
+ 	}
+  	document.getElementById('pbFriendlyDivs').innerHTML = mess;
+   	for (q in Seed.allianceDiplomacies.friendly){
+  		document.getElementById('pbFriendly_'+q).addEventListener('click', function(){
+  			//alert(this.id.substr(12))
+  			uW.PTgetMembers(this.id.substr(12))
+  		});
+  	}
+  },
+
+  paintHostilesDiv : function () {
+  	var t = Tabs.AllianceList;
+  	var mess = ' ----- Hostiles ----- <BR>';
+ 	for (k in Seed.allianceDiplomacies.hostile){
+  		mess += '<INPUT id=pbHostile_'+k+' type=submit value="'+Seed.allianceDiplomacies.hostile[k].allianceName+'">&nbsp;'; //
+ 	}
+  	document.getElementById('pbHostilesDivs').innerHTML = mess;
+  	for (q in Seed.allianceDiplomacies.hostile){
+  		document.getElementById('pbHostile_'+q).addEventListener('click', function(){
+  			//alert(this.id.substr(11))
+  			uW.PTgetMembers(this.id.substr(11))
+  		});
+  	}
+  },
   pName : '',
   eventPlayerSubmit : function (){
     var t = Tabs.AllianceList;
@@ -3791,7 +3836,11 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
   eventSubmit : function (){
     var t = Tabs.AllianceList;
     document.getElementById('ptallErr').innerHTML='';
-    t.aName = document.getElementById('allAllName').value;
+    if (t.clickedAlly){
+    	t.aName = t.clickedAllyName;
+    }else{
+    	t.aName = document.getElementById('allAllName').value;
+    }
     if (t.aName.length < 3){
       document.getElementById('ptallErr').innerHTML = uW.g_js_strings.getAllianceSearchResults.entryatleast3;
       return;
