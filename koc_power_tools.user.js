@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20121031a
+// @version        20121106a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20121031a';
+var Version = '20121106a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -5823,24 +5823,29 @@ Tabs.Train = {
         t.fixQueTimes (q);
         t.stats.queued = q.length;
         first = true;
+		first_special = true;
         for (var i=0; i<q.length; i++){
           start = q[i][2];
           end = q[i][3];
-          if (first)
+          if (first || (q[i][7] && first_special))
             actual = end - now;
           else
             actual = end - lastEnd;
           if (actual < 0)
             actual = 0;
           q[i][6] = cityId;
+		  //q[i][7] If true means special troop training
+		  
           m += '<TR align=right><TD width="5px"><A><DIV onclick="cancelTrain('+ q[i][0]+','+q[i][1]+','+q[i][2]+','+q[i][3]+','+q[i][5]+','+q[i][6]+','+i +')">X</div></a></td>';
           m += '<TD>'+ q[i][1] +' </td><TD align=left> '+ uW.unitcost['unt'+q[i][0]][0];
-          if (first)
+          if (first || (q[i][7] && first_special))
             m += '</td><TD> &nbsp; '+  timestr(end-start, true) +'</td><TD> (<SPAN id=ptttfq>'+ timestr(actual, true) +'</span>)';
           else
             m += '</td><TD> &nbsp; '+  timestr(actual, true) +'</td></tr>'; 
           lastEnd = end;
           first = false;
+		  if(q[i][7])
+			first_special = false;
         }
       }
       m += '</table>';
