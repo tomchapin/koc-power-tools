@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20121106a
+// @version        20121107a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20121106a';
+var Version = '20121107a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -5221,8 +5221,10 @@ Tabs.Train = {
     });
     document.getElementById('ptttType').addEventListener('change',function(){
         if (document.getElementById('ptttInpPS').value > 0){
-            t.dispTroopTrainTimes()
+            t.dispTroopTrainTimes();
         }
+		t.lastQueString = null;
+		t.displayCityStats();
     });
     var dcp = new CdispCityPicker ('ptspeed', document.getElementById('ptspeedcity'), true, t.clickCitySelect, 0);
     t.TTspMax = document.getElementById ('ptttSpMax');
@@ -5540,8 +5542,6 @@ Tabs.Train = {
 					b.maxLevel = 12;
 			}
 		}
-		logit(isPrestige);
-		logit(inspect(b,3,1));
         if (b.maxLevel < uc[8][k][1]){
           t.stats.MaxTrain = 0;
           t.limitingFactor = null;
@@ -5778,6 +5778,10 @@ Tabs.Train = {
   displayCityStats : function (){
     var t = Tabs.Train;
     var cityId = t.selectedCity.id;
+	var isSpecial = false;
+	if(t.TTselType.value > 12){
+		isSpecial = true;
+	}
     t.stats.food = parseInt (Seed.resources['city'+cityId].rec1[0]/3600);
     t.stats.wood = parseInt (Seed.resources['city'+cityId].rec2[0]/3600);
     t.stats.stone = parseInt (Seed.resources['city'+cityId].rec3[0]/3600);
@@ -5787,7 +5791,7 @@ Tabs.Train = {
       t.stats.idlePop = parseInt(Seed.citystats['city'+cityId].pop[0]);
     else
       t.stats.idlePop = parseInt(Seed.citystats['city'+cityId].pop[0]) - parseInt(Seed.citystats['city'+cityId].pop[3]);
-    t.stats.barracks = getCityBuilding (cityId, 13).count;
+    t.stats.barracks = (isSpecial)?getCityBuilding (cityId, 22).count:getCityBuilding (cityId, 13).count;
     var m = '<CENTER><B>'+ Cities.byID[cityId].name +' &nbsp; ('+ Cities.byID[cityId].x +','+ Cities.byID[cityId].y +')</b></center><HR>';
 
     m += '<TABLE class=ptTab width=100%><TR align=center>';
@@ -5808,11 +5812,21 @@ Tabs.Train = {
     t.expireTheQueue(q);
     var qs = q.toString();
     var now = unixTime();
-    if (q!=null && q.length>0)
-      totTime = q[q.length-1][3] - now;
+    // if (q!=null && q.length>0)
+      // totTime = q[q.length-1][3] - now;
     if ( qs == t.lastQueString){
       if (q!=null && q.length>0){
-        var cur = q[0][3] - now;
+		var cur = 0;
+		for(var i = 0; i<q.length; i++){
+			if(q[i][7] && isSpecial){
+				cur = q[i][3] - now;
+				break;
+			}
+			if(!q[i][7] && !isSpecial){
+				cur = q[i][3] - now;
+				break;
+			}
+		}
         document.getElementById ('ptttfq').innerHTML = timestr(cur, true);
       }
     } else {
@@ -5820,14 +5834,23 @@ Tabs.Train = {
       t.stats.queued = 0;
       m = '<TABLE align=center class=ptTab>';
       if (q!=null && q.length>0 ){
-        t.fixQueTimes (q);
-        t.stats.queued = q.length;
+		if(!getCityPrestige(cityId))
+			t.fixQueTimes (q);
+        // t.stats.queued = q.length;
         first = true;
-		first_special = true;
         for (var i=0; i<q.length; i++){
+		  if(isSpecial && q[i][0] < 13){
+			continue;
+		  }
+		  if(!isSpecial && q[i][0] >= 13){
+			continue;
+		  }
+		  
           start = q[i][2];
           end = q[i][3];
-          if (first || (q[i][7] && first_special))
+		  if(end > totTime)
+			totTime = end;
+          if (first)
             actual = end - now;
           else
             actual = end - lastEnd;
@@ -5838,24 +5861,25 @@ Tabs.Train = {
 		  
           m += '<TR align=right><TD width="5px"><A><DIV onclick="cancelTrain('+ q[i][0]+','+q[i][1]+','+q[i][2]+','+q[i][3]+','+q[i][5]+','+q[i][6]+','+i +')">X</div></a></td>';
           m += '<TD>'+ q[i][1] +' </td><TD align=left> '+ uW.unitcost['unt'+q[i][0]][0];
-          if (first || (q[i][7] && first_special))
+          if (first)
             m += '</td><TD> &nbsp; '+  timestr(end-start, true) +'</td><TD> (<SPAN id=ptttfq>'+ timestr(actual, true) +'</span>)';
           else
             m += '</td><TD> &nbsp; '+  timestr(actual, true) +'</td></tr>'; 
           lastEnd = end;
           first = false;
-		  if(q[i][7])
-			first_special = false;
+		  t.stats.queued++;
         }
       }
       m += '</table>';
       document.getElementById ('divSTleft').innerHTML = m;
+	  t.totTime = totTime;
     }
     m = t.stats.queued +' ' + uW.g_js_strings.commonstr.oftx +' ';
     if (t.stats.queued >= 0)
-      m += t.stats.barracks;
-    if (totTime > 0)
-      m += ' - '+ uW.g_js_strings.commonstr.time + ': '+ uW.timestr(totTime);
+	  m += t.stats.barracks;
+	
+    if ((t.totTime-now) > 0)
+      m += ' - '+ uW.g_js_strings.commonstr.time + ': '+ uW.timestr(t.totTime-now);
     document.getElementById ('statTTtot').innerHTML = m;
     
 // defense queue ....
@@ -11404,12 +11428,12 @@ var fortNamesShort = {
 function getCityBuilding (cityId, buildingId){
   var b = Seed.buildings['city'+cityId];
   var ret = {count:0, maxLevel:0};
-  for (var i=1; i<33; i++){
-    if (b['pos'+i] && b['pos'+i][0] == buildingId){
-      ++ret.count;
-      if (parseInt(b['pos'+i][1]) > ret.maxLevel)
-        ret.maxLevel = parseInt(b['pos'+i][1]);
-    }
+  for( var k in b){
+	if(b[k] && b[k][0] == buildingId){
+		++ret.count;
+		if(parseInt(b[k][1]) > ret.maxLevel)
+			ret.maxLevel = parseInt(b[k][1]);
+	}
   }
   return ret;
 }
