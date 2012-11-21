@@ -5834,7 +5834,8 @@ Tabs.Train = {
 				break;
 			}
 		}
-        document.getElementById ('ptttfq').innerHTML = timestr(cur, true);
+		if(document.getElementById ('ptttfq'))
+			document.getElementById ('ptttfq').innerHTML = timestr(cur, true);
       }
     } else {
       t.lastQueString = qs;
