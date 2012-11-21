@@ -1,12 +1,19 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20121107a
+// @version        20121121a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
 
-var Version = '20121107a';
+//Fixed weird bug with koc game
+if(window.self.location != window.top.location){
+	if(window.self.location.href == window.parent.location.href){
+		return; //If iframe source is same as the parent don't load script
+	}
+}
+
+var Version = '20121121a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
