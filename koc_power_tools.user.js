@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20121121a
+// @version        20121121b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
@@ -13,7 +13,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20121121a';
+var Version = '20121121b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -7469,7 +7469,7 @@ Tabs.OverView = {
       str += _row ('Ore', rows[4]);
       str += _row ('Aetherstone', rows[5]);
       str += '<TR><TD colspan=11><BR></td></tr>';
-      for (r=1; r<14; r++){
+      for (r=1; r<15; r++){
         rows[r] = [];
         for(i=0; i<Cities.numCities; i++) {
           cityID = 'city'+ Cities.cities[i].id;
@@ -7479,13 +7479,13 @@ Tabs.OverView = {
 	  
 	  var colnum = Cities.numCities;
       if (Options.includeMarching){
-        for (var i=0; i<14; i++){
+        for (var i=0; i<15; i++){
           rows[i][colnum] = parseIntNan(march.marchUnits[i]);
 		}
 		colnum++;
       }
 	  if(Options.includeTrainingExt){
-		for (var i=0; i<14; i++){
+		for (var i=0; i<15; i++){
 		  rows[i][colnum] = parseIntNan(train.trainUnts[i]);
 		}
 	  }
@@ -7513,6 +7513,7 @@ Tabs.OverView = {
       str += _row ('Ram', rows[11]);
       str += _row ('Catapult', rows[12]);
       str += _row ('Bloodthorn', rows[13]);
+      str += _row ('Executioner', rows[14]);
       str += '<TR><TD colspan=11><BR></td></tr>';
       
       row = [];
@@ -7616,7 +7617,7 @@ Tabs.OverView = {
       document.getElementById('ptoverfont').addEventListener('change', e_fontSize, false);
     //DebugTimer.display ('Draw Overview');    
     } catch (e){
-      t.Overv.innerHTML = '<PRE>'+ e.name +' : '+ e.message +'</pre>';
+      t.Overv.innerHTML = '<PRE>'+ e.name +' : '+ e.message +' on '+ e.lineNumber +'</pre>';
     }   
     t.displayTimer = setTimeout (t.paintOld, 5000);	
 
@@ -11408,7 +11409,7 @@ function getTrainInfo (){
   var ret = {};
 
   ret.trainUnts = [];
-  for (i=0; i<13; i++){
+  for (i=0; i<15; i++){
     ret.trainUnts[i] = 0;
   }
   
