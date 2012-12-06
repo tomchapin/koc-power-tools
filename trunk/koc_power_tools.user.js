@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20121205a
+// @version        20121206a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
@@ -13,7 +13,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20121205a';
+var Version = '20121206a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -8035,6 +8035,7 @@ Tabs.Attaque = {
      }
 	 
 	 var trmarchsizebuff = equippedthronestats(66);
+			 if (trmarchsizebuff>unsafeWindow.cm.thronestats.boosts.MarchSize.Max)trmarchsizebuff=unsafeWindow.cm.thronestats.boosts.MarchSize.Max;
 	 if(trmarchsizebuff > 0)
 		e+=(trmarchsizebuff/100);
 		if(unsafeWindow.seed.cityData.city[t.sourceCity.id].isPrestigeCity){
@@ -8338,6 +8339,7 @@ Tabs.Attaque = {
 				e+=0.5;
 				
 			 var trmarchsizebuff = equippedthronestats(66);
+			 if (trmarchsizebuff>unsafeWindow.cm.thronestats.boosts.MarchSize.Max)trmarchsizebuff=unsafeWindow.cm.thronestats.boosts.MarchSize.Max;
 			 if(trmarchsizebuff > 0)
 				e+=(trmarchsizebuff/100);
 		if(unsafeWindow.seed.cityData.city[t.sourceCity.id].isPrestigeCity){
@@ -8395,7 +8397,7 @@ function equippedthronestats (stat_id){
 	for(var k = 0; k<equip_items.length; k++){
 		var item_id = equip_items[k];
 		var item = uW.kocThroneItems[item_id];
-		logit(inspect(item,3,1));
+		//logit(inspect(item,3,1));
 		for(var i = 1; i<=item.quality; i++){
 			var id = item["effects"]["slot"+i]["id"];
 			if(id == stat_id){
