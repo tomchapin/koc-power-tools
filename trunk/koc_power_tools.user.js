@@ -5362,7 +5362,8 @@ Tabs.Train = {
 		for(var k = 0; k<equipped.length; k++){
 			var item_id = equipped[k];
 			var item = unsafeWindow.kocThroneItems[item_id];
-			for(var i = 1; i<=item.quality; i++){
+			var maxline = Math.min(item.quality, 5);
+			for(var i = 1; i<=maxline; i++){
 				var id = item['effects']['slot'+i]['id'];
 				if(id == StatID){
 					var tier = parseInt(item["effects"]["slot"+i]["tier"]);
@@ -8398,7 +8399,8 @@ function equippedthronestats (stat_id){
 		var item_id = equip_items[k];
 		var item = uW.kocThroneItems[item_id];
 		//logit(inspect(item,3,1));
-		for(var i = 1; i<=item.quality; i++){
+		var maxline = Math.min(item.quality, 5);
+		for(var i = 1; i<=maxline; i++){
 			var id = item["effects"]["slot"+i]["id"];
 			if(id == stat_id){
 				var tier = parseInt(item["effects"]["slot"+i]["tier"]);
