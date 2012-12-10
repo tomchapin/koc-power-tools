@@ -2736,7 +2736,7 @@ var messageNav = {
 var AttackDialog = {
   init : function (){
     var t = AttackDialog;
-    t.modal_attackFunc = new CalterUwFunc ('modal_attack', [[/}\s*$/, 'attackDialog_hook(); }']]);
+    t.modal_attackFunc = new CalterUwFunc ('modal_attack', [[/}\s*$/, '; attackDialog_hook(); }']]);
     uW.attackDialog_hook = t.modalAttackHook;
     t.modal_attackFunc.setEnable (true);
   },
@@ -7245,7 +7245,7 @@ Tabs.OverView = {
 	          <TD class=xtabH>Ore</td><TD class=xtabH>Pop</td><TD class=xtabHL>Might</td><TD class=xtabH>Life</td><TD class=xtabH>Atk</td><TD class=xtabH>Def</td><TD class=xtabH>Speed</td><TD class=xtabH>Range</td><TD class=xtabH>Load</td>\
 	          <TD class=xtabHL>Food</td></tr>\
 	          <TR style="height:1px;"><TD style="padding:0px; spacing:0px; height:1px; border-color:black; border-width: 1px; border-style: none none solid none" colspan=14></td></tr>';
-	      for (ui=1; ui<13; ui++){
+	      for (ui=1; ui<15; ui++){
 	        if (++rownum % 2)
 	          rsty = '';
 	        else
@@ -11001,7 +11001,12 @@ function getTroopDefTrainEstimates (cityID, city){
 			}
 		}
 	}
-
+	var isPrestige = getCityPrestige(city.id);
+	if(isPrestige){
+		city.blacksmithLevel = 12;
+		city.workshopLevel = 12;
+		city.stableLevel = 12;
+	}
 	var now = unixTime();
 	city.marshallCombatScore = 0;
 	var s = Seed.knights[cityID];
