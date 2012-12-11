@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20121209a
+// @version        20121210a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
@@ -13,7 +13,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20121209a';
+var Version = '20121210a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -1374,7 +1374,6 @@ var Rpt = {
 				m+='<TR><TD colspan=4>Knight Combat Skill: ' + rslt['s1KCombatLv'] + '</TD></TR>';
 			m+='<TR><TD colspan=4>Attack Boosted: ' + 100*rslt['s1atkBoost'] + '%</TD></TR>';
 			m+='<TR><TD colspan=4>Defense Boosted: ' + 100*rslt['s1defBoost'] + '%</TD></TR>';
-			<TR></TR>
 
 			m+='<TR><TD colspan=4> </TD></TR>';	
 			m+='<TR><TD colspan=4><b>Attack Results:</b></TD></TR>';
