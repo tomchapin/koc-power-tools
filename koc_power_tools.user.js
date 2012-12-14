@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20121210a
+// @version        20121214a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
@@ -13,7 +13,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20121210a';
+var Version = '20121214a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -631,7 +631,8 @@ var ChatStuff = {
     var t = ChatStuff;
 	if(getMyAlliance()[0] > 0)
 		t.getAllianceLeaders();
-    t.chatDivContentFunc = new CalterUwFunc ('Chat.chatDivContent', [['h = cm.formatModel.exe(h, true);','h=chatDivContent_hook2(h);h = cm.formatModel.exe(h, true);'],['return f.join("");', 'var msg = f.join("");\n msg=chatDivContent_hook(msg,d);\n return msg;']]);
+	//['h = cm.formatModel.exe(h, true);','h=chatDivContent_hook2(h);h = cm.formatModel.exe(h, true);'],
+    t.chatDivContentFunc = new CalterUwFunc ('Chat.chatDivContent', [['return f.join("")', 'var msg = f.join("");\n msg=chatDivContent_hook(msg,d);\n return msg;']]);
     uW.chatDivContent_hook = t.chatDivContentHook;
     uW.chatDivContent_hook2 = t.chatDivContentHook2;
     uW.ptChatIconClicked = t.e_iconClicked;
@@ -10651,6 +10652,7 @@ var CalterUwFunc = function (funcName, findReplace) {
     }
     this.funcNew = rt;
   } catch (err) {
+	logit("CalterUwFunc "+funcName+" "+e);
   }
       
   function setEnable (tf){
