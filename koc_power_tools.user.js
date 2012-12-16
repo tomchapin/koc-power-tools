@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20121216a
+// @version        20121216b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20121216a';
+var Version = '20121216b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -293,7 +293,7 @@ if (TEST_WIDE){
   FoodAlerts.init();
   TowerAlerts.init();
   MapDistanceFix.init ();
-  WarnZeroAttack.init ();
+  //WarnZeroAttack.init ();
   AllianceReports.init ();
   messageNav.init();
   PageNavigator.init ();
