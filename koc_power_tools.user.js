@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20121214a
+// @version        20121216a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
+ 
 
 //Fixed weird bug with koc game
 if(window.self.location != window.top.location){
@@ -13,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20121214a';
+var Version = '20121216a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -133,6 +134,8 @@ var Options = {
   AttackCibleY : 0,
   AttackKnight : 0,
   enhancedinbox : true,
+  miniRefresh   : false,
+  miniRefreshIntvl: 3,
 };
 
 var Colors ={
@@ -407,7 +410,7 @@ var battleReports = {
     uW.getReportDisplay_hook = t.hook;
     uW.getReportDisplay_hookz = t.hookz;
     t.getReportDisplayFunc.setEnable (true);
-    t.renderBattleReportFunc = new CalterUwFunc ('Messages.viewMarchReport', [['$("modal_msg_list").innerHTML = cm.MarchReportController.getMarchReport(m, r);','var msg = cm.MarchReportController.getMarchReport(m, r); $("modal_msg_list").innerHTML = renderBattleReport_hook(msg,m,r);']]); //March reports battle rounds function
+    t.renderBattleReportFunc = new CalterUwFunc ('Messages.viewMarchReport', [[/\$\("modal_msg_list"\)\.innerHTML\s*=\s*cm\.MarchReportController\.getMarchReport\(c,\s*w\)/, 'var msg = cm.MarchReportController.getMarchReport(c, s); $("modal_msg_list").innerHTML = renderBattleReport_hook(msg,c,s);']]); //March reports battle rounds function
     uW.renderBattleReport_hook = t.hook2;
     t.renderBattleReportFunc.setEnable (true);
     uW.deleteAreport = t.e_deleteReport;
@@ -494,7 +497,7 @@ var battleReports = {
 var mapinfoFix = {
 	init : function(){
 		var t = mapinfoFix;
-		t.calcButtonInfo = new CalterUwFunc ('cm.ContextMenuMapController.prototype.calcButtonInfo', [['case "reassign":b.text = g_js_strings.commonstr.reassign;b.color = "blue";b.action = function () {modal_attack(2, e.tile.x, e.tile.y);};d.push(b);break;', 'case "reassign":b.text = g_js_strings.commonstr.reassign;b.color = "blue";b.action = function () {modal_attack(5, e.tile.x, e.tile.y);};d.push(b);break;']]);
+		t.calcButtonInfo = new CalterUwFunc ('cm.ContextMenuMapController.prototype.calcButtonInfo', [[/case\s*"reassign":b\.text\s*=\s*g_js_strings\.commonstr\.reassign;b\.color\s*=\s*"blue";b\.action\s*=\s*function\s*\(\)\s*{modal_attack\(2,\s*e\.tile\.x,\s*e\.tile\.y\);*};d\.push\(b\);break;/,   'case "reassign":b.text=g_js_strings.commonstr.reassign;b.color="blue";b.action=function(){modal_attack(5,e.tile.x,e.tile.y);};d.push(b);break;']]);
 		t.MapContextMenus = new CalterUwFunc ('cm.ContextMenuMapController.prototype.calcCityType', [['return c', 'c = calcCityTypeFix(c,d);return c']]);
 		t.calcButtonInfo.setEnable(Options.mapInfo);
 		t.MapContextMenus.setEnable(Options.mapInfo2);
@@ -631,8 +634,8 @@ var ChatStuff = {
     var t = ChatStuff;
 	if(getMyAlliance()[0] > 0)
 		t.getAllianceLeaders();
-	//['h = cm.formatModel.exe(h, true);','h=chatDivContent_hook2(h);h = cm.formatModel.exe(h, true);'],
-    t.chatDivContentFunc = new CalterUwFunc ('Chat.chatDivContent', [['return f.join("")', 'var msg = f.join("");\n msg=chatDivContent_hook(msg,d);\n return msg;']]);
+    // [[/h\s*=\s*cm.formatModel\.exe\(h,\s*true\);/,'h=chatDivContent_hook2(h);h = cm.formatModel.exe(h, true);'],
+	t.chatDivContentFunc = new CalterUwFunc ('Chat.chatDivContent', [['return f.join("")', 'var msg = f.join("");\n msg=chatDivContent_hook(msg,d);\n return msg;']]);
     uW.chatDivContent_hook = t.chatDivContentHook;
     uW.chatDivContent_hook2 = t.chatDivContentHook2;
     uW.ptChatIconClicked = t.e_iconClicked;
@@ -3250,7 +3253,7 @@ var TowerAlerts = {
     uW.ptViewImpending_hook = t.viewImpending_hook;
     t.viewImpendingFunc.setEnable (true);
 
-    t.generateIncomingFunc = new CalterUwFunc ('attack_generateincoming', [[/.*} else {\s*e = true;\s*}/im, '} else { e = ptGenerateIncoming_hook(); }']]);
+    t.generateIncomingFunc = new CalterUwFunc ('attack_generateincoming', [[/d\s*=\s*true/i, 'd = ptGenerateIncoming_hook();']]);
     uW.ptGenerateIncoming_hook = t.generateIncoming_hook;
   },
     
@@ -4824,6 +4827,7 @@ Tabs.Options = {
   curTabBut : null,
   curTabName : null,
   fixAvailable : {},
+  refreshTimer : null,
 
   init : function (div){
     var t = Tabs.Options;
@@ -4876,7 +4880,11 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=ptEnableWisperAlert type=checkbox /></td><TD>Enable sound alert on whisper</td></tr>';
 	  m+='<TR><TD><INPUT id=ptEnableTowerAlert type=checkbox /></td><TD>Enable sound alert on tower alert in chat</td></tr>';
       m+='<TR><TD><INPUT id=ptupdate type=checkbox '+ (GlobalOptions.ptupdate?'CHECKED ':'') +'/></td><TD>Check updates on '+ htmlSelector({0:'Userscripts', 1:'Google Code'},GlobalOptions.ptupdatebeta,'id=ptupdatebeta') +' (all domains) &nbsp; &nbsp; <INPUT id=ptupdatenow type=submit value="Update Now" /></td></tr>';
-	  m+='<TR><TD colspan=2><B>KofC Features:</b></td></tr>';
+	  
+      m+='<TR><TD><INPUT id=ptEnableMiniRefresh type=checkbox ' + (Options.miniRefresh?'CHECKED ':'') + '/></td><TD> Refresh data/marches every ';
+      m+='<INPUT id=optMiniRefreshIntvl type=text size=3 value="'+ Options.miniRefreshIntvl +'"> minutes</td></tr>';
+      
+      m+='<TR><TD colspan=2><B>KofC Features:</b></td></tr>';
 	  m+='<TR><TD><INPUT id=togAllRpts type=checkbox /></td><TD>Enable enhanced Alliance Reports.</td></tr>';
 	  m+='<TR><TD><INPUT id=togAllowAlter type=checkbox /></td><TD>Allow other scripts to change format of Alliance Reports.</td></tr>';
 	  m+='<TR><TD><INPUT id=togAllMembers type=checkbox /></td><TD>Enable enhanced alliance members view.</td></tr>';
@@ -4918,7 +4926,9 @@ Tabs.Options = {
       t.togOpt ('togMapInfo2', 'mapInfo2', mapinfoFix.setEnable2, mapinfoFix.isAvailable2);
       t.togOpt ('togBatRounds', 'dispBattleRounds', null, battleReports.isRoundsAvailable);
       t.togOpt ('togAtkDelete', 'reportDeleteButton', null, battleReports.isRoundsAvailable);
+      
       document.getElementById('ptupdate').addEventListener ('change', t.e_updateChanged, false);
+      document.getElementById('ptEnableMiniRefresh').addEventListener ('change', t.e_miniRefreshChanged, false);
 	  
 	  document.getElementById('ptupdatebeta').addEventListener ('change', function(){
       		GlobalOptions.ptupdatebeta = document.getElementById('ptupdatebeta').value;
@@ -4938,10 +4948,24 @@ Tabs.Options = {
           saveOptions();
         }, false);
       
+      document.getElementById('optMiniRefreshIntvl').addEventListener ('change', function () {
+          var x = document.getElementById('optMiniRefreshIntvl').value; 
+          if (isNaN(x) || x< 2 || x> 999){
+            document.getElementById('optMiniRefreshIntvl').value = Options.miniRefreshIntvl;
+            return;
+          }
+          Options.miniRefreshIntvl = x; 
+          saveOptions();
+        }, false);   
+      
 	document.getElementById('optAutoTrainMins').addEventListener ('change', function () {
 				AutoTrainOptions.intervalSecs = 60 * document.getElementById('optAutoTrainMins').value;
 				saveAutoTrainOptions();
 			}, false);
+	
+	     if (Options.miniRefresh) {
+	         t.refreshTimer = setInterval (function(){Tabs.Options.updateAll();},  Options.miniRefreshIntvl * 60 *1000);
+	     }
 
 	} catch (e) {
       t.Overv.innerHTML = '<PRE>'+ e.name +' : '+ e.message +'</pre>';  
@@ -5016,14 +5040,12 @@ Tabs.Options = {
       t.cont.innerHTML = '<PRE>'+ e.name +' : '+ e.message +'</pre>';  
     }
   },
-  
-
-  
+    
   hide : function (){
   },
 
   show : function (){
-        var t = Tabs.Options;
+    var t = Tabs.Options;
     if (t.curTabName == 'U') 
          t.Options();
     else if (t.curTabName == 'V')
@@ -5059,12 +5081,66 @@ Tabs.Options = {
     GM_setValue ('Options_??', JSON2.stringify(GlobalOptions));  
   },
   
+  e_miniRefreshChanged : function () {
+      Options.miniRefresh = document.getElementById('ptEnableMiniRefresh').checked;
+      saveOptions();
+      
+      clearInterval(t.refreshTimer);
+      
+      if (Options.miniRefresh) {
+         Tabs.Options.updateAll();
+         t.refreshTimer = setInterval (function(){Tabs.Options.updateAll();},  Options.miniRefreshIntvl * 60 *1000);
+      }
+  },
+  
+  // This function grabs a fresh copy of the main_src and replaces the seed variable with the returned data.
+  // This refreshes the data without a full web page refresh.
+  updateAll : function () {
+      // update the timestamps
+      var ts = (new Date().getTime() / 1000) + uW.g_timeoff;
+      var cts = parseInt( (ts -25.1) * 1000);
+
+      var upd = window.self.location.href;
+      upd=upd.replace(/ts=\d*\.\d+/, "ts="+ts);
+      upd=upd.replace(/cts=\d*/, "cts="+cts);
+
+      //logit("Request: " + upd);
+      var params = uW.Object.clone(uW.g_ajaxparams);
+      new AjaxRequest(
+              upd, {
+                  method: "POST",
+                  parameters: params,
+                  onSuccess: function (rslt) {
+                      var mainSrcHTMLCode = rslt.responseText;
+                      var myregexp = /var seed=\{.*?\};/;
+                      var match = myregexp.exec(mainSrcHTMLCode);
+
+                      if (match != null) {
+                          //logit("found match");
+                          result = match[0];
+                          result = result.substr(4);
+
+                          var seed2 = eval(result);
+
+                          for (jj in seed2) {
+                              Seed[jj] = seed2[jj];
+                          }
+
+                          unsafeWindow.kocThroneItems = {};
+                          unsafeWindow.createThroneItems();
+                          unsafeWindow.cm.ThroneView.renderInventory(unsafeWindow.kocThroneItems);
+
+                      }
+                  },
+                  onFailure: function () {
+                      logit("ERROR ********: ", inspect(rslt,3,1));
+                      if (notify != null)
+                          notify(rslt.errorMsg);
+                  },
+              });
+  },
+  
 }
-
-
-
-
-
 
 
 /*******************   KOC Map interface ****************/
@@ -10319,10 +10395,10 @@ var PageNavigator = {
   init : function (){
     var t = PageNavigator;
     t.modalMessagesFunc = new CalterUwFunc ('modal_messages', [
-        [/pageNavigatorModel =.*$/im, 'var pager = new ptPagerHook(0,5); pageNavigatorModel=pager'],
-        [/pageNavigatorView =.*$/im, 'pageNavigatorView=pager'],
-        [/pageNavigatorController =.*$/im, 'pageNavigatorController=pager']
-        ]);
+        [/pageNavigatorModel\s*=.*?;/i, 'var pager=new ptPagerHook(0,5);pageNavigatorModel=pager;'],
+        [/pageNavigatorView\s*=.*?;/i, 'pageNavigatorView=pager;'],
+        [/pageNavigatorController\s*=.*?;/i, 'pageNavigatorController=pager;']
+        ]); 
     uW.ptPagerHook = t.Cpager;
     t.ctrlPaginationOld = uW.ctrlPagination;
     t.loadPage_paginationOld = uW.loadPage_pagination;
@@ -10647,12 +10723,23 @@ var CalterUwFunc = function (funcName, findReplace) {
     for (var i=0; i<findReplace.length; i++){
       x = rt.replace(findReplace[i][0], findReplace[i][1]);
       if (x == rt)  // if not found
-        return;
+      {
+          // print out an error message when the match fails.
+          // These messages get lost on a refresh, so wait a few seconds to put it in the error log.
+          setTimeout( function (fname, repStr, ftstr) {
+                return function () {
+                logit("Unable to replace string in function " + fname);
+                logit("Replacment string:" + repStr );
+                logit("Function listing: " + ftstr);
+                return;
+              }
+          }(funcName, findReplace, ft), 3000);
+      }
       rt = x;
     }
     this.funcNew = rt;
   } catch (err) {
-	logit("CalterUwFunc "+funcName+" "+e);
+	logit("CalterUwFunc "+funcName+" "+err);
   }
       
   function setEnable (tf){
@@ -10695,7 +10782,7 @@ var WarnZeroAttack = {
   
   init : function (){
     var t = WarnZeroAttack;
-    t.modalAttackFunc = new CalterUwFunc ('modal_attack', [['modal_attack_check()', 'modalAttack_hook()']]);
+    t.modalAttackFunc = new CalterUwFunc ('modal_attack', [['attack_checkOverMarch()', 'modalAttack_hook()']]);
     uW.modalAttack_hook = t.hook;
     t.modalAttackFunc.setEnable(Options.fixWarnZero);
   },
@@ -10716,7 +10803,7 @@ var WarnZeroAttack = {
     && parseIntZero(document.getElementById('modal_attack_target_coords_y').value) == 0){
       new CdialogCancelContinue ('<SPAN class=boldRed>You are about to march to location 0,0!</span>', null, uW.modal_attack_check, document.getElementById('modalInner1'));      
     } else {
-      uW.modal_attack_check();
+      uW.attack_checkOverMarch();
     }
   },
   
