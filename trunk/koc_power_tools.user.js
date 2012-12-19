@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20121216b
+// @version        20121219a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20121216b';
+var Version = '20121219a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -8226,7 +8226,6 @@ Tabs.Attaque = {
 	                   }
 	                   var currentcityid =  t.sourceCity.id;
 	                   unsafeWindow.attach_addoutgoingmarch(rslt.marchId, rslt.marchUnixTime, ut + timediff, params.xcoord, params.ycoord, unitsarr, params.type, params.kid, resources, rslt.tileId, rslt.tileType, rslt.tileLevel, currentcityid, true);
-	                   unsafeWindow.update_seed(rslt.updateSeed)
 	                   if(rslt.updateSeed){unsafeWindow.update_seed(rslt.updateSeed)};
 	                   
 	                   for(var i=0;i<iused.length;i++){
