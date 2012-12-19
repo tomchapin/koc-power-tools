@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20121219a
+// @version        20121219b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20121219a';
+var Version = '20121219b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -8213,15 +8213,20 @@ Tabs.Attaque = {
 	                  if (rslt.ok) {
 			   var timediff = parseInt(rslt.eta) - parseInt(rslt.initTS);
 	                   var ut = unsafeWindow.unixtime();
-	                   var unitsarr=[0,0,0,0,0,0,0,0,0,0,0,0,0];
+	                   var unitsarr2 = '';
+	                   for (j in unsafeWindow.unitcost)
+						   unitsarr2 += '0,';
+	                   var unitsarr = '['+unitsarr2+'0]';
+//	                   var unitsarr=[0,0,0,0,0,0,0,0,0,0,0,0,0];
 	                   for(i = 0; i <= unitsarr.length; i++){
 	                   	if(params["u"+i]){
+							logit(i);
 	                  	unitsarr[i] = params["u"+i];
 	                  	}
 	                   }
 	                   var resources=new Array();
 	                   resources[0] = params.gold;
-	                   for(i=1; i<=4; i++){
+	                   for(i=1; i<=5; i++){
 	                  	resources[i] = params["r"+i];
 	                   }
 	                   var currentcityid =  t.sourceCity.id;
