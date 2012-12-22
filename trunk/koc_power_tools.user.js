@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20121219b
+// @version        20121222a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20121219b';
+var Version = '20121222a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -929,7 +929,7 @@ var Rpt = {
 		//need the info from the list query
 		var m = '';
 		var unitImg = [];
-		for (var i=1;i<13;i++)
+		for (var i=1;i<16;i++)
 			unitImg[i] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_'+i+'_30.png></TD><TD>' + uW.unitcost['unt'+i][0];
 		unitImg[13] = '<img src=http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/units/unit_13_30_s34.jpg></TD><TD>Bloodthorn';
 		unitImg[53] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_53_30.png></TD><TD>Crossbows';
@@ -5230,7 +5230,7 @@ Tabs.Train = {
 	  <TABLE class=ptTab width=100%><TR valign=top><TD width=50%>\
       <TABLE align=center><TR><TD align=right>"+uW.g_js_strings.modal_messages_viewdesertionreports.trooptypes+": </td><TD colspan=2>\
       <SELECT id=ptttType>";
-     for (i=1;i<=13;i++){
+     for (i=1;i<=15;i++){
       	  s+='<option value='+i+'>'+uW.unitcost['unt'+i][0]+'</option>';
       }
       s+="</select> &nbsp; ("+uW.g_js_strings.commonstr.max+" <span id=ptttSpMax></span>)</td></tr>\
@@ -5875,7 +5875,7 @@ Tabs.Train = {
       t.stats.idlePop = parseInt(Seed.citystats['city'+cityId].pop[0]);
     else
       t.stats.idlePop = parseInt(Seed.citystats['city'+cityId].pop[0]) - parseInt(Seed.citystats['city'+cityId].pop[3]);
-    t.stats.barracks = (isSpecial)?getCityBuilding (cityId, 22).count:getCityBuilding (cityId, 13).count;
+	t.stats.barracks = (isSpecial)?(getCityBuilding (cityId, 22).count+getCityBuilding (cityId, 24).count+getCityBuilding (cityId, 26).count):getCityBuilding (cityId, 13).count;
     var m = '<CENTER><B>'+ Cities.byID[cityId].name +' &nbsp; ('+ Cities.byID[cityId].x +','+ Cities.byID[cityId].y +')</b></center><HR>';
 
     m += '<TABLE class=ptTab width=100%><TR align=center>';
@@ -6758,7 +6758,7 @@ Tabs.OverView = {
            for(i=0; i<Cities.numCities; i++) {
              n += "<TD width=81 style='background: #FFFFFF'><B>"+ Cities.cities[i].name.substring(0,11) +'</b><BR>'+ coordLink (Cities.cities[i].x, Cities.cities[i].y) +"<BR>"+ uW.provincenames['p'+ Cities.cities[i].provId] +"</td>";
            }
-   	  for(a=1;a<14;a++) {
+   	  for(a=1;a<16;a++) {
    	        var total=0;
    	        var marching = 0;
    	        var raiding = 0;
@@ -11529,7 +11529,7 @@ function getTrainInfo (){
   var ret = {};
 
   ret.trainUnts = [];
-  for (i=0; i<15; i++){
+  for (i=0; i<16; i++){
     ret.trainUnts[i] = 0;
   }
   
