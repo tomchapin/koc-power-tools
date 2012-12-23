@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20121222b
+// @version        20121222c
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
@@ -14,8 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-
-var Version = '20121222b';
+var Version = '20121222c';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -326,6 +325,7 @@ if (TEST_WIDE){
 //setInterval (function(){logit (inspect (getClientCoords (mainPop.getMainDiv()), 3, 1))}, 2000);  
 
   uW.ptLoaded = true;
+  
 }
 
 
@@ -4230,6 +4230,8 @@ return 0;
     var t = Tabs.AllianceList;
     var params = uW.Object.clone(uW.g_ajaxparams);
     params.perPage = 100;
+    params.type = 'might';
+    params.page = 1;
     if (allianceName)
       params.allianceName = allianceName;
     if (allianceId && allianceId != 0)
@@ -4252,6 +4254,8 @@ return 0;
     var Data=[];
     params.perPage = 100;
     params.allianceId = allianceId;
+    params.type = 'might';
+    params.page = 1;
     
     new MyAjaxRequest(uW.g_ajaxpath + "ajax/getUserLeaderboard.php" + uW.g_ajaxsuffix, {
       method: "post",
@@ -8317,6 +8321,8 @@ Tabs.Attaque = {
          var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
          params.perPage = 100;
          params.allianceId = myA[0];
+         params.type = 'might';
+         params.page = 1;
              new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/getUserLeaderboard.php" + unsafeWindow.g_ajaxsuffix, {
    	        method: "post",
    	        parameters: params,
@@ -13177,3 +13183,5 @@ function formatUnixTime (unixTimeString,format){
 
 
 ptStartup ();
+
+
