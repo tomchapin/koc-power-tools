@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20121222a
+// @version        20121222b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
@@ -14,7 +14,8 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20121222a';
+
+var Version = '20121222b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -4336,6 +4337,8 @@ return 0;
     var t = Tabs.AllianceList;
     var params = uW.Object.clone(uW.g_ajaxparams);
     params.userId = uid;
+    params.type = 'might';
+    params.page = 1;
     new MyAjaxRequest(uW.g_ajaxpath + "ajax/getUserLeaderboard.php" + uW.g_ajaxsuffix, {
       method: "post",
       parameters: params,
@@ -5309,7 +5312,7 @@ Tabs.Train = {
 		t.lastQueString = null;
 		t.displayCityStats();
     });
-    var dcp = new CdispCityPicker ('ptspeed', document.getElementById('ptspeedcity'), true, t.clickCitySelect, 0);
+    
     t.TTspMax = document.getElementById ('ptttSpMax');
     t.TTspMaxPS = document.getElementById ('ptttSpMaxPS');
     t.TTspMaxSlots = document.getElementById ('ptttSpMaxSlots');
@@ -5341,6 +5344,7 @@ Tabs.Train = {
     t.TDbutMaxPerSlot.addEventListener ('click', t.clickDefMaxPS, false);
     t.TDbutMaxSlots.addEventListener ('click', t.clickDefMaxSlots, false);
     t.TDbutDo.addEventListener ('click', t.clickDefDo, false);
+    var dcp = new CdispCityPicker ('ptspeed', document.getElementById('ptspeedcity'), true, t.clickCitySelect, 0);
 	document.getElementById ('chkPop').addEventListener ('change', t.clickCheckIdlePop, false);
     document.getElementById ('chkDoTraps').addEventListener ('change', t.clickCheckDoTraps, false);
     document.getElementById ('chkDoCaltrops').addEventListener ('change', t.clickCheckDoCaltrops, false);
