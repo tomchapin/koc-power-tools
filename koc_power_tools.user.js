@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20121222c
+// @version        20121225a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20121222c';
+var Version = '20121225a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -7554,7 +7554,7 @@ Tabs.OverView = {
       str += _row ('Ore', rows[4]);
       str += _row ('Aetherstone', rows[5]);
       str += '<TR><TD colspan=11><BR></td></tr>';
-      for (r=1; r<15; r++){
+      for (r=1; r<16; r++){
         rows[r] = [];
         for(i=0; i<Cities.numCities; i++) {
           cityID = 'city'+ Cities.cities[i].id;
@@ -7564,13 +7564,13 @@ Tabs.OverView = {
 	  
 	  var colnum = Cities.numCities;
       if (Options.includeMarching){
-        for (var i=0; i<15; i++){
+        for (var i=0; i<16; i++){
           rows[i][colnum] = parseIntNan(march.marchUnits[i]);
 		}
 		colnum++;
       }
 	  if(Options.includeTrainingExt){
-		for (var i=0; i<15; i++){
+		for (var i=0; i<16; i++){
 		  rows[i][colnum] = parseIntNan(train.trainUnts[i]);
 		}
 	  }
@@ -7599,6 +7599,7 @@ Tabs.OverView = {
       str += _row ('Catapult', rows[12]);
       str += _row ('Bloodthorn', rows[13]);
       str += _row ('Executioner', rows[14]);
+      str += _row ('Siege Wall', rows[15]);
       str += '<TR><TD colspan=11><BR></td></tr>';
       
       row = [];
@@ -7783,7 +7784,7 @@ Tabs.Attaque = {
            <td><b><u>Distance</u></b><br><span id='BOEstimationD'>&nbsp;</span><td><b><u>Closest City</u></b><br><span id=BOVilleProche></span>\
            </tr><tr align=center valign=top>\
            <td colspan=4 align=left><table border=0 bordercolor=black cellspacing=0 cellpadding=0 width=100% style='text-align:center'><tr><td rowspan=15><div id=RAAstatsource></div></td><td colspan=2><a href='javascript:void(0)' id=BO_RAZ_Units title='Clear' >Units Selected</a></td><td>Attack Time</td><td>Reinforce Time</td></tr>";
-            for (r=1; r<15; r++){
+            for (r=1; r<16; r++){
    	     m += '<tr><td align=right><img height=20 title="'+unsafeWindow.unitcost['unt'+r][0]+'" src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_'+r+'_30_s34.jpg></td><td align=left><input style="border:1px solid black;height:16px;font-size:12px;" id="RAAnbunit'+r+'" type=text size=12 value="0" ></td><td><span id="BOEstimationTT'+r+'">&nbsp;</span></td><td><span id="BOEstimationTZ'+r+'">&nbsp;</span></td></tr>';
       	}
       	var itemlist=[55,57,931,932];
@@ -8042,7 +8043,7 @@ Tabs.Attaque = {
        var y2 = parseInt(t.destinationCityy.value);
        var dist = distance (x1, y1, x2, y2);  
        var tempplusgrand=0;
-       for (r=1; r<15; r++){
+       for (r=1; r<16; r++){
          if (parseInt(ById("RAAnbunit"+r).value)>0) {
                var m = estETA(dist, r, t.sourceCity.id);
                if (tempplusgrand<m.ETA) tempplusgrand=m.ETA;   
@@ -8070,7 +8071,7 @@ Tabs.Attaque = {
       var t = Tabs.Attaque;  
       var totalunit=0;
       if (typemarche==3 && ById("RAAnbunit3").value==0) ById("RAAnbunit3").value=1;
-      for (r=1; r<15; r++){
+      for (r=1; r<16; r++){
          if (typemarche==3 && r!=3) {
           ById("RAAnbunit"+r).value=0;
          }
@@ -8297,7 +8298,7 @@ Tabs.Attaque = {
      var y2 = parseInt(t.destinationCityy.value);
      var dist = distance (x1, y1, x2, y2);
      ById("BOEstimationD").innerHTML = '<b>' + dist + '</b>&nbsp;<a href="javascript:void(0)" onclick="cm.utils.CoordinateLinkController.onClick(event)" class="coordinateLink">('+ t.destinationCityx.value +','+ t.destinationCityy.value +')</a>';     
-     for (r=1; r<15; r++){
+     for (r=1; r<16; r++){
         var m = estETA(dist, r, t.sourceCity.id);
         ById("BOEstimationTT"+r).innerHTML = "<b>" + m.etaStr + "</b>";
         ById("BOEstimationTZ"+r).innerHTML = "<b>" + m.friendEtaStr + "</b>";
@@ -8371,7 +8372,7 @@ Tabs.Attaque = {
      var m="";
      m="<table cellspacing=0 cellpadding=0 width=80%><tr><td colspan=2>Units Available</tr>";
      var cityID = 'city'+ t.sourceCity.id;
-     for (r=1; r<15; r++){   
+     for (r=1; r<16; r++){   
        m += '<tr><td align=right><img title="'+unsafeWindow.unitcost['unt'+r][0]+'" height=20 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_'+r+'_30_s34.jpg></td>\
              <td align=left><input style="border:1px solid black;height:20px;font-size:11px;" id="RAAdestunit'+r+'" type=text size=10 readonly value="'+parseInt(Seed.units[cityID]['unt'+r])+'">&nbsp;\
              <input type=button value="--->" id="RAApdestunit'+r+'"  style="border:1px solid black;height:16px;font-size:11px;"></td></tr>';
@@ -8412,7 +8413,7 @@ Tabs.Attaque = {
       for(var i=0;i<itemlist.length;i++){
         ById('BOitemSpan_'+itemlist[i]).innerHTML = unsafeWindow.ksoItems[itemlist[i]].count;
       }
-     for (r=1; r<15; r++){
+     for (r=1; r<16; r++){
        ById("RAApdestunit"+r).addEventListener ('click', function() {
 			 var nomcha=this.id.replace("RAApdest","RAAdest");
 			 var nomcha2=this.id.replace("RAApdestunit","RAAnbunit");
@@ -8459,12 +8460,12 @@ Tabs.Attaque = {
        }, false);
      }
      if (t.sourceCity!=city) {
-           for (r=1; r<15; r++){
+           for (r=1; r<16; r++){
             ById("RAAnbunit"+r).value="0";
            }
      } else {
           
-          for (r=1; r<15; r++){
+          for (r=1; r<16; r++){
               if (ById("RAAnbunit"+r).value=="") ById("RAAnbunit"+r).value="0";
               if (ById("RAAdestunit"+r).value=="") ById("RAAdestunit"+r).value="0";
                 if (parseInt(ById("RAAnbunit"+r).value)>parseInt(ById("RAAdestunit"+r).value)) {
