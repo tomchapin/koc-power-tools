@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20121225a
+// @version        20121226a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20121225a';
+var Version = '20121226a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -7772,6 +7772,7 @@ Tabs.Attaque = {
   },
   show : function (){  
     var t = Tabs.Attaque;
+    setTimeout(t.Refreshtroops,10000);
     var rownum = 0;
     var ModelCity = {};
     if (t.state == null) {  
@@ -7783,7 +7784,7 @@ Tabs.Attaque = {
            <td><b><u>Destination</b></u><br>X:<input type=text id=RAAtypetrpx size=3>&nbsp;Y:<input type=text id=RAAtypetrpy size=3><br><a href='javascript:void(0);' id='BOchargelistelieux'>Fetch Members</a> : <select id='listeFavori'></select></td>\
            <td><b><u>Distance</u></b><br><span id='BOEstimationD'>&nbsp;</span><td><b><u>Closest City</u></b><br><span id=BOVilleProche></span>\
            </tr><tr align=center valign=top>\
-           <td colspan=4 align=left><table border=0 bordercolor=black cellspacing=0 cellpadding=0 width=100% style='text-align:center'><tr><td rowspan=15><div id=RAAstatsource></div></td><td colspan=2><a href='javascript:void(0)' id=BO_RAZ_Units title='Clear' >Units Selected</a></td><td>Attack Time</td><td>Reinforce Time</td></tr>";
+           <td colspan=4 align=left><table border=0 bordercolor=black cellspacing=0 cellpadding=0 width=100% style='text-align:center'><tr><td rowspan=16><div id=RAAstatsource></div></td><td colspan=2><a href='javascript:void(0)' id=BO_RAZ_Units title='Clear' >Units Selected</a></td><td>Attack Time</td><td>Reinforce Time</td></tr>";
             for (r=1; r<16; r++){
    	     m += '<tr><td align=right><img height=20 title="'+unsafeWindow.unitcost['unt'+r][0]+'" src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_'+r+'_30_s34.jpg></td><td align=left><input style="border:1px solid black;height:16px;font-size:12px;" id="RAAnbunit'+r+'" type=text size=12 value="0" ></td><td><span id="BOEstimationTT'+r+'">&nbsp;</span></td><td><span id="BOEstimationTZ'+r+'">&nbsp;</span></td></tr>';
       	}
@@ -7832,7 +7833,7 @@ Tabs.Attaque = {
        }
        }, false); 
  	  ById("BO_RAZ_Units").addEventListener ('click', function() {
-		for (r=1; r<15; r++) ById("RAAnbunit"+r).value=0; 
+		for (r=1; r<16; r++) ById("RAAnbunit"+r).value=0; 
 		}, false); 
        ById("BO_AT_Fav_ajou").addEventListener ('click', function() {
         if (ById("BO_AT_Fav_Nom").value=="") {
@@ -7843,7 +7844,7 @@ Tabs.Attaque = {
         Options.AttackFav[a]={};
         var lisf = Options.AttackFav[a];
         lisf[0]=ById("BO_AT_Fav_Nom").value;
-        for (r=1; r<15; r++) lisf[r]=ById("RAAnbunit"+r).value;
+        for (r=1; r<16; r++) lisf[r]=ById("RAAnbunit"+r).value;
         ById("BO_AT_Fav_Nom").value="";
         saveOptions(); 
 	metajourfavori();
@@ -7851,7 +7852,7 @@ Tabs.Attaque = {
        ById("BO_AT_Fav").addEventListener ('change', function() {
          numfav=ById("BO_AT_Fav").value;
          if (numfav=="") {
-          for (r=1; r<15; r++) ById("RAAnbunit"+r).value=0; 
+          for (r=1; r<16; r++) ById("RAAnbunit"+r).value=0; 
          }else {
           var lisf = Options.AttackFav[numfav];
           for (var m in lisf) {
@@ -7923,7 +7924,7 @@ Tabs.Attaque = {
           t.destinationCityy.value = Options.AttackCibleY;
           ById("RAApiKnight").value=Options.AttackKnight;
           nHtml.Click(ById("ptRAA0_"+Cities.byID[Options.AttackFromCity].idx)); 
-          for (r=1; r<15; r++) {
+          for (r=1; r<16; r++) {
 	      ById("RAAnbunit"+r).value=Options.AttackUnits[r-1];
           }
         }, false);
@@ -7990,7 +7991,7 @@ Tabs.Attaque = {
 	t.destinationCityy.value = Options.AttackCibleY;
 	ById("RAApiKnight").value=Options.AttackKnight;
 	nHtml.Click(ById("ptRAA0_"+Cities.byID[Options.AttackFromCity].idx));
-	for (r=1; r<15; r++) {
+	for (r=1; r<16; r++) {
 	   ById("RAAnbunit"+r).value=Options.AttackUnits[r-1];
           }
       t.clickATTAQUEDo(4,0);
@@ -8157,7 +8158,7 @@ Tabs.Attaque = {
       }
       var res=0;
       if (bouffe==1) {
-       for (var i=1;i<15;i++) {
+       for (var i=1;i<16;i++) {
         res += parseInt(unsafeWindow.unitstats['unt'+i][5] * ById("RAAnbunit"+i).value * (1 + (0.10 * Seed.tech.tch10)));
        }
        }
@@ -8186,6 +8187,7 @@ Tabs.Attaque = {
  	 params.u12 = 0;
  	 params.u13 = 0;
  	 params.u14 = 0;
+ 	 params.u15 = 0;
  
  
          if (typemarche!=3) {
@@ -8203,6 +8205,7 @@ Tabs.Attaque = {
 	if (ById("RAAnbunit12").value>0) params.u12 = ById("RAAnbunit12").value;
 	if (ById("RAAnbunit13").value>0) params.u13 = ById("RAAnbunit13").value;
 	if (ById("RAAnbunit14").value>0) params.u14 = ById("RAAnbunit14").value;
+	if (ById("RAAnbunit15").value>0) params.u15 = ById("RAAnbunit15").value;
 	
 	}else {
 	 params.u3 = ById("RAAnbunit3").value;
@@ -8222,17 +8225,14 @@ Tabs.Attaque = {
 	                  if (rslt.ok) {
 			   var timediff = parseInt(rslt.eta) - parseInt(rslt.initTS);
 	                   var ut = unsafeWindow.unixtime();
-	                   var unitsarr2 = '';
-	                   for (j in unsafeWindow.unitcost)
-						   unitsarr2 += '0,';
-	                   var unitsarr = '['+unitsarr2+'0]';
-//	                   var unitsarr=[0,0,0,0,0,0,0,0,0,0,0,0,0];
-	                   for(i = 0; i <= unitsarr.length; i++){
-	                   	if(params["u"+i]){
-							logit(i);
-	                  	unitsarr[i] = params["u"+i];
-	                  	}
-	                   }
+	                   
+				var unitsarr = [];
+				for (j in unsafeWindow.unitcost)
+					unitsarr.push(0);
+				for(i = 0; i <= unitsarr.length; i++)
+					if(params["u"+i])
+						unitsarr[i] = params["u"+i];
+	                   
 	                   var resources=new Array();
 	                   resources[0] = params.gold;
 	                   for(i=1; i<=5; i++){
@@ -8322,8 +8322,6 @@ Tabs.Attaque = {
          var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
          params.perPage = 100;
          params.allianceId = myA[0];
-         params.type = 'might';
-         params.page = 1;
              new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/getUserLeaderboard.php" + unsafeWindow.g_ajaxsuffix, {
    	        method: "post",
    	        parameters: params,
@@ -8362,6 +8360,16 @@ Tabs.Attaque = {
        Options.Yrenfort = y;
        saveOptions ();
   },
+   
+   Refreshtroops : function (){
+	   if(!ById("RAAstatsource"))return;
+     var t = Tabs.Attaque;
+	   var cityID = 'city'+ t.sourceCity.id;
+	   for (r=1; r<16; r++)
+	   ById('RAAdestunit'+r).value = parseInt(Seed.units[cityID]['unt'+r]);
+	   setTimeout(t.Refreshtroops,1000);
+   },
+   
    
   clickRAACitySourceSelect : function (city){
      var t = Tabs.Attaque;
@@ -8448,7 +8456,7 @@ Tabs.Attaque = {
 			 if (niveauPointRall==11) maxtroupe=parseInt(150000*e);
 			 if (niveauPointRall==12) maxtroupe=parseInt(200000*e);
 			 var nbunitto=0;
-			 for (r=1; r<15; r++) {
+			 for (r=1; r<16; r++) {
 			   nbunitto+=parseInt(ById("RAAnbunit"+r).value);
 			 }
 			 var libre = parseInt(maxtroupe - nbunitto);
