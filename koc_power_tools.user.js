@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20121226a
+// @version        20121226b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // ==/UserScript==
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20121226a';
+var Version = '20121226b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -8029,7 +8029,7 @@ Tabs.Attaque = {
        ndate.setMinutes(horloge.substr(3,2));
        ndate.setSeconds(0);
        var atunits=new Array();
-       for (r=1; r<15; r++) {
+       for (r=1; r<16; r++) {
           atunits.push(parseInt(ById("RAAnbunit"+r).value));
        }
        Options.AttackUnits = atunits;
@@ -8132,6 +8132,7 @@ Tabs.Attaque = {
                 u = m.values[b - 1][1],
                 k = parseFloat(u);
             e *= k
+            if(unsafeWindow.seed.cityData.city[t.sourceCity.id].prestigeInfo.blessings.indexOf(207)e *= 1.1;
 		}
       var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
       
@@ -8438,7 +8439,7 @@ Tabs.Attaque = {
 			 if(l_elem&&l_elem.checked&&parseInt(Seed.items["i932"])>0)
 				e+=0.5;
 				
-			 var trmarchsizebuff = equippedthronestats(66);
+			var trmarchsizebuff = Math.floor(equippedthronestats(66));
 			 if (trmarchsizebuff>unsafeWindow.cm.thronestats.boosts.MarchSize.Max)trmarchsizebuff=unsafeWindow.cm.thronestats.boosts.MarchSize.Max;
 			 if(trmarchsizebuff > 0)
 				e+=(trmarchsizebuff/100);
@@ -8449,6 +8450,7 @@ Tabs.Attaque = {
                 u = m.values[b - 1][1],
                 k = parseFloat(u);
             e *= k
+            if(unsafeWindow.seed.cityData.city[t.sourceCity.id].prestigeInfo.blessings.indexOf(207)e *= 1.1;
 		}
 
 			 var niveauPointRall=parseInt(getCityBuilding (t.sourceCity.id, 12).maxLevel); // 12=Point de ralliement
