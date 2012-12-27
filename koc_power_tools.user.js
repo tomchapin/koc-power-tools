@@ -8132,7 +8132,7 @@ Tabs.Attaque = {
                 u = m.values[b - 1][1],
                 k = parseFloat(u);
             e *= k
-            if(unsafeWindow.seed.cityData.city[t.sourceCity.id].prestigeInfo.blessings.indexOf(207)e *= 1.1;
+            if(unsafeWindow.seed.cityData.city[t.sourceCity.id].prestigeInfo.blessings.indexOf(207) != -1)e *= 1.1;
 		}
       var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
       
@@ -8450,7 +8450,7 @@ Tabs.Attaque = {
                 u = m.values[b - 1][1],
                 k = parseFloat(u);
             e *= k
-            if(unsafeWindow.seed.cityData.city[t.sourceCity.id].prestigeInfo.blessings.indexOf(207)e *= 1.1;
+            if(unsafeWindow.seed.cityData.city[t.sourceCity.id].prestigeInfo.blessings.indexOf(207) != -1)e *= 1.1;
 		}
 
 			 var niveauPointRall=parseInt(getCityBuilding (t.sourceCity.id, 12).maxLevel); // 12=Point de ralliement
