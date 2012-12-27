@@ -8121,7 +8121,7 @@ Tabs.Attaque = {
        e+=0.5;
      }
 	 
-	 var trmarchsizebuff = equippedthronestats(66);
+	 var trmarchsizebuff = Math.floor(equippedthronestats(66));
 			 if (trmarchsizebuff>unsafeWindow.cm.thronestats.boosts.MarchSize.Max)trmarchsizebuff=unsafeWindow.cm.thronestats.boosts.MarchSize.Max;
 	 if(trmarchsizebuff > 0)
 		e+=(trmarchsizebuff/100);
