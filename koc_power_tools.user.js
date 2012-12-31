@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20121226b
+// @version        20121230a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
+// @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
 // ==/UserScript==
  
 
@@ -14,7 +15,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20121226b';
+var Version = '20121230a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -302,12 +303,15 @@ if (TEST_WIDE){
   battleReports.init ();
   CoordBox.init ();
   GMTclock.init ();
+  DispReport.init();
+  mapinfoFix.init(); 
+  
+  
   tabManager.init (mainPop.getMainDiv());
   
   AudioManager.init();
-  DispReport.init();
   AllianceReportsCheck.init();
-  mapinfoFix.init();
+  
   
   if (Options.ptWinIsOpen){
     mainPop.show (true);
@@ -4874,7 +4878,7 @@ Tabs.Options = {
     }
     },
     
-    Options : function (){ 
+    SetOptions : function (){ 
     var t = Tabs.Options; 
     try {      
       m = '<TABLE class=ptTab>';
@@ -4971,11 +4975,13 @@ Tabs.Options = {
 			}, false);
 	
 	     if (Options.miniRefresh) {
+	         clearInterval(t.refreshTimer);
 	         t.refreshTimer = setInterval (function(){Tabs.Options.updateAll();},  Options.miniRefreshIntvl * 60 *1000);
 	     }
 
 	} catch (e) {
-      t.Overv.innerHTML = '<PRE>'+ e.name +' : '+ e.message +'</pre>';  
+      new CdialogCancelContinue ('<PRE>'+ e +'</pre>', null, null, true);
+      t.Overv.innerHTML = '<PRE>'+ e +'</pre>';
     }
   },
   
@@ -5044,6 +5050,7 @@ Tabs.Options = {
       },false);	
       
     } catch (e) {
+      new CdialogCancelContinue ('<PRE>'+ inspect(e,3,1) +'</pre>', null, null, true);
       t.cont.innerHTML = '<PRE>'+ e.name +' : '+ e.message +'</pre>';  
     }
   },
@@ -5054,7 +5061,7 @@ Tabs.Options = {
   show : function (){
     var t = Tabs.Options;
     if (t.curTabName == 'U') 
-         t.Options();
+         t.SetOptions();
     else if (t.curTabName == 'V')
       t.Layout();
   },
@@ -5130,13 +5137,20 @@ Tabs.Options = {
                           var seed2 = eval(result);
 
                           for (jj in seed2) {
-                              Seed[jj] = seed2[jj];
+                             if (seed2.hasOwnProperty(jj)) {
+                                Seed[jj] = seed2[jj];
+                             }
                           }
 
                           unsafeWindow.kocThroneItems = {};
                           unsafeWindow.createThroneItems();
                           unsafeWindow.cm.ThroneView.renderInventory(unsafeWindow.kocThroneItems);
 
+                          if (unsafeWindow.seed.queue_throne.length == 0)
+                          {
+                             unsafeWindow.seed.queue_throne = {}
+                          }
+    
                       }
                   },
                   onFailure: function () {
@@ -6855,6 +6869,8 @@ Tabs.OverView = {
    	  t.Overv.innerHTML = n;
    	  
    	  document.getElementById('TEST').addEventListener('click', function(){
+   	     
+   	     /*
    	  		var params = uW.Object.clone(uW.g_ajaxparams);
    	    			new AjaxRequest(uW.g_ajaxpath + "/fb/e2/src/main_src.php?g=&y=0&n=nan001&l=nl_NL&messagebox=&standalone=0&res=1&iframe=1&lang=en&ts=1304248288.7067&s=250&appBar=" + uW.g_ajaxsuffix, {
    	    			    method: "POST",
@@ -6879,6 +6895,8 @@ Tabs.OverView = {
    	    			        notify(rslt.errorMsg);
    	    			    },
    	    			});
+   	    			*/
+   	     Tabs.Options.updateAll();
    	  	
    	  }, false);
    	    	
@@ -7703,6 +7721,7 @@ Tabs.OverView = {
       document.getElementById('ptoverfont').addEventListener('change', e_fontSize, false);
     //DebugTimer.display ('Draw Overview');    
     } catch (e){
+      new CdialogCancelContinue ('<PRE>'+ inspect(e,3,1) +'</pre>', null, null, true);
       t.Overv.innerHTML = '<PRE>'+ e.name +' : '+ e.message +' on '+ e.lineNumber +'</pre>';
     }   
     t.displayTimer = setTimeout (t.paintOld, 5000);	
@@ -12960,6 +12979,7 @@ Tabs.Tower = {
 		t.togOpt ('togEnhanceAR', 'EnhanceAR', AllianceReportsCheck.enable);
       
     } catch (e) {
+      new CdialogCancelContinue ('<PRE>'+ inspect(e,3,1) +'</pre>', null, null, true);
       t.cont.innerHTML = '<PRE>'+ e.name +' : '+ e.message +'</pre>';  
     }
   },
