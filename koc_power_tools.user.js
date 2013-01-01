@@ -1,12 +1,11 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20121231a
+// @version        20130101a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
 // ==/UserScript==
- 
 
 //Fixed weird bug with koc game
 if(window.self.location != window.top.location){
@@ -15,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20121231a';
+var Version = '20130101a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -79,7 +78,7 @@ var Options = {
   fixTower2    : true,
   fixMapDistance: true,
   fixMsgCount  : true,
-  fixWarnZero  : true,
+  fixMarchUnits  : true,
   fixPageNav   : true,
   enhanceViewMembers : true,
   enhanceARpts : true,
@@ -294,7 +293,6 @@ if (TEST_WIDE){
   FoodAlerts.init();
   TowerAlerts.init();
   MapDistanceFix.init ();
-  //WarnZeroAttack.init ();
   AllianceReports.init ();
   messageNav.init();
   PageNavigator.init ();
@@ -305,7 +303,7 @@ if (TEST_WIDE){
   GMTclock.init ();
   DispReport.init();
   mapinfoFix.init(); 
-  
+  MarchUnitsFix.init();
   
   tabManager.init (mainPop.getMainDiv());
   
@@ -329,7 +327,6 @@ if (TEST_WIDE){
 //setInterval (function(){logit (inspect (getClientCoords (mainPop.getMainDiv()), 3, 1))}, 2000);  
 
   uW.ptLoaded = true;
-  
 }
 
 
@@ -679,25 +676,25 @@ var ChatStuff = {
 		return msg.htmlSpecialCharsDecode();
   },
 
- chatDivContentHook : function (msg,type){
-       var t = ChatStuff; 
-       var element_class = '';
-       var alliance = false;
-       var whisper = false;
-       var m = /div class=\'info\'>.*<\/div>/im.exec(msg);
-       if (m == null)
-         return msg;
-       if(type != null){
-		   if(type.indexOf('says to the alliance') > 0){
-			   alliance = true;
-		   }
-		   if(type.indexOf('whispers to you') > 0){
-			   whisper = true;
-		   }
-	   }
-       var whisp = m[0];
-       
-    if (whisper) {
+  chatDivContentHook : function (msg,type){
+	var t = ChatStuff; 
+	var element_class = '';
+	var alliance = false;
+	var whisper = false;
+	var m = /div class=\'info\'>.*<\/div>/im.exec(msg);
+	if (m == null)
+		return msg;
+	if(type != null){
+		if(type.indexOf('says to the alliance') > 0){
+			alliance = true;
+		}
+		if(type.indexOf('whispers to you') > 0){
+			whisper = true;
+		}
+	}
+	var whisp = m[0];
+	
+	if (whisper) {
 		if (Options.chatwhisper) {
 			element_class += ' ptChatWhisper ';
 		}
@@ -717,44 +714,40 @@ var ChatStuff = {
     }
 
 	if (scripters.indexOf(suid) >= 0) {
-  
-msg = msg.replace (/\bhttps\:\/\/[-a-z].*\'\/\>/i, 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAIAAABLixI0AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9sIDwArAkRAgZ4AAAPXSURBVDjLrVRNSDJdFL4zjpqiWZROlkEtsk20cGPqQkQpKIRykTu37aKgFi1cRxZUixat3BQkRCX9UrsUQ0TEhH6IMBcVbpRB58fRmfsubu+UvV98Hx/vszj3cM55zjn3nnsvlkwmBUGo1+s8z/M8z3Ecy7Isy9I0TdN09TcqlQpSGIahaZrjOI7jeJ6v1+uNRkMQBAghkclk6vU69xssyzIMgzjVapWmaYZhGIaRyIgvCIIgCKAZWDabFQRBFEUIYaPREEVRkoiAXAiiKGIYhvTPFBgGIcQwjDg6OhJFUUqBukV8AMBX+a/AdDod4n9t4Vuu/whZo9Hged5kMg0ODjYajXK5TBCEzWbr7e0VBKFSqfzEtFgsfr9/aGioWCw2ha2vr0MIl5aWAAAHBwcQwufnZwzD/jGLXC6Px+PSIV5cXCA7gRa0TZ7nZ2ZmpqamKIoaHh7+aYPRaNRut7Msu729rdVqSZJscq+trUEIw+EwKtXf34/sGo0mEomwLFur1aLRaEdHh8FgQDEmkwnFtLa2fs8lTTAUCkn2+/t7COHDw0M2m4UQvr29ORwOCGE+n/9xBKiv/f19VHNkZAQAQJIkhLBcLqOYQqEAIfT7/d/ulwRc0iCEiUQCHX8sFjMYDNVqFW1TpVIBANra2gAAV1dX7+/voiimUqmxsTGfz7e1tfW9L1EUFxcXUbQoiq+vrwCAnZ0d+AXn5+cAgIGBAY7jJOPx8fHH/foYJ0EUCoXr6+tCoRCJRBQKRSaT0Wq1y8vL+XxeFMXHx8fNzc35+XkAQKlUCoVCtVqtVqvlcrlwOPz4+Aj+Lj76crvdXq83mUwGAgGbzabRaFwu1+3trdPptNvtZrO5q6vL4/F0d3e73W6ZTOb1ejUazcvLSzAYpCiqWCx+5orFYnNzc4FAgCTJm5ubYDCYTqddLtfk5KTH46nX6xRFLSwsJBIJs9l8eHi4urpqtVqVSqVarU4kEk1vaGJi4unp6eTkhCAIdLPv7u5Iktzd3c3lcmdnZzKZLB6POxyOdDo9OjpKUdTp6SkazsrKStMb8vl8FEVtbGxcXl7GYjG1Wr23t4cqUxQ1Pj4OAFCpVDiOl0qlSqWSSqWMRuP09HQmk7FarU3HptfrDQYDUvr6+jo7OwEARqOxvb0d6cjV0tLS09Oj0+n0er1arVYqlRaL5fP/+isTRD8KNjs7+//I6F+WEgEACKfT+WeFP+MAADiOo2eIYZjklYDjOPZTWRzHcRyXfQFBEJKUy+WSgqBQKDCZTIZqYhiGQgmCkCKUSqVCoUDyKxBZoVAQBCFZfgGv35yL3q6pzwAAAABJRU5ErkJggg=='+'\'\/\>');
- //Phouse msg = msg.replace (/\bhttp\:\/\/[-a-z].*jpg/i, 'data:image/png;base64,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');
-		//Phouse msg = msg.replace (/\bhttp\:\/\/[-a-z].*jpg/i, 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAIAAABLixI0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAASYSURBVEhLlVRvUFRVFL9vd3nP3WWX3W0Q2EhdAjOhwBybzEJNoQgUkMkx0QqnSesDNvYhBnQYnXQmacrKqclpkmGmETHHwAmFmpRkJChrGRJYVBZYZEVRlt237L7/nfveYwEzms6H9+5975zf+Z3fuedq0X+ZIdqENDqSoniOndtXO/fvN8sPdUxE6ZOXT5ri8/NyXX/8Oof/XFg5r719uqN3Q0k5bXzSp13g6mnLWJZ+69pfq9bnePwcMlqWpKaNjXgi6MS/5Sk5cOT49z8Vbt91vkcfCgexGz2IBprSH0vqdLkRxEkIP6+cjSA8mFfBnoO1TZeKtr5+7po1xPCI0CGJR6QFUaZRt9Ma9/DGkgqzY9XwyDCyxiJvnwL3AF4Zr+529vUfPlrzwYk+v39CTSuGkSQgkYOtw8K5x8L4e2gY3fw9P8lQf+ok7DT31WhevQWAyquqy77pCdCT+C/UgoGmHEXGfU9EkjT9ZerPLCwA8tPBkrIvD9VcETlaklmoBgUoWwWUIJB0/xFR9XohZ6M7ZjFFkvlvHfi2uX8qQg4TGXkrIZHHZRKijAj1SnjtGyL8o0o3Ma9oi62PsJnNppffqKhruYm4O7uf11XmxZkNWpyckJmIsAAIdvUivjI/iSIpvNVQ0I1xSxJpNGGsKIqKfjrX7liStW1f7QU3SLMuRfpkx1r32CQXGkPMLcTcxk9uHAmgt+YOa12TumDo8yKZq4TiM0a5aHLZSzAaxP5jJ75uarekFXVd9+K2aqnKF/Vr0lPXfvhb8XLdVzvXRxTjBbG6dfDd461RrJc5XaHZ/JnKF173hrJTbZoNmSs8Aze6zh5GE06cByfH2iKB0Wk1Biqq+peBqh9cR865zAaqNHvxmdJnOF6WDBfOIXYCDV5CgcF3XsnRZK54ykJqdDotYsEDmi2mJNqDLI/Xcs+++NG1/7vOvXXOqvp22OavXApNBFMbyoMnejQxoTgvW0MH/L62eoc9Tu4Olx4fKs5cerChF6suCTgG+igECN7HhvFx8wUZRJpZXsh6wq6yk9CN+mNBOqCLyIFbLrDn9272jtNtPcO4TDiPktRcngWRdquZjNLSYa6wqhGJwscN7Q1lBfotVVgWpdGzzz2wlRJ2nUywRj/3uA0PoGx2m3nRfCsAwXrbp40tVz2IC7xfuDJuh6y9nFKxGbwgA1Aj0JnL3XuykluvQluxpb13qtujrpEIgvL4rCHkn2Rkf+ClYs2YIZAGMUhiOgdGLDFWPINIkEWESDk5QMBxl6lgHQWZOA9ToYLNnEeF69TQYge5X9B4QIGnBJ8E6I/NSKpMZIKRgZvGIgTgjGNqWrrXpiZc2JfX7HQTmz7qHr6rsgOCIrd9Xfrd2sqLXf3qbGupCC+VXkrBzusThBTziHJbOmKNC+NsbS4vAwdNccGXDC7QMT9mYfxDF//sxXSAtT4R9Tcqt6uKlbG11Nl/m0jeJLE+lT/+qcHTCygzTZFMNmJerORpMrCjk61101jP5hZd9rJIb/nn7TgLaOZGEYulHdqgu+PnaSxYGU3mYEgZxv9h8ygyHKSVgL8BxwEUOe4NZoMAAAAASUVORK5CYII=');
-
+		msg = msg.replace (/\bhttps\:\/\/[-a-z].*\'\/\>/i, 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAIAAABLixI0AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9sIDwArAkRAgZ4AAAPXSURBVDjLrVRNSDJdFL4zjpqiWZROlkEtsk20cGPqQkQpKIRykTu37aKgFi1cRxZUixat3BQkRCX9UrsUQ0TEhH6IMBcVbpRB58fRmfsubu+UvV98Hx/vszj3cM55zjn3nnsvlkwmBUGo1+s8z/M8z3Ecy7Isy9I0TdN09TcqlQpSGIahaZrjOI7jeJ6v1+uNRkMQBAghkclk6vU69xssyzIMgzjVapWmaYZhGIaRyIgvCIIgCKAZWDabFQRBFEUIYaPREEVRkoiAXAiiKGIYhvTPFBgGIcQwjDg6OhJFUUqBukV8AMBX+a/AdDod4n9t4Vuu/whZo9Hged5kMg0ODjYajXK5TBCEzWbr7e0VBKFSqfzEtFgsfr9/aGioWCw2ha2vr0MIl5aWAAAHBwcQwufnZwzD/jGLXC6Px+PSIV5cXCA7gRa0TZ7nZ2ZmpqamKIoaHh7+aYPRaNRut7Msu729rdVqSZJscq+trUEIw+EwKtXf34/sGo0mEomwLFur1aLRaEdHh8FgQDEmkwnFtLa2fs8lTTAUCkn2+/t7COHDw0M2m4UQvr29ORwOCGE+n/9xBKiv/f19VHNkZAQAQJIkhLBcLqOYQqEAIfT7/d/ulwRc0iCEiUQCHX8sFjMYDNVqFW1TpVIBANra2gAAV1dX7+/voiimUqmxsTGfz7e1tfW9L1EUFxcXUbQoiq+vrwCAnZ0d+AXn5+cAgIGBAY7jJOPx8fHH/foYJ0EUCoXr6+tCoRCJRBQKRSaT0Wq1y8vL+XxeFMXHx8fNzc35+XkAQKlUCoVCtVqtVqvlcrlwOPz4+Aj+Lj76crvdXq83mUwGAgGbzabRaFwu1+3trdPptNvtZrO5q6vL4/F0d3e73W6ZTOb1ejUazcvLSzAYpCiqWCx+5orFYnNzc4FAgCTJm5ubYDCYTqddLtfk5KTH46nX6xRFLSwsJBIJs9l8eHi4urpqtVqVSqVarU4kEk1vaGJi4unp6eTkhCAIdLPv7u5Iktzd3c3lcmdnZzKZLB6POxyOdDo9OjpKUdTp6SkazsrKStMb8vl8FEVtbGxcXl7GYjG1Wr23t4cqUxQ1Pj4OAFCpVDiOl0qlSqWSSqWMRuP09HQmk7FarU3HptfrDQYDUvr6+jo7OwEARqOxvb0d6cjV0tLS09Oj0+n0er1arVYqlRaL5fP/+isTRD8KNjs7+//I6F+WEgEACKfT+WeFP+MAADiOo2eIYZjklYDjOPZTWRzHcRyXfQFBEJKUy+WSgqBQKDCZTIZqYhiGQgmCkCKUSqVCoUDyKxBZoVAQBCFZfgGv35yL3q6pzwAAAABJRU5ErkJggg=='+'\'\/\>');
 		element_class += ' ptChatScripter';
-	 }
-	 if(alliance){
-		 if (m[0].indexOf('My embassy has') >= 0 && Options.chatAttack)
+	}
+	if(alliance){
+		if (m[0].indexOf('My embassy has') >= 0 && Options.chatAttack)
 			element_class = ' ptChatAttack';
-		 if (m[0].indexOf('My wilderness at') >= 0 && Options.chatAttack)
+		if (m[0].indexOf('My wilderness at') >= 0 && Options.chatAttack)
 			element_class = ' ptChatAttack';
-	 }
-     msg = msg.replace ("class=\'content\'", "class='content "+ element_class +"'");
-	 msg = msg.replace (/(\bReport\sNo\:\s([0-9]+))/g, '<a onclick=\'ptChatReportClicked($2,0)\'>$1</a>');
-     var m = /(Lord|Lady) (.*?)</im.exec(msg);
-     if (m != null)
-       m[2] = m[2].replace(/\'/g,"Ã‚Â°Ã‚Â°");
-     msg = msg.replace (/<img (.*?>)/img, '<A onclick=\"ptChatIconClicked(\''+ m[2] +'\')\"><img class=\"ptChatIcon\" $1</a>');
-     if (whisper && Options.enableWhisperAlert) {
+	}
+    msg = msg.replace ("class=\'content\'", "class='content "+ element_class +"'");
+	msg = msg.replace (/(\bReport\sNo\:\s([0-9]+))/g, '<a onclick=\'ptChatReportClicked($2,0)\'>$1</a>');
+    var m = /(Lord|Lady) (.*?)</im.exec(msg);
+    if (m != null)
+		m[2] = m[2].replace(/\'/g,"Ã‚Â°Ã‚Â°");
+    msg = msg.replace (/<img (.*?>)/img, '<A onclick=\"ptChatIconClicked(\''+ m[2] +'\')\"><img class=\"ptChatIcon\" $1</a>');
+    if (whisper && Options.enableWhisperAlert) {
 		AudioManager.setSource(SOUND_FILES.whisper);
 		AudioManager.play();
 		setTimeout(function(){AudioManager.stop();}, 2500);
-     } 
-     if(alliance){
-		 if (whisp.indexOf('My embassy has') >= 0 && Options.enableTowerAlert) {
+    } 
+    if(alliance){
+		if (whisp.indexOf('My embassy has') >= 0 && Options.enableTowerAlert) {
 			AudioManager.setSource(SOUND_FILES.alert);
 			AudioManager.play();
 			setTimeout(function(){AudioManager.stop();}, 5000);
-		 } 
-		 if (whisp.indexOf('My wilderness at') >= 0 && Options.enableTowerAlert) {
+		} 
+		if (whisp.indexOf('My wilderness at') >= 0 && Options.enableTowerAlert) {
 			AudioManager.setSource(SOUND_FILES.alert);
 			AudioManager.play();
 			setTimeout(function(){AudioManager.stop();}, 5000);
-		 }
-	 }
-     return msg;
-   },
+		}
+	}
+    return msg;
+	},
    
    getAllianceLeaders : function (){
    var t = ChatStuff;
@@ -773,9 +766,8 @@ msg = msg.replace (/\bhttps\:\/\/[-a-z].*\'\/\>/i, 'data:image/png;base64,iVBORw
 		},
 		onFailure: function () {}
   		});
-	},
-   
- }
+  },
+}
 
 var AudioManager = {
   player: null,
@@ -4918,6 +4910,7 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=togCoordBox type=checkbox /></td><TD>Keep map coordinate box/bookmarks on top of troop activity</td></tr>';
 	  m+='<TR><TD><INPUT id=togMapInfo type=checkbox /></td><TD>Fix reassign button on maptile info</td></tr>';
 	  m+='<TR><TD><INPUT id=togMapInfo2 type=checkbox /></td><TD>Add reassign button when clicked on own city</td></tr>';
+	  m+='<TR><TD><INPUT id=togMarchUnits type=checkbox /></td><TD>Fix march size calculation in march screen</td></tr>';
 	  m+='<TR><TD colspan=2><B>Auto Training:</b></td></tr>';
 	  m+='<TR><TD></TD><TD><INPUT id=optAutoTrainMins type=text size=1 value="'+ parseInt(AutoTrainOptions.intervalSecs/60) +'"> minutes between auto-training.</td></tr>';
 	  m+='</table><BR><BR><HR>Note that if a checkbox is greyed out there has probably been a change of KofC\'s code, rendering the option inoperable.';
@@ -4942,6 +4935,7 @@ Tabs.Options = {
       t.togOpt ('togCoordBox', 'mapCoordsTop', CoordBox.setEnable, CoordBox.isAvailable);
       t.togOpt ('togMapInfo', 'mapInfo', mapinfoFix.setEnable, mapinfoFix.isAvailable);
       t.togOpt ('togMapInfo2', 'mapInfo2', mapinfoFix.setEnable2, mapinfoFix.isAvailable2);
+      t.togOpt ('togMarchUnits', 'fixMarchUnits', MarchUnitsFix.setEnable, MarchUnitsFix.isAvailable);
       t.togOpt ('togBatRounds', 'dispBattleRounds', null, battleReports.isRoundsAvailable);
       t.togOpt ('togAtkDelete', 'reportDeleteButton', null, battleReports.isRoundsAvailable);
       
@@ -10758,7 +10752,7 @@ if (typeof(GM_xmlhttpRequest) !== 'undefined' && typeof(GM_updatingEnabled) === 
 /********* End updater code *************/
 
 // TODO: Handle multiple instances altering same function!!   ****************************
-var CalterUwFunc = function (funcName, findReplace) {
+var CalterUwFunc = function (funcName, findReplace, debug) {
   var t = this;
   this.isEnabled = false;
   this.isAvailable = isAvailable;
@@ -10791,6 +10785,11 @@ var CalterUwFunc = function (funcName, findReplace) {
       rt = x;
     }
     this.funcNew = rt;
+	if(debug){
+		logit("Debug for "+ funcName);
+		logit("Old function \n"+this.funcOld);
+		logit("New function \n"+this.funcNew);
+	}
   } catch (err) {
 	logit("CalterUwFunc "+funcName+" "+err);
   }
@@ -10830,34 +10829,32 @@ function ShowExtraInfo(){
 	document.getElementById('mod_citylist').innerHTML = content; 
 }
 
-var WarnZeroAttack = {
+var MarchUnitsFix = {
   modalAttackFunc : null,  
   
   init : function (){
-    var t = WarnZeroAttack;
-    t.modalAttackFunc = new CalterUwFunc ('modal_attack', [['attack_checkOverMarch()', 'modalAttack_hook()']]);
+    var t = MarchUnitsFix;
+    t.modalAttackFunc = new CalterUwFunc ('modal_attack', [[/var\s*e\s*=\s*0;/im, 'w = modalAttack_hook(w); var e = 0;']]);
     uW.modalAttack_hook = t.hook;
-    t.modalAttackFunc.setEnable(Options.fixWarnZero);
+    t.modalAttackFunc.setEnable(Options.fixMarchUnits);
   },
    
   setEnable : function (tf){
-    var t = WarnZeroAttack;
+    var t = MarchUnitsFix;
     t.modalAttackFunc.setEnable (tf);
   },
   
   isAvailable : function (){
-    var t = WarnZeroAttack;
+    var t = MarchUnitsFix;
     return t.modalAttackFunc.isAvailable();
   },
     
-  hook : function (){
-    var t = WarnZeroAttack;
-    if (parseIntZero(document.getElementById('modal_attack_target_coords_x').value) == 0
-    && parseIntZero(document.getElementById('modal_attack_target_coords_y').value) == 0){
-      new CdialogCancelContinue ('<SPAN class=boldRed>You are about to march to location 0,0!</span>', null, uW.modal_attack_check, document.getElementById('modalInner1'));      
-    } else {
-      uW.attack_checkOverMarch();
-    }
+  hook : function (w){
+    var t = MarchUnitsFix;
+    if (w > uW.cm.thronestats.boosts.MarchSize){
+		w = uW.cm.thronestats.boosts.MarchSize;
+	}
+	return w;
   },
   
 }
