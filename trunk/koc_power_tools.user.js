@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130101a
+// @version        20130101b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130101a';
+var Version = '20130101b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -136,6 +136,7 @@ var Options = {
   enhancedinbox : true,
   miniRefresh   : false,
   miniRefreshIntvl: 3,
+  chatIcons : true,
 };
 
 var Colors ={
@@ -166,6 +167,8 @@ var AutoTrainOptions = {
 	keepOre:				{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
 };
 
+var ChatIcons = {};
+
 var JSON;if(!JSON){JSON={};}(function(){"use strict";function f(n){return n<10?'0'+n:n;}if(typeof Date.prototype.toJSON!=='function'){Date.prototype.toJSON=function(key){return isFinite(this.valueOf())?this.getUTCFullYear()+'-'+f(this.getUTCMonth()+1)+'-'+f(this.getUTCDate())+'T'+f(this.getUTCHours())+':'+f(this.getUTCMinutes())+':'+f(this.getUTCSeconds())+'Z':null;};String.prototype.toJSON=Number.prototype.toJSON=Boolean.prototype.toJSON=function(key){return this.valueOf();};}var cx=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,escapable=/[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,gap,indent,meta={'\b':'\\b','\t':'\\t','\n':'\\n','\f':'\\f','\r':'\\r','"':'\\"','\\':'\\\\'},rep;function quote(string){escapable.lastIndex=0;return escapable.test(string)?'"'+string.replace(escapable,function(a){var c=meta[a];return typeof c==='string'?c:'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4);})+'"':'"'+string+'"';}function str(key,holder){var i,k,v,length,mind=gap,partial,value=holder[key];if(value&&typeof value==='object'&&typeof value.toJSON==='function'){value=value.toJSON(key);}if(typeof rep==='function'){value=rep.call(holder,key,value);}switch(typeof value){case'string':return quote(value);case'number':return isFinite(value)?String(value):'null';case'boolean':case'null':return String(value);case'object':if(!value){return'null';}gap+=indent;partial=[];if(Object.prototype.toString.apply(value)==='[object Array]'){length=value.length;for(i=0;i<length;i+=1){partial[i]=str(i,value)||'null';}v=partial.length===0?'[]':gap?'[\n'+gap+partial.join(',\n'+gap)+'\n'+mind+']':'['+partial.join(',')+']';gap=mind;return v;}if(rep&&typeof rep==='object'){length=rep.length;for(i=0;i<length;i+=1){k=rep[i];if(typeof k==='string'){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v);}}}}else{for(k in value){if(Object.hasOwnProperty.call(value,k)){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v);}}}}v=partial.length===0?'{}':gap?'{\n'+gap+partial.join(',\n'+gap)+'\n'+mind+'}':'{'+partial.join(',')+'}';gap=mind;return v;}}if(typeof JSON.stringify!=='function'){JSON.stringify=function(value,replacer,space){var i;gap='';indent='';if(typeof space==='number'){for(i=0;i<space;i+=1){indent+=' ';}}else if(typeof space==='string'){indent=space;}rep=replacer;if(replacer&&typeof replacer!=='function'&&(typeof replacer!=='object'||typeof replacer.length!=='number')){throw new Error('JSON.stringify');}return str('',{'':value});};}if(typeof JSON.parse!=='function'){JSON.parse=function(text,reviver){var j;function walk(holder,key){var k,v,value=holder[key];if(value&&typeof value==='object'){for(k in value){if(Object.hasOwnProperty.call(value,k)){v=walk(value,k);if(v!==undefined){value[k]=v;}else{delete value[k];}}}}return reviver.call(holder,key,value);}text=String(text);cx.lastIndex=0;if(cx.test(text)){text=text.replace(cx,function(a){return'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4);});}if(/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,'@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']').replace(/(?:^|:|,)(?:\s*\[)+/g,''))){j=eval('('+text+')');return typeof reviver==='function'?walk({'':j},''):j;}throw new SyntaxError('JSON.parse');};}}());
 var JSON2 = JSON; 
 
@@ -194,11 +197,12 @@ function ptStartup (){
   
   readOptions();
   readGlobalOptions();
+  readChatIconsOptions();
   readColors();
-   readAutoTrainOptions();
+  readAutoTrainOptions();
 	if (AutoTrainOptions.intervalSecs < 60)
 		AutoTrainOptions.intervalSecs = 60;
-	saveAutoTrainOptions();
+  saveAutoTrainOptions();
 
 //logit ('g_timeoff: '+ uW.g_timeoff);
   Seed = uW.seed;
@@ -712,10 +716,15 @@ var ChatStuff = {
 	if (Options.chatLeaders) {
 		if (t.leaders[suid]) element_class += ' ptChat'+t.leaders[suid];
     }
-
+	
 	if (scripters.indexOf(suid) >= 0) {
 		msg = msg.replace (/\bhttps\:\/\/[-a-z].*\'\/\>/i, 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAIAAABLixI0AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9sIDwArAkRAgZ4AAAPXSURBVDjLrVRNSDJdFL4zjpqiWZROlkEtsk20cGPqQkQpKIRykTu37aKgFi1cRxZUixat3BQkRCX9UrsUQ0TEhH6IMBcVbpRB58fRmfsubu+UvV98Hx/vszj3cM55zjn3nnsvlkwmBUGo1+s8z/M8z3Ecy7Isy9I0TdN09TcqlQpSGIahaZrjOI7jeJ6v1+uNRkMQBAghkclk6vU69xssyzIMgzjVapWmaYZhGIaRyIgvCIIgCKAZWDabFQRBFEUIYaPREEVRkoiAXAiiKGIYhvTPFBgGIcQwjDg6OhJFUUqBukV8AMBX+a/AdDod4n9t4Vuu/whZo9Hged5kMg0ODjYajXK5TBCEzWbr7e0VBKFSqfzEtFgsfr9/aGioWCw2ha2vr0MIl5aWAAAHBwcQwufnZwzD/jGLXC6Px+PSIV5cXCA7gRa0TZ7nZ2ZmpqamKIoaHh7+aYPRaNRut7Msu729rdVqSZJscq+trUEIw+EwKtXf34/sGo0mEomwLFur1aLRaEdHh8FgQDEmkwnFtLa2fs8lTTAUCkn2+/t7COHDw0M2m4UQvr29ORwOCGE+n/9xBKiv/f19VHNkZAQAQJIkhLBcLqOYQqEAIfT7/d/ulwRc0iCEiUQCHX8sFjMYDNVqFW1TpVIBANra2gAAV1dX7+/voiimUqmxsTGfz7e1tfW9L1EUFxcXUbQoiq+vrwCAnZ0d+AXn5+cAgIGBAY7jJOPx8fHH/foYJ0EUCoXr6+tCoRCJRBQKRSaT0Wq1y8vL+XxeFMXHx8fNzc35+XkAQKlUCoVCtVqtVqvlcrlwOPz4+Aj+Lj76crvdXq83mUwGAgGbzabRaFwu1+3trdPptNvtZrO5q6vL4/F0d3e73W6ZTOb1ejUazcvLSzAYpCiqWCx+5orFYnNzc4FAgCTJm5ubYDCYTqddLtfk5KTH46nX6xRFLSwsJBIJs9l8eHi4urpqtVqVSqVarU4kEk1vaGJi4unp6eTkhCAIdLPv7u5Iktzd3c3lcmdnZzKZLB6POxyOdDo9OjpKUdTp6SkazsrKStMb8vl8FEVtbGxcXl7GYjG1Wr23t4cqUxQ1Pj4OAFCpVDiOl0qlSqWSSqWMRuP09HQmk7FarU3HptfrDQYDUvr6+jo7OwEARqOxvb0d6cjV0tLS09Oj0+n0er1arVYqlRaL5fP/+isTRD8KNjs7+//I6F+WEgEACKfT+WeFP+MAADiOo2eIYZjklYDjOPZTWRzHcRyXfQFBEJKUy+WSgqBQKDCZTIZqYhiGQgmCkCKUSqVCoUDyKxBZoVAQBCFZfgGv35yL3q6pzwAAAABJRU5ErkJggg=='+'\'\/\>');
 		element_class += ' ptChatScripter';
+	} else 
+	if(ChatIcons[suid] > 0){
+		msg = msg.replace(/\bhttps\:\/\/[-a-z].*\'\/\>/i,"https://graph.facebook.com/"+ ChatIcons[suid] +"/picture\'\/\>");
+	} else {
+		t.getfbid(suid);
 	}
 	if(alliance){
 		if (m[0].indexOf('My embassy has') >= 0 && Options.chatAttack)
@@ -767,6 +776,20 @@ var ChatStuff = {
 		onFailure: function () {}
   		});
   },
+  
+  getfbid : function (uid){
+	Tabs.AllianceList.fetchPlayerCourt(uid, ChatStuff.addfbuid);
+  },
+  
+  addfbuid : function (rslt){
+	var t = ChatStuff;
+	if(rslt.ok){
+		var uid = parseInt(rslt.playerInfo.userId);
+		var fbid = parseInt(rslt.playerInfo.fbuid);
+		ChatIcons[uid] = fbid;
+		saveChatIconsOptions();
+	}
+  }
 }
 
 var AudioManager = {
@@ -4997,7 +5020,9 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=togChatWhisper type=checkbox /></td><TD>Enable Whisper in Color Font.</td></tr>';
 	  m+='<TR><TD><INPUT id=togChatBold type=checkbox /></td><TD>Enable Chat in Bold Font.</td></tr>';
 	  m+='<TR><TD><INPUT id=togChatAttack type=checkbox /></td><TD>Enable background color on tower alert.</td></tr>';
-	  m+='<TR><TD><INPUT id=togChatLead type=checkbox /></td><TD>Enable background for alliance Leaders.<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr></table>';
+	  m+='<TR><TD><INPUT id=togChatLead type=checkbox /></td><TD>Enable background for alliance Leaders.</td></tr>';
+	  m+='<TR><TD><INPUT id=togChatIcon type=checkbox /></td><TD>Enable facebook profile pictures in chat instead of kabam avatars.<SPAN class=boldRed>&nbsp;(NEW)</span></td></tr>';
+	  m+='</table>';
 
 	  m+='<TABLE class=ptTab><BR><TR><TD colspan=2><U><B>Colors: &nbsp;(Refresh for effect)</b></u></td></tr>';
       m+='<TR><TD>Chat Color - Global: </td><TD><INPUT id=togGlobal type=text size=7 maxlength=7 value="'+Colors.ChatGlobal+'"></td>&nbsp;<TD style="background-color:'+Colors.ChatGlobal+'" width=30px>&nbsp;</td></tr>';
@@ -5029,6 +5054,7 @@ Tabs.Options = {
       t.togOpt ('togChatBold', 'chatbold');
       t.togOpt ('togChatAttack', 'chatAttack');
       t.togOpt ('togChatLead', 'chatLeaders');
+      t.togOpt ('togChatIcon', 'chatIcons');
       
       document.getElementById('togGlobal').addEventListener('change', function(){Colors.ChatGlobal = document.getElementById('togGlobal').value;t.Layout()}, false);
       document.getElementById('togChatLeaders').addEventListener('change', function(){Colors.ChatLeaders = document.getElementById('togChatLeaders').value;t.Layout()}, false);
@@ -11820,6 +11846,29 @@ function readAutoTrainOptions (){
 function saveAutoTrainOptions (){
   var serverID = GetServerId();
 	GM_setValue ('AutoTrainOptions_'+serverID, JSON2.stringify(AutoTrainOptions));
+}
+
+function readChatIconsOptions (){
+  var serverID = GetServerId();
+	s = GM_getValue ('ChatIcons_'+serverID);
+	if (s != null){
+		opts = JSON2.parse (s);
+		for (k in opts){
+			if (ChatIcons[k] != undefined) {
+				if (matTypeof(opts[k]) == 'object') {
+					for (kk in opts[k])
+						if (ChatIcons[k][kk] != undefined)
+							ChatIcons[k][kk] = opts[k][kk];
+				} else
+					ChatIcons[k] = opts[k];
+			}
+		}
+	}
+}
+
+function saveChatIconsOptions (){
+  var serverID = GetServerId();
+	GM_setValue ('ChatIcons_'+serverID, JSON2.stringify(ChatIcons));
 }
 
 
