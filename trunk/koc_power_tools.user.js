@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130101d
+// @version        20130105a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -137,6 +137,9 @@ var Options = {
   miniRefresh   : false,
   miniRefreshIntvl: 3,
   ChatIcons : true,
+  mapInfo: false,
+  mapInfo2: false,
+  mapInfo3: false
 };
 
 var Colors ={
@@ -503,14 +506,21 @@ var battleReports = {
 var mapinfoFix = {
 	init : function(){
 		var t = mapinfoFix;
-		t.calcButtonInfo = new CalterUwFunc ('cm.ContextMenuMapController.prototype.calcButtonInfo', [[/case\s*"reassign":b\.text\s*=\s*g_js_strings\.commonstr\.reassign;b\.color\s*=\s*"blue";b\.action\s*=\s*function\s*\(\)\s*{modal_attack\(2,\s*e\.tile\.x,\s*e\.tile\.y\);*};d\.push\(b\);break;/,   'case "reassign":b.text=g_js_strings.commonstr.reassign;b.color="blue";b.action=function(){modal_attack(5,e.tile.x,e.tile.y);};d.push(b);break;']]);
+		t.calcButtonInfo =  new CalterUwFunc('cm.ContextMenuMapController.prototype.calcButtonInfo', 
+		      [[/case\s*"reassign":b\.text\s*=\s*g_js_strings\.commonstr\.reassign;b\.color\s*=\s*"blue";b\.action\s*=\s*function\s*\(\)\s*{modal_attack\(2,\s*e\.tile\.x,\s*e\.tile\.y\);*};d\.push\(b\);break;/,
+		        'case "reassign":b.text=g_js_strings.commonstr.reassign;b.color="blue";b.action=function(){modal_attack(5,e.tile.x,e.tile.y);};d.push(b);break;']]);
+		
+	   t.bookMarkMod = new CalterUwFunc('cm.ContextMenuMapController.prototype.calcButtonInfo',
+		      [[/case\s*"bookmark":/, 'case "bookmark": try { if (e.city && cm.tileInfo[e.tile.id] && cm.tileInfo[e.tile.id].cityName ) {e.tile.name = e.user.username + "/" + cm.tileInfo[e.tile.id].cityName;}} catch (err1) {} ']]);
+		
 		t.MapContextMenus = new CalterUwFunc ('cm.ContextMenuMapController.prototype.calcCityType', [['return c', 'c = calcCityTypeFix(c,d);return c']]);
 		t.calcButtonInfo.setEnable(Options.mapInfo);
 		t.MapContextMenus.setEnable(Options.mapInfo2);
-		uW.cm.ContextMenuMapController.prototype.MapContextMenus.City["2"] = ["profile", "throne", "transport", "reinforce", "reassign", "reinforcements", "message", "bookmark"];
+		t.bookMarkMod.setEnable(Options.mapInfo3);
+      
+		uW.cm.ContextMenuMapController.prototype.MapContextMenus.City["2"].splice(4,0, "reassign");
 		uW.calcCityTypeFix = t.calcCityType_hook;
-		// logit(uW.cm.ContextMenuMapController.prototype.MapContextMenus.City["3"]);
-		// logit(uW.cm.ContextMenuMapController.prototype.calcCityType);
+		
 	},
 	setEnable : function(tf){
 		var t = mapinfoFix;
@@ -520,6 +530,10 @@ var mapinfoFix = {
 		var t = mapinfoFix;
 		t.MapContextMenus.setEnable(tf);
 	},
+   setEnable3 : function(tf){
+      var t = mapinfoFix;
+      t.bookMarkMod.setEnable(tf);
+   },
 	calcCityType_hook : function (c,d){
 		if(Cities.byID[d.city.id] && c != 1)
 			c = uW.cm.CITY_STATUS.MY_CITY_AND_NOT_CURRENT_CITY;
@@ -527,11 +541,15 @@ var mapinfoFix = {
 	},
 	isAvailable : function(){
 		var t = mapinfoFix;
-		return t.calcButtonInfo.isAvailable;
+		return t.calcButtonInfo.isAvailable();
 	},
 	isAvailable2 : function(){
 		var t = mapinfoFix;
-		return t.MapContextMenus.isAvailable;
+		return t.MapContextMenus.isAvailable();
+	},
+	isAvailable3 : function(){
+	   var t = mapinfoFix;
+	   return t.bookMarkMod.isAvailable();
 	},
 	
 }
@@ -4934,7 +4952,8 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=togCoordBox type=checkbox /></td><TD>Keep map coordinate box/bookmarks on top of troop activity</td></tr>';
 	  m+='<TR><TD><INPUT id=togMapInfo type=checkbox /></td><TD>Fix reassign button on maptile info</td></tr>';
 	  m+='<TR><TD><INPUT id=togMapInfo2 type=checkbox /></td><TD>Add reassign button when clicked on own city</td></tr>';
-	  m+='<TR><TD><INPUT id=togMarchUnits type=checkbox /></td><TD>Fix march size calculation in march screen</td></tr>';
+	  m+='<TR><TD><INPUT id=togMapInfo3 type=checkbox /></td><TD>Include player name / city name in new bookmarks</td></tr>';
+      m+='<TR><TD><INPUT id=togMarchUnits type=checkbox /></td><TD>Fix march size calculation in march screen</td></tr>';
 	  m+='<TR><TD colspan=2><B>Auto Training:</b></td></tr>';
 	  m+='<TR><TD></TD><TD><INPUT id=optAutoTrainMins type=text size=1 value="'+ parseInt(AutoTrainOptions.intervalSecs/60) +'"> minutes between auto-training.</td></tr>';
 	  m+='</table><BR><BR><HR>Note that if a checkbox is greyed out there has probably been a change of KofC\'s code, rendering the option inoperable.';
@@ -4959,6 +4978,7 @@ Tabs.Options = {
       t.togOpt ('togCoordBox', 'mapCoordsTop', CoordBox.setEnable, CoordBox.isAvailable);
       t.togOpt ('togMapInfo', 'mapInfo', mapinfoFix.setEnable, mapinfoFix.isAvailable);
       t.togOpt ('togMapInfo2', 'mapInfo2', mapinfoFix.setEnable2, mapinfoFix.isAvailable2);
+      t.togOpt ('togMapInfo3', 'mapInfo3', mapinfoFix.setEnable3, mapinfoFix.isAvailable3);
       t.togOpt ('togMarchUnits', 'fixMarchUnits', MarchUnitsFix.setEnable, MarchUnitsFix.isAvailable);
       t.togOpt ('togBatRounds', 'dispBattleRounds', null, battleReports.isRoundsAvailable);
       t.togOpt ('togAtkDelete', 'reportDeleteButton', null, battleReports.isRoundsAvailable);
@@ -10778,75 +10798,198 @@ if (typeof(GM_xmlhttpRequest) !== 'undefined' && typeof(GM_updatingEnabled) === 
     
 /********* End updater code *************/
 
-// TODO: Handle multiple instances altering same function!!   ****************************
-var CalterUwFunc = function (funcName, findReplace, debug) {
-  var t = this;
-  this.isEnabled = false;
-  this.isAvailable = isAvailable;
-  this.setEnable = setEnable;
-  this.funcOld = null;  
-  this.funcNew = null;
-  try {
-    var x = funcName.split('.');
-    var f = unsafeWindow;
-    for (var i=0; i<x.length; i++)
-      f = f[x[i]];
-    ft = f.toString();
-    this.funcOld = f;
-    var rt = ft.replace ('function '+ funcName, 'function');
-    for (var i=0; i<findReplace.length; i++){
-      x = rt.replace(findReplace[i][0], findReplace[i][1]);
-      if (x == rt)  // if not found
+//****************************
+//This is a new implementation of the CalterUwFunc class to modify a function of the 'unsafewWindow' object.
+//For reverse compatibility this implementation operates like the original, but multiple CalterUwFunc objects can be created for the same function.
+//Each CalterUwFunc can be enabled or diabled independently.  (Of course, the repalcement strings must be compatibile with each other to work
+//simulataneously).
+
+//The implementation uses a worker class CalterFuncModifier.  One and only one CalterFuncModifier is created for each uw function modified.
+//CalterFuncModifier allows multiple modifier string pairs to be applied.  For individual control of specific mods, access the 'modIndex'
+//member to determine the index of the first mod and then directly call the operations of the 'funcModifier' member.
+
+//This implementation creates/uses a registry of CalterFuncModifier's that is added to the unsafeWindow object so that changes
+//to the same function in different scripts is possible.
+
+//****************************
+
+
+var CalterUwFunc = function (funcName, findReplace) {
+
+   this.isAvailable = isAvailable;
+   this.setEnable = setEnable;
+
+   this.funcName = funcName;
+   this.funcModifier = null;
+   this.modIndex = 0;
+   this.numberMods = 0;
+
+   // find an existing CalterUwFunc if it already exists
+   if (!unsafeWindow.calterRegistry) unsafeWindow.calterRegistry = {};
+   var calterF = null;
+
+   if (unsafeWindow.calterRegistry[funcName]) {
+      // use the existing function modifier
+      calterF = unsafeWindow.calterRegistry[funcName];
+      for (i=0; i< findReplace.length; i++) {
+         calterF.addModifier(findReplace[i]);
+      }
+   } else {
+      // create and register the new calter
+      calterF = new CalterFuncModifier(funcName, findReplace);
+      unsafeWindow.calterRegistry[funcName] = calterF;
+   }
+   this.funcModifier = calterF;
+
+   if (findReplace != null)
+   {
+      this.numberMods = findReplace.length;
+      this.modIndex = this.funcModifier.numModifiers()- this.numberMods;
+   }
+
+   function isAvailable() {
+      // check if any of the replace strings matched the original function
+      var avail = false;
+      for (i= this.modIndex; i < this.modIndex + this.numberMods; i++ )
       {
-          // print out an error message when the match fails.
-          // These messages get lost on a refresh, so wait a few seconds to put it in the error log.
-          setTimeout( function (fname, repStr, ftstr) {
-                return function () {
-                logit("Unable to replace string in function " + fname);
-                logit("Replacment string:" + repStr );
-                logit("Function listing: " + ftstr);
-                return;
-              }
-          }(funcName, findReplace, ft), 3000);
+         if (this.funcModifier.testModifier(i)) avail= true;
       }
-      rt = x;
-    }
-    this.funcNew = rt;
-	if(debug){
-		logit("Debug for "+ funcName);
-		logit("Old function \n"+this.funcOld);
-		logit("New function \n"+this.funcNew);
-	}
-  } catch (err) {
-	logit("CalterUwFunc "+funcName+" "+err);
-  }
-      
-  function setEnable (tf){
-    if (t.funcNew == null)
-      return;
-    if (t.isEnabled != tf){
-      if (tf){
-//      	var scr = document.createElement('script');   
-//      	scr.innerHTML = funcName +' = '+ t.funcNew;
-//      	document.body.appendChild(scr);
-//        setTimeout ( function (){document.body.removeChild(scr);}, 500);
-		uW.uwuwuwFunc(funcName +' = '+ t.funcNew);
-      	t.isEnabled = true;
-      } else {
-      var x = funcName.split('.');
+      return avail;
+   }
+
+   function setEnable(tf) {
+      this.funcModifier.enableModifier(this.modIndex, tf, this.numberMods);
+   }
+}
+
+var CalterFuncModifier = function (funcName, findReplace) {
+   // (second argument is now optional )
+
+   this.applyModifiers = applyModifiers;
+   this.addModifier = addModifier;
+   this.enableModifier = enableModifier;
+   this.testModifier = testModifier;
+   this.modEnabled = modEnabled;
+   this.numModifiers = numModifiers;
+
+   this.funcName = funcName;
+   this.funcOld = null;  
+   this.funcOldString = null;
+   this.funcNew = null;
+   this.modifiers = [];
+   this.modsActive = [];
+
+   try {
+      var x = this.funcName.split('.');
       var f = unsafeWindow;
-      for (var i=0; i<x.length-1; i++)
-        f = f[x[i]];
-      f[x[x.length-1]] = this.funcOld;
-        t.isEnabled = false;
+      for (var i=0; i<x.length; i++)
+         f = f[x[i]];
+      ft = f.toString();
+      this.funcOld = f;
+      this.funcOldString = ft.replace ('function '+ this.funcName, 'function');
+
+      if (findReplace) {
+         this.modifiers  = findReplace;
+         this.modsActive = new Array(findReplace.length);
+         for (var i=0; i<findReplace.length; i++){
+            this.modsActive[i] = false;
+         }
       }
-    }
-  }
-  function isAvailable (){
-    if (t.funcNew == null)
+   } catch (err) {
+      logit("CalterFuncModifier "+ this.funcName+" "+err);
+   }
+
+   // test if this modifier works on the original function.
+   //    true = match found / replace possible
+   //    false = does not match
+   function testModifier(modNumber) {
+      x = this.funcOldString.replace(this.modifiers[modNumber][0], this.modifiers[modNumber][1]);
+      if (x != this.funcOldString)
+      {
+         return true;
+      }
       return false;
-    return true;
-  }
+   }
+
+   // use the active modifiers to create/apply a new function
+   function applyModifiers() {
+      try {
+         var rt = this.funcOldString;
+         var active = false;
+
+         for (var i=0; i< this.modifiers.length; i++){
+            if ( !this.modsActive[i]) continue;
+
+            x = rt.replace(this.modifiers[i][0], this.modifiers[i][1]);
+            if (x == rt)  // if not found
+            {
+               // print out an error message when the match fails.
+               // These messages get lost on a refresh, so wait a few seconds to put it in the error log.
+               setTimeout( function (fname, repStr, ftstr) {
+                  return function () {
+                     logit("Unable to replace string in function " + fname);
+                     logit("Replacment string:" + repStr );
+                     logit("Function listing: " + ftstr);
+                     return;
+                  }
+               }(this.funcName, this.modifiers[i][0], ft), 3000);
+            }
+            else {
+
+            }
+
+            rt = x;
+            active = true;
+         }
+
+         this.funcNew = rt;
+         if (active) {
+            // apply the new function
+            uW.uwuwuwFunc(this.funcName +' = '+ this.funcNew);
+         } else {
+            // set to the original function
+            var x1 = this.funcName.split('.');
+            var f1 = unsafeWindow;
+            for (var i=0; i<x1.length-1; i++)
+               f1 = f1[x1[i]];
+            f1[x1[x1.length-1]] = this.funcOld;
+         }
+      } catch (err) {
+         logit("CalterFuncModifier "+ this.funcName+" "+err);
+      }
+   }
+
+   // add additional modifiers.  The index of the modifier is returned so the caller can enable/disable it specificially
+   function addModifier(fr) {
+      this.modifiers.push(fr);
+      this.modsActive.push(false);
+      // return the index of the newly added modifier
+      return this.modifiers.length-1;
+   }
+
+   // turn on/off some of the modifiers.
+   // 'len' allows setting consectutive modifiers to the same value.
+   //   If len is null, 1 is used
+   function enableModifier(modNumber, value, len) {
+
+      if (len == null) len = 1;
+      for (i = modNumber; i < modNumber + len; i++) {
+         if ( i < this.modsActive.length) {
+            this.modsActive[i] = value;
+         }
+      }
+      this.applyModifiers();
+   }
+
+   function modEnabled(modNumber) {
+      if ( modNumber < this.modsActive.length)
+         return this.modsActive[modNumber];
+   }
+
+   function numModifiers() {
+      return this.modifiers.length;
+   }
+
 };
 
 function ShowExtraInfo(){
