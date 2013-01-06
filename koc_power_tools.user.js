@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130105a
+// @version        20130105b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130101d';
+var Version = '20130105b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -5178,27 +5178,53 @@ Tabs.Options = {
                       var match = myregexp.exec(mainSrcHTMLCode);
 
                       if (match != null) {
-                          //logit("found match");
-                          result = match[0];
-                          result = result.substr(4);
+                         //logit("found match");
+                         result = match[0];
+                         result = result.substr(4);
 
-                          var seed2 = eval(result);
+                         var seed2 = eval(result);
 
-                          for (jj in seed2) {
-                             if (seed2.hasOwnProperty(jj)) {
-                                Seed[jj] = seed2[jj];
-                             }
-                          }
+                         for (jj in seed2) {
+                            if (seed2.hasOwnProperty(jj)) {
+                               Seed[jj] = seed2[jj];
+                            }
+                         }
 
-                          unsafeWindow.kocThroneItems = {};
-                          unsafeWindow.createThroneItems();
-                          unsafeWindow.cm.ThroneView.renderInventory(unsafeWindow.kocThroneItems);
+                         for (var o = 0; o < Seed.cities.length; o++) {
+                            var n = Seed.cities[o][0];
+                            Seed.citystats["city" + n].pop[0] = parseInt(Seed.citystats["city" + n].pop[0]);
+                            Seed.citystats["city" + n].pop[1] = parseInt(Seed.citystats["city" + n].pop[1]);
+                            Seed.citystats["city" + n].pop[2] = parseInt(Seed.citystats["city" + n].pop[2]);
+                            Seed.citystats["city" + n].gold[0] = parseInt(Seed.citystats["city" + n].gold[0]);
+                            Seed.citystats["city" + n].gold[1] = parseInt(Seed.citystats["city" + n].gold[1]);
+                            Seed.newTradeReports = parseInt(Seed.newTradeReports);
+                            for (var m = 1; m < 5; m++) {
+                               Seed.resources["city" + n]["rec" + m][0] = parseInt(Seed.resources["city" + n]["rec" + m][0]);
+                               Seed.resources["city" + n]["rec" + m][1] = parseInt(Seed.resources["city" + n]["rec" + m][1]);
+                               Seed.resources["city" + n]["rec" + m][2] = parseInt(Seed.resources["city" + n]["rec" + m][2]);
+                               Seed.resources["city" + n]["rec" + m][3] = parseInt(Seed.resources["city" + n]["rec" + m][3]);
+                            }
+                            var b = Seed.queue_con["city" + n];
+                            var d = unsafeWindow.Object.keys(Seed.buildings["city" + n]);
+                            for (var h = 0; h < b.length; h++) {
+                               for (var m = 0; m < d.length; m++) {
+                                  if (Seed.buildings["city" + n][d[m]][3] == b[h][2]) {
+                                     b[h][7] = Seed.buildings["city" + n][d[m]][2];
+                                     break;
+                                  }
+                               }
+                            }
+                         }
+                         
+                         if (Seed.queue_throne.length == 0) {
+                            Seed.queue_throne = {}
+                         }
 
-                          if (unsafeWindow.seed.queue_throne.length == 0)
-                          {
-                             unsafeWindow.seed.queue_throne = {}
-                          }
-    
+                         unsafeWindow.kocThroneItems = {};
+                         unsafeWindow.createThroneItems();
+                         unsafeWindow.cm.ThroneView.renderInventory(unsafeWindow.kocThroneItems);
+                         
+
                       }
                   },
                   onFailure: function () {
