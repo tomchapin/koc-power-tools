@@ -2619,17 +2619,16 @@ Tabs.Knights = {
     }
     sk = [];
     var unassigned = parseInt(Math.sqrt(parseInt(knight.experience)/75)) + 1  - parseInt(knight.skillPointsApplied);
-	var overassigned = 0;
     for (var i=0; i<4; i++){
       sk[i] = parseInt(knight[knightRoles[i][1]]);
       if (i == rid)
         sk[i] += unassigned;
       if(sk[i] > 255){
-		overassigned = sk[i] - 255;
 		sk[i] = 255;
+		unassigned = parseInt(255 - parseInt(knight[knightRoles[i][1]]));
 	  }
     }
-	if (unassigned==0 || overassigned>0) return;
+	if (unassigned==0) return;
     if (e!=null) {
 		var row = e.parentNode.parentNode;
 		for (i=row.cells.length-1; i>=1; i--)
@@ -2662,7 +2661,7 @@ Tabs.Knights = {
     }
   },
   
-  postSkillPoints : function (cid, kid, pol, com, int, res, notify){  
+  postSkillPoints : function (cid, kid, pol, com, int, res, notify){
     var params = uW.Object.clone(uW.g_ajaxparams);
     params.cid = cid;
     params.kid = kid;
