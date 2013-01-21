@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130121c
+// @version        20130121d
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130121c';
+var Version = '20130121d';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -756,7 +756,7 @@ var ChatStuff = {
 			element_class = ' ptChatAttack';
 			var f = msg.indexOf('<div class=\'tx\'>');
 			if(f >= 0) {
-				msg = msg.replace(/<div class=\'tx\'>/,'<div class=\'tx\'><center><table border="1" cellpadding="10"><tr><td>')
+				msg = msg.replace(/<div class=\'tx\'>/,'<div class=\'tx\'><center><table border="1" cellpadding="0"><tr><td>')
 				msg = msg.replace(/\|\|/g,'</td></tr><tr><td>');
 				var a = msg.indexOf('</div>',f);
 				msg = msg.slice(0,a)+'</td></tr></table></center>'+msg.slice(a);
@@ -774,7 +774,7 @@ var ChatStuff = {
 			element_class = ' ptChatRecall';
 			var f = msg.indexOf('<div class=\'tx\'>');
 			if(f >= 0) {
-				msg = msg.replace(/<div class=\'tx\'>/,'<div class=\'tx\'><center><table border="1" cellpadding="10"><tr><td>')
+				msg = msg.replace(/<div class=\'tx\'>/,'<div class=\'tx\'><center><table border="1" cellpadding="0"><tr><td>')
 				msg = msg.replace(/\|\|/g,'</td></tr><tr><td>');
 				var a = msg.indexOf('</div>',f);
 				msg = msg.slice(0,a)+'</td></tr></table></center>'+msg.slice(a);
