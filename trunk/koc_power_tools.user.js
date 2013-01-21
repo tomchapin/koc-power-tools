@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130120c
+// @version        20130121a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130120c';
+var Version = '20130121a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -756,6 +756,11 @@ var ChatStuff = {
 			element_class = ' ptChatAttack';
 			msg = msg.replace(/\|/g,'<br>');
 			msg = msg.replace('..:.','');
+			if (Options.enableTowerAlert) {
+				AudioManager.setSource(SOUND_FILES.alert);
+				AudioManager.play();
+				setTimeout(function(){AudioManager.stop();}, 5000);
+			}
 		}
 		if (m[0].indexOf('.::.') >= 0 && Options.chatAttack) {
 			element_class = ' ptChatRecall';
@@ -785,12 +790,7 @@ var ChatStuff = {
 			AudioManager.play();
 			setTimeout(function(){AudioManager.stop();}, 5000);
 		}
-		//barcode style catch
-		if (m[0].indexOf('..:.') >= 0 && Options.enableTowerAlert) {
-			AudioManager.setSource(SOUND_FILES.alert);
-			AudioManager.play();
-			setTimeout(function(){AudioManager.stop();}, 5000);
-		}
+
 			
 	}
     return msg;
@@ -3554,7 +3554,7 @@ fetchPlayerCourt : function (uid, notify){
     method: "post",
     parameters: params,
     onSuccess: function (rslt) {
-logit ("ajax/viewCourt.php\n"+ inspect (rslt, 3, 1));      
+//logit ("ajax/viewCourt.php\n"+ inspect (rslt, 3, 1));      
       notify (rslt);
     },
     onFailure: function (rslt) {
