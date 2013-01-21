@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130121a
+// @version        20130121b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130121a';
+var Version = '20130121b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -754,6 +754,13 @@ var ChatStuff = {
 		//barcode style catch
 		if (m[0].indexOf('..:.') >= 0 && Options.chatAttack) {
 			element_class = ' ptChatAttack';
+			var f = msg.indexOf('<div class=\'tx\'>');
+			if(f >= 0) {
+				msg = msg.replace(/<div class=\'tx\'>/,'<div class=\'tx\'><center><table border="1" cellpadding="10"><tr><td>')
+				msg = msg.replace(/\|\|/g,'</td></tr><tr><td>');
+				msg = msg.slice(0,f)+'</td></tr></table></center>'+msg.slice(f);
+				
+			}
 			msg = msg.replace(/\|/g,'<br>');
 			msg = msg.replace('..:.','');
 			if (Options.enableTowerAlert) {
@@ -764,6 +771,13 @@ var ChatStuff = {
 		}
 		if (m[0].indexOf('.::.') >= 0 && Options.chatAttack) {
 			element_class = ' ptChatRecall';
+			var f = msg.indexOf('<div class=\'tx\'>');
+			if(f >= 0) {
+				msg = msg.replace(/<div class=\'tx\'>/,'<div class=\'tx\'><center><table border="1" cellpadding="10"><tr><td>')
+				msg = msg.replace(/\|\|/g,'</td></tr><tr><td>');
+				msg = msg.slice(0,f)+'</td></tr></table></center>'+msg.slice(f);
+				
+			}
 			msg = msg.replace(/\|/g,'<br>');
 			msg = msg.replace('.::.','');
 		}
