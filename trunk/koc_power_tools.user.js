@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130105b
+// @version        20130120a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130105b';
+var Version = '20130120a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -234,6 +234,7 @@ function ptStartup (){
     .ptErrText {font-weight:bold; color:#600000}\
      button::-moz-focus-inner, input[type="submit"]::-moz-focus-inner { border: none; }\
     .ptChatAttack {color: #000; font-weight:bold; background-color:'+Colors.ChatAtt+'; }\
+    .ptChatRecall {color: #000; font-weight:bold; background-color:#6B8E23; }\
     .ptChatWhisper {font-weight:bold; color: '+Colors.ChatWhisper+';}\
     .ptChatAlliance {background-color: '+Colors.ChatAll+';}\
 	.ptChatScripter {color:#A56631; font-weight:bold; background-color:'+Colors.ChatLeaders+';}\
@@ -750,6 +751,13 @@ var ChatStuff = {
 			element_class = ' ptChatAttack';
 		if (m[0].indexOf('My wilderness at') >= 0 && Options.chatAttack)
 			element_class = ' ptChatAttack';
+		if (m[0].indexOf(unsafeWindow.g_js_strings.modal_messages_viewreports.attackedby) >= 0 && Options.chatAttack) {
+			if(m[0].indexOf(unsafeWindow.g_js_strings.attack_generateincoming.estimatedarrival) >= 0)
+				element_class = ' ptChatAttack';
+			if(m[0].indexOf(unsafeWindow.g_js_strings.incomingattack.attackrecalled) >= 0)
+				element_class = ' ptChatRecall';
+			
+		}
 	}
     msg = msg.replace ("class=\'content\'", "class='content "+ element_class +"'");
 	msg = msg.replace (/(\bReport\sNo\:\s([0-9]+))/g, '<a onclick=\'ptChatReportClicked($2,0)\'>$1</a>');
@@ -773,6 +781,17 @@ var ChatStuff = {
 			AudioManager.play();
 			setTimeout(function(){AudioManager.stop();}, 5000);
 		}
+		if (m[0].indexOf(unsafeWindow.g_js_strings.modal_messages_viewreports.attackedby) >= 0 && Options.chatAttack) {
+			if(m[0].indexOf(unsafeWindow.g_js_strings.attack_generateincoming.estimatedarrival) >= 0) {
+			AudioManager.setSource(SOUND_FILES.alert);
+			AudioManager.play();
+			setTimeout(function(){AudioManager.stop();}, 5000);
+			}
+			if(m[0].indexOf(unsafeWindow.g_js_strings.incomingattack.attackrecalled) >= 0)
+				{}//nothing thus far
+			
+		}
+			
 	}
     return msg;
 	},
