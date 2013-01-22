@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130122d
+// @version        20130122e
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130122d';
+var Version = '20130122e';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -787,6 +787,18 @@ var ChatStuff = {
 			msg = msg.replace(/\|/g,'<br>');
 			msg = msg.replace('.::.','');
 		}
+	}
+	//tables for other use
+	if(m[0].indexOf(':::.') >= 0) {
+			var f = msg.indexOf('<div class=\'tx\'>');
+			if(f >= 0) {
+				msg = msg.replace(/<div class=\'tx\'>/,'<div class=\'tx\'><center><table border="1" cellpadding="0"><tr><td>')
+				msg = msg.replace(/\|\|/g,'</td></tr><tr><td>');
+				var a = msg.indexOf('</div>',f);
+				msg = msg.slice(0,a)+'</td></tr></table></center>'+msg.slice(a);
+			}
+			msg = msg.replace(/\|/g,'<br>');
+			msg = msg.replace(':::.','');
 	}
     msg = msg.replace ("class=\'content\'", "class='content "+ element_class +"'");
 	msg = msg.replace (/(\bReport\sNo\:\s([0-9]+))/g, '<a onclick=\'ptChatReportClicked($2,0)\'>$1</a>');
