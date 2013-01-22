@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130121d
+// @version        20130122a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130121d';
+var Version = '20130122a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -115,6 +115,7 @@ var Options = {
   OverViewShowExtra : 'maximum',
   alertConfig  : {aChat:false, aPrefix:'** I\'m being attacked! **', scouting:false, wilds:false, minTroops:10000, spamLimit:10 },
   alertinterval : 10,
+  alertmtroops : 0,
   celltext     : {atext:false, provider:0, num1:"000", num2:"000", num3:"0000"},
   rptType:'alliance',
   arAttacker:'Them',
@@ -13194,6 +13195,7 @@ Tabs.Tower = {
       m = '<TABLE class=ptTab><TR><TD colspan=2><B>Alliance Report Scanner:</b></td></tr>';
 	 m += '<TR><TD><INPUT id=togEnhanceAR type=checkbox /></td><TD>Enable post of Alliance Reports to Alliance Chat</td></tr>\
 		   <TR><TD></td><TD><TABLE>\
+		    <TR><TD>Min troops: <INPUT id=ptalertmtroops type=text size=6 value='+Options.alertmtroops+' /></TD></TR>\
 			<TR><TD>Scan interval: <INPUT id=ptalertinterval type=text size=3 value='+Options.alertinterval+' /> seconds\
 			<TR><TD><INPUT id=ptalerttext type=checkbox '+ (Options.celltext.enable?'CHECKED ':'') +'/> Send text on alert</td></tr>\
 			<TR><TD colspan=2><table><tr><td align=left>Text message alert to: <INPUT id=ptnum1 type=text size=4 maxlength=4 value="'+ Options.celltext.num1 +'"  '+(Options.celltext.provider==0?'DISABLED':'')+'\> &nbsp;<INPUT id=ptnum2 type=text size=3 maxlength=3 value="'+ Options.celltext.num2 +'"  '+(Options.celltext.provider==0?'DISABLED':'')+'\> &nbsp;<INPUT id=ptnum3 type=text size=4 maxlength=4 value="'+ Options.celltext.num3 +'"  '+(Options.celltext.provider==0?'DISABLED':'')+'\></td></tr>\
@@ -13228,6 +13230,7 @@ Tabs.Tower = {
 		document.getElementById('ptnum2').addEventListener ('change', t.phonenum, false);
 		document.getElementById('ptnum3').addEventListener ('change', t.phonenum, false);
 		document.getElementById('ptalertinterval').addEventListener ('change', function(e){Options.alertinterval = parseInt(e.target.value);}, false);
+		document.getElementById('ptalertmtroops').addEventListener ('change', function(e){Options.alertmtroops = parseInt(e.target.value);}, false);
 		t.togOpt ('togEnhanceAR', 'EnhanceAR', AllianceReportsCheck.enable);
       
     } catch (e) {
@@ -13345,6 +13348,7 @@ var AllianceReportsCheck = {
 
    parseAReports : function (ar, playerNames, allianceNames, cityNames, totalPages){
     var t = AllianceReportsCheck;
+    
 	var myAllianceId = getMyAlliance()[0];
 	var rptkeys = unsafeWindow.Object.keys(ar);
       if (matTypeof(ar) != 'array'){
@@ -13368,15 +13372,10 @@ var AllianceReportsCheck = {
 				var allianceName = 'Undefined';
 			  else
 				var allianceName = allianceNames["a"+rpt.side1AllianceId];
-	  var date=unsafeWindow.formatDateByUnixTime(rpt.reportUnixTime);
-	   var msg = 'Report No: '+rpt.reportId+' '+date+' : '+playerNames['p'+rpt.side0PlayerId]+'\'s '+target+' at '+rpt.side0XCoord+','+rpt.side0YCoord+' has been '+atkType+' by '+playerNames["p"+rpt.side1PlayerId]+' at '+rpt.side1XCoord+','+rpt.side1YCoord+' of '+allianceName+'('+getDiplomacy(rpt.side1AllianceId)+')';
- var automsg = sendChat('/a '+msg);
- if(Options.celltext.enable)
- t.postToCell(rpt, playerNames, cityNames);
-	if(Options.alertConfig.sound)
-		AudioAlert.sound(true);
-	t.addAllianceReport(rpt);
-		logit(msg);
+			var date=unsafeWindow.formatDateByUnixTime(rpt.reportUnixTime);
+			var msg = 'Report No: '+rpt.reportId+' '+date+' : '+playerNames['p'+rpt.side0PlayerId]+'\'s '+target+' at '+rpt.side0XCoord+','+rpt.side0YCoord+' has been '+atkType+' by '+playerNames["p"+rpt.side1PlayerId]+' at '+rpt.side1XCoord+','+rpt.side1YCoord+' of '+allianceName+'('+getDiplomacy(rpt.side1AllianceId)+')';
+			t.fetchreport(ID,rpt,msg,playerNames,cityNames);
+			t.addAllianceReport(rpt);
           }
 		 }
 		}	  
@@ -13440,6 +13439,31 @@ postToCell : function (m, playerNames, cityNames){
 	data: implodeUrlArgs(data),
 
 	})
+  },
+  
+  fetchreport : function (rpId,rpt,msg,playerNames,cityNames) {
+    var t = AllianceReportsCheck;
+			var params = uW.Object.clone(uW.g_ajaxparams);
+			params.rid=rpId;
+			new MyAjaxRequest(uW.g_ajaxpath + "ajax/fetchReport.php" + uW.g_ajaxsuffix, {
+				method: "post",
+				parameters: params,
+				onSuccess: function (rslt) {
+					var troops = rslt.detail.fght.s1;
+					var trooptot = 0;
+					for (i in troops) {
+						trooptot += Number(troops[i][0]);
+					}
+					if(Options.alertmtroops > trooptot)return;
+					 var automsg = sendChat('/a '+trooptot+' '+msg);
+					if(Options.celltext.enable)
+						t.postToCell(rpt, playerNames, cityNames);
+					if(Options.alertConfig.sound)
+						AudioAlert.sound(true);
+				},
+				onFailure: function () {
+				},
+			}, false);  
   },
 }
 
