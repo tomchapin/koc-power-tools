@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130122e
+// @version        20130123a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130122e';
+var Version = '20130123a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -825,7 +825,8 @@ var ChatStuff = {
 
 			
 	}
-    return msg;
+	//lets remove the null character which could be a problem when copy and paste web addresses Null:"­",UnicodeLS:"&#8232;",
+    return msg.replace("­","").replace("&#8232;","");
 	},
    
    getAllianceLeaders : function (){
@@ -5208,6 +5209,8 @@ Tabs.Options = {
   // This function grabs a fresh copy of the main_src and replaces the seed variable with the returned data.
   // This refreshes the data without a full web page refresh.
   updateAll : function () {
+	  //potential fix for missing troop recalls:  true flag forces troop march update
+	  unsafeWindow.update_seed_ajax(true);
       // update the timestamps
       var ts = (new Date().getTime() / 1000) + uW.g_timeoff;
       var cts = parseInt( (ts -25.1) * 1000);
