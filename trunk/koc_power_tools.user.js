@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130123b
+// @version        20130125a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130123b';
+var Version = '20130125a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -2976,7 +2976,7 @@ var DispReport = {
     for(var i=0; i<rpts.length; i++){
 		// logit(inspect(rpts[i].subject));
 		// logit(inspect(rpts[i].sender));
-		if(rpts[i].subject.innerHTML.indexOf('New Gift Received!') >= 0 && rpts[i].sender.innerHTML.indexOf('Kingdoms Of Camelot') >= 0){
+		if((rpts[i].subject.innerHTML.indexOf('¡Nuevo regalo recibido!') >= 0 || rpts[i].subject.innerHTML.indexOf('New Gift Received!') >= 0 ) && rpts[i].sender.innerHTML.indexOf('Kingdoms Of Camelot') >= 0){
 			rpts[i].checkbox.firstChild.checked = true;
 		}
 	}
