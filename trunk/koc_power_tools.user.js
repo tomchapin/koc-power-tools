@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130126a
+// @version        20130126b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130126a';
+var Version = '20130126b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -1450,7 +1450,7 @@ var Rpt = {
 			if (rslt['tch']) {
 				m+='<TABLE class=ptTab><TR><TH colspan=2 align=left>Research</TH></TR>';
 				for (var tl in rslt.tch) {
-					tid = /[0-9]/.exec(tl);
+					tid = /[0-9]+/.exec(tl);
 					m+='</TD></TR><TR><TD>'+uW.techcost['tch'+tid[0]][0]+'</TD><TD align=right>' + rslt.tch[tl] + '</TD></TR>';
 				}
 				m+='</TABLE>';
@@ -9539,9 +9539,10 @@ Tabs.Rpt = {
 			}
 			if (rslt['tch']) {
 				m+='<TABLE class=ptTab><TR><TH colspan=2 align=left>Research</TH></TR>';
-				for (var tl in rslt.tch)
-					tid = /[0-9]/.exec(tl);
+				for (var tl in rslt.tch) {
+					tid = /[0-9]+/.exec(tl);
 					m+='</TD></TR><TR><TD>'+uW.techcost['tch'+tid[0]][0]+'</TD><TD align=right>' + rslt.tch[tl] + '</TD></TR>';
+				}
 				m+='</TABLE>';
 			}
 			m+='</TD></TR></TABLE>';
