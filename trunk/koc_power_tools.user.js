@@ -314,7 +314,8 @@ if (TEST_WIDE){
   DispReport.init();
   mapinfoFix.init(); 
   MarchUnitsFix.init();
-  
+  towho.init();
+  uW.towhome = towho;
   tabManager.init (mainPop.getMainDiv());
   
   AudioManager.init();
@@ -2754,7 +2755,14 @@ Tabs.Knights = {
 
 
 /**************/
-
+var towho = {
+	mmFunc : null,
+	init : function() {
+		t = towho;
+		t.mmFunc = new CalterUwFunc ('cm.messageController.messageWide', [[/params\.subject\s*=\s*..".modal_msg_write_subj".\.val.../im, 'params.subject = allianceall?"{"+g_js_strings.commonstr.alliance+"}"+document.getElementById(\'modal_msg_write_subj\').value:"{"+g_js_strings.commonstr.officers+"}"+document.getElementById(\'modal_msg_write_subj\').value;']]);
+		t.mmFunc.setEnable (true);
+	}
+}
 var messageNav = {
   mmFunc : null,
   mmsFunc : null,
