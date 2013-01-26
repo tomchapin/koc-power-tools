@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130125c
+// @version        20130125d
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130125c';
+var Version = '20130125d';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -315,7 +315,6 @@ if (TEST_WIDE){
   mapinfoFix.init(); 
   MarchUnitsFix.init();
   towho.init();
-  uW.towhome = towho;
   tabManager.init (mainPop.getMainDiv());
   
   AudioManager.init();
@@ -2759,7 +2758,7 @@ var towho = {
 	mmFunc : null,
 	init : function() {
 		t = towho;
-		t.mmFunc = new CalterUwFunc ('cm.messageController.messageWide', [[/params\.subject\s*=\s*..".modal_msg_write_subj".\.val.../im, 'params.subject = allianceall?"{"+g_js_strings.commonstr.alliance+"}"+document.getElementById(\'modal_msg_write_subj\').value:"{"+g_js_strings.commonstr.officers+"}"+document.getElementById(\'modal_msg_write_subj\').value;']]);
+		t.mmFunc = new CalterUwFunc ('cm.messageController.messageWide', [[/params\.subject\s*=\s*..".modal_msg_write_subj".\.val.../im, 'params.subject = cm.messageController.escape\(allianceall?"{"+g_js_strings.commonstr.alliance+"}"+document.getElementById(\'modal_msg_write_subj\').value:"{"+g_js_strings.commonstr.officers+"}"+document.getElementById(\'modal_msg_write_subj\').value\);']]);
 		t.mmFunc.setEnable (true);
 	}
 }
