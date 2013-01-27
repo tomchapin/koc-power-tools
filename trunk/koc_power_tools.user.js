@@ -13547,7 +13547,7 @@ var cdtd = {
 		unsafeWindow.cdtdhook = t.drawdefendstatus;
 		if(Options.EnhCBtns) {
 			t.views.setEnable(true);
-			t.drawdefendstatus();
+			setTimeout(t.drawdefendstatus,1000);
 		};
 	},
 	drawdefendstatus : function () {
