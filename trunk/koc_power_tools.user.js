@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130126d
+// @version        20130127a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130126d';
+var Version = '20130127a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -142,6 +142,7 @@ var Options = {
   AttackCibleY : 0,
   AttackKnight : 0,
   enhancedinbox : true,
+  EnhCBtns	:	false,
   miniRefresh   : false,
   miniRefreshIntvl: 3,
   ChatIcons : true,
@@ -322,6 +323,7 @@ if (TEST_WIDE){
   mapinfoFix.init(); 
   MarchUnitsFix.init();
   towho.init();
+  cdtd.init();
   tabManager.init (mainPop.getMainDiv());
   
   AudioManager.init();
@@ -5013,6 +5015,7 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=togBatRounds type=checkbox /></td><TD>Display # of rounds in battle reports</td></tr>';
 	  m+='<TR><TD><INPUT id=togAtkDelete type=checkbox /></td><TD>Enable delete button when displaying battle report</td></tr>';
 	  m+='<TR><TD><INPUT id=togRptGift type=checkbox /></td><TD>Enable delete gifts report button in inbox</td></tr>';
+	  m+='<TR><TD><INPUT id=togCV type=checkbox /></td><TD>Enable enhanced city buttons currently alpha WIP</td></tr>';
 	  m+='<TR><TD colspan=2><BR><BR><B>KofC Bug Fixes:</b></td></tr>';
 	  m+='<TR><TD><INPUT id=togTowerFix type=checkbox /></td><TD>Fix tower report to show exact target (city, wild or invalid)</td></tr>';
 	  m+='<TR><TD><INPUT id=togKnightSelect type=checkbox /></td><TD>Do not automatically select a knight when changing march type to scout, transport or reassign</td></tr>';
@@ -5042,6 +5045,7 @@ Tabs.Options = {
       t.togOpt ('togKnightSelect', 'fixKnightSelect', AttackDialog.setEnable, AttackDialog.isKnightSelectAvailable);
       t.togOpt ('togAttackPicker', 'attackCityPicker', AttackDialog.setEnable, AttackDialog.isCityPickerAvailable);
       t.togOpt ('togRptGift', 'enhancedinbox', DispReport.setEnable, DispReport.isDispReportAvailable);
+      t.togOpt ('togCV', 'EnhCBtns');
       t.togOpt ('togCoordBox', 'mapCoordsTop', CoordBox.setEnable, CoordBox.isAvailable);
       t.togOpt ('togMapInfo', 'mapInfo', mapinfoFix.setEnable, mapinfoFix.isAvailable);
       t.togOpt ('togMapInfo2', 'mapInfo2', mapinfoFix.setEnable2, mapinfoFix.isAvailable2);
@@ -13534,6 +13538,68 @@ function formatUnixTime (unixTimeString,format){
 	} */
 	return rtn;
 }
+
+var cdtd = {
+	views : null,
+	init : function (){
+		var t = cdtd;
+		t.views = new CalterUwFunc("cityinfo_changetab", [[/switch\s*.a./im,'cdtdhook();switch (a)'],[/\$../igm,'jQuery("']]);;
+		unsafeWindow.cdtdhook = t.drawdefendstatus;
+		if(Options.EnhCBtns) {
+			t.views.setEnable(true);
+			t.drawdefendstatus();
+		};
+	},
+	drawdefendstatus : function () {
+		var t = cdtd;
+		for(i = 0;i < unsafeWindow.seed.cities.length;i++) {
+			var cityidx = i+1;
+			var city = document.getElementById('citysel_'+cityidx);
+			var cityid = 'city'+unsafeWindow.seed.cities[i][0];
+			city.style.border='2px inset';
+			city.style.display='inline';// NEED HELP HERE.. CSS EXPERTS??
+			//var tw = Math.floor((Number(document.getElementById('mod_citylist').offsetWidth)-18.5)/9);
+			city.style.width =  10+'%';
+			//city.style.height = tw+'px';
+			//city.style.boxShadow='inset 0px 0px 0px 0px';
+			//city.style.box-shadow='inset 0px 0px 0px 0px';
+			if(unsafeWindow.seed.citystats[cityid].gate == 0) {
+				city.style.color='red';
+			} else {
+				city.style.color='green';
+			}
+			city.ondblclick=function () {
+				logit('id is '+this.id);
+				logit('target is '+this.name);
+				t.setdefendstatus(this.name);
+				//setTimeout(t.drawdefendstatus,1000);
+			};
+		}
+	},
+  
+  setdefendstatus : function (city) {
+	var t = cdtd;
+    var state = 1;
+    if (uW.seed.citystats["city" + city].gate != 0)
+      state = 0;
+	var params = uW.Object.clone(uW.g_ajaxparams);
+	params.cid = city;
+    params.state = state;
+	new AjaxRequest(uW.g_ajaxpath + "ajax/gate.php" + uW.g_ajaxsuffix, {
+		method: "post",
+		parameters: params,
+		onSuccess: function (message) {
+			uW.seed.citystats["city" + city].gate = state;
+			t.drawdefendstatus();
+		},
+		onFailure: function () {
+			t.drawdefendstatus();
+		},
+	});  
+  },
+  
+}
+
 
 
 ptStartup ();
