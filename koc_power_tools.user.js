@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130127a
+// @version        20130127b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130127a';
+var Version = '20130127b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -13541,14 +13541,25 @@ function formatUnixTime (unixTimeString,format){
 
 var cdtd = {
 	views : null,
+	//views2 : null,
 	init : function (){
 		var t = cdtd;
-		t.views = new CalterUwFunc("cityinfo_changetab", [[/switch\s*.a./im,'cdtdhook();switch (a)'],[/\$../igm,'jQuery("']]);;
+		t.views = new CalterUwFunc("cityinfo_changetab", [[/switch\s*.a./im,'cdtdhook();switch (a)'],[/\$../igm,'jQuery("']]);
+		//t.views2 = new CalterUwFunc("secondupdate", [[/attack_generateincoming.../im,'attack_generateincoming();cdtdhook()\;'],[/\$../igm,'jQuery\(\"']]);
 		unsafeWindow.cdtdhook = t.drawdefendstatus;
 		if(Options.EnhCBtns) {
 			t.views.setEnable(true);
+			setTimeout(t.setuptime,1000);
+			//t.views2.setEnable(true);
 			setTimeout(t.drawdefendstatus,1000);
 		};
+	},
+	setuptime : function () {
+		unsafeWindow.update_citylist2 = unsafeWindow.update_citylist;
+		unsafeWindow.update_citylist = function (e) {
+			unsafeWindow.cdtdhook();
+			unsafeWindow.update_citylist2(e);
+		}
 	},
 	drawdefendstatus : function () {
 		var t = cdtd;
