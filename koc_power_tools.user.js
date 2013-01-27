@@ -1299,10 +1299,14 @@ var Rpt = {
 		function handleblds (bType) {
 			if(rslt['blds']){
 			var blds = rslt['blds']['b'+bType]; b = '<TR><TD>'; arField = [], firstbld = true;
-			
-         var bldNum = "bdg" + bType;
-         b += uW.buildingcost[bldNum][0];
-			
+			if (bType == 1)
+				b+='Farm';
+			else if (bType == 2)
+				b+='Sawmill';
+			else if (bType == 3)
+				b+='Quarry';
+			else if (bType == 4)
+				b+='Mine';
 			b+='</TD><TD>';
 			for (var i=1; i<12; i++)
 				arField[i]=0;
@@ -1430,7 +1434,6 @@ var Rpt = {
 			else
 				m+='None';
 			m+='</TD></TR>';
-		
 			if (rslt['pop'])
 				m+='<TR><TD>Population: ' + addCommas(rslt['pop']) + '</TD></TR>';
 			if (rslt['hap'])
@@ -1439,24 +1442,17 @@ var Rpt = {
 				if (rslt['blds']['b1'] || rslt['blds']['b2'] || rslt['blds']['b3'] || rslt['blds']['b4']) {
 					m+='<TABLE class=ptTab><TR><TH colspan=2 align=left>Fields</TH></TR>';
 					for (var i=1; i<5; i++)
-					   if (rslt['blds']['b'+i])
-					      m+=handleblds(i);
-					for (var i=22; i<28; i++)
-					   if (rslt['blds']['b'+i])
-					      m+=handleblds(i);
+						if (rslt['blds']['b'+i])
+							m+=handleblds(i);
 					m+='</TABLE>';
 				}
 			}
-			if (rslt['tch'] ) {
+			if (rslt['tch']) {
 				m+='<TABLE class=ptTab><TR><TH colspan=2 align=left>Research</TH></TR>';
 				for (var tl in rslt.tch) {
 					tid = /[0-9]+/.exec(tl);
 					m+='</TD></TR><TR><TD>'+uW.techcost['tch'+tid[0]][0]+'</TD><TD align=right>' + rslt.tch[tl] + '</TD></TR>';
 				}
-	         for (var tl in rslt.tch2) {
-	               tid = /[0-9]+/.exec(tl);
-	               m+='</TD></TR><TR><TD>'+uW.techcost2['tch'+tid[0]][0]+'</TD><TD align=right>' + rslt.tch2[tl] + '</TD></TR>';
-	         }
 				m+='</TABLE>';
 			}
 			m+='</TD></TR></TABLE>';
@@ -1532,7 +1528,6 @@ var Rpt = {
 						m+='<TD align=left><font size="1"><b>Def: </b>'+addCommas(rslt['bonus']['mod']['s1']['u'+i]['def'][1])+'</font></td>';
 						m+='<TD align=left><font size="1"><b>Spd: </b>'+addCommas(rslt['bonus']['mod']['s1']['u'+i]['spd'][1])+'</font></td>';
 						m+='<TD align=left><font size="1"><b>Rng: </b>'+addCommas(rslt['bonus']['mod']['s1']['u'+i]['rng'][1])+'</font></td></tr>';
-						
 					}
 				}
 			}
@@ -1548,34 +1543,6 @@ var Rpt = {
 					}
 				}
 			}
-			
-	      var tchLookup = {
-            t_hp:  uW.techcost.tch15[0],
-            t_atk: uW.techcost.tch8[0],
-            t_def: uW.techcost.tch9[0],
-            t_ld: uW.techcost.tch10[0],
-            t_spd: uW.techcost.tch12[0],
-            t_rng: uW.techcost.tch13[0]
-         };
-			
-			var tch2Lookup = {
-			   t_ic: uW.techcost2.tch1[0],
-			   t_id: uW.techcost2.tch4[0],
-			   t_sr: uW.techcost2.tch5[0],
-			   t_if: uW.techcost2.tch6[0]
-			};
-			
-         if ( (rslt.bonus.tch && rslt.bonus.tch.s1) &&  (rslt.bonus.tch2 && rslt.bonus.tch2.s1)) {
-            m+='<TR><TD colspan=4> </TD></TR>';
-            m+='<TR><TD colspan=4><b>Tech Bonuses:</b></TD></TR>';
-            for (i in rslt.bonus.tch.s1) {
-               m+='<TR><TD colspan=4>' + tchLookup['t_' +i] +': ' + Math.round(rslt.bonus.tch.s1[i]*100) + '%</TD></TR>';
-            }
-            for (i in rslt.bonus.tch2.s0) {
-               m+='<TR><TD colspan=4>' + tch2Lookup['t_' +i]  +': ' + Math.round(rslt.bonus.tch2.s1[i]*100) + '%</TD></TR>';
-            }
-         }
-			
 			m+='</TABLE></TD><TD width=50% align=right valign=top>';
 			m+='<TABLE class=ptTab width=100%>';
 			m+='<TR><TD colspan=4><B>Defenders</B> ('+rpt.side0Name+')';
@@ -1769,7 +1736,8 @@ var Rpt = {
 				}
 			} else
 				m+='<TR><TD>No Troops Defended</TD></TR>';
- 	
+
+
 
 			if (rslt['fght']["s0"]) {
 				m+='<TR><TD colspan=4> </TD></TR>';
@@ -1812,18 +1780,6 @@ var Rpt = {
 				}
 
 			}
-			
-         if ( (rslt.bonus.tch && rslt.bonus.tch.s0) &&  (rslt.bonus.tch2 && rslt.bonus.tch2.s0)) {
-            m+='<TR><TD colspan=4> </TD></TR>';
-            m+='<TR><TD colspan=4><b>Tech Bonuses:</b></TD></TR>';
-            for (i in rslt.bonus.tch.s0) {
-               m+='<TR><TD colspan=4>' + tchLookup['t_' +i] +': ' + Math.round(rslt.bonus.tch.s0[i]*100) + '%</TD></TR>';
-            }
-            
-            for (i in rslt.bonus.tch2.s0) {
-               m+='<TR><TD colspan=4>' + tch2Lookup['t_' +i]  +': ' + Math.round(rslt.bonus.tch2.s0[i]*100) + '%</TD></TR>';
-            }  
-         }
 
 			m+='</TABLE></TD></TR></TABLE>';
 		}
@@ -2802,7 +2758,7 @@ var towho = {
 	mmFunc : null,
 	init : function() {
 		t = towho;
-		t.mmFunc = new CalterUwFunc ('cm.messageController.messageWide', [[/params\.subject\s*=\s*..".modal_msg_write_subj".\.val.../im, 'params.subject = cm.messageController.escape\(allianceall?"{"+g_js_strings.commonstr.alliance+"}"+document.getElementById(\'modal_msg_write_subj\').value:"{"+g_js_strings.commonstr.officers+"}"+document.getElementById(\'modal_msg_write_subj\').value\);']]);
+		t.mmFunc = new CalterUwFunc ('cm.messageController.messageWide', [[/params\.subject\s*=\s*..".modal_msg_write_subj".\.val.../im, 'params.subject = cm.messageController.escape\(allianceall?"{"+g_js_strings.commonstr.alliance+"}"+document.getElementById(\'modal_msg_write_subj\').value:"{"+g_js_strings.commonstr.officers+"}"+document.getElementById(\'modal_msg_write_subj\').value\);'],[/\$\("#modal_msg_write_to/im,'jQuery("#modal_msg_write_to']]);
 		t.mmFunc.setEnable (true);
 	}
 }
@@ -9440,10 +9396,14 @@ Tabs.Rpt = {
 		function handleblds (bType) {
 		  if(rslt['blds']){
 			var blds = rslt['blds']['b'+bType]; b = '<TR><TD>'; arField = [], firstbld = true;
-			
-			var bldNum = "bdg" + bType;
-			b += uW.buildingcost[bldNum][0];
-					
+			if (bType == 1)
+				b+='Farm';
+			else if (bType == 2)
+				b+='Sawmill';
+			else if (bType == 3)
+				b+='Quarry';
+			else if (bType == 4)
+				b+='Mine';
 			b+='</TD><TD>';
 			for (var i=1; i<12; i++)
 				arField[i]=0;
@@ -9552,7 +9512,6 @@ Tabs.Rpt = {
 			m+=handleunts();
 			m+=handlefrt();
 			m+=handlersc();
-			
 			m+='</TD><TD width=50% align=left valign=top>';
 			m+='<TABLE class=ptTab width=100%>';
 			if (rslt['lstlgn']) {
@@ -9574,11 +9533,8 @@ Tabs.Rpt = {
 			if (rslt['blds']['b1'] || rslt['blds']['b2'] || rslt['blds']['b3'] || rslt['blds']['b4']) {
 				m+='<TABLE class=ptTab><TR><TH colspan=2 align=left>Fields</TH></TR>';
 				for (var i=1; i<5; i++)
-				   if (rslt['blds']['b'+i])
-				      m+=handleblds(i);
-				for (var i=22; i<28; i++)
-				   if (rslt['blds']['b'+i])
-				      m+=handleblds(i);
+					if (rslt['blds']['b'+i])
+						m+=handleblds(i);
 				m+='</TABLE>';
 			}
 			if (rslt['tch']) {
@@ -9587,10 +9543,6 @@ Tabs.Rpt = {
 					tid = /[0-9]+/.exec(tl);
 					m+='</TD></TR><TR><TD>'+uW.techcost['tch'+tid[0]][0]+'</TD><TD align=right>' + rslt.tch[tl] + '</TD></TR>';
 				}
-	         for (var tl in rslt.tch2) {
-	               tid = /[0-9]+/.exec(tl);
-	               m+='</TD></TR><TR><TD>'+uW.techcost2['tch'+tid[0]][0]+'</TD><TD align=right>' + rslt.tch2[tl] + '</TD></TR>';
-	         }
 				m+='</TABLE>';
 			}
 			m+='</TD></TR></TABLE>';
