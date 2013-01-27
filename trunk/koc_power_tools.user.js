@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130127c
+// @version        20130127d
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130127c';
+var Version = '20130127d';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -13546,16 +13546,13 @@ var cdtd = {
 		t.views = new CalterUwFunc("citysel_click",[[/cm\.PrestigeCityView\.render\(\)/im,'cm.PrestigeCityView.render();cdtdhook();']]);
 		unsafeWindow.cdtdhook = t.drawdefendstatus;
 		if(Options.EnhCBtns) {
-			setTimeout(t.setuptime,1000);
 			t.views.setEnable(true);
-			setTimeout(t.drawdefendstatus,1000);
-		};
-	},
-	setuptime : function () {
-		unsafeWindow.update_citylist2 = unsafeWindow.update_citylist;
-		unsafeWindow.update_citylist = function (e) {
-			unsafeWindow.update_citylist2(e);
-			unsafeWindow.cdtdhook();
+			unsafeWindow.update_citylist2 = unsafeWindow.update_citylist;
+			unsafeWindow.update_citylist = function (e) {
+				unsafeWindow.update_citylist2(e);
+				unsafeWindow.cdtdhook();
+			};
+			t.drawdefendstatus();
 		};
 	},
 	drawdefendstatus : function () {
@@ -13563,6 +13560,10 @@ var cdtd = {
 		for(i = 0;i < unsafeWindow.seed.cities.length;i++) {
 			var cityidx = i+1;
 			var city = document.getElementById('citysel_'+cityidx);
+			if(!city) {
+				setTimeout(t.drawdefendstatus,100);
+				return;
+			}
 			var cityid = 'city'+unsafeWindow.seed.cities[i][0];
 			city.style.border='2px inset';
 			city.style.display='inline';// NEED HELP HERE.. CSS EXPERTS??
