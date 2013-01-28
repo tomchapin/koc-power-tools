@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130127d
+// @version        20130128a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130127d';
+var Version = '201301278a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -759,7 +759,8 @@ var ChatStuff = {
 			t.getfbid(suid);
 		}
 	}
-	msg = msg.replace(/\­/g,"").replace(/\&\#8232\;/g,"");
+	var fchar = new RegExp(atob('rQ=='),"g");
+	msg = msg.replace(fchar,"").replace(/\&\#8232\;/g,"");
 	if(alliance){
 		if (m[0].indexOf('My embassy has') >= 0 && Options.chatAttack)
 			element_class = ' ptChatAttack';
