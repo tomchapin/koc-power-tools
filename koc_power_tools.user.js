@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130206a
+// @version        20130206b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130206a';
+var Version = '20130206b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -3618,19 +3618,19 @@ fetchPlayerCourt : function (uid, notify){
 		if(rslt)if(rslt.ok) {
 			var span = document.getElementById('allListOut');
 			//span.innerHTML += '<BR>'+rslt.;
+	span.innerHTML += '<BR>Found one '+inspect(rslt);		
 			
-			
-    var u = rslt.playerInfo[0];
-    var a = 'None';
-    if (u.allianceName)
-      a = u.allianceName +' ('+ getDiplomacy(u.allianceId) + ')';
-    var m = '<DIV style="max-width:375x; width:375px; overflow-y:auto"><TABLE cellspacing=0 class=ptTab><TR><TD><B>Details:</b> &nbsp; </td><TD>'+uW.g_js_strings.commonstr.alliance+': '+ a +' &nbsp; '+uW.g_js_strings.commonstr.cities+': '
-          + u.cities +' &nbsp; '+uW.g_js_strings.commonstr.population+': '+ u.population +'</td></tr><TR><TD></td><TD></div>'+uW.g_js_strings.commonstr.province+': ';
-    var pids = u.provinceIds.split (',');
-    var p = [];
-    for (var i=0; i<pids.length; i++)
-      p.push(uW.provincenames['p'+pids[i]]);
-    span.innerHTML += m + p.join (', ') +'</td></tr></table><br>';
+//    var u = rslt.playerInfo[0];
+//    var a = 'None';
+//    if (u.allianceName)
+//      a = u.allianceName +' ('+ getDiplomacy(u.allianceId) + ')';
+//    var m = '<DIV style="max-width:375x; width:375px; overflow-y:auto"><TABLE cellspacing=0 class=ptTab><TR><TD><B>Details:</b> &nbsp; </td><TD>'+uW.g_js_strings.commonstr.alliance+': '+ a +' &nbsp; '+uW.g_js_strings.commonstr.cities+': '
+//          + u.cities +' &nbsp; '+uW.g_js_strings.commonstr.population+': '+ u.population +'</td></tr><TR><TD></td><TD></div>'+uW.g_js_strings.commonstr.province+': ';
+//    var pids = u.provinceIds.split (',');
+//    var p = [];
+//    for (var i=0; i<pids.length; i++)
+//      p.push(uW.provincenames['p'+pids[i]]);
+//    span.innerHTML += m + p.join (', ') +'</td></tr></table><br>';
 			
 			
 			//t.gotPlayerDetail(rslt, span);
