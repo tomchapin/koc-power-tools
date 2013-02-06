@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130128b
+// @version        20130206a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '201301278b';
+var Version = '20130206a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -3549,7 +3549,6 @@ function officerId2String (oid){
     return uW.allianceOfficerTypeMapping[4];
   return '';
 }
-
 Tabs.AllianceList = {
   tabOrder : 25,
   tabLabel : uW.g_js_strings.commonstr.player,
@@ -3614,7 +3613,61 @@ fetchPlayerCourt : function (uid, notify){
     },
   });
 },
+	fetchmods : function (idx,rslt) {
+		var t = Tabs.AllianceList;
+		if(rslt)if(rslt.ok) {
+			var span = document.getElementById('allListOut');
+			//span.innerHTML += '<BR>'+rslt.;
+			
+			
+    var u = rslt.playerInfo[0];
+    var a = 'None';
+    if (u.allianceName)
+      a = u.allianceName +' ('+ getDiplomacy(u.allianceId) + ')';
+    var m = '<DIV style="max-width:375x; width:375px; overflow-y:auto"><TABLE cellspacing=0 class=ptTab><TR><TD><B>Details:</b> &nbsp; </td><TD>'+uW.g_js_strings.commonstr.alliance+': '+ a +' &nbsp; '+uW.g_js_strings.commonstr.cities+': '
+          + u.cities +' &nbsp; '+uW.g_js_strings.commonstr.population+': '+ u.population +'</td></tr><TR><TD></td><TD></div>'+uW.g_js_strings.commonstr.province+': ';
+    var pids = u.provinceIds.split (',');
+    var p = [];
+    for (var i=0; i<pids.length; i++)
+      p.push(uW.provincenames['p'+pids[i]]);
+    span.innerHTML += m + p.join (', ') +'</td></tr></table><br>';
+			
+			
+			//t.gotPlayerDetail(rslt, span);
+		};
+		if(matTypeof(idx)=='object'){
+			idx=0;
+			document.getElementById('allListOut').innerHTML = '<CENTER>SEARCHING FOR MODERATORS ON DOMAIN</center>';
+		};
+		logit('and idx is '+idx);
+		if(idx > unsafeWindow.moderators.length) {
+			document.getElementById('allListOut').innerHTML += '<BR><CENTER>SEARCH COMPLETE</center>';
+			return;
+		}
+		var uid = unsafeWindow.moderators[idx];
+//if(idx > 4)return;
 
+	var params = uW.Object.clone(uW.g_ajaxparams);
+    params.uid = uid;
+    AjaxRequest(uW.g_ajaxpath + "ajax/getUserGeneralInfo.php" + uW.g_ajaxsuffix, {
+      method: "post",
+      parameters: params,
+      onSuccess: function (transport) {
+      var rslt = eval("(" + transport.responseText + ")");
+	  if (rslt.ok) t.fetchmods((idx+1),rslt)
+	  else t.fetchmods(idx+1);
+
+      },
+      onFailure: function (rslt) {
+		  logit('failure');
+           //document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>'+uW.g_js_strings.errorcode.err_602+'</center>';
+      },
+    });
+
+
+
+
+	},
 
 fetchTEST : function (pageNum, notify){    // as in alliance list, sorted by rank, 10 per page
   var params = uW.Object.clone(uW.g_ajaxparams);
@@ -3669,7 +3722,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
        m+= '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowtoPlayers" target="_blank">HELP</a></td></tr>';
 	   m+='<TR><TD class=xtab align=right></td><TD class=xtab>'+uW.g_js_strings.modal_fow_leaderboard.searchuser+': &nbsp; </td>';
        m+=' <TD width=80% class=xtab><INPUT id=allPlayName size=20 type=text/> &nbsp;'; 
-       m+='<INPUT id=playSubmit type=submit value="'+uW.g_js_strings.modal_fow_leaderboard.finduser+'" /> &nbsp; <INPUT id=ffbuidsubmit type=submit value="UID" /></td>\
+       m+='<INPUT id=playSubmit type=submit value="'+uW.g_js_strings.modal_fow_leaderboard.finduser+'" /> &nbsp; <INPUT id=ffbuidsubmit type=submit value="UID" />&nbsp; <INPUT id=ffkmods type=submit value="MODS" />-mods currently alpha</td>\
             <TD class="xtab ptErrText"><SPAN id=ptplayErr></span></td></tr>\
           <TR><TD class=xtab></td><TD class=xtab>'+uW.g_js_strings.setDiplomacyWindow.srchalli+': &nbsp;</td>\
             <TD class=xtab><INPUT id=allAllName type=text /> &nbsp; <INPUT id=allSubmit type=submit value="'+uW.g_js_strings.modal_fow_leaderboard.findalli+'" /></td>\
@@ -3717,6 +3770,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       document.getElementById('allSubmit').addEventListener ('click', t.eventSubmit, false);
       document.getElementById('playSubmit').addEventListener ('click', t.eventPlayerSubmit, false);
       document.getElementById('ffbuidsubmit').addEventListener ('click', t.eventPlayerUIDSubmit, false);
+      document.getElementById('ffkmods').addEventListener ('click', t.fetchmods, false);
       document.getElementById('allAllName').addEventListener ('focus', function (){document.getElementById('ptallErr').innerHTML='';}, false);
       document.getElementById('allPlayName').addEventListener ('focus', function (){document.getElementById('ptplayErr').innerHTML='';}, false);
       document.getElementById('allListSubmit').addEventListener ('click', t.eventListSubmit, false);
@@ -4109,7 +4163,6 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     }
 
   },
-
   eventGotMemberList : function (rslt){
     var t = Tabs.AllianceList;
     if (!rslt.ok){
@@ -4695,6 +4748,7 @@ ajax/getOnline.php:
    
    
 };
+unsafeWindow.fetchPlayerInfo = Tabs.AllianceList.fetchPlayerInfo;
 
 
 /*********************************** Test TAB ***********************************/
