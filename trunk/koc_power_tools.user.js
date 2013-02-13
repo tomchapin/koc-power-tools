@@ -3534,6 +3534,7 @@ function parseIntZero (n){
   return parseInt(n, 10);
 }
 
+
 /*********************************** Players TAB ***********************************/
 
 function officerId2String (oid){
@@ -3549,12 +3550,15 @@ function officerId2String (oid){
     return uW.allianceOfficerTypeMapping[4];
   return '';
 }
+
 Tabs.AllianceList = {
   tabOrder : 25,
   tabLabel : uW.g_js_strings.commonstr.player,
   cont : null,
   dat : [],
   clickedAlly:false,
+  lastLogin:0,
+  warStatus:0,
   
 
 /***
@@ -3605,7 +3609,7 @@ fetchPlayerCourt : function (uid, notify){
     method: "post",
     parameters: params,
     onSuccess: function (rslt) {
-//logit ("ajax/viewCourt.php\n"+ inspect (rslt, 3, 1));      
+logit ("ajax/viewCourt.php\n"+ inspect (rslt, 3, 1));      
       notify (rslt);
     },
     onFailure: function (rslt) {
@@ -3613,61 +3617,7 @@ fetchPlayerCourt : function (uid, notify){
     },
   });
 },
-	fetchmods : function (idx,rslt) {
-		var t = Tabs.AllianceList;
-		if(rslt)if(rslt.ok) {
-			var span = document.getElementById('allListOut');
-			//span.innerHTML += '<BR>'+rslt.;
-	span.innerHTML += '<BR>Found one '+inspect(rslt);		
-			
-//    var u = rslt.playerInfo[0];
-//    var a = 'None';
-//    if (u.allianceName)
-//      a = u.allianceName +' ('+ getDiplomacy(u.allianceId) + ')';
-//    var m = '<DIV style="max-width:375x; width:375px; overflow-y:auto"><TABLE cellspacing=0 class=ptTab><TR><TD><B>Details:</b> &nbsp; </td><TD>'+uW.g_js_strings.commonstr.alliance+': '+ a +' &nbsp; '+uW.g_js_strings.commonstr.cities+': '
-//          + u.cities +' &nbsp; '+uW.g_js_strings.commonstr.population+': '+ u.population +'</td></tr><TR><TD></td><TD></div>'+uW.g_js_strings.commonstr.province+': ';
-//    var pids = u.provinceIds.split (',');
-//    var p = [];
-//    for (var i=0; i<pids.length; i++)
-//      p.push(uW.provincenames['p'+pids[i]]);
-//    span.innerHTML += m + p.join (', ') +'</td></tr></table><br>';
-			
-			
-			//t.gotPlayerDetail(rslt, span);
-		};
-		if(matTypeof(idx)=='object'){
-			idx=0;
-			document.getElementById('allListOut').innerHTML = '<CENTER>SEARCHING FOR MODERATORS ON DOMAIN</center>';
-		};
-		logit('and idx is '+idx);
-		if(idx > unsafeWindow.moderators.length) {
-			document.getElementById('allListOut').innerHTML += '<BR><CENTER>SEARCH COMPLETE</center>';
-			return;
-		}
-		var uid = unsafeWindow.moderators[idx];
-//if(idx > 4)return;
 
-	var params = uW.Object.clone(uW.g_ajaxparams);
-    params.uid = uid;
-    AjaxRequest(uW.g_ajaxpath + "ajax/getUserGeneralInfo.php" + uW.g_ajaxsuffix, {
-      method: "post",
-      parameters: params,
-      onSuccess: function (transport) {
-      var rslt = eval("(" + transport.responseText + ")");
-	  if (rslt.ok) t.fetchmods((idx+1),rslt)
-	  else t.fetchmods(idx+1);
-
-      },
-      onFailure: function (rslt) {
-		  logit('failure');
-           //document.getElementById('allListOut').innerHTML = '<BR><BR><CENTER>'+uW.g_js_strings.errorcode.err_602+'</center>';
-      },
-    });
-
-
-
-
-	},
 
 fetchTEST : function (pageNum, notify){    // as in alliance list, sorted by rank, 10 per page
   var params = uW.Object.clone(uW.g_ajaxparams);
@@ -3702,6 +3652,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     uW.PTalClickPrev = t.eventListPrev;
     uW.PTalClickNext = t.eventListNext;
     uW.PCplo = t.clickedPlayerGetLastLogin;
+    uW.PTPlayClick = t.clickedPlayerInAll;
     Lastlogin=0;
     t.show();
   },
@@ -3722,7 +3673,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
        m+= '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowtoPlayers" target="_blank">HELP</a></td></tr>';
 	   m+='<TR><TD class=xtab align=right></td><TD class=xtab>'+uW.g_js_strings.modal_fow_leaderboard.searchuser+': &nbsp; </td>';
        m+=' <TD width=80% class=xtab><INPUT id=allPlayName size=20 type=text/> &nbsp;'; 
-       m+='<INPUT id=playSubmit type=submit value="'+uW.g_js_strings.modal_fow_leaderboard.finduser+'" /> &nbsp; <INPUT id=ffbuidsubmit type=submit value="UID" />&nbsp; <INPUT id=ffkmods type=submit value="MODS" />-mods currently alpha</td>\
+       m+='<INPUT id=playSubmit type=submit value="'+uW.g_js_strings.modal_fow_leaderboard.finduser+'" /> &nbsp; <INPUT id=ffbuidsubmit type=submit value="UID" /></td>\
             <TD class="xtab ptErrText"><SPAN id=ptplayErr></span></td></tr>\
           <TR><TD class=xtab></td><TD class=xtab>'+uW.g_js_strings.setDiplomacyWindow.srchalli+': &nbsp;</td>\
             <TD class=xtab><INPUT id=allAllName type=text /> &nbsp; <INPUT id=allSubmit type=submit value="'+uW.g_js_strings.modal_fow_leaderboard.findalli+'" /></td>\
@@ -3770,7 +3721,6 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       document.getElementById('allSubmit').addEventListener ('click', t.eventSubmit, false);
       document.getElementById('playSubmit').addEventListener ('click', t.eventPlayerSubmit, false);
       document.getElementById('ffbuidsubmit').addEventListener ('click', t.eventPlayerUIDSubmit, false);
-      document.getElementById('ffkmods').addEventListener ('click', t.fetchmods, false);
       document.getElementById('allAllName').addEventListener ('focus', function (){document.getElementById('ptallErr').innerHTML='';}, false);
       document.getElementById('allPlayName').addEventListener ('focus', function (){document.getElementById('ptplayErr').innerHTML='';}, false);
       document.getElementById('allListSubmit').addEventListener ('click', t.eventListSubmit, false);
@@ -3925,27 +3875,31 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
    },
 
   gotPlayerLeaderboard2 : function (rslt,span,uid,status){
-   // alert(uid+'/'+status);
     var t = Tabs.AllianceList;
+    var prestige="";
     if (!rslt.ok){
       span.innerHTML = rslt.errorMsg;
       return;
     }
+    t.dat = [];
+    var myA = getMyAlliance ();
     if (rslt.totalResults == 0){
-      span.innerHTML = '<B>'+uW.g_js_strings.commonstr.leaderboard+': </b>'+uW.itemlist.i10021.name+'?<BR>';
+      t.fetchPlayerLastLogin (uid, function (r) {t.displayPlayer("",r)});
       return;
     }
-    var myA = getMyAlliance ();
-    t.dat = [];
-    //logit ("gotPlayerLeaderboard2 -1 "+JSON2.stringify(rslt));
+    
     var p = rslt.results[0];
         if ( myA[0] == p.allianceId)
            t.friendEta = true;
         else
            t.friendEta = false;
         for (var c=0; c<p.cities.length; c++){
+          if (p.cities[c].prestigeType ==0) prestige = "";
+          if (p.cities[c].prestigeType ==1) prestige = "Druid";
+          if (p.cities[c].prestigeType ==2) prestige = "Fey";
+          if (p.cities[c].prestigeType ==3) prestige = "Briton";
           t.dat.push ([p.displayName, parseInt(p.might), p.officerType, parseInt(p.numCities), parseInt(p.cities[c].tileLevel),
-               parseInt(p.cities[c].xCoord), parseInt(p.cities[c].yCoord), p.cities[c].cityName, 0, status,0,p.userId]);
+               parseInt(p.cities[c].xCoord), parseInt(p.cities[c].yCoord), p.cities[c].cityName, 0, status,0,p.userId,prestige,p.userId]);
         }
         t.setDistances (Cities.cities[0].x, Cities.cities[0].y);
         t.ModelCity=Cities.cities[0];
@@ -3973,7 +3927,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     else
       an += ' ('+ officerId2String(p.officerType) +')';
     pStr = JSON2.stringify(p);
-    logit (pStr);
+    //logit (pStr);
     m = '<TABLE cellspacing=0 class=ptTab><TR><TD><B>'+uW.g_js_strings.commonstr.leaderboard+': </b></td><TD colspan=2>'+uW.g_js_strings.commonstr.might +': '+ p.might  +' &nbsp; '+uW.g_js_strings.commonstr.alliance+': '+ an +'</td></tr>'; 
     for (var i=0; i<p.cities.length; i++){
       var c = p.cities[i];
@@ -4163,6 +4117,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     }
 
   },
+
   eventGotMemberList : function (rslt){
     var t = Tabs.AllianceList;
     if (!rslt.ok){
@@ -4181,6 +4136,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     var numInvalid = 0;
     var numPlayers = 0;
     var myA = getMyAlliance ();
+    var prestige="";
     t.dat = [];
     for (var i=0; i<t.memberListRslt.results.length; i++){
       p = t.memberListRslt.results[i];
@@ -4193,8 +4149,12 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
         else
            t.friendEta = false;
         for (var c=0; c<p.cities.length; c++){
+          if (p.cities[c].prestigeType ==0) prestige = "";
+          if (p.cities[c].prestigeType ==1) prestige = "Druid";
+          if (p.cities[c].prestigeType ==2) prestige = "Fey";
+          if (p.cities[c].prestigeType ==3) prestige = "Briton";
           t.dat.push ([p.displayName, parseInt(p.might), p.officerType, parseInt(p.numCities), parseInt(p.cities[c].tileLevel),
-               parseInt(p.cities[c].xCoord), parseInt(p.cities[c].yCoord), p.cities[c].cityName, 0, rslt.data[p.userId]?1:0,'--',p.userId]);
+               parseInt(p.cities[c].xCoord), parseInt(p.cities[c].yCoord), p.cities[c].cityName, 0, rslt.data[p.userId]?1:0,'--',p.userId,prestige,p.userId]);
         }
       }
     }
@@ -4207,6 +4167,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
   // sort and display
   reDisp : function (){
     var t = Tabs.AllianceList;
+    //alert(t.dat.toSource());
     function sortFunc (a, b){
       var t = Tabs.AllianceList;
       if (typeof(a[t.sortColNum]) == 'number'){
@@ -4226,13 +4187,19 @@ return 0;
     }
     t.dat.sort (sortFunc);
     var m = '';
+    var cityName= "";
     for (var i=0; i<t.dat.length; i++){
-      m += '<TR style="max-height:30px"><TD class=xxtab>'+ t.dat[i][0] +'</td><TD align=right class=xxtab>'+ addCommasInt(t.dat[i][1]) 
-         +'</td><TD align=center class=xxtab>'+ t.dat[i][3] +'</td><TD class=xxtab>'+ officerId2String(t.dat[i][2])                       
-         +'</td><TD class=xxtab>'+ (t.dat[i][9]?'<SPAN class=boldDarkRed>ONLINE</span>':'') +'</td><TD class=xxtab>'+ t.dat[i][7] +'</td><TD align=right class=xxtab>'+ t.dat[i][4] 
-         +'</td><TD align=center class=xxtab><DIV onclick="ptGotoMap('+ t.dat[i][5] +','+ t.dat[i][6] +')"><A>'+ t.dat[i][5] +','+ t.dat[i][6] +'</a></div></td>\
-            <TD align=right class=xxtab style="padding-right:20px;">'+ t.dat[i][8].toFixed(2) +'</td>\
-         </td><TD  nowrap class=xxtab>'+ (t.dat[i][10]?'<SPAN>'+ (t.dat[i][10]>0?timestr(t.dat[i][10],1):'--') +'</span>':'<SPAN>--</span>') +'<td class=xxtab><SPAN onclick="PCplo(this, \''+ t.dat[i][11] +'\')"><A>'+uW.g_js_strings.modal_messages_viewreports_view.lastlogin+'</a></span><td></tr>';
+      cityName = t.dat[i][5].toString() + t.dat[i][6].toString();
+      var status = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAWJJREFUeNrUU79PwkAUvv5IG6iAg8HEMIlxNLBCNxkkYah/gP6NmAChiYQUupjA4uCicbKJBQ0E24OWtvjdgCHGdmHyJV/efffuvrx37x232WzIPsaTPW1vAXGXaJpGRFGUOY67AD0FMsAX8IpSH4Mg8JrNZrwATI6i6KrRaGjVarWWTqePXde1TdO873Q67GYX8GIFwjAs1ev160qlckMp5QG2XQC/Xa1WnK7r7+APsQLr9fq8XC7XbNvmWXd832d7BFnxxWKxhnUvUQAXcqg/7zgOcRyKjIKfmCRJeRZPfETP89zJ5HO6XIYngiAThq1R6k5ZPLGNOPBsGMYglcpEsqyQLSRJicbj8YDFEzOwLGvUat21KfVFVb1Us9nc0WIx/xgOe2a/323PZrPRbwFud5RRvyQIwpmiKCX4AvgB4g6684Z2PsG/MJ4kIMAdsnn4Y+jYi85x3o8V+J+f6VuAAQDR57f+eJX9fgAAAABJRU5ErkJggg=="/>';
+      if (t.dat[i][9] ==1) status = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAVNJREFUeNrUk09OwkAUh9+gUKpAFIuIfxJilLIlMd6gaw+Ax/AY7r2AnMFFb2DcC5gYYlBotYKttEwp83zjQtFIN6x8yZfJ9PfypZM3wxARFqkELFgLC5ZnN+yyQF9YjrR12hpEiegRJghoQIQunj7PF1DlQOB5dadi6Nt6cSWlKiPu8+ZTq9bu3tUoPyPc+UcQWK9sHRh6oVIOXF91XpzE2AtUXTss72tlQ+axR4AQjb313aJlWSCEAM75J3JS2dVMUebUdREjECWcojLwBiCZRJOvKB2mFZnH/wEXvb7b5zbaKmR+No6jMZd5/Bg5mt3HByupJQE24Js8gD/0LJnHC0zecNuO6d06HcGmAWRBTCEK/NZbh9+PTJn/FrDZq8wYS0GeVeE4cQIldkT6TZq/DT28gWtxBa/YpP73OMESLWuE8seli4gh9YdzBf/zMX0IMACs96WetcYlTQAAAABJRU5ErkJggg=="/>';      
+
+      m += '<TR style="max-height:30px"><TD class=xxtab>'+ status + '<SPAN onclick="PTPlayClick(this, \''+ t.dat[i][13] +'\',\''+ t.dat[i][9] +'\')"><A>'+ t.dat[i][0] +'</a></span></td><TD align=right class=xxtab>'+ addCommasInt(t.dat[i][1]);
+      m +='</td><TD align=center class=xxtab>'+ t.dat[i][12] +'</td><TD class=xxtab>'+ officerId2String(t.dat[i][2]);                      
+      m +='</td><TD class=xxtab><INPUT id=ScoutCheckbox_'+cityName+' type=checkbox unchecked=true></td><TD class=xxtab>'+ t.dat[i][7] +'</td><TD align=right class=xxtab>'+ t.dat[i][4];
+      m +='</td><TD align=center class=xxtab><DIV onclick="ptGotoMap('+ t.dat[i][5] +','+ t.dat[i][6] +')"><A>'+ t.dat[i][5] +','+ t.dat[i][6] +'</a></div></td>';
+      m +='<TD align=right class=xxtab style="padding-right:20px;">'+ t.dat[i][8].toFixed(2) +'</td>'
+      m +='</td><TD  nowrap class=xxtab>'+ (t.dat[i][10]?'<SPAN>'+ (t.dat[i][10]>0?timestr(t.dat[i][10],1):'--') +'</span>':'<SPAN>--</span>') +'<td class=xxtab><SPAN onclick="PCplo(this, \''+ t.dat[i][11] +'\')"><A>Login</a></span><td></tr>';
+
     }
     var tbody = document.getElementById('allBody');
     tbody.style.maxHeight = '';
@@ -4243,14 +4210,16 @@ return 0;
       tbody.style.height = '470px';
       tbody.style.maxHeight = '470px';
     }
-//new CtableToText('tabAllMembers').toText();
   },
 
+  clickedPlayerInAll : function (span,uid,status){
+    var t = Tabs.AllianceList;
+    t.clickedPlayerLeaderboard2(span,uid,status);
+  },
 
   setDistances : function (x, y){
     var t = Tabs.AllianceList;
-    for (var i=0; i<t.dat.length; i++)
-      t.dat[i][8] = distance (x, y, t.dat[i][5], t.dat[i][6]);
+    for (var i=0; i<t.dat.length; i++) t.dat[i][8] = distance (x, y, t.dat[i][5], t.dat[i][6]);
   },
 
   friendEta:false,
@@ -4298,24 +4267,30 @@ return 0;
             .xxtab{background-color:none; padding-left:5px; padding-right:5px;} </style>\
       <DIV class=ptstat ><TABLE id=tabAllMembers cellpadding=0  width=100%><TR font-weight:bold"><TD class=xtab> &nbsp; '+ allName +'</td>\
         <TD class=xtab width=80% align=center>'+uW.g_js_strings.commonstr.distance+ uW.g_js_strings.commonstr.from+' <SPAN id=distFrom>'+ Cities.cities[0].name +' ('+ Cities.cities[0].x +','+ Cities.cities[0].y +')</span></td><TD class=xtab align=right>'+ numPlayers + uW.g_js_strings.commonstr.members+'&nbsp; </td></tr></table></div>\
-      <div style="max-height:545px; height:545px; max-width:745px; width:745px; overflow-y:auto;"><TABLE id=tabAllMembers align=center cellpadding=0 cellspacing=0><THEAD style="overflow-y:hidden;">\
+       <div style="max-height:500px; height:500px; overflow-y:auto;"><TABLE id=tabAllMembers align=center cellpadding=0 cellspacing=0><THEAD style="overflow-y:auto;">\
       <TR style="font-weight:bold"><TD id=clickCol0 onclick="PTalClickSort(this)" class=clickable><A><DIV>'+uW.g_js_strings.commonstr.player+'</div></a></td>\
-        <TD id=clickCol1 onclick="PTalClickSort(this)" class=clickable align=center><A><DIV>'+uW.g_js_strings.commonstr.might+'</a></div></td>\
-        <TD id=clickCol3 onclick="PTalClickSort(this)" class=clickable><A><DIV>'+uW.g_js_strings.commonstr.cities+'</a></div></td>\
-        <TD id=clickCol2 onclick="PTalClickSort(this)" class=clickable align=center><A><DIV>'+uW.g_js_strings.commonstr.rank+'</a></div></td>\
-        <TD id=clickCol9 onclick="PTalClickSort(this)" class=clickable align=center><A><DIV>'+uW.g_js_strings.commonstr.online+'</a></div></td>\
-        <TD id=clickCol7 onclick="PTalClickSort(this)" class=clickable><A><DIV>'+uW.g_js_strings.MapObject.cityname+'</a></div></td>\
-        <TD id=clickCol4 onclick="PTalClickSort(this)" class=clickable><A><DIV>'+uW.g_js_strings.commonstr.lvl+'</a></div></td>\
-        <TD id=clickCol5 onclick="PTalClickSort(this)" class=clickable><A><DIV>'+uW.g_js_strings.commonstr.coordinates+'</a></div></td>\
-        <TD id=clickCol8 onclick="PTalClickSort(this)" class=clickable><A><DIV>'+uW.g_js_strings.commonstr.distance+'</a></div></td>\
-        <TD id=clickCol10 onclick="PTalClickSort(this)" class=clickable><A><DIV>'+uW.g_js_strings.attack_generateincoming.estimatedarrival+'</a></div></td>\
-        <TD class=clickable><A><DIV>'+uW.g_js_strings.modal_messages_viewreports_view.lastlogin+'</a></div></td></tr></thead>\
+         <TD id=clickCol1 onclick="PTalClickSort(this)" class=clickable align=center><A><DIV>Might</a></div></td>\
+        <TD id=clickCol3 onclick="PTalClickSort(this)" class=clickable><A><DIV>Faction</a></div></td>\
+        <TD id=clickCol2 onclick="PTalClickSort(this)" class=clickable align=center><A><DIV>Rank</a></div></td>\
+        <TD id=clickCol9 class=clickable align=center><DIV><INPUT id=ToggleScoutCheckbox type=checkbox unchecked=true></div></td>\
+        <TD id=clickCol7 onclick="PTalClickSort(this)" class=clickable><A><DIV>City Name</a></div></td>\
+        <TD id=clickCol4 onclick="PTalClickSort(this)" class=clickable><A><DIV>Lvl</a></div></td>\
+        <TD id=clickCol5 onclick="PTalClickSort(this)" class=clickable><A><DIV>Coords</a></div></td>\
+        <TD id=clickCol8 onclick="PTalClickSort(this)" class=clickable><A><DIV>Dist.</a></div></td>\
+        <TD id=clickCol10 onclick="PTalClickSort(this)" class=clickable><A><DIV>Eta</a></div></td>\
+        <TD class=clickable><A><DIV>Login</a></div></td></tr></thead>\
       <TBODY id=allBody style="background-color:#ffffff;"></tbody></table></div>';
       
     document.getElementById('allListOut').innerHTML = m; //style="top:670px; left:0px; position:absolute;
-    document.getElementById('altInput').innerHTML = '<HR><TABLE width=100% cellpaddding=0><TR align=center>\
-        <TD class=xtab>Show distance from: &nbsp; X: <INPUT size=2 type=text id=plyrX /> Y: <INPUT size=2 type=text id=plyrY /> &nbsp; Or, choose city: <span id=dmcoords></span></td></tr></table>';
+
+    m = '<HR><TABLE width=100% cellpaddding=0><TR>';
+    m+= '<TD class=xtab>Show distance from: &nbsp; X: <INPUT size=2 type=text id=plyrX /> Y: <INPUT size=2 type=text id=plyrY /> &nbsp; Or, choose city: <span id=dmcoords></span></td></tr>';
+    m+= '<TR><TD class=xtab><DIV id=PaintScout></div></td></tr></table>';
+    document.getElementById('altInput').innerHTML = m;
+
+        
     document.getElementById('clickCol'+t.sortColNum).className = 'clickable clickableSel';
+    document.getElementById('ToggleScoutCheckbox').addEventListener ('change', t.doSelectall,false);
 
     t.reDisp();
     new CdispCityPicker ('plyrdcp', document.getElementById ('dmcoords'), true, t.eventCoords, 0).bindToXYboxes(document.getElementById('plyrX'), document.getElementById('plyrY'));
@@ -4329,11 +4304,13 @@ return 0;
   
   displayPlayer : function (allName,rslt){
     var t = Tabs.AllianceList;
+    var status = "";
     function alClickSort (e){
       var t = Tabs.AllianceList;
       var newColNum = e.id.substr(8);
       document.getElementById('clickCol'+t.sortColNum).className = 'clickable';
       e.className='clickable clickableSel';
+      alert(t.dat[0].toSource());
       if (newColNum == t.sortColNum)
         t.sortDir *= -1;
       else
@@ -4341,38 +4318,340 @@ return 0;
       t.reDisp();
     }
     uW.PTalClickSort = alClickSort;
+
+    switch (parseInt(rslt.playerInfo.warStatus)) {
+                    case 1:
+                        status = uW.g_js_strings.commonstr.normal;
+                        break;
+                    case 2:
+                        status = uW.g_js_strings.MapObject.begprotect;
+                        break;
+                    case 3:
+                        status = uW.g_js_strings.commonstr.truce;
+                        break;
+                    case 4:
+                        status = uW.g_js_strings.commonstr.vacation;
+                        break;
+                    default:
+                        status = uW.g_js_strings.commonstr.normal
+    }
+
     var m = '<STYLE>.clickable{background-color:#ddd; border:2px outset; border-color:#555; padding-left:5px; padding-right:5px}\
             .clickableSel{background-color:#ffffcc;}\
             .xxtab{background-color:none; padding-left:5px; padding-right:5px;} </style>\
-            <DIV class=ptstat ><TABLE id=tabAllMembers cellpadding=0  width=100%><TR font-weight:bold"><TD class=xtab>Alliance: '+ allName +'</td>\
-              <TD class=xtab width=80% align=center>'+uW.g_js_strings.modal_messages_viewreports_view.lastlogin+': <SPAN id=lastlogin>'+  rslt.playerInfo.lastLogin+'</span></td><TD class=xtab align=right></td></tr></table></div>\
+             <DIV id=playerInfo></div><DIV id=TRStats></div>\
       <div style="max-height:470px; height:470px; overflow-y:auto;"><TABLE id=tabAllMembers align=center cellpadding=0 cellspacing=0><THEAD style="overflow-y:hidden;">\
       <TR style="font-weight:bold"><TD id=clickCol0 onclick="PTalClickSort(this)" class=clickable><A><DIV>Player</div></a></td>\
         <TD id=clickCol1 onclick="PTalClickSort(this)" class=clickable align=center><A><DIV>Might</a></div></td>\
-        <TD id=clickCol3 onclick="PTalClickSort(this)" class=clickable><A><DIV>Cities</a></div></td>\
+        <TD id=clickCol3 onclick="PTalClickSort(this)" class=clickable><A><DIV>Faction</a></div></td>\
         <TD id=clickCol2 onclick="PTalClickSort(this)" class=clickable align=center><A><DIV>Rank</a></div></td>\
-        <TD id=clickCol9 onclick="PTalClickSort(this)" class=clickable align=center><A><DIV>Online</a></div></td>\
+        <TD id=clickCol9 class=clickable align=center><DIV><INPUT id=ToggleScoutCheckbox type=checkbox unchecked=true></div></td>\
         <TD id=clickCol7 onclick="PTalClickSort(this)" class=clickable><A><DIV>City Name</a></div></td>\
         <TD id=clickCol4 onclick="PTalClickSort(this)" class=clickable><A><DIV>Lvl</a></div></td>\
         <TD id=clickCol5 onclick="PTalClickSort(this)" class=clickable><A><DIV>Coords</a></div></td>\
         <TD id=clickCol8 onclick="PTalClickSort(this)" class=clickable><A><DIV>Distance</a></div></td>\
         <TD id=clickCol10 onclick="PTalClickSort(this)" class=clickable><A><DIV>Eta</a></div></td>\
-		<TD class=clickable><A><DIV>'+uW.g_js_strings.modal_messages_viewreports_view.lastlogin+'</a></div></td></tr></thead>\
+		<TD class=clickable><A><DIV>Login</a></div></td></tr></thead>\
       <TBODY id=allBody style="background-color:#ffffff;"></tbody></table></div>\
       <DIV  width:100%; style="top:670px; left:0px; position:absolute; background-color:#ffffff; border-top:1px solid; margin-top:8px; color:#700; font-weight:bold;">';
     document.getElementById('allListOut').innerHTML = m;  //style="top:670px; left:0px; position:absolute;
-    document.getElementById('altInput').innerHTML = '<HR><TABLE width=100% cellpaddding=0><TR align=center>\
-        <TD class=xtab>Show distance from: &nbsp; X: <INPUT size=2 type=text id=plyrX /> Y: <INPUT size=2 type=text id=plyrY /> &nbsp; Or, choose city: <span id=dmcoords></span></td></tr></table>';
+    
+    m = '<HR><TABLE width=100% cellpaddding=0><TR align=left>';
+    m+= '<TD class=xtab>Show distance from: &nbsp; X: <INPUT size=2 type=text id=plyrX /> Y: <INPUT size=2 type=text id=plyrY /> &nbsp; Or, choose city: <span id=dmcoords></span></td></tr>';
+    m+= '<TR align=left><TD class=xtab><DIV id=PaintScout></div></td></tr></table>';
+    document.getElementById('altInput').innerHTML = m;
+
+    m = '<TABLE><TR><TD class=xtab style="width:75px">Alliance:</td><TD class=xtab style="width:150px"><a onclick="PTgetMembers('+ rslt.playerInfo.allianceId +')">'+rslt.playerInfo.allianceName+'</a></td></tr>';
+    m+= '<TR><TD class=xtab>Last Login:</td><TD class=xtab>' + rslt.playerInfo.lastLogin + '</td></tr>';
+    m+= '<TR><TD class=xtab>Status:</td><TD class=xtab>' + status + '</td>';
+    now = unixTime();
+    if (rslt.playerInfo.warStatus > 1 && ((rslt.playerInfo.truceExpireUnixTime - now)>0)) m+= '<TD class=xtab>Expires: ' + rslt.playerInfo.truceExpireTimestamp + ' (' + timestr(rslt.playerInfo.truceExpireUnixTime - now) +')</td></tr>';
+    if (t.dat.length ==0) m+= '<TR><TD class=xtab><B>MISTED?</b></td><TD><TD class=xtab>Expires: ' + rslt.playerInfo.fogExpireTimestamp +'</td></tr>';
+    m+= '<TR><TD class=xtab>Glory:</td><TD class=xtab><DIV id=PaintGlory></div></td></tr><TR><TD class=xtab>Max Glory:</td><TD class=xtab><DIV id=PaintMaxGlory></div></td></tr>';
+
+    m +='</table><BR>Compare Throne Room : <INPUT id=CompareTR type=submit value="Compare"><INPUT id=CalcTR type=submit value="Calculate"><BR><BR>';
+
+    document.getElementById('playerInfo').innerHTML = m;
+    document.getElementById('ToggleScoutCheckbox').addEventListener ('change', t.doSelectall,false);
+    document.getElementById('CompareTR').addEventListener ('click', function (){t.TRStats(rslt.playerInfo.userId,rslt.playerInfo.displayName,"Compare")},false);
+    document.getElementById('CalcTR').addEventListener ('click', function (){t.TRStats(rslt.playerInfo.userId,rslt.playerInfo.displayName,"Calc")},false);
     document.getElementById('clickCol'+t.sortColNum).className = 'clickable clickableSel';
 
+    t.PaintGlory(rslt.playerInfo.userId);
     t.reDisp();
     new CdispCityPicker ('plyrdcp', document.getElementById ('dmcoords'), true, t.eventCoords, 0).bindToXYboxes(document.getElementById('plyrX'), document.getElementById('plyrY'));
     document.getElementById('idFindETASelect').disabled = false;
+
     
   },
+
+
+  PaintGlory: function(uid){
+      	var t = Tabs.AllianceList;
+      	var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+      	params.userId = uid;
+      	params.ctrl = 'PlayerProfile';
+     	params.action = 'get';
+      	new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/_dispatch.php" + unsafeWindow.g_ajaxsuffix, {
+          	method: "post",
+          	parameters: params,
+          	onSuccess: function (transport) {
+            	var rslt = eval("(" + transport.responseText + ")");
+            	if(rslt.ok) {
+            		document.getElementById('PaintGlory').innerHTML = addCommas(rslt.profile.glory);
+            		document.getElementById('PaintMaxGlory').innerHTML = addCommas(rslt.profile.maxGlory);
+            	} else t.PaintGlory(uid);
+
+          	},
+          	onFailure: function () {
+          	},
+       	});   
+ },
+
+
+
+  	HisStatEffects: [],
+  	MyStatEffects: [],
+
+	TRStats : function (uid,name,what){
+  	var t = Tabs.AllianceList;
+  	var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+	params.ctrl = 'throneRoom\\ThroneRoomServiceAjax';
+	params.action = 'getEquipped';
+	params.playerId = uid;
+	
+  	new AjaxRequest(unsafeWindow.g_ajaxpath + "ajax/_dispatch53.php" + unsafeWindow.g_ajaxsuffix, {
+		method: "post",
+		parameters: params,
+		loading: true,
+		onSuccess: function (transport) {
+			var rslt = eval("(" + transport.responseText + ")");
+				if(rslt.ok){
+					for (k in uW.cm.thronestats.effects) t.HisStatEffects[k] = 0;
+					for (kk=0;kk<6;kk++){
+    		 			y = rslt.items[kk];
+	    	 			if (y != undefined) {
+		    	 			for (i=1;i<=5;i++) {
+					   			   id = y["effects"]["slot"+i]["id"];
+								   tier = parseInt(y["effects"]["slot"+i]["tier"]);
+								   level = y["level"];
+								   p = uW.cm.thronestats.tiers[id][tier];
+								   Current = p.base + ((level * level + level) * p.growth * 0.5);
+								   if (i<=parseInt(y["quality"])) t.HisStatEffects[id] += Current;
+							}
+						}
+					}
+					for (k in uW.cm.thronestats.effects) t.MyStatEffects[k] = 0;
+    				for (k in uW.kocThroneItems){
+    		 			y = uW.kocThroneItems[k];
+	    	 			for (i=1;i<=5;i++) {
+				   			id = y["effects"]["slot"+i]["id"];
+				   			tier = parseInt(y["effects"]["slot"+i]["tier"]);
+				   			level = y["level"];
+				   			p = uW.cm.thronestats.tiers[id][tier];
+				   			Current = p.base + ((level * level + level) * p.growth * 0.5);
+				   			if (y.isEquipped && i<=y["quality"]) t.MyStatEffects[id] += Current
+						}
+					}
+					if (what == "Compare") t.PaintTRCompare(name);
+					if (what == "Calc") t.PaintTRCalc(name);
+			   } else t.TRStatsCompare();
+		},
+		onFailure: function () {
+		   return;
+		},
+	}); 	  	  	
+  },
+
+
+TRlineHolder : {
+	1:{1:"Attack",2:null},2:{1:1,2:17},3:{1:24,2:29},4:{1:34,2:39},5:{1:44,2:50},6:{1:56,2:61},7:{1:17,2:1},8:{1:29,2:24},9:{1:39,2:34},10:{1:50,2:44},11:{1:61,2:56},
+	12:{1:"Defense",2:null},13:{1:2,2:18},14:{1:25,2:30},15:{1:35,2:40},16:{1:45,2:51},17:{1:18,2:2},18:{1:30,2:25},19:{1:40,2:35},20:{1:51,2:45},
+	21:{1:"Life",2:null},22:{1:3,2:19},23:{1:26,2:31},24:{1:36,2:41},25:{1:46,2:52},26:{1:19,2:3},27:{1:31,2:26},28:{1:41,2:36},29:{1:52,2:46},
+	30:{1:"Combat Speed",2:null},31:{1:4,2:20},32:{1:27,2:32},33:{1:47,2:53},34:{1:57,2:62},35:{1:20,2:4},36:{1:32,2:27},37:{1:53,2:47},38:{1:62,2:57},
+	39:{1:"Range",2:null},40:{1:5,2:21},41:{1:37,2:42},42:{1:58,2:63},43:{1:21,2:5},44:{1:42,2:37},45:{1:63,2:58},	
+	46:{1:"Load",2:null},47:{1:6,2:22},48:{1:48,2:54},49:{1:59,2:64},50:{1:22,2:6},51:{1:54,2:48},52:{1:64,2:59},
+	52:{1:"Accuracy",2:null},53:{1:7,2:23},54:{1:28,2:33},55:{1:38,2:43},56:{1:49,2:55},57:{1:60,2:65},58:{1:23,2:7},59:{1:33,2:28},60:{1:43,2:38},61:{1:55,2:49},62:{1:65,2:60},	
+	63:{1:"Other",2:null},64:{1:8,2:8},65:{1:9,2:9},65:{1:10,2:10},66:{1:11,2:11},67:{1:12,2:12},68:{1:13,2:13},69:{1:14,2:14},70:{1:15,2:15},71:{1:16,2:16},72:{1:66,2:66},73:{1:67,2:67},74:{1:68,2:68},75:{1:69,2:69},76:{1:70,2:70},77:{1:71,2:71},78:{1:72,2:72},79:{1:73,2:73},80:{1:74,2:74},81:{1:75,2:75},82:{1:76,2:76},83:{1:77,2:77},84:{1:78,2:78},85:{1:79,2:79},86:{1:80,2:80},87:{1:81,2:81},88:{1:82,2:82},89:{1:83,2:83},90:{1:84,2:84},91:{1:85,2:85},92:{1:86,2:86},93:{1:87,2:87},94:{1:88,2:88},95:{1:89,2:89},96:{1:90,2:90},97:{1:91,2:91},98:{1:92,2:92},99:{1:93,2:93},100:{1:94,2:94},101:{1:95,2:95},102:{1:96,2:96},
+},
+
+PaintTRCalc : function (name){
+  	var t = Tabs.AllianceList;
+  	m = '<BR><BR><DIV style="max-height:690px; height:690px; overflow-y:scroll;"><TABLE><TD width="35px" class=xtab></td><TD class=xtab><B>' + name + '</b><TD  width="50px"></td><TD class=xtab><B>'+ Seed.player.name+'</b></td>';
+	for (z=1;z<=102;z++) {
+		var HisContent = "";
+		var MyContent = "";
+		var His = t.TRlineHolder[z][1];
+		var My = t.TRlineHolder[z][2];
+		var diff = 0;
+		var color = "black";
+
+		if (t.TRlineHolder[z][2] == null) {
+			m+= '<TR><TD>&nbsp</td></tr><TR><TD class=xtab></td><TD class=xtab><B><U>' + t.TRlineHolder[z][1] + '</b></u><TD  width="50px" class=xtab></td><TD class=xtab></td></tr>';
+		} else {
+			if (t.HisStatEffects[His] != 0) HisContent = t.HisStatEffects[His] + '% ' + uW.cm.thronestats["effects"][His]["1"];
+			if (t.MyStatEffects[My] != 0) MyContent = t.MyStatEffects[My] + '% ' + uW.cm.thronestats["effects"][My]["1"];
+			
+			if (t.HisStatEffects[His] != 0 && t.MyStatEffects[My] != 0) { 
+				if (z < 63) diff = (parseInt(t.HisStatEffects[His]) + parseInt(t.MyStatEffects[My]));
+				if (z > 63) diff = ( parseInt(t.MyStatEffects[My]) - parseInt(t.HisStatEffects[His]) );
+				if (MyContent.indexOf("Debuff") != -1 && diff > 0) color = "red";
+				else if (MyContent.indexOf("Debuff") != -1 && diff < 0) color = "green";
+				else if (HisContent.indexOf("Debuff") != -1 && diff > 0) color = "green";
+				else if (HisContent.indexOf("Debuff") != -1 && diff < 0) color = "red";
+				else if (diff < 0) color = "red";
+				else color = "green";
+				m+='<TR><TD class=xtab><FONT color='+ color +'><I><B>'+ diff +'</b></i></font></td><TD class=xtab>' + HisContent + '</td><TD class=xtab></td><TD class=xtab>' + MyContent + '</td>';
+			} else if (t.HisStatEffects[His] != 0 || t.MyStatEffects[His] != 0) m+='<TR><TD class=xtab></td><TD class=xtab>' + HisContent + '</td><TD class=xtab></td><TD class=xtab>' + MyContent + '</td>';
+			m+='</tr>'; 
+		}
+	}
+	m +='</table></div>';
+	var popMsg = null;
+	t.popMsg = new CPopup('pbMailBody', 0, 0, 550, 750, true, function() {clearTimeout (1000);});
+	t.popMsg.centerMe (mainPop.getMainDiv());
+	t.popMsg.getMainDiv().innerHTML = m;
+	t.popMsg.getTopDiv().innerHTML = '<DIV align=center><B>Throne Room Compare</B></DIV>';
+	t.popMsg.show(true); 	
+  },
+
+
+  PaintTRCompare : function (name){
+  	var t = Tabs.AllianceList;
+  	m = '<BR><BR><TABLE><TD class=xtab></td><TD class=xtab><B>' + name + '</b><TD></td><TD class=xtab><B>'+ Seed.player.name+'</b></td></tr><TR><TD>&nbsp</td></tr>';
+	for (k=1;k<t.MyStatEffects.length;k++) {
+		var HisContent = "";
+		var MyContent = "";
+		if (t.HisStatEffects[k] != 0) HisContent = t.HisStatEffects[k] + '% ' + uW.cm.thronestats["effects"][k]["1"];
+		if (t.MyStatEffects[k] != 0) MyContent = t.MyStatEffects[k] + '% ' + uW.cm.thronestats["effects"][k]["1"];
+
+		if (t.HisStatEffects[k] != 0 || t.MyStatEffects[k] != 0) m+='<TR><TD  width="25px" class=xtab></td><TD class=xtab>' + HisContent + '</td><TD  width="50px" class=xtab></td><TD class=xtab>' + MyContent + '</td></tr>';
+	}
+	m +='</table>';
+	var popMsg = null;
+	t.popMsg = new CPopup('pbMailBody', 0, 0, 550, 750, true, function() {clearTimeout (1000);});
+	t.popMsg.centerMe (mainPop.getMainDiv());
+	t.popMsg.getMainDiv().innerHTML = m;
+	t.popMsg.getTopDiv().innerHTML = '<DIV align=center><B>Throne Room Compare</B></DIV>';
+	t.popMsg.show(true); 	
+  },
+
+
+rallypointlevel: 0,
+
+MaxScouts : function (city){
+  	var t = Tabs.AllianceList;
+  	var othertroops=0;
+    var max = 0;
+    var maxsend = 0;
+    t.getRallypoint("city" + city.id);
+    RallypointMax = (t.rallypointlevel * 10000);
+    maxsend = RallypointMax + ((RallypointMax / 100) * uW.cm.ThroneController.effectBonus(66));
+    for (i=1;i<=12;i++) othertroops += parseInt(document.getElementById('Unt'+3).value);
+    if (othertroops < maxsend) max = (maxsend - othertroops);
+    if (max > Seed.units["city" + city.id]["unt"+3]) max = Seed.units["city" + city.id]["unt"+3];
+    document.getElementById('numScouts').value = max;
+  },
+
+  getRallypoint: function(cityId){
+      var t = Tabs.AllianceList;
+
+      for (var o in Seed.buildings[cityId]){
+        var buildingType = parseInt(Seed.buildings[cityId][o][0]);
+        var buildingLevel = parseInt(Seed.buildings[cityId][o][1]);
+        if (buildingType == 12) t.rallypointlevel=parseInt(buildingLevel);
+       }
+     if(t.rallypointlevel == 11) t.rallypointlevel = 15;
+     if(t.rallypointlevel == 12) t.rallypointlevel = 20;      
+ },
+
+
+  doSelectall : function (){
+  	var t = Tabs.AllianceList;
+  	var city = "";
+  	for (var k=0;k<t.dat.length;k++){
+  		city = t.dat[k][5].toString() + t.dat[k][6].toString();
+  		if (document.getElementById('ToggleScoutCheckbox').checked) document.getElementById('ScoutCheckbox_'+city).checked = true;
+  		else document.getElementById('ScoutCheckbox_'+city).checked = false
+  	}
+  },
+
+  doAddScout : function (){
+  	var t = Tabs.AllianceList;
+  	var count = -1;
+  	var city="";
+  	slots = CheckCityMarches(t.ScoutInfo.id);
+	rallypointlevel = getRallypoint(t.ScoutInfo.id);
+	if (rallypointlevel == 12) rallypointlevel = 11;
+  	for (var k=0;k<t.dat.length;k++){	
+  		if (t.dat[k][5] != undefined && t.dat[k][6] != undefined){
+  			var x = t.dat[k][5];
+  			var y = t.dat[k][6];
+	  		count++;
+	  		city = t.dat[k][5].toString() + t.dat[k][6].toString();
+	  		var box = 'ScoutCheckbox_'+city;
+  			if (document.getElementById(box).checked && (count+1) < (rallypointlevel-slots))setTimeout(t.doScout,1500*count, x,y,box);
+  		}
+  	}
+  },
+
+  doScout : function (x,y,box) {
+  	var t = Tabs.AllianceList;
+	  	var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+		params.cid= t.ScoutInfo.id;
+	    params.type = 3
+	    params.kid = 0
+	    params.xcoord = x;
+	    params.ycoord = y;
+	  	params.u3 = document.getElementById('numScouts').value;
+	  	params.gold = 0;
+	  	params.r1 = 0;
+	  	params.r2 = 0;
+	  	params.r3 = 0;
+	  	params.r4 = 0;
+	  	params.r5 = 0;
+
+		new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/march.php" + unsafeWindow.g_ajaxsuffix, {
+			    method: "post",
+			    parameters: params,
+			    loading: true,
+			    onSuccess: function (rslt) {
+			        var t = Tabs.AllianceList;  
+			        logit(rslt.toSource());
+			        if (rslt.ok) {
+			        	var timediff = parseInt(rslt.eta) - parseInt(rslt.initTS);
+				        var ut = unsafeWindow.unixtime();
+				        var unitsarr=[0,0,0,0,0,0,0,0,0,0,0,0,0];
+				        for(i = 0; i <= unitsarr.length; i++){
+				           	if(params["u"+i]){
+				             	unitsarr[i] = params["u"+i];
+				           	}
+				        }
+				        var resources=new Array();
+				        resources[0] = params.gold;
+				        for(i=1; i<=4; i++){
+				           	resources[i] = params["r"+i];
+				        }
+				        var currentcityid =  params.cid;
+				        unsafeWindow.attach_addoutgoingmarch(rslt.marchId, rslt.marchUnixTime, ut + timediff, params.xcoord, params.ycoord, unitsarr, params.type, params.kid, resources, rslt.tileId, rslt.tileType, rslt.tileLevel, currentcityid, true);
+				        unsafeWindow.update_seed(rslt.updateSeed)
+				        if(rslt.updateSeed){unsafeWindow.update_seed(rslt.updateSeed)};
+				        document.getElementById(box).checked = false;        
+			        }
+			    }, 
+			    onFailure: function () {},
+		});
+  },
+
   
   eventCoords : function (city, x, y){
     var t = Tabs.AllianceList;
+    t.ScoutInfo = new Array;
+    t.ScoutInfo = city;
+    document.getElementById('PaintScout').innerHTML = 'Scout selected cities from: ' + t.ScoutInfo.name + ' with <INPUT id=numScouts type=text maxlength=7 size=7 value="1"><INPUT id=MaxScout type=submit value=Max> Scout(s) <INPUT id=scoutAllSelected type=submit value=GO>';
+    document.getElementById('scoutAllSelected').addEventListener('click', function (){t.doAddScout();});
+    document.getElementById('MaxScout').addEventListener('click', function (){t.MaxScouts(city);});
+
     var m = '';
     if (city != null)
       m = city.name +' ('+ city.x +','+ city.y +')';
@@ -4397,9 +4676,9 @@ return 0;
   fetchAllianceMemberList : function (allianceId, allianceName, notify) {
     var t = Tabs.AllianceList;
     var params = uW.Object.clone(uW.g_ajaxparams);
-    params.perPage = 100;
-    params.type = 'might';
+    params.type = "might";
     params.page = 1;
+    params.perPage = 100;
     if (allianceName)
       params.allianceName = allianceName;
     if (allianceId && allianceId != 0)
@@ -4422,7 +4701,7 @@ return 0;
     var Data=[];
     params.perPage = 100;
     params.allianceId = allianceId;
-    params.type = 'might';
+    params.type = "might";
     params.page = 1;
     
     new MyAjaxRequest(uW.g_ajaxpath + "ajax/getUserLeaderboard.php" + uW.g_ajaxsuffix, {
@@ -4509,7 +4788,7 @@ return 0;
     var t = Tabs.AllianceList;
     var params = uW.Object.clone(uW.g_ajaxparams);
     params.userId = uid;
-    params.type = 'might';
+    params.type = "might";
     params.page = 1;
     new MyAjaxRequest(uW.g_ajaxpath + "ajax/getUserLeaderboard.php" + uW.g_ajaxsuffix, {
       method: "post",
@@ -4748,7 +5027,6 @@ ajax/getOnline.php:
    
    
 };
-unsafeWindow.fetchPlayerInfo = Tabs.AllianceList.fetchPlayerInfo;
 
 
 /*********************************** Test TAB ***********************************/
@@ -13663,6 +13941,26 @@ var cdtd = {
   },
   
 }
+
+function CheckCityMarches(cityID){
+	var Counter=0;
+	if (Seed.queue_atkp['city'+ cityID] != undefined) {
+		for (atkp in Seed.queue_atkp['city'+ cityID]) if (Seed.queue_atkp['city'+ cityID][atkp]["marchUnixTime"]) Counter++;
+	} else Counter=0;
+	return Counter;
+}
+
+function getRallypoint(cityId){
+	var rallypointlevel=0;
+	for (var o in Seed.buildings["city" + cityId]){
+	    var buildingType = parseInt(Seed.buildings["city" + cityId][o][0]);
+	    var buildingLevel = parseInt(Seed.buildings["city" + cityId][o][1]);
+	    if (buildingType == 12) rallypointlevel=parseInt(buildingLevel);
+	}
+	if (Seed.cityData.city[cityId].isPrestigeCity) rallypointlevel += 3;
+	return rallypointlevel;
+}
+
 
 
 
