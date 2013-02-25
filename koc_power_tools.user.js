@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130210a
+// @version        20130224a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130210a';
+var Version = '20130224a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -3609,7 +3609,7 @@ fetchPlayerCourt : function (uid, notify){
     method: "post",
     parameters: params,
     onSuccess: function (rslt) {
-logit ("ajax/viewCourt.php\n"+ inspect (rslt, 3, 1));      
+//logit ("ajax/viewCourt.php\n"+ inspect (rslt, 3, 1));      
       notify (rslt);
     },
     onFailure: function (rslt) {
