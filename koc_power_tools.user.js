@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130303a
+// @version        20130319a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130303a';
+var Version = '20130319a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -4619,24 +4619,24 @@ MaxScouts : function (city){
 			        var t = Tabs.AllianceList;  
 			        logit(rslt.toSource());
 			        if (rslt.ok) {
-			        	var timediff = parseInt(rslt.eta) - parseInt(rslt.initTS);
-				        var ut = unsafeWindow.unixtime();
-				        var unitsarr=[0,0,0,0,0,0,0,0,0,0,0,0,0];
-				        for(i = 0; i <= unitsarr.length; i++){
-				           	if(params["u"+i]){
-				             	unitsarr[i] = params["u"+i];
-				           	}
-				        }
-				        var resources=new Array();
-				        resources[0] = params.gold;
-				        for(i=1; i<=4; i++){
-				           	resources[i] = params["r"+i];
-				        }
-				        var currentcityid =  params.cid;
-				        unsafeWindow.attach_addoutgoingmarch(rslt.marchId, rslt.marchUnixTime, ut + timediff, params.xcoord, params.ycoord, unitsarr, params.type, params.kid, resources, rslt.tileId, rslt.tileType, rslt.tileLevel, currentcityid, true);
-				        unsafeWindow.update_seed(rslt.updateSeed)
-				        if(rslt.updateSeed){unsafeWindow.update_seed(rslt.updateSeed)};
-				        document.getElementById(box).checked = false;        
+			           var timediff = parseInt(rslt.eta) - parseInt(rslt.initTS);
+			           var ut = unsafeWindow.unixtime();
+			           var unitsarr=[0,0,0,0,0,0,0,0,0,0,0,0,0];
+			           for(i = 0; i <= unitsarr.length; i++){
+			              if(params["u"+i]){
+			                 unitsarr[i] = params["u"+i];
+			              }
+			           }
+			           var resources=new Array();
+			           resources[0] = params.gold;
+			           for(i=1; i<=4; i++){
+			              resources[i] = params["r"+i];
+			           }
+			           var currentcityid =  params.cid;
+			           unsafeWindow.attach_addoutgoingmarch(rslt.marchId, rslt.marchUnixTime, ut + timediff, params.xcoord, params.ycoord, unitsarr, params.type, params.kid, resources, rslt.tileId, rslt.tileType, rslt.tileLevel, currentcityid, true);
+			           unsafeWindow.update_seed(rslt.updateSeed)
+			           if(rslt.updateSeed){unsafeWindow.update_seed(rslt.updateSeed)};
+			           document.getElementById(box).checked = false;        
 			        }
 			    }, 
 			    onFailure: function () {},
@@ -5567,10 +5567,11 @@ Tabs.Options = {
   // This refreshes the data without a full web page refresh.
   updateAll : function () {
 	  //potential fix for missing troop recalls:  true flag forces troop march update
-	  unsafeWindow.update_seed_ajax(true);
+	   //unsafeWindow.update_seed_ajax(true);
       // update the timestamps
       var ts = (new Date().getTime() / 1000) + uW.g_timeoff;
-      var cts = parseInt( (ts -25.1) * 1000);
+      var cts = parseInt( (ts - 25.1) * 1000);
+      
 
       var upd = window.self.location.href;
       upd=upd.replace(/ts=\d*\.\d+/, "ts="+ts);
@@ -5584,14 +5585,13 @@ Tabs.Options = {
                   parameters: params,
                   onSuccess: function (rslt) {
                       var mainSrcHTMLCode = rslt.responseText;
-                      var myregexp = /var seed=\{.*?\};/;
+                      var myregexp = /var seed=\{.*?\};/;                      
                       var match = myregexp.exec(mainSrcHTMLCode);
-
                       if (match != null) {
                          //logit("found match");
                          result = match[0];
                          result = result.substr(4);
-
+                         
                          var seed2 = eval(result);
 
                          for (jj in seed2) {
@@ -5599,7 +5599,9 @@ Tabs.Options = {
                                Seed[jj] = seed2[jj];
                             }
                          }
-
+                         
+                         delete Seed.ss;
+ 
                          for (var o = 0; o < Seed.cities.length; o++) {
                             var n = Seed.cities[o][0];
                             Seed.citystats["city" + n].pop[0] = parseInt(Seed.citystats["city" + n].pop[0]);
@@ -8717,82 +8719,82 @@ Tabs.Attaque = {
 	 params.u3 = ById("RAAnbunit3").value;
 	 ById("RAAnbunit3").value=0;
 	}
-  	t.actionRAA.disabled=true;
-        t.actionREN.disabled=true;
-        t.actionREE.disabled=true;
-	t.statutRAA.innerHTML = "<i><b>Sending march....</b></i>";
-	new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/march.php" + unsafeWindow.g_ajaxsuffix, {
-	              method: "post",
-	              parameters: params,
-	              loading: true,
-	              onSuccess: function (transport) {
-	                  var t = Tabs.Attaque;  
-	                  var rslt = transport;
-	                  if (rslt.ok) {
-			   var timediff = parseInt(rslt.eta) - parseInt(rslt.initTS);
-	                   var ut = unsafeWindow.unixtime();
-	                   
-				var unitsarr = [];
-				for (j in unsafeWindow.unitcost)
-					unitsarr.push(0);
-				for(i = 0; i <= unitsarr.length; i++)
-					if(params["u"+i])
-						unitsarr[i] = params["u"+i];
-	                   
-	                   var resources=new Array();
-	                   resources[0] = params.gold;
-	                   for(i=1; i<=5; i++){
-	                  	resources[i] = params["r"+i];
-	                   }
-	                   var currentcityid =  t.sourceCity.id;
-	                   unsafeWindow.attach_addoutgoingmarch(rslt.marchId, rslt.marchUnixTime, ut + timediff, params.xcoord, params.ycoord, unitsarr, params.type, params.kid, resources, rslt.tileId, rslt.tileType, rslt.tileLevel, currentcityid, true);
-	                   if(rslt.updateSeed){unsafeWindow.update_seed(rslt.updateSeed)};
-	                   
-	                   for(var i=0;i<iused.length;i++){
-						Seed.items["i"+iused[i]]=parseInt(Seed.items["i"+iused[i]])-1;unsafeWindow.ksoItems[iused[i]].subtract();
-					   }
-					    var typeattaque = "";
-						switch (typemarche){
-							case 2:
-								typeattaque="Reinforce successful";
-								break;
-							case 3:
-								typeattaque="Scout successful";
-								break;
-							case 4:
-								typeattaque="Attack successful";
-								break;
-							case 5:
-								typeattaque="Reassign successful";
-								break;
-							default:
-								typeattaque="March successful";
-						}
-     	 		   t.statutRAA.innerHTML = "<center><font size='3px'><b>"+typeattaque+"</b></font></center>";
-      			   t.clickRAACitySourceSelect(t.sourceCity);
-	                  } else {
-						 t.statutRAA.innerHTML ="<font color=red size='3px'><b>Error sending march!<b></font>";
-						 if (rslt.msg) {
-						   t.statutRAA.innerHTML +="<br><font color=black size='2px'>" + rslt.msg +"</font>";
-						 }else{
-						   t.statutRAA.innerHTML +="<br>Waiting for 2 seconds!</font>";
-						   //setTimeout(function() { t.clickATTAQUEDo(); }, 2000);
-						 }
-	                 }
-	                 t.actionRAA.disabled=false;
-      			     t.actionREN.disabled=false;
-      			     t.actionREE.disabled=false;
-	              },
-	                  onFailure: function () {
-	                    var t = Tabs.Attaque;
-	                    t.statutRAA.innerHTML ="<font color=red size='3px'><b>Error communicating with server!<b></font>";
-	                    t.actionRAA.disabled=false;
-      			    t.actionREN.disabled=false;
-      			    t.actionREE.disabled=false;
-	                  }
-	          });
-            
-  
+         t.actionRAA.disabled=true;
+         t.actionREN.disabled=true;
+         t.actionREE.disabled=true;
+         t.statutRAA.innerHTML = "<i><b>Sending march....</b></i>";
+         new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/march.php" + unsafeWindow.g_ajaxsuffix, {
+            method: "post",
+            parameters: params,
+            loading: true,
+            onSuccess: function (transport) {
+               var t = Tabs.Attaque;  
+               var rslt = transport;
+               if (rslt.ok) {
+                  var timediff = parseInt(rslt.eta) - parseInt(rslt.initTS);
+                  var ut = unsafeWindow.unixtime();
+
+                  var unitsarr = [];
+                  for (j in unsafeWindow.unitcost)
+                     unitsarr.push(0);
+                  for(i = 0; i <= unitsarr.length; i++)
+                     if(params["u"+i])
+                        unitsarr[i] = params["u"+i];
+
+                  var resources=new Array();
+                  resources[0] = params.gold;
+                  for(i=1; i<=5; i++){
+                     resources[i] = params["r"+i];
+                  }
+                  var currentcityid =  t.sourceCity.id;
+                  unsafeWindow.attach_addoutgoingmarch(rslt.marchId, rslt.marchUnixTime, ut + timediff, params.xcoord, params.ycoord, unitsarr, params.type, params.kid, resources, rslt.tileId, rslt.tileType, rslt.tileLevel, currentcityid, true);
+                  if(rslt.updateSeed){unsafeWindow.update_seed(rslt.updateSeed)};
+
+                  for(var i=0;i<iused.length;i++){
+                     Seed.items["i"+iused[i]]=parseInt(Seed.items["i"+iused[i]])-1;unsafeWindow.ksoItems[iused[i]].subtract();
+                  }
+                  var typeattaque = "";
+                  switch (typemarche){
+                     case 2:
+                        typeattaque="Reinforce successful";
+                        break;
+                     case 3:
+                        typeattaque="Scout successful";
+                        break;
+                     case 4:
+                        typeattaque="Attack successful";
+                        break;
+                     case 5:
+                        typeattaque="Reassign successful";
+                        break;
+                     default:
+                        typeattaque="March successful";
+                  }
+                  t.statutRAA.innerHTML = "<center><font size='3px'><b>"+typeattaque+"</b></font></center>";
+                  t.clickRAACitySourceSelect(t.sourceCity);
+               } else {
+                  t.statutRAA.innerHTML ="<font color=red size='3px'><b>Error sending march!<b></font>";
+                  if (rslt.msg) {
+                     t.statutRAA.innerHTML +="<br><font color=black size='2px'>" + rslt.msg +"</font>";
+                  }else{
+                     t.statutRAA.innerHTML +="<br>Waiting for 2 seconds!</font>";
+                     //setTimeout(function() { t.clickATTAQUEDo(); }, 2000);
+                  }
+               }
+               t.actionRAA.disabled=false;
+               t.actionREN.disabled=false;
+               t.actionREE.disabled=false;
+            },
+            onFailure: function () {
+               var t = Tabs.Attaque;
+               t.statutRAA.innerHTML ="<font color=red size='3px'><b>Error communicating with server!<b></font>";
+               t.actionRAA.disabled=false;
+               t.actionREN.disabled=false;
+               t.actionREE.disabled=false;
+            }
+         });
+
+
     },
   
     estimerRes: function() {
@@ -10588,28 +10590,31 @@ Tabs.Marches = {
     	 	     }
     	 	   }    
     	 	 }    
-    	 	 
-    	 	 new AjaxRequest(uW.g_ajaxpath + "ajax/cancelMarch.php" + uW.g_ajaxsuffix, {
-    	 	     method: "post",
-    	 	     parameters: params,
-    	 	     onSuccess: function (rslt) {
-    	 	     var march = uW.seed.queue_atkp["city" + params.cid]["m" + params.mid];
-    	 	     march.marchStatus = 8;
-    	 	      var marchtime = parseInt(march.returnUnixTime) - parseInt(march.destinationUnixTime);
-    	 	      var ut = unixTime();
-    	 	      if (uW.seed.playerEffects.returnExpire > unixTime())
-    	 	        marchtime *= 0.5
-    	 	       march.returnUnixTime = ut + marchtime;
-    	 	       march.destinationUnixTime = ut;
-    	 	       march.marchUnixTime = ut - marchtime;
-    	 	       if (notify != null)
-    	 	         notify(rslt.errorMsg);
-    	 	     },
-    	 	     onFailure: function () {
-    	 	       if (notify != null)
-    	 	         notify(rslt.errorMsg);
-    	 	     },
-    	 	 });
+
+     	 	 new AjaxRequest(uW.g_ajaxpath + "ajax/cancelMarch.php" + uW.g_ajaxsuffix, {
+     	 	    method: "post",
+     	 	    parameters: params,
+     	 	    onSuccess: function (rslt) {
+     	 	       var march = uW.seed.queue_atkp["city" + params.cid]["m" + params.mid];
+     	 	       march.marchStatus = 8;
+     	 	       var marchtime = parseInt(march.returnUnixTime) - parseInt(march.destinationUnixTime);
+     	 	       var ut = unixTime();
+     	 	       if (uW.seed.playerEffects.returnExpire > unixTime())
+     	 	          marchtime *= 0.5
+     	 	          march.returnUnixTime = ut + marchtime;
+     	 	       march.destinationUnixTime = ut;
+     	 	       march.marchUnixTime = ut - marchtime;
+                if (rslt.updateSeed) {
+                   update_seed(rslt.updateSeed)
+                }
+     	 	       if (notify != null)
+     	 	          notify(rslt.errorMsg);
+     	 	    },
+     	 	    onFailure: function () {
+     	 	       if (notify != null)
+     	 	          notify(rslt.errorMsg);
+     	 	    },
+     	 	 });
     	 	 
     	 },    
       
