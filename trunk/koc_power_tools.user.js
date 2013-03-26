@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130319a
+// @version        20130326a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130319a';
+var Version = '20130326a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -148,7 +148,8 @@ var Options = {
   ChatIcons : true,
   mapInfo: false,
   mapInfo2: false,
-  mapInfo3: false
+  mapInfo3: false,
+  multiBrowserAllow : false
 };
 
 var Colors ={
@@ -342,10 +343,33 @@ if (TEST_WIDE){
     TowerAlerts.enableFixFalseReports(true);
   
   AddMainTabLink('TOOLS', eventHideShow, mouseMainTab);
+  
+  multiBrowserOverride();
 //TestSomething.init ();  
 //setInterval (function(){logit (inspect (getClientCoords (mainPop.getMainDiv()), 3, 1))}, 2000);  
 
   uW.ptLoaded = true;
+}
+
+function multiBrowserOverride()
+{
+   // get a pointer to the function
+   var old_usa = unsafeWindow.update_seed_ajax;
+   
+   // create a new own
+   var usa = function (marchForceUpdateFlag, updateSeedDoneCallback, isCancelTraining) {
+      if (Options.allowMultiBroswer)
+      {
+         // remove a variable
+         delete unsafeWindow.seed.ss;
+      }
+      
+      // call the original function
+      old_usa(marchForceUpdateFlag, updateSeedDoneCallback, isCancelTraining);
+   }
+   
+   // install our override
+   unsafeWindow.update_seed_ajax = usa; 
 }
 
 
@@ -3011,7 +3035,7 @@ var DispReport = {
 			a.style.float = 'left';
 			a.addEventListener('click', t.checkreportlist, false);
 		var div = document.createElement('span');
-		div.appendChild(a);
+		//div.appendChild(a);
 		msgBody.appendChild(div);
 		var mml = document.getElementById('modal_msg_list');
 		if (mml != null)
@@ -5356,7 +5380,8 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=togMapInfo type=checkbox /></td><TD>Fix reassign button on maptile info</td></tr>';
 	  m+='<TR><TD><INPUT id=togMapInfo2 type=checkbox /></td><TD>Add reassign button when clicked on own city</td></tr>';
 	  m+='<TR><TD><INPUT id=togMapInfo3 type=checkbox /></td><TD>Include player name / city name in new bookmarks</td></tr>';
-      m+='<TR><TD><INPUT id=togMarchUnits type=checkbox /></td><TD>Fix march size calculation in march screen</td></tr>';
+     m+='<TR><TD><INPUT id=togMarchUnits type=checkbox /></td><TD>Fix march size calculation in march screen</td></tr>';
+     m+='<TR><TD><INPUT id=togAllowMulti type=checkbox /></td><TD>Disable Multi-Browser check (experimental)</td></tr>';
 	  m+='<TR><TD colspan=2><B>Auto Training:</b></td></tr>';
 	  m+='<TR><TD></TD><TD><INPUT id=optAutoTrainMins type=text size=1 value="'+ parseInt(AutoTrainOptions.intervalSecs/60) +'"> minutes between auto-training.</td></tr>';
 	  m+='</table><BR><BR><HR>Note that if a checkbox is greyed out there has probably been a change of KofC\'s code, rendering the option inoperable.';
@@ -5386,6 +5411,7 @@ Tabs.Options = {
       t.togOpt ('togMarchUnits', 'fixMarchUnits', MarchUnitsFix.setEnable, MarchUnitsFix.isAvailable);
       t.togOpt ('togBatRounds', 'dispBattleRounds', null, battleReports.isRoundsAvailable);
       t.togOpt ('togAtkDelete', 'reportDeleteButton', null, battleReports.isRoundsAvailable);
+      t.togOpt ('togAllowMulti', 'allowMultiBroswer');
       
       document.getElementById('ptupdate').addEventListener ('change', t.e_updateChanged, false);
       document.getElementById('ptEnableMiniRefresh').addEventListener ('change', t.e_miniRefreshChanged, false);
@@ -5593,7 +5619,7 @@ Tabs.Options = {
                          result = result.substr(4);
                          
                          var seed2 = eval(result);
-
+                         
                          for (jj in seed2) {
                             if (seed2.hasOwnProperty(jj)) {
                                Seed[jj] = seed2[jj];
