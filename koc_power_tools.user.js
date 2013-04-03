@@ -6150,7 +6150,6 @@ Tabs.Train = {
         var b = getCityBuilding (cityId, k.substr(1));
 		if(isPrestige){
 			var bid = parseInt(k.substr(1));
-			logit(bid);
 			switch(bid){
 				case 17: //Stable
 					b.maxLevel = 12;
