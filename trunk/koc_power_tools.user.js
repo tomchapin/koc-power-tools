@@ -1,7 +1,7 @@
-// ==UserScript==
+﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130422b
+// @version        20130425
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130422b';
+var Version = '20130425';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -555,6 +555,10 @@ var mapinfoFix = {
 		t.bookMarkMod.setEnable(Options.mapInfo3);
       
 		uW.cm.ContextMenuMapController.prototype.MapContextMenus.City["2"].splice(4,0, "reassign");
+// add reinforcement of wilds
+		for (jj in uW.cm.ContextMenuMapController.prototype.MapContextMenus.AllianceWilderness) {
+			uW.cm.ContextMenuMapController.prototype.MapContextMenus.AllianceWilderness[jj] = ["profile", "throne", "reinforce", "reinforcements", "message", "bookmark"];
+		}
 		uW.calcCityTypeFix = t.calcCityType_hook;
 		
 	},
