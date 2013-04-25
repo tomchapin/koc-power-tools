@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130425
+// @version        20130425b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130425';
+var Version = '20130425b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -8151,6 +8151,14 @@ Tabs.OverView = {
       for(i=0; i<Cities.numCities; i++) {
         var rp = getResourceProduction (Cities.cities[i].id);
         var usage = parseInt(Seed.resources["city" + Cities.cities[i].id]['rec1'][3]);
+//
+// adjust for throne room upkeep reduction
+     	var trupkeepreduce = 0;
+     	trupkeepreduce = equippedthronestats(79);
+     	if(trupkeepreduce > 33)
+     	  trupkeepreduce = 33;
+     	usage = parseInt(usage*(100-trupkeepreduce)/100);
+//
         row[i] = rp[1] - usage;
       }
      
