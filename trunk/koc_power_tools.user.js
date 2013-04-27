@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130426a
+// @version        20130426b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130426a';
+var Version = '20130426b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -330,6 +330,8 @@ if (TEST_WIDE){
   AudioManager.init();
   AllianceReportsCheck.init();
   
+  uW.cm.unitFrontendType["9"] = "specialist";  //change type of wagons from siege to avoid siege load bug
+  uW.cm.unitFrontendType["15"] = "infantry";   //change type of wagons from siege to avoid siege load bug
   
   if (Options.ptWinIsOpen){
     mainPop.show (true);
@@ -768,7 +770,7 @@ var ChatStuff = {
 			element_class += ' ptChatBold ';
 	}
 	var rats = ["2466324","1580842"];//people who openly tried to destroy script development including reporting scripters to kabam.  now the joke is on them.
-	var scripters = ["7552815","10681588","1747877","2865067","10153485","15182839","1550996","1617431819","9688786","8184813","9863346","11107993","9751486","5614388","424090","14845619","8480468","7042380"];
+	var scripters = ["7552815","10681588","1747877","2865067","10153485","15182839","1550996","1617431819","9688786","8184813","9863346","11107993","9751486","5614388","424090","14845619","8480468","7042380","731589"];
 	var suid = /viewProfile\(this,([0-9]+),false/i.exec(m[0]);
 	if(!suid)
 		suid = uW.tvuid;
@@ -11489,33 +11491,50 @@ function ShowExtraInfo(){
 }
 
 var MarchUnitsFix = {
-  modalAttackFunc : null,  
+//  modalAttackFunc : null,  
+//  
+//  init : function (){
+//    var t = MarchUnitsFix;
+//    t.modalAttackFunc = new CalterUwFunc ('modal_attack', [[/var\s*e\s*=\s*0;/im, 'w = modalAttack_hook(w); var e = 0;']]);
+//    uW.modalAttack_hook = t.hook;
+//    t.modalAttackFunc.setEnable(Options.fixMarchUnits);
+//  },
+//   
+//  setEnable : function (tf){
+//    var t = MarchUnitsFix;
+//    t.modalAttackFunc.setEnable (tf);
+//  },
+//  
+//  isAvailable : function (){
+//    var t = MarchUnitsFix;
+//    return t.modalAttackFunc.isAvailable();
+//  },
+//    
+//  hook : function (w){
+//    var t = MarchUnitsFix;
+//    if (w > uW.cm.thronestats.boosts.MarchSize){
+//		w = uW.cm.thronestats.boosts.MarchSize;
+//	}
+//	return w;
+//  },
   
   init : function (){
     var t = MarchUnitsFix;
-    t.modalAttackFunc = new CalterUwFunc ('modal_attack', [[/var\s*e\s*=\s*0;/im, 'w = modalAttack_hook(w); var e = 0;']]);
-    uW.modalAttack_hook = t.hook;
-    t.modalAttackFunc.setEnable(Options.fixMarchUnits);
+    t.fixrallymarchsize = new CalterUwFunc ('modal_attack_update_unt_max', 
+      [['\}\)\)\;', '})); var x = 1 + Math.min(cm.ThroneController.effectBonus(66),150)/100; f = Math.round(f*x);']]);
+    t.fixrallymarchsize.setEnable(Options.fixMarchUnits);
   },
-   
+
   setEnable : function (tf){
     var t = MarchUnitsFix;
-    t.modalAttackFunc.setEnable (tf);
-  },
-  
-  isAvailable : function (){
-    var t = MarchUnitsFix;
-    return t.modalAttackFunc.isAvailable();
+    t.fixrallymarchsize.setEnable (tf);
   },
     
-  hook : function (w){
+  isAvailable : function (){
     var t = MarchUnitsFix;
-    if (w > uW.cm.thronestats.boosts.MarchSize){
-		w = uW.cm.thronestats.boosts.MarchSize;
-	}
-	return w;
+    return t.fixrallymarchsize.isAvailable();
   },
-  
+    
 }
 
 function distance (d, f, c, e) {
