@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130426b
+// @version        20130427a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130426b';
+var Version = '20130427a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -7511,7 +7511,8 @@ Tabs.OverView = {
     	for (y in Seed.buildings[city]) {
     		if (Seed.buildings[city][y][0] == 15) blacksmith = Seed.buildings[city][y][1]; 
     	}
-    	wall = parseInt(Seed.buildings[city].pos1[1]);
+	if (Seed.buildings[city].pos1 == null) wall = 0;
+    		else wall = parseInt(Seed.buildings[city].pos1[1]);
     	var WallSpace = 0;
     	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 1000)};
     	max = WallSpace/2/2 - parseInt(Seed.fortifications[city]["fort53"]) - parseInt(Seed.fortifications[city]["fort55"]);
@@ -8213,19 +8214,66 @@ Tabs.OverView = {
   
       var now = unixTime();
       var row = [];
+      var rowsp = [];
+      var rowrev = [];
+
       for(i=0; i<Cities.numCities; i++) {
         var totTime = 0;
+        var totTime2 = 0;
         var q = Seed.queue_unt['city'+Cities.cities[i].id]; 
         if (q!=null && q.length>0)
           totTime = q[q.length-1][3] - now;
         if (totTime < 0)
           totTime = 0;
-        if (totTime < 3600)
-          row[i] = '<SPAN class=boldRed><B>'+ timestr(totTime) +'</b></span>';
-        else
-          row[i] = timestr(totTime);
+	row[i] = 0;
+	rowsp[i] = 0;
+	if (q!=null && q.length>0) {
+	  if (q[q.length-1][7]) {
+	    row[i] = 0;
+            if (totTime < 3600)
+              rowsp[i] = '<SPAN class=boldRed><B>'+ timestr(totTime) +'</b></span>';
+            else
+              rowsp[i] = timestr(totTime);
+	  } else {
+            if (totTime < 3600)
+              row[i] = '<SPAN class=boldRed><B>'+ timestr(totTime) +'</b></span>';
+            else
+              row[i] = timestr(totTime);
+	    if (q.length>1) {
+	     for (j=2; j<q.length+1; j++) {
+	      if (q[q.length-j][7]) {
+         	totTime2 = q[q.length-j][3] - now;
+        	if (totTime2 < 0)
+          	  totTime2 = 0;
+        	if (totTime2 < 3600)
+          	  rowsp[i] = '<SPAN class=boldRed><B>'+ timestr(totTime2) +'</b></span>';
+        	else
+          	  rowsp[i] = timestr(totTime2);
+		break;
+	       }
+	     }
+	   }
+	 }
+	}
+
+        var qr = Seed.queue_revive['city'+Cities.cities[i].id]; 
+        if (qr!=null && qr.length>0)
+          totTime = qr[qr.length-1][3] - now;
+        if (totTime < 0)
+          totTime = 0;
+	rowrev[i] = 0;
+	if (qr!=null && qr.length>0) {
+            if (totTime < 3600)
+              rowrev[i] = '<SPAN class=boldRed><B>'+ timestr(totTime) +'</b></span>';
+            else
+              rowrev[i] = timestr(totTime);
+	}
+
       }
+
       str += _row ('TroopQ', row, true);
+      str += _row ('SpecialTroopQ', rowsp, true);
+      str += _row ('ReviveQ', rowrev, true);
       
       var row = [];
       for(i=0; i<Cities.numCities; i++) {
