@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130427a
+// @version        20130428a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130427a';
+var Version = '20130428a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -4234,8 +4234,7 @@ return 0;
       if (t.dat[i][9] ==1) status = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAVNJREFUeNrUk09OwkAUh9+gUKpAFIuIfxJilLIlMd6gaw+Ax/AY7r2AnMFFb2DcC5gYYlBotYKttEwp83zjQtFIN6x8yZfJ9PfypZM3wxARFqkELFgLC5ZnN+yyQF9YjrR12hpEiegRJghoQIQunj7PF1DlQOB5dadi6Nt6cSWlKiPu8+ZTq9bu3tUoPyPc+UcQWK9sHRh6oVIOXF91XpzE2AtUXTss72tlQ+axR4AQjb313aJlWSCEAM75J3JS2dVMUebUdREjECWcojLwBiCZRJOvKB2mFZnH/wEXvb7b5zbaKmR+No6jMZd5/Bg5mt3HByupJQE24Js8gD/0LJnHC0zecNuO6d06HcGmAWRBTCEK/NZbh9+PTJn/FrDZq8wYS0GeVeE4cQIldkT6TZq/DT28gWtxBa/YpP73OMESLWuE8seli4gh9YdzBf/zMX0IMACs96WetcYlTQAAAABJRU5ErkJggg=="/>';      
 
       m += '<TR style="max-height:30px"><TD class=xxtab>'+ status + '<SPAN onclick="PTPlayClick(this, \''+ t.dat[i][13] +'\',\''+ t.dat[i][9] +'\')"><A>'+ t.dat[i][0] +'</a></span></td><TD align=right class=xxtab>'+ addCommasInt(t.dat[i][1]);
-      m +='</td><TD align=center class=xxtab>'+ t.dat[i][12] +'</td><TD class=xxtab>'+ officerId2String(t.dat[i][2]);                      
-      m +='</td><TD class=xxtab><INPUT id=ScoutCheckbox_'+cityName+' type=checkbox unchecked=true></td><TD class=xxtab>'+ t.dat[i][7] +'</td><TD align=right class=xxtab>'+ t.dat[i][4];
+      m +='</td><TD align=center class=xxtab>'+ t.dat[i][12] +'</td><TD class=xxtab>'+ officerId2String(t.dat[i][2]);                    m +='</td><TD class=xxtab><INPUT id=ScoutCheckbox_'+cityName+' type=checkbox unchecked=true></td><TD class=xxtab>'+ t.dat[i][7] +'</td><TD align=right class=xxtab>'+ t.dat[i][4];
       m +='</td><TD align=center class=xxtab><DIV onclick="ptGotoMap('+ t.dat[i][5] +','+ t.dat[i][6] +')"><A>'+ t.dat[i][5] +','+ t.dat[i][6] +'</a></div></td>';
       m +='<TD align=right class=xxtab style="padding-right:20px;">'+ t.dat[i][8].toFixed(2) +'</td>'
       m +='</td><TD  nowrap class=xxtab>'+ (t.dat[i][10]?'<SPAN>'+ (t.dat[i][10]>0?timestr(t.dat[i][10],1):'--') +'</span>':'<SPAN>--</span>') +'<td class=xxtab><SPAN onclick="PCplo(this, \''+ t.dat[i][11] +'\')"><A>Login</a></span><td></tr>';
@@ -4612,7 +4611,7 @@ MaxScouts : function (city){
   	for (var k=0;k<t.dat.length;k++){
   		city = t.dat[k][5].toString() + t.dat[k][6].toString();
   		if (document.getElementById('ToggleScoutCheckbox').checked) document.getElementById('ScoutCheckbox_'+city).checked = true;
-  		else document.getElementById('ScoutCheckbox_'+city).checked = false
+  		else document.getElementById('ScoutCheckbox_'+city).checked = false;
   	}
   },
 
@@ -4620,9 +4619,10 @@ MaxScouts : function (city){
   	var t = Tabs.AllianceList;
   	var count = -1;
   	var city="";
+	openslots = document.getElementById('openSlots').value;
   	slots = CheckCityMarches(t.ScoutInfo.id);
 	rallypointlevel = getRallypoint(t.ScoutInfo.id);
-	if (rallypointlevel == 12) rallypointlevel = 11;
+	slotsend = rallypointlevel-slots-openslots;
   	for (var k=0;k<t.dat.length;k++){	
   		if (t.dat[k][5] != undefined && t.dat[k][6] != undefined){
   			var x = t.dat[k][5];
@@ -4630,7 +4630,7 @@ MaxScouts : function (city){
 	  		count++;
 	  		city = t.dat[k][5].toString() + t.dat[k][6].toString();
 	  		var box = 'ScoutCheckbox_'+city;
-  			if (document.getElementById(box).checked && (count+1) < (rallypointlevel-slots))setTimeout(t.doScout,1500*count, x,y,box);
+  			if (document.getElementById(box).checked && (count < slotsend)) setTimeout(t.doScout,5000*count, x,y,box);
   		}
   	}
   },
@@ -4688,9 +4688,9 @@ MaxScouts : function (city){
     var t = Tabs.AllianceList;
     t.ScoutInfo = new Array;
     t.ScoutInfo = city;
-    document.getElementById('PaintScout').innerHTML = 'Scout selected cities from: ' + t.ScoutInfo.name + ' with <INPUT id=numScouts type=text maxlength=7 size=7 value="1"><INPUT id=MaxScout type=submit value=Max> Scout(s) <INPUT id=scoutAllSelected type=submit value=GO>';
-    document.getElementById('scoutAllSelected').addEventListener('click', function (){t.doAddScout();});
-    document.getElementById('MaxScout').addEventListener('click', function (){t.MaxScouts(city);});
+    document.getElementById('PaintScout').innerHTML = 'Scout selected cities from: ' + t.ScoutInfo.name + ' with <INPUT id=numScouts type=text maxlength=7 size=7 value="1"><INPUT id=MaxScout type=submit value=Max> Scout(s); Rally point slots to keep open: <INPUT id=openSlots type=text maxlength=3 size=3 value="0"> <INPUT id=scoutAllSelected type=submit value=GO>';
+    document.getElementById('scoutAllSelected').addEventListener('click', function (){t.doAddScout();},false);
+    document.getElementById('MaxScout').addEventListener('click', function (){t.MaxScouts(city);},false);
 
     var m = '';
     if (city != null)
@@ -7148,8 +7148,8 @@ Tabs.OverView = {
         	  		for(b=0; b<Cities.numCities; b++) {
         	  			    z+='<TD align=right style="background: #FFFFFF">';
 							if(a==5){
-								z+= (parseInt(2000000) > parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]))? '<FONT COLOR= "669900">':'<FONT COLOR="686868">';
-								z+= addCommas(2000000);
+								z+= (parseInt(1000000) > parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]))? '<FONT COLOR= "669900">':'<FONT COLOR="686868">';
+								z+= addCommas(1000000);
 							} else{
 								if (parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][1]/3600) > parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]/3600)) z+='<FONT COLOR= "669900">';
 								else z+='<FONT COLOR="686868">';
@@ -11568,8 +11568,10 @@ var MarchUnitsFix = {
   
   init : function (){
     var t = MarchUnitsFix;
+//    t.fixrallymarchsize = new CalterUwFunc ('modal_attack_update_unt_max', 
+//      [['\}\)\)\;', '})-0.001); var x = 1 + Math.min(cm.ThroneController.effectBonus(66),150)/100; f = Math.round(f*x-0.001);']]);
     t.fixrallymarchsize = new CalterUwFunc ('modal_attack_update_unt_max', 
-      [['\}\)\)\;', '})); var x = 1 + Math.min(cm.ThroneController.effectBonus(66),150)/100; f = Math.round(f*x);']]);
+      [['\}\)\)\;', '})*(1 + Math.min(cm.ThroneController.effectBonus(66),150)/100)-0.001);']]);
     t.fixrallymarchsize.setEnable(Options.fixMarchUnits);
   },
 
@@ -14074,7 +14076,10 @@ function getRallypoint(cityId){
 	for (var o in Seed.buildings["city" + cityId]){
 	    var buildingType = parseInt(Seed.buildings["city" + cityId][o][0]);
 	    var buildingLevel = parseInt(Seed.buildings["city" + cityId][o][1]);
-	    if (buildingType == 12) rallypointlevel=parseInt(buildingLevel);
+	    if (buildingType == 12) {
+		rallypointlevel=parseInt(buildingLevel);
+		if (rallypointlevel == 12) rallypointlevel = 11;
+	    }
 	}
 	if (Seed.cityData.city[cityId].isPrestigeCity) rallypointlevel += 3;
 	return rallypointlevel;
