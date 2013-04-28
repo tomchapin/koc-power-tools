@@ -7148,8 +7148,8 @@ Tabs.OverView = {
         	  		for(b=0; b<Cities.numCities; b++) {
         	  			    z+='<TD align=right style="background: #FFFFFF">';
 							if(a==5){
-								z+= (parseInt(1000000) > parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]))? '<FONT COLOR= "669900">':'<FONT COLOR="686868">';
-								z+= addCommas(1000000);
+								z+= (parseInt(2000000) > parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]))? '<FONT COLOR= "669900">':'<FONT COLOR="686868">';
+								z+= addCommas(2000000);
 							} else{
 								if (parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][1]/3600) > parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]/3600)) z+='<FONT COLOR= "669900">';
 								else z+='<FONT COLOR="686868">';
