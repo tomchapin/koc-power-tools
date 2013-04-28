@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130428a
+// @version        20130428b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130428a';
+var Version = '20130428b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -1457,6 +1457,8 @@ var Rpt = {
 						m+='<TR><TD><img width=30 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/' + crest + '.png></TD><TD colspan=2>' + crestname[crest] + '</TD></TR>';
 				}
 			}
+			if (rslt['loot'][6] > 0)
+				m+='<TR><TD>'+astoneImg+'</TD><TD align=right>'+addCommas(rslt['loot'][6])+'</TD></TR>';
 			m+='</TABLE><BR />';
 		}
 
@@ -1519,6 +1521,23 @@ var Rpt = {
 				m+='<TR><TD colspan=4>Knight Combat Skill: ' + rslt['s1KCombatLv'] + '</TD></TR>';
 			m+='<TR><TD colspan=4>Attack Boosted: ' + 100*rslt['s1atkBoost'] + '%</TD></TR>';
 			m+='<TR><TD colspan=4>Defense Boosted: ' + 100*rslt['s1defBoost'] + '%</TD></TR>';
+// add guardian info
+			if (rslt['s1guardianAtkBoost'])
+				m+='<TR><TD colspan=4>Guardian Attack Boost: ' + parseFloat(100*rslt['s1guardianAtkBoost']).toFixed(1) + '%</TD></TR>';
+			else
+				m+='<TR><TD colspan=4>&nbsp;</TD></TR>';
+			if (rslt['s1guardianDefBoost'])
+				m+='<TR><TD colspan=4>Guardian Life Boost: ' + parseFloat(100*rslt['s1guardianDefBoost']).toFixed(1) + '%</TD></TR>';
+			else
+				m+='<TR><TD colspan=4>&nbsp;</TD></TR>';
+			if (rslt['s1guardianMarchBoost'])
+				m+='<TR><TD colspan=4>Guardian March Speed Boost: ' + parseFloat(100*rslt['s1guardianMarchBoost']).toFixed(1) + '%</TD></TR>';
+			else
+				m+='<TR><TD colspan=4>&nbsp;</TD></TR>';
+			if (rslt['s1guardianTrainBoost'])
+				m+='<TR><TD colspan=4>Guardian Training Boost: ' + parseFloat(100*rslt['s1guardianTrainBoost']).toFixed(1) + '%</TD></TR>';
+			else
+				m+='<TR><TD colspan=4>&nbsp;</TD></TR>';
 
 			m+='<TR><TD colspan=4> </TD></TR>';	
 			m+='<TR><TD colspan=4><b>Attack Results:</b></TD></TR>';
@@ -1593,6 +1612,19 @@ var Rpt = {
 					}
 				}
 			}
+
+			if (rslt.bonus['tch2']) {
+				m+='<TR><TD colspan=4> </TD></TR>';
+				m+='<TR><TD colspan=4><b>Briton Research Bonuses:</b></TD></TR>';
+				for (var t2l in rslt.bonus.tch2.s1) {
+					if (t2l == 'ic') var britontech = 'Improved Cartography'; 
+					if (t2l == 'id') var britontech = 'Improved Defenses'; 
+					if (t2l == 'sr') var britontech = 'Strengthen Ranks'; 
+					if (t2l == 'if') var britontech = 'Improved Fletching'; 
+					m+='<TR><TD colspan=4>'+britontech+'</TD><TD align=left>' + rslt.bonus.tch2.s1[t2l] + '</TD></TR>';
+				}
+			}
+
 			m+='</TABLE></TD><TD width=50% align=right valign=top>';
 			m+='<TABLE class=ptTab width=100%>';
 			m+='<TR><TD colspan=4><B>Defenders</B> ('+rpt.side0Name+')';
@@ -1609,7 +1641,23 @@ var Rpt = {
 				m+='<TR><TD colspan=4>Defense Boosted: ' + 100*rslt['s0defBoost'] + '%</TD></TR>';
 			else
 				m+='<TR><TD colspan=4>&nbsp;</TD></TR>';
-
+// add guardian info
+			if (rslt['s0guardianAtkBoost'])
+				m+='<TR><TD colspan=4>Guardian Attack Boost: ' + parseFloat(100*rslt['s0guardianAtkBoost']).toFixed(1) + '%</TD></TR>';
+			else
+				m+='<TR><TD colspan=4>&nbsp;</TD></TR>';
+			if (rslt['s0guardianDefBoost'])
+				m+='<TR><TD colspan=4>Guardian Life Boost: ' + parseFloat(100*rslt['s0guardianDefBoost']).toFixed(1) + '%</TD></TR>';
+			else
+				m+='<TR><TD colspan=4>&nbsp;</TD></TR>';
+			if (rslt['s0guardianMarchBoost'])
+				m+='<TR><TD colspan=4>Guardian March Speed Boost: ' + parseFloat(100*rslt['s0guardianMarchBoost']).toFixed(1) + '%</TD></TR>';
+			else
+				m+='<TR><TD colspan=4>&nbsp;</TD></TR>';
+			if (rslt['s0guardianTrainBoost'])
+				m+='<TR><TD colspan=4>Guardian Training Boost: ' + parseFloat(100*rslt['s0guardianTrainBoost']).toFixed(1) + '%</TD></TR>';
+			else
+				m+='<TR><TD colspan=4>&nbsp;</TD></TR>';
 
 			m+='<TR><TD colspan=4> </TD></TR>';	
 			m+='<TR><TD colspan=4><b>Defense Results:</b></TD></TR>';
@@ -1831,6 +1879,18 @@ var Rpt = {
 
 			}
 
+
+			if (rslt.bonus['tch2']) {
+				m+='<TR><TD colspan=4> </TD></TR>';
+				m+='<TR><TD colspan=4><b>Briton Research Bonuses:</b></TD></TR>';
+				for (var t2l in rslt.bonus.tch2.s0) {
+					if (t2l == 'ic') var britontech = 'Improved Cartography'; 
+					if (t2l == 'id') var britontech = 'Improved Defenses'; 
+					if (t2l == 'sr') var britontech = 'Strengthen Ranks'; 
+					if (t2l == 'if') var britontech = 'Improved Fletching'; 
+					m+='<TR><TD colspan=4>'+britontech+'</TD><TD align=left>' + rslt.bonus.tch2.s0[t2l] + '</TD></TR>';
+				}
+			}
 			m+='</TABLE></TD></TR></TABLE>';
 		}
 
@@ -3085,7 +3145,8 @@ var DispReport = {
   parseBarbReport : function(rpts){
     var t = DispReport;
 	//Messages.viewMarchReport("25175",1,51,7,0,"Enemy","0","oftheNOOBS","M",4,518,355,1349852870,1,517,346,0,1550996);return false;
-	var regex = /Messages.viewMarchReport\((["0-9]+),(["0-9]+),(["0-9]+),(["0-9]+),(["0-9]+),("[^"]+"),("[^"]+"),("[^"]+"),("[^"]+"),(["0-9]+),(["0-9]+),(["0-9]+),(["0-9]+),(["0-9]+),(["0-9]+),(["0-9]+),(["0-9]+),(["0-9]+)\)/;
+//	var regex = /Messages.viewMarchReport\((["0-9]+),(["0-9]+),(["0-9]+),(["0-9]+),(["0-9]+),("[^"]+"),("[^"]+"),("[^"]+"),("[^"]+"),(["0-9]+),(["0-9]+),(["0-9]+),(["0-9]+),(["0-9]+),(["0-9]+),(["0-9]+),(["0-9]+),(["0-9]+)\)/;
+    var regex = /Messages.viewMarchReport\(([^"]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+),([^"]+),([^"]+),([^"]+),([^"]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+),([0-9]+)/;
     for(var i=0; i<rpts.length; i++){
 		var m = regex.exec(rpts[i].view.innerHTML);
 		if(m){
@@ -4234,7 +4295,8 @@ return 0;
       if (t.dat[i][9] ==1) status = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAVNJREFUeNrUk09OwkAUh9+gUKpAFIuIfxJilLIlMd6gaw+Ax/AY7r2AnMFFb2DcC5gYYlBotYKttEwp83zjQtFIN6x8yZfJ9PfypZM3wxARFqkELFgLC5ZnN+yyQF9YjrR12hpEiegRJghoQIQunj7PF1DlQOB5dadi6Nt6cSWlKiPu8+ZTq9bu3tUoPyPc+UcQWK9sHRh6oVIOXF91XpzE2AtUXTss72tlQ+axR4AQjb313aJlWSCEAM75J3JS2dVMUebUdREjECWcojLwBiCZRJOvKB2mFZnH/wEXvb7b5zbaKmR+No6jMZd5/Bg5mt3HByupJQE24Js8gD/0LJnHC0zecNuO6d06HcGmAWRBTCEK/NZbh9+PTJn/FrDZq8wYS0GeVeE4cQIldkT6TZq/DT28gWtxBa/YpP73OMESLWuE8seli4gh9YdzBf/zMX0IMACs96WetcYlTQAAAABJRU5ErkJggg=="/>';      
 
       m += '<TR style="max-height:30px"><TD class=xxtab>'+ status + '<SPAN onclick="PTPlayClick(this, \''+ t.dat[i][13] +'\',\''+ t.dat[i][9] +'\')"><A>'+ t.dat[i][0] +'</a></span></td><TD align=right class=xxtab>'+ addCommasInt(t.dat[i][1]);
-      m +='</td><TD align=center class=xxtab>'+ t.dat[i][12] +'</td><TD class=xxtab>'+ officerId2String(t.dat[i][2]);                    m +='</td><TD class=xxtab><INPUT id=ScoutCheckbox_'+cityName+' type=checkbox unchecked=true></td><TD class=xxtab>'+ t.dat[i][7] +'</td><TD align=right class=xxtab>'+ t.dat[i][4];
+      m +='</td><TD align=center class=xxtab>'+ t.dat[i][12] +'</td><TD class=xxtab>'+ officerId2String(t.dat[i][2]);
+      m +='</td><TD class=xxtab><INPUT id=ScoutCheckbox_'+cityName+' type=checkbox unchecked=true></td><TD class=xxtab>'+ t.dat[i][7] +'</td><TD align=right class=xxtab>'+ t.dat[i][4];
       m +='</td><TD align=center class=xxtab><DIV onclick="ptGotoMap('+ t.dat[i][5] +','+ t.dat[i][6] +')"><A>'+ t.dat[i][5] +','+ t.dat[i][6] +'</a></div></td>';
       m +='<TD align=right class=xxtab style="padding-right:20px;">'+ t.dat[i][8].toFixed(2) +'</td>'
       m +='</td><TD  nowrap class=xxtab>'+ (t.dat[i][10]?'<SPAN>'+ (t.dat[i][10]>0?timestr(t.dat[i][10],1):'--') +'</span>':'<SPAN>--</span>') +'<td class=xxtab><SPAN onclick="PCplo(this, \''+ t.dat[i][11] +'\')"><A>Login</a></span><td></tr>';
@@ -4688,10 +4750,11 @@ MaxScouts : function (city){
     var t = Tabs.AllianceList;
     t.ScoutInfo = new Array;
     t.ScoutInfo = city;
+  if (t.ScoutInfo != null) {
     document.getElementById('PaintScout').innerHTML = 'Scout selected cities from: ' + t.ScoutInfo.name + ' with <INPUT id=numScouts type=text maxlength=7 size=7 value="1"><INPUT id=MaxScout type=submit value=Max> Scout(s); Rally point slots to keep open: <INPUT id=openSlots type=text maxlength=3 size=3 value="0"> <INPUT id=scoutAllSelected type=submit value=GO>';
     document.getElementById('scoutAllSelected').addEventListener('click', function (){t.doAddScout();},false);
     document.getElementById('MaxScout').addEventListener('click', function (){t.MaxScouts(city);},false);
-
+  }
     var m = '';
     if (city != null)
       m = city.name +' ('+ city.x +','+ city.y +')';
