@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130429a
+// @version        20130429b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130429a';
+var Version = '20130429b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -85,6 +85,7 @@ var Options = {
   fixMapDistance: true,
   fixMsgCount  : true,
   fixMarchUnits  : true,
+  fixLoadCap  : true,
   fixPageNav   : true,
   enhanceViewMembers : true,
   enhanceARpts : true,
@@ -323,7 +324,7 @@ if (TEST_WIDE){
   DispReport.init();
   mapinfoFix.init(); 
   MarchUnitsFix.init();
-//  LoadFix.init();
+  LoadCapFix.init();
   towho.init();
   cdtd.init();
   tabManager.init (mainPop.getMainDiv());
@@ -5460,8 +5461,9 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=togMapInfo type=checkbox /></td><TD>Fix reassign button on maptile info</td></tr>';
 	  m+='<TR><TD><INPUT id=togMapInfo2 type=checkbox /></td><TD>Add reassign button when clicked on own city</td></tr>';
 	  m+='<TR><TD><INPUT id=togMapInfo3 type=checkbox /></td><TD>Include player name / city name in new bookmarks</td></tr>';
-     m+='<TR><TD><INPUT id=togMarchUnits type=checkbox /></td><TD>Fix march size calculation in march screen</td></tr>';
-     m+='<TR><TD><INPUT id=togAllowMulti type=checkbox /></td><TD>Disable Multi-Browser check (experimental)</td></tr>';
+	  m+='<TR><TD><INPUT id=togMarchUnits type=checkbox /></td><TD>Fix march size calculation in march screen</td></tr>';
+ 	  m+='<TR><TD><INPUT id=togLoadCapFix type=checkbox /></td><TD>Limit load capacity to not exceed throne room load cap</td></tr>';
+	  m+='<TR><TD><INPUT id=togAllowMulti type=checkbox /></td><TD>Disable Multi-Browser check (experimental)</td></tr>';
 	  m+='<TR><TD colspan=2><B>Auto Training:</b></td></tr>';
 	  m+='<TR><TD></TD><TD><INPUT id=optAutoTrainMins type=text size=1 value="'+ parseInt(AutoTrainOptions.intervalSecs/60) +'"> minutes between auto-training.</td></tr>';
 	  m+='</table><BR><BR><HR>Note that if a checkbox is greyed out there has probably been a change of KofC\'s code, rendering the option inoperable.';
@@ -5489,6 +5491,7 @@ Tabs.Options = {
       t.togOpt ('togMapInfo2', 'mapInfo2', mapinfoFix.setEnable2, mapinfoFix.isAvailable2);
       t.togOpt ('togMapInfo3', 'mapInfo3', mapinfoFix.setEnable3, mapinfoFix.isAvailable3);
       t.togOpt ('togMarchUnits', 'fixMarchUnits', MarchUnitsFix.setEnable, MarchUnitsFix.isAvailable);
+      t.togOpt ('togLoadCapFix', 'fixLoadCap', LoadCapFix.setEnable, LoadCapFix.isAvailable);
       t.togOpt ('togBatRounds', 'dispBattleRounds', null, battleReports.isRoundsAvailable);
       t.togOpt ('togAtkDelete', 'reportDeleteButton', null, battleReports.isRoundsAvailable);
       t.togOpt ('togAllowMulti', 'allowMultiBroswer');
@@ -11651,25 +11654,26 @@ var MarchUnitsFix = {
     
 }
 
-//var LoadFix = {
-//  init : function (){
-//    var t = LoadFix;
-//    t.capLoadEffect = new CalterUwFunc ('cm.MarchModal.updateTroopResource_', [
-//      ['cm\.ThroneController\.effectBonus\(6\)', '50'] ]);
-//    t.capLoadEffect.setEnable(Options.fixMarchUnits);
-//  },
-//
-//  setEnable : function (tf){
-//    var t = LoadFix;
-//    t.capLoadEffect.setEnable (tf);
-//  },
-//    
-//  isAvailable : function (){
-//    var t = LoadFix;
-//    return t.capLoadEffect.isAvailable();
-//  },
-//  
-//}
+var LoadCapFix = {
+  init : function (){
+    var t = LoadCapFix;
+    t.capLoadEffect = new CalterUwFunc ('cm.MarchModal.updateTroopResource', [
+      [/\$\("#modal/ig, 'jQuery("#modal'] ,
+      [/1\s*\+\s*loadBoost\)/i, '1 + Math.min(loadBoost,5+loadEffectBoost+techLoadBoost));load=Math.round(load-0.001);'] ]);
+    t.capLoadEffect.setEnable(Options.fixLoadCap);
+  },
+
+  setEnable : function (tf){
+    var t = LoadCapFix;
+    t.capLoadEffect.setEnable (tf);
+  },
+    
+  isAvailable : function (){
+    var t = LoadCapFix;
+    return t.capLoadEffect.isAvailable();
+  },
+  
+}
 
 function distance (d, f, c, e) {
   var a = 750;
