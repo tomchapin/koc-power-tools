@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130428b
+// @version        20130429a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130428b';
+var Version = '20130429a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -323,6 +323,7 @@ if (TEST_WIDE){
   DispReport.init();
   mapinfoFix.init(); 
   MarchUnitsFix.init();
+//  LoadFix.init();
   towho.init();
   cdtd.init();
   tabManager.init (mainPop.getMainDiv());
@@ -11649,6 +11650,26 @@ var MarchUnitsFix = {
   },
     
 }
+
+//var LoadFix = {
+//  init : function (){
+//    var t = LoadFix;
+//    t.capLoadEffect = new CalterUwFunc ('cm.MarchModal.updateTroopResource_', [
+//      ['cm\.ThroneController\.effectBonus\(6\)', '50'] ]);
+//    t.capLoadEffect.setEnable(Options.fixMarchUnits);
+//  },
+//
+//  setEnable : function (tf){
+//    var t = LoadFix;
+//    t.capLoadEffect.setEnable (tf);
+//  },
+//    
+//  isAvailable : function (){
+//    var t = LoadFix;
+//    return t.capLoadEffect.isAvailable();
+//  },
+//  
+//}
 
 function distance (d, f, c, e) {
   var a = 750;
