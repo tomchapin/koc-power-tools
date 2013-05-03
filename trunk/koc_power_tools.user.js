@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130502a
+// @version        20130502b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130502a';
+var Version = '20130502b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -3136,7 +3136,7 @@ var AllianceReports = {
     t = AllianceReports;
     t.enable (Options.enhanceARpts);
     t.marvFunc = new CalterUwFunc ('modal_alliance_report_view', [['getReportDisplay', 'getReportDisplay_hook2']]);
-    t.memListFunc = new CalterUwFunc ('membersInfo', [['commonstr.might','commonstr.might + "</td><td class=colcities>" + g_js_strings.commonstr.cities + "</td><td class=collast>" + g_js_strings.membersInfo.lastonline'],['memberInfo[key].prestige', 'memberInfo[key].prestige+ "</td>");memhtml.push("<td class=colcities>" + memberInfo[key].cities + "</td>");memhtml.push("<td class=collast>" + memberInfo[key].lastLogin']]);
+    t.memListFunc = new CalterUwFunc ('membersInfo', [['commonstr.might','commonstr.might + "</td><td class=colcities>" + g_js_strings.commonstr.cities + "</td><td class=collast>" + g_js_strings.membersInfo.lastonline'],['memberInfo[key].prestige\)', 'memberInfo[key].prestige)+ "</td>");memhtml.push("<td class=colcities>" + memberInfo[key].cities + "</td>");memhtml.push("<td class=collast>" + memberInfo[key].lastLogin']]);
     uW.getReportDisplay_hook2 = t.getReportDisplayHook;
     uW.getmembersInfo_hook = t.getMembersInfoHook;
     t.marvFunc.setEnable (true);
