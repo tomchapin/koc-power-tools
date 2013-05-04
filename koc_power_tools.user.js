@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130502b
+// @version        20130504a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130502b';
+var Version = '20130504a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -2640,7 +2640,13 @@ Tabs.Knights = {
             if (t.action==1) {   
 	      	  t.clickedAssignPoints(null,cid,knight.knightId,1);
             }
-            ass += '<TD class=ptentry align=left style="'+ sty +'" ><A style="'+ sty +'" onclick="ptAssignSkill(this,' + cid +','+ knight.knightId +','+ i +')">['+ knightRoles[i][2] +'] &nbsp;</a></td>'; 
+            ass += '<td class="ptentry" align="left" style="' + sty + '">';
+            if (knight[knightRoles[i][1]] < 255) {
+                ass += '<a title="' + uW.g_js_strings.modaltitles.assignskills + '" style="' + sty + '" onclick="ptAssignSkill(this,' + cid + ',' + knight.knightId + ',' + i + ')">[' + knightRoles[i][2] + ']</a>';
+            } else {
+                ass += '<span style="color: #006600; font-size: 10px; font-weight: normal;">(max)</span>';
+            }
+            ass += '</td>';
           }
           } 
           else
