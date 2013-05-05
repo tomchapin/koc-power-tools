@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130504a
+// @version        20130505a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130504a';
+var Version = '20130505a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -7187,8 +7187,14 @@ Tabs.OverView = {
         	  		for(b=0; b<Cities.numCities; b++) {
         	  			    z+='<TD align=right style="background: #FFFFFF">';
 							if(a==5){
-								z+= (parseInt(2000000) > parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]))? '<FONT COLOR= "669900">':'<FONT COLOR="686868">';
-								z+= addCommas(2000000);
+								var aethcapinc = 0;
+								aethcapinc += equippedthronestats(88);
+								var equippedItems = equippedthroneItems(equippedItems);
+								var currSet = uW.cm.ThroneController.hasFactionBonus(equippedItems);
+								if(currSet.hazBonus && currSet.faction === "fey")
+							           aethcapinc += uW.cm.ThroneController.effectBonus(95);
+								z+= (parseInt(2000000*(1+aethcapinc/100)) > parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]))? '<FONT COLOR= "669900">':'<FONT COLOR="686868">';
+								z+= addCommas(2000000*(1+aethcapinc/100));
 							} else{
 								if (parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][1]/3600) > parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]/3600)) z+='<FONT COLOR= "669900">';
 								else z+='<FONT COLOR="686868">';
@@ -8840,6 +8846,7 @@ Tabs.Attaque = {
  	 params.u13 = 0;
  	 params.u14 = 0;
  	 params.u15 = 0;
+ 	 params.u16 = 0;
  
  
          if (typemarche!=3) {
@@ -8858,6 +8865,7 @@ Tabs.Attaque = {
 	if (ById("RAAnbunit13").value>0) params.u13 = ById("RAAnbunit13").value;
 	if (ById("RAAnbunit14").value>0) params.u14 = ById("RAAnbunit14").value;
 	if (ById("RAAnbunit15").value>0) params.u15 = ById("RAAnbunit15").value;
+	if (ById("RAAnbunit16").value>0) params.u16 = ById("RAAnbunit16").value;
 	
 	}else {
 	 params.u3 = ById("RAAnbunit3").value;
