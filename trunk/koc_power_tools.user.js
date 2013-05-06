@@ -9174,6 +9174,14 @@ function equippedthronestats (stat_id){
 	return total;
 }
 
+var equippedthroneItems = function(throneSet) {
+	var thronePreset = Seed.throne.activeSlot;
+	var equippedItems = {};
+	for (itm=0; itm < Seed.throne.slotEquip[thronePreset].length; itm++) {
+	   equippedItems[Seed.throne.slotEquip[thronePreset][itm]] = Seed.throne.inventory[Seed.throne.slotEquip[thronePreset][itm]];
+	}
+	return equippedItems;
+}
 
 function estETA(dist, unit, cityID) {
 	var ret={ETA:0,etaStr:'N/D',friendETA:0,friendEtaStr:'N/D'};    
