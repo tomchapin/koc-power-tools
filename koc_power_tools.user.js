@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130506a
+// @version        20130509a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130506a';
+var Version = '20130509a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -10795,9 +10795,10 @@ Tabs.Marches = {
     var names = ['Supply', 'Mil', 'Scout', 'Pike', 'Sword', 'Archer', 'Cav', 'Heavy', 'Wagon', 'Balli', 'Ram', 'Cat', 'BloodT', 'Exec', 'SWall', 'FlArcher'];
     var t = Tabs.Marches;
     clearTimeout (t.displayTimer);
-    
-// TODO FIX:    Troops show as encamped even if they are here yet (check destinationUnixTime)
 
+// TODO FIX: Troops show as encamped even if they are here yet (check destinationUnixTime)
+//    - Added 5/9/2013
+    
 /***    
 var s = 'OUTGOING:<BR>'; 
 for (var c=0; c<Cities.numCities; c++){
@@ -10833,26 +10834,28 @@ return;
     if (matTypeof(Seed.queue_atkinc) != 'array'){
       for (k in Seed.queue_atkinc){
         march = Seed.queue_atkinc[k];
-        if (march.marchType == 2){
-          ++numSlots;
-          city = march.toCityId;
-          from = march.fromPlayerId;
-          if (!enc[city])
-            enc[city] = {};
-          if (!enc[city][from])
-            enc[city][from] = [];
-          s = {};
-          s.knight = parseInt (march.knightCombat);
-          s.marchId = k.substr(1);
-          s.troops = [];
-          for (i=1; i<nTroopType+1; i++){
-            if (Options.encRemaining)
-              s.troops[i] = parseInt (march['unit'+ i +'Return']);
-            else
-              s.troops[i] = parseInt (march['unit'+ i +'Count']);
+	var now = unixTime();
+	if (march["destinationUnixTime"] < now )
+          if (march.marchType == 2){
+            ++numSlots;
+            city = march.toCityId;
+            from = march.fromPlayerId;
+            if (!enc[city])
+              enc[city] = {};
+            if (!enc[city][from])
+              enc[city][from] = [];
+            s = {};
+            s.knight = parseInt (march.knightCombat);
+            s.marchId = k.substr(1);
+            s.troops = [];
+            for (i=1; i<nTroopType+1; i++){
+              if (Options.encRemaining)
+                s.troops[i] = parseInt (march['unit'+ i +'Return']);
+              else
+                s.troops[i] = parseInt (march['unit'+ i +'Count']);
+            }
+            enc[city][from].push (s);
           }
-          enc[city][from].push (s);
-        }
       }
     }
 //logit ("enc: "+ inspect (enc, 6, 1));    
