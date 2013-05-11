@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130509a
+// @version        20130511a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130509a';
+var Version = '20130511a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -150,6 +150,7 @@ var Options = {
   mapInfo: false,
   mapInfo2: false,
   mapInfo3: false,
+  fixApothTime: true,
   multiBrowserAllow : false
 };
 
@@ -326,6 +327,7 @@ if (TEST_WIDE){
   mapinfoFix.init(); 
   MarchUnitsFix.init();
   LoadCapFix.init();
+  ApothTimeFix.init();
   towho.init();
   cdtd.init();
   tabManager.init (mainPop.getMainDiv());
@@ -599,6 +601,46 @@ var mapinfoFix = {
 	   return t.bookMarkMod.isAvailable();
 	},
 	
+}
+
+var ApothTimeFix = {
+  apothFix : null,
+
+  init : function (){
+    t = ApothTimeFix;
+
+      t.apothFix = new CalterUwFunc ('cm.RevivalModel.getRevivalStats', [[/&&\s*h\.isDruid/im,'|| h.id === 23'],[/try/im, 'var insert=getRevivalStats_hook(insert); var ff = insert.f; var equippedItems = insert.equippedItems; var dd = insert.d; g = dd[k]["Cost"] * j; try'],[/g\s*=\s*e\(k\)\s*\*\s*j,/im,' '],[/hasFactionBonus\(\)/im,'hasFactionBonus(equippedItems)'],[/\[7]\s*\*\s*j/im,'[7] * parseInt(j)'],[/o\s*-\s*\(o\s*\*/img,'o / (1 +'],[/afford\s*:\s*f\(\)/im,'afford : ff']]);
+// TODO: seems like getMaximumTrainable breaks the bonus calculations in getRevivalStats - need to find a workaround
+      uW.getRevivalStats_hook = t.hook;
+      t.apothFix.setEnable(Options.fixApothTime);
+  },
+
+  setEnable : function (tf){
+	var t = ApothTimeFix;
+	t.apothFix.setEnable (tf);
+  },
+
+
+  isAvailable : function (){
+	t = ApothTimeFix;
+	return t.apothFix.isAvailable();
+  },
+
+  hook : function (insert){
+	var t = ApothTimeFix;
+	var insert = {};
+	insert.f = parseInt(uW.seed.citystats["city" + uW.currentcityid].gold[0]);
+	insert.d = uW.cm.WorldSettings.getSettingAsObject("APOTHECARY_COST");
+	
+	var thronePreset = uW.seed.throne.activeSlot;
+	var equippedItems = {};
+	for (itm=0; itm < uW.seed.throne.slotEquip[thronePreset].length; itm++) {
+	   equippedItems[uW.seed.throne.slotEquip[thronePreset][itm]] = uW.seed.throne.inventory[uW.seed.throne.slotEquip[thronePreset][itm]];
+	}
+	insert.equippedItems = equippedItems;
+	return insert;
+  },
+
 }
 
 var anticd = {
@@ -5433,6 +5475,7 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=togMapInfo3 type=checkbox /></td><TD>Include player name / city name in new bookmarks</td></tr>';
 	  m+='<TR><TD><INPUT id=togMarchUnits type=checkbox /></td><TD>Fix march size calculation in march screen</td></tr>';
  	  m+='<TR><TD><INPUT id=togLoadCapFix type=checkbox /></td><TD>Limit load capacity to not exceed throne room load cap</td></tr>';
+ 	  m+='<TR><TD><INPUT id=togApothTimeFix type=checkbox /></td><TD>Fix revival time calculator (not working for max button clicked)</td></tr>';
 	  m+='<TR><TD><INPUT id=togAllowMulti type=checkbox /></td><TD>Disable Multi-Browser check (experimental)</td></tr>';
 	  m+='<TR><TD colspan=2><B>Auto Training:</b></td></tr>';
 	  m+='<TR><TD></TD><TD><INPUT id=optAutoTrainMins type=text size=1 value="'+ parseInt(AutoTrainOptions.intervalSecs/60) +'"> minutes between auto-training.</td></tr>';
@@ -5462,6 +5505,7 @@ Tabs.Options = {
       t.togOpt ('togMapInfo3', 'mapInfo3', mapinfoFix.setEnable3, mapinfoFix.isAvailable3);
       t.togOpt ('togMarchUnits', 'fixMarchUnits', MarchUnitsFix.setEnable, MarchUnitsFix.isAvailable);
       t.togOpt ('togLoadCapFix', 'fixLoadCap', LoadCapFix.setEnable, LoadCapFix.isAvailable);
+      t.togOpt ('togApothTimeFix', 'fixApothTime', ApothTimeFix.setEnable, ApothTimeFix.isAvailable);
       t.togOpt ('togBatRounds', 'dispBattleRounds', null, battleReports.isRoundsAvailable);
       t.togOpt ('togAtkDelete', 'reportDeleteButton', null, battleReports.isRoundsAvailable);
       t.togOpt ('togAllowMulti', 'allowMultiBroswer');
@@ -10653,7 +10697,8 @@ Tabs.Marches = {
 						marchType = 102;
   				    if (type =="returning" && marchType == 2 && marchStatus != 2)
 						marchType = 8;
-  				    if (marchStatus == 3)
+  				//    if (marchStatus == 3)
+  				    if (marchStatus == 10)
 							marchType = 103;
 					if (marchStatus == 4)
 							marchType = 104;
@@ -10665,16 +10710,16 @@ Tabs.Marches = {
   				    }
   
   				    switch (marchType) {
-  					    case 1: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status=uW.g_js_strings.commonstr.transport;break;
-  					    case 2: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status=uW.g_js_strings.commonstr.reinforce;break;
-  					    case 3: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/scouting.jpg";status=uW.g_js_strings.commonstr.scout;break;
-  					    case 4: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status=uW.g_js_strings.commonstr.attack;break;
-  					    case 5: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status=uW.g_js_strings.commonstr.reassign;break;
-  					    case 8: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status=uW.g_js_strings.commonstr.returning;break;
-  					    case 9: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status=uW.g_js_strings.commonstr.raid;break;
-  					    case 102: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status=uW.g_js_strings.commonstr.encamped;break;
-						case 103: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/autoAttack/raid_stopped_desat.png";status=unsafeWindowg_js_strings.attack_generatequeue.raidstopped;break;
-						case 104: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/autoAttack/raid_resting.png";status=uW.g_js_strings.attack_generatequeue.raidresting;break;
+  					    case 1: icon="http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/transporting.jpg";status=uW.g_js_strings.commonstr.transport;break;
+  					    case 2: icon="http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/reinforce.jpg";status=uW.g_js_strings.commonstr.reinforce;break;
+  					    case 3: icon="http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/scouting.jpg";status=uW.g_js_strings.commonstr.scout;break;
+  					    case 4: icon="http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/attacking.jpg";status=uW.g_js_strings.commonstr.attack;break;
+  					    case 5: icon="http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/transporting.jpg";status=uW.g_js_strings.commonstr.reassign;break;
+  					    case 8: icon="http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/returning.jpg";status=uW.g_js_strings.commonstr.returning;break;
+  					    case 9: icon="http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/attacking.jpg";status=uW.g_js_strings.commonstr.raid;break;
+  					    case 102: icon="http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/reinforce.jpg";status=uW.g_js_strings.commonstr.encamped;break;
+						case 103: icon="http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/autoAttack/raid_stopped_desat.png";status=uW.g_js_strings.attack_generatequeue.raidstopped;break;
+						case 104: icon="http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/autoAttack/raid_resting.png";status=uW.g_js_strings.attack_generatequeue.raidresting;break;
   				    } 
   				      				    
   				    if (Seed.queue_atkp[cityID][k]["knightId"] !=0){
@@ -10688,7 +10733,7 @@ Tabs.Marches = {
 						m += '<TD><A onclick="r8x6Home('+ marchID +')"><img src='+ icon +'></a></td>';
   				    else if(status=='Encamped' && t.isMyself(Seed.queue_atkp[cityID][k].fromPlayerId))
 						m += '<TD><A onclick="pr56Recall('+ marchID +')"><img src='+ icon +'></a></td>';
-					else if(status=='Returning' || status=="Stopped" || status=="Resting")
+					else if(status=='Returning' || status=="Raid Stopped")
 						m += '<TD><img src='+ icon +'></td>';
 					else
 						m += '<TD><A onclick="cancelMarch('+ marchID +')"><img src='+ icon +'></a></td>';
