@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130511a
+// @version        20130511b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130511a';
+var Version = '20130511b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -894,6 +894,7 @@ var ChatStuff = {
     msg = msg.replace ("class=\'content\'", "class='content "+ element_class +"'");
 	msg = msg.replace (/(\bReport\sNo\:\s([0-9]+))/g, '<a onclick=\'ptChatReportClicked($2,0)\'>$1</a>');
 	msg = msg.replace (/#([0-9]+)#/g, '<a onclick=\'ptChatReportClicked($1,0)\'>$1</a>');
+	msg = msg.replace (/(\byoutu([0-9a-z\.\?\/\=\-\_]+))/gi, '<a onclick=\"window.open\(\'http\:\/\/www\.$1\',\'_blank\'\)\">$1</a>');
 	
 	msg = msg.replace (/(\W)(bot)(\W)/gi,'$1<a onclick=window.open("http://userscripts.org/scripts/show/101052")>$2</a>$3');
 	msg = msg.replace (/(\W)(tools)(\W)/gi,'$1<a onclick=window.open("http://userscripts.org/scripts/show/103659")>$2</a>$3');
