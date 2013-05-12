@@ -1,7 +1,7 @@
-﻿// ==UserScript==
+// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130511b
+// @version        20130511c
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130511b';
+var Version = '20130511c';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -9597,9 +9597,9 @@ Tabs.Rpt = {
 					else if (rpt.side1AllianceId == parseInt(getMyAlliance()[0])) {
 						t.report[reportId].sideId = 1;
 					} else { // if we're here then this is a player report from when they were in another alliance
-						if (rpt.side0PlayerId == getMyUserId())
+						if (rpt.side0PlayerId == uW.tvuid)
 							t.report[reportId].sideId = 0;
-						else if (rpt.side1PlayerId == getMyUserId())
+						else if (rpt.side1PlayerId == uW.tvuid)
 							t.report[reportId].sideId = 1;
 						else // shouldn't get here but we'll catch it if the report body is requested
 							t.report[reportId].sideId = -1;
