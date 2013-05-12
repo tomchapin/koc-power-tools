@@ -1,4 +1,4 @@
-// ==UserScript==
+﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
 // @version        20130511c
@@ -11715,7 +11715,7 @@ var LoadCapFix = {
     var t = LoadCapFix;
     t.capLoadEffect = new CalterUwFunc ('cm.MarchModal.updateTroopResource', [
       [/\$\("#modal/ig, 'jQuery("#modal'] ,
-      [/1\s*\+\s*loadBoost\)/i, '1 + Math.min(loadBoost,5+loadEffectBoost+techLoadBoost));load=Math.floor(load+0.001);'] ]);
+      [/1\s*\+\s*loadBoost\)/i, '1 + Math.min(loadBoost,5+loadEffectBoost+techLoadBoost));load=Math.floor(load);'] ]);
     t.capLoadEffect.setEnable(Options.fixLoadCap);
   },
 
