@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130511c
+// @version        20130516a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130511c';
+var Version = '20130516a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -151,6 +151,7 @@ var Options = {
   mapInfo2: false,
   mapInfo3: false,
   fixApothTime: true,
+  fixTRAetherCost: true,
   multiBrowserAllow : false
 };
 
@@ -328,6 +329,7 @@ if (TEST_WIDE){
   MarchUnitsFix.init();
   LoadCapFix.init();
   ApothTimeFix.init();
+  TRAetherCostFix.init();
   towho.init();
   cdtd.init();
   tabManager.init (mainPop.getMainDiv());
@@ -632,17 +634,35 @@ var ApothTimeFix = {
 	insert.f = parseInt(uW.seed.citystats["city" + uW.currentcityid].gold[0]);
 	insert.d = uW.cm.WorldSettings.getSettingAsObject("APOTHECARY_COST");
 	
-	var thronePreset = uW.seed.throne.activeSlot;
-	var equippedItems = {};
-	for (itm=0; itm < uW.seed.throne.slotEquip[thronePreset].length; itm++) {
-	   equippedItems[uW.seed.throne.slotEquip[thronePreset][itm]] = uW.seed.throne.inventory[uW.seed.throne.slotEquip[thronePreset][itm]];
-	}
+	var equippedItems = equippedthroneItems(equippedItems);
 	insert.equippedItems = equippedItems;
 	return insert;
   },
 
 }
 
+var TRAetherCostFix = {
+  aethercostFix : null,
+
+  init : function (){
+    t = TRAetherCostFix;
+
+      t.aethercostFix = new CalterUwFunc ('cm.ThronePanelController.calcCost', [[/if\(l\(/im,'if(cm.ThronePanelController.isLastLevel('],[/E\.stones\.use\s*=\s*E\.stones\.total/im,'E.stones.use = B'],[/if\(E\.stones\.use\s*==/im,'if(E.stones.use >='],[/E\.gems\.use\s*=\s*c\(E\.stones\.total\s*-\s*B\)/im,'var y = + (cm.WorldSettings.getSetting("TR_AETHERSTONE_CONVERSION_COST")), z; E.gems.use = Math.ceil((E.stones.total - B)/y)'],[/E\.gems\.use\s*=\s*c\(z\[D]\.Stones\)/im,'var y = + (cm.WorldSettings.getSetting("TR_AETHERSTONE_CONVERSION_COST")), z; E.gems.use = Math.ceil((z[D].Stones)/y)']]);
+      t.aethercostFix.setEnable(Options.fixTRAetherCost);
+  },
+
+  setEnable : function (tf){
+	var t = TRAetherCostFix;
+	t.aethercostFix.setEnable (tf);
+  },
+
+  isAvailable : function (){
+	t = TRAetherCostFix;
+	return t.aethercostFix.isAvailable();
+  },
+
+}
+ 
 var anticd = {
   isInited : false,
   KOCversion : '?',
@@ -5477,6 +5497,7 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=togMarchUnits type=checkbox /></td><TD>Fix march size calculation in march screen</td></tr>';
  	  m+='<TR><TD><INPUT id=togLoadCapFix type=checkbox /></td><TD>Limit load capacity to not exceed throne room load cap</td></tr>';
  	  m+='<TR><TD><INPUT id=togApothTimeFix type=checkbox /></td><TD>Fix revival time calculator (not working for max button clicked)</td></tr>';
+ 	  m+='<TR><TD><INPUT id=togTRAetherCostFix type=checkbox /></td><TD>Fix display of aetherstones for throne room upgrade/enhance</td></tr>';
 	  m+='<TR><TD><INPUT id=togAllowMulti type=checkbox /></td><TD>Disable Multi-Browser check (experimental)</td></tr>';
 	  m+='<TR><TD colspan=2><B>Auto Training:</b></td></tr>';
 	  m+='<TR><TD></TD><TD><INPUT id=optAutoTrainMins type=text size=1 value="'+ parseInt(AutoTrainOptions.intervalSecs/60) +'"> minutes between auto-training.</td></tr>';
@@ -5507,6 +5528,7 @@ Tabs.Options = {
       t.togOpt ('togMarchUnits', 'fixMarchUnits', MarchUnitsFix.setEnable, MarchUnitsFix.isAvailable);
       t.togOpt ('togLoadCapFix', 'fixLoadCap', LoadCapFix.setEnable, LoadCapFix.isAvailable);
       t.togOpt ('togApothTimeFix', 'fixApothTime', ApothTimeFix.setEnable, ApothTimeFix.isAvailable);
+      t.togOpt ('togTRAetherCostFix', 'fixTRAetherCost', TRAetherCostFix.setEnable, TRAetherCostFix.isAvailable);
       t.togOpt ('togBatRounds', 'dispBattleRounds', null, battleReports.isRoundsAvailable);
       t.togOpt ('togAtkDelete', 'reportDeleteButton', null, battleReports.isRoundsAvailable);
       t.togOpt ('togAllowMulti', 'allowMultiBroswer');
@@ -6510,12 +6532,13 @@ Tabs.Train = {
     var m = '<CENTER><B>'+ Cities.byID[cityId].name +' &nbsp; ('+ Cities.byID[cityId].x +','+ Cities.byID[cityId].y +')</b></center><HR>';
 
     m += '<TABLE class=ptTab width=100%><TR align=center>';
-    for(i=1;i<=6;i++){
+    for(i=1;i<=8;i++){
     	m += '<TR><TD width=75px>'+uW.unitcost['unt'+i][0]+'</td><TD width=60px>'+addCommas(parseInt(Seed.units['city'+cityId]['unt'+i]))+'</td>';
-    	m += '<TD width=75px>'+uW.unitcost['unt'+(i+6)][0]+'</td><TD width=60px>'+addCommas(parseInt(Seed.units['city'+cityId]['unt'+(i+6)]))+'</td>';
+    	m += '<TD width=75px>'+uW.unitcost['unt'+(i+8)][0]+'</td><TD width=60px>'+addCommas(parseInt(Seed.units['city'+cityId]['unt'+(i+8)]))+'</td>';
     	if (i<=4) m += '<TD width=75px><SPAN id=ptttr_'+uW.resourceinfo['rec'+i]+'>'+uW.resourceinfo['rec'+i]+'</span></td><TD width=60px><SPAN id=ptttr2_'+uW.resourceinfo['rec'+i]+'>'+addCommas(parseInt(Seed.resources['city'+cityId]['rec'+i][0]/3600))+'</span></td>';
     	if (i==5) m += '<TD width=75px><SPAN id=ptttr_gold>'+uW.resourceinfo['rec0']+'</span></td><TD width=60px><SPAN id=ptttr2_gold>'+addCommas(Seed.citystats['city'+cityId].gold[0])+'</span></td>';
-    	if (i==6) m += '<TD width=75px><SPAN id=ptttr_pop>'+uW.g_js_strings.showPopTooltip.idlepop+'</td><TD width=60px><SPAN id=ptttr2_pop>'+addCommas(t.stats.idlePop)+'</td>';
+    	if (i==6) m += '<TD width=75px><SPAN id=ptttr_pop>Available Population</td><TD width=60px><SPAN id=ptttr2_pop>'+addCommas(t.stats.idlePop)+'</td>';
+    	if (i>6) m += '<TD width=75px></td><TD width=60px></td>';
     	m+='</tr>';
     }
     m+='</table>';
