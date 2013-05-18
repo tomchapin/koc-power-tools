@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130516b
+// @version        20130518a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130516b';
+var Version = '20130518a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -151,7 +151,7 @@ var Options = {
   mapInfo2: false,
   mapInfo3: false,
   fixApothTime: true,
-  fixTRAetherCost: false,
+  fixTRAetherCost: true,
   multiBrowserAllow : false
 };
 
@@ -607,25 +607,30 @@ var mapinfoFix = {
 
 var ApothTimeFix = {
   apothFix : null,
+  apothFixCB : null,
 
   init : function (){
     t = ApothTimeFix;
 
       t.apothFix = new CalterUwFunc ('cm.RevivalModel.getRevivalStats', [[/&&\s*h\.isDruid/im,'|| h.id === 23'],[/try/im, 'var insert=getRevivalStats_hook(insert); var ff = insert.f; var equippedItems = insert.equippedItems; var dd = insert.d; g = dd[k]["Cost"] * j; try'],[/g\s*=\s*e\(k\)\s*\*\s*j,/im,' '],[/hasFactionBonus\(\)/im,'hasFactionBonus(equippedItems)'],[/\[7]\s*\*\s*j/im,'[7] * parseInt(j)'],[/o\s*-\s*\(o\s*\*/img,'o / (1 +'],[/afford\s*:\s*f\(\)/im,'afford : ff']]);
+      t.apothFixCB = new CalterUwFunc ('cm.RevivalModel.getRevivalStats', [[/o\s*-\s*o\s*\*\s*\(/im,'o / (1 +'],[/o\s*-\s*o\s*\*\s*\cm/im,'o / (1 + cm'],[/currentcityid\)\);/im,'currentcityid)));']]);  //fix for cometbird
 // TODO: seems like getMaximumTrainable breaks the bonus calculations in getRevivalStats - need to find a workaround
       uW.getRevivalStats_hook = t.hook;
       t.apothFix.setEnable(Options.fixApothTime);
+      t.apothFixCB.setEnable(Options.fixApothTime);
   },
 
   setEnable : function (tf){
 	var t = ApothTimeFix;
 	t.apothFix.setEnable (tf);
+	t.apothFixCB.setEnable (tf);
   },
 
 
   isAvailable : function (){
 	t = ApothTimeFix;
 	return t.apothFix.isAvailable();
+	return t.apothFixCB.isAvailable();
   },
 
   hook : function (insert){
@@ -643,22 +648,27 @@ var ApothTimeFix = {
 
 var TRAetherCostFix = {
   aethercostFix : null,
+  aethercostFixCB : null,
 
   init : function (){
     t = TRAetherCostFix;
 
       t.aethercostFix = new CalterUwFunc ('cm.ThronePanelController.calcCost', [[/if\(l\(/im,'if(cm.ThronePanelController.isLastLevel('],[/E\.stones\.use\s*=\s*E\.stones\.total/im,'E.stones.use = B'],[/if\(E\.stones\.use\s*==/im,'if(E.stones.use >='],[/E\.gems\.use\s*=\s*c\(E\.stones\.total\s*-\s*B\)/im,'var y = + (cm.WorldSettings.getSetting("TR_AETHERSTONE_CONVERSION_COST")), z; E.gems.use = Math.ceil((E.stones.total - B)/y)'],[/E\.gems\.use\s*=\s*c\(z\[D]\.Stones\)/im,'var y = + (cm.WorldSettings.getSetting("TR_AETHERSTONE_CONVERSION_COST")), z; E.gems.use = Math.ceil((z[D].Stones)/y)']]);
+      t.aethercostFixCB = new CalterUwFunc ('cm.ThronePanelController.calcCost', [[/if\s*\(l\(/im,'if(cm.ThronePanelController.isLastLevel('],[/if\s*\(E\.stones\.use\s*==/im,'if(E.stones.use >=']]);  //fix for cometbird
       t.aethercostFix.setEnable(Options.fixTRAetherCost);
+      t.aethercostFixCB.setEnable(Options.fixTRAetherCost);
   },
 
   setEnable : function (tf){
 	var t = TRAetherCostFix;
 	t.aethercostFix.setEnable (tf);
+	t.aethercostFixCB.setEnable (tf);
   },
 
   isAvailable : function (){
 	t = TRAetherCostFix;
 	return t.aethercostFix.isAvailable();
+	return t.aethercostFixCB.isAvailable();
   },
 
 }
