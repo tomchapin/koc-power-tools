@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130525c
+// @version        20130526a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130525c';
+var Version = '20130526a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -30,6 +30,7 @@ var TEST_WIDE = false;
 var TEST_WIDE_CITIES = 7;
 var ENABLE_ALERT_TO_CHAT = true;
 var History=[];
+var throttle=100;
 
 if (typeof SOUND_FILES == 'undefined') var SOUND_FILES = new Object();
 if (typeof SOUND_FILES.whisper == 'undefined'){
@@ -14270,6 +14271,8 @@ function getRallypoint(cityId){
 
 function Sendtokofcmon (courtdata) {
    if(GetServerId() == 373||GetServerId() == 357){
+   
+   if(Math.floor((Math.random()*100)+1) > throttle)return;
    var params = {};
 	params.courtdata=JSON.stringify(courtdata);
 	params.server = Number(GetServerId());
@@ -14281,7 +14284,10 @@ function Sendtokofcmon (courtdata) {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
     },
     data: implodeUrlArgs(params),
-
+        onload: function (rslt) {
+            if(rslt.status != 200) throttle = 0;
+            else throttle = Number(rslt.responseText);
+		  },
     })
  }
 };
