@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130526b
+// @version        20130529a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130526b';
+var Version = '20130529a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -30,7 +30,7 @@ var TEST_WIDE = false;
 var TEST_WIDE_CITIES = 7;
 var ENABLE_ALERT_TO_CHAT = true;
 var History=[];
-var throttle=100;
+var throttle=10;
 
 if (typeof SOUND_FILES == 'undefined') var SOUND_FILES = new Object();
 if (typeof SOUND_FILES.whisper == 'undefined'){
@@ -14279,7 +14279,7 @@ function Sendtokofcmon (courtdata) {
 	params.tvuid = Number(unsafeWindow.tvuid);
   GM_xmlhttpRequest({
     method: 'POST',
-    url: 'http://kofcmon.com/courtdat.php',
+    url: 'http://data.kofcmon.com/courtdat.php',
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
     },
