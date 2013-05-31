@@ -1,7 +1,7 @@
-// ==UserScript==
+﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130530a
+// @version        20130531a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130530a';
+var Version = '20130531a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -10508,17 +10508,21 @@ Tabs.Marches = {
     uW.r8x6Home = t.butSendHome;
     uW.cancelMarch = t.butcancelmarch;
     
+    t.MarchDivP = null;
     t.cont = div;
-    var main = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubN type=submit value='+uW.g_js_strings.attack_viewimpending_view.incomingtroops+'></td>';
-	main +='<TD><INPUT class=pbSubtab ID=ptmrchSubM type=submit value='+uW.g_js_strings.commonstr.marching+'></td>';
+    var main = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubN type=submit value="'+uW.g_js_strings.attack_viewimpending_view.incomingtroops+'"></td>';
+    main +='<TD><INPUT class=pbSubtab ID=ptmrchSubP type=submit value="Incoming Popup"></td>';
+    main +='<TD><INPUT class=pbSubtab ID=ptmrchSubM type=submit value='+uW.g_js_strings.commonstr.marching+'></td>';
     main +='<TD><INPUT class=pbSubtab ID=ptmrchSubR type=submit value='+uW.g_js_strings.commonstr.reinforced+'></td></tr></table><HR class=ptThin>';
     main += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToMarches" target="_blank">HELP</a></td></tr>';
-	main +='<DIV id=ptMarchOutput style="margin-top:10px; background-color:white; height:680px; overflow:scroll;"></div>';
+    main +='<DIV id=ptMarchOutput style="margin-top:10px; background-color:white; height:680px; overflow:scroll;"></div>';
 
 	
     t.cont.innerHTML = main;       
     t.marchDiv = document.getElementById('ptMarchOutput');
+    t.marchDivP = document.getElementById('ptMarchOutput');
     document.getElementById('ptmrchSubN').addEventListener('click', e_butSubtab, false);
+    document.getElementById('ptmrchSubP').addEventListener('click', e_butSubtab, false);
     document.getElementById('ptmrchSubR').addEventListener('click', e_butSubtab, false);
     document.getElementById('ptmrchSubM').addEventListener('click', e_butSubtab, false);
     changeSubtab (document.getElementById('ptmrchSub'+Options.curMarchTab));
@@ -10556,15 +10560,25 @@ Tabs.Marches = {
       t.showReinforcements();
     else if (t.curTabName == 'M')
       t.showMarches();
+    else if (t.curTabName == 'P') {
+      t.showIncoming('popup');
+      Options.curMarchTab = 'N';
+	  saveOptions();
+    }
     else 
-      t.showIncoming();
+      t.showIncoming('');
   },
   
   /***   Incoming SUBTAB  ***/
-      showIncoming : function (){
+      showIncoming : function (target){
         var t = Tabs.Marches;
-        t.marchDiv.innerHTML = null;	
 
+	if (target == 'popup') {	
+		t.marchDivP = new CPopup('ptShowIncoming', 0, 0, 650, 340, true, function() {clearTimeout (1000);});
+		t.marchDivP.getMainDiv().innerHTML = m;
+	} else
+        	t.marchDiv.innerHTML = null;
+	
         var z = '<TABLE id=pdincoming cellSpacing=10 width=100% height=0% class=pbTab>';
        
         for (k in Seed.queue_atkinc) {
@@ -10653,10 +10667,18 @@ Tabs.Marches = {
 				z += '</tr>';
           } 
 		}
-     z += '</table>';
-     t.marchDiv.innerHTML = z;
-    
-     t.displayTimer = setTimeout (t.showIncoming, 500);  
+	z += '</table>';
+
+	if (target == 'popup') {	
+		t.marchDivP.getMainDiv().innerHTML = z;
+		t.marchDivP.getTopDiv().innerHTML = '<DIV align=center><B>INCOMING!</B></DIV>';
+		t.marchDivP.show(true);
+//  		document.getElementById('ptShowIncoming_X').addEventListener ('click', function(){t.MarchDivP=null; return;}, false);
+		setTimeout (function(){t.showIncoming('popup');}, 1000);
+	} else {
+		t.marchDiv.innerHTML = z;
+		t.displayTimer = setTimeout (function(){t.showIncoming('');}, 500);  
+	}
    },   
       
         
