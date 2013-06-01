@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130531a
+// @version        20130601a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130531a';
+var Version = '20130601a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -8861,7 +8861,8 @@ Tabs.Attaque = {
 	 var trmarchsizebuff = Math.floor(equippedthronestats(66));
 			 if (trmarchsizebuff>unsafeWindow.cm.thronestats.boosts.MarchSize.Max)trmarchsizebuff=unsafeWindow.cm.thronestats.boosts.MarchSize.Max;
 	 if(trmarchsizebuff > 0)
-		e+=(trmarchsizebuff/100);
+//		e+=(trmarchsizebuff/100);
+		e *=(1+trmarchsizebuff/100);
 		if(unsafeWindow.seed.cityData.city[t.sourceCity.id].isPrestigeCity){
 			var b = unsafeWindow.seed.cityData.city[t.sourceCity.id].prestigeInfo.prestigeLevel;
 			var r = unsafeWindow.cm.WorldSettings.getSetting("ASCENSION_RALLYPOINT_BOOST"),
@@ -8878,9 +8879,9 @@ Tabs.Attaque = {
            return;
       }
       var niveauPointRall=parseInt(getCityBuilding (t.sourceCity.id, 12).maxLevel); // 12=Point de ralliement
-         var maxtroupe=parseInt(niveauPointRall*10000*e);
-         if (niveauPointRall==11) maxtroupe=parseInt(150000*e);
-         if (niveauPointRall==12) maxtroupe=parseInt(200000*e);
+         var maxtroupe=Math.round(niveauPointRall*10000*e-0.001);
+         if (niveauPointRall==11) maxtroupe=Math.round(150000*e-0.001);
+         if (niveauPointRall==12) maxtroupe=Math.round(200000*e-0.001);
       if (totalunit>maxtroupe) {
        t.statutRAA.innerHTML = '<FONT COLOR=#550000>You can only send '+maxtroupe+' units.</font>';
        return;
@@ -9181,7 +9182,8 @@ Tabs.Attaque = {
 			var trmarchsizebuff = Math.floor(equippedthronestats(66));
 			 if (trmarchsizebuff>unsafeWindow.cm.thronestats.boosts.MarchSize.Max)trmarchsizebuff=unsafeWindow.cm.thronestats.boosts.MarchSize.Max;
 			 if(trmarchsizebuff > 0)
-				e+=(trmarchsizebuff/100);
+//				e+=(trmarchsizebuff/100);
+				e *=(1+trmarchsizebuff/100);
 		if(unsafeWindow.seed.cityData.city[t.sourceCity.id].isPrestigeCity){
 			var b = unsafeWindow.seed.cityData.city[t.sourceCity.id].prestigeInfo.prestigeLevel;
 			var r = unsafeWindow.cm.WorldSettings.getSetting("ASCENSION_RALLYPOINT_BOOST"),
@@ -9193,9 +9195,9 @@ Tabs.Attaque = {
 		}
 
 			 var niveauPointRall=parseInt(getCityBuilding (t.sourceCity.id, 12).maxLevel); // 12=Point de ralliement
-			 var maxtroupe=parseInt(niveauPointRall*10000*e);
-			 if (niveauPointRall==11) maxtroupe=parseInt(150000*e);
-			 if (niveauPointRall==12) maxtroupe=parseInt(200000*e);
+			 var maxtroupe=Math.round(niveauPointRall*10000*e-0.001);
+			 if (niveauPointRall==11) maxtroupe=Math.round(150000*e-0.001);
+			 if (niveauPointRall==12) maxtroupe=Math.round(200000*e-0.001);
 			 var nbunitto=0;
          for (r=1; r<nTroopType+1; r++) {
 			   nbunitto+=parseInt(ById("RAAnbunit"+r).value);
