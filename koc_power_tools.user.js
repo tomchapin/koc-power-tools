@@ -1,10 +1,11 @@
-﻿// ==UserScript==
+// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130602a
+// @version        20130603b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
+// @require        rawdeflate.js
 // ==/UserScript==
 
 //Fixed weird bug with koc game
@@ -14,7 +15,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130602a';
+var Version = '20130603b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -14296,12 +14297,13 @@ function getRallypoint(cityId){
 function Sendtokofcmon (courtdata) {
    if(Math.floor((Math.random()*1000)+1) > throttle)return;
    var params = {};
-	params.courtdata=JSON.stringify(courtdata);
+	params.mapdata=  btoa(RawDeflate.deflate(JSON.stringify(courtdata)));
+	params.gz = true;
 	params.server = Number(GetServerId());
 	params.tvuid = Number(unsafeWindow.tvuid);
   GM_xmlhttpRequest({
     method: 'POST',
-    url: 'http://data.kocscripters.com/courtdat.php',
+    url: 'http://data2.kocscripters.com/courtdat.php',
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
     },
