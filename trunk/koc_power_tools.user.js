@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130609a
+// @version        20130610a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130609a';
+var Version = '20130610a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -1176,6 +1176,7 @@ var Rpt = {
 		unitImg2[62] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_62_30.png></TD><TD>';
 
 		var trEffect = [];
+/*
 		trEffect[1] = 'Attack';
 		trEffect[2] = 'Defense';
 		trEffect[3] = 'Life';
@@ -1272,8 +1273,9 @@ var Rpt = {
 		trEffect[94] = 'Druid Bonus 1'	
 		trEffect[95] = 'Fey Bonus 1'
 		trEffect[96] = 'Briton Bonus 1'
-
-
+*/
+		for (var k in uW.cm.thronestats.effects)
+			trEffect[k] = uW.cm.thronestats.effects[k][1];
 
 		if (rpt.marchType == 0)
 			rpt.marchName = 'Desertion';
