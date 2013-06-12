@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130610a
+// @version        20130612a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -7764,8 +7764,8 @@ Tabs.OverView = {
     	m+= '/' + max +'</td>';
     }
     m+='</tr><TR><TD colspan="8" style="background: #FFFFFF; border:none">&nbsp;</td></tr>';
+    // to do: change to match ascended cities (city center)
     m+='<TR valign=top align=right><TD width=85 style="background-color:'+Colors.OverviewDarkRow+';">City space</td>';
-    
     for(i=0; i<Seed.cities.length; i++) {
     	var count=0;
     	city = 'city'+Seed.cities[i][0];
@@ -7777,8 +7777,8 @@ Tabs.OverView = {
     	m+= count + '</font> (31)</td>';
     }
     m+='</tr>';
+    // to do: change to match ascended cities (fields vs. resource points)
     m+='<TR valign=top align=right><TD width=85 style="background-color:'+Colors.OverviewDarkRow+';">Field space</td>';
-    
     for(i=0; i<Seed.cities.length; i++) {
     	var count=0;
     	var castle=0;
@@ -7792,12 +7792,17 @@ Tabs.OverView = {
     	m+= count + '</font> ('+FieldSpace[castle]+')</td>';
     }
     m+='</tr>';
-    for (b=0;b<=21;b++){
+    for (b=0;b<=27;b++){
     	m+='<TR valign=top align=right><TD width=85 style="background-color:'+Colors.OverviewDarkRow+';">'+uW.buildingcost['bdg' + b][0]+'</td>';
         for (c=0;c<Seed.cities.length;c++){
+            var cid = Seed.cities[c][0];
+            var fid = 0;
+            if (Seed.cityData.city[cid].isPrestigeCity == true) {
+                fid = Seed.cityData.city[cid].prestigeInfo.prestigeType;
+            }
         	m+='<TD style="width:79px; max-width:79px; word-wrap: break-word; background:#FFFFFF">';
         		city= 'city'+Seed.cities[c][0];
-        		var count =0;
+        		var count = 0;
         		for (y in Seed.buildings[city]) {
         			if (Seed.buildings[city][y][0] == b) {
         				count++;
@@ -7809,7 +7814,11 @@ Tabs.OverView = {
         			}
         		}
         		if (count == 0) {
-        			m+='<FONT COLOR= "CC0000">0</font>';
+                    if ((b == 21 && fid == 1) || ((b == 22 || b == 23) && fid != 1) || ((b == 24 || b == 25) && fid != 2) || ((b == 26 || b == 27) && fid != 3)) {
+                        m += '-';
+                    } else {
+                        m+='<FONT COLOR= "CC0000">0</font>';
+                    }
         		}
         	m+='</td>';		
         }
