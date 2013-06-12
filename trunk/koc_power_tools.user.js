@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130612a
+// @version        20130612b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130610a';
+var Version = '20130612b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -7841,7 +7841,7 @@ Tabs.OverView = {
     }
     m+='</tr></table><BR></table><BR><TABLE class=ptBuilds  border=1px cellpadding=2 cellspacing=0><TR valign=top align=left>';
     for (i in uW.techcost) {
-    	m+='<TD border=1px style="width:150px; background:#FFFFFF">'+uW.techcost[i][0]+'</td><TD align=center style="width:50px max-width:150px; background:#FFFFFF;">';
+    	m+='<TD border=1px style="width:150px; background:#FFFFFF">'+uW.techcost[i][0]+'</td><TD align=center style="width:50px; max-width:150px; background:#FFFFFF;">';
     	if (Seed.tech[i] >=9) m+='<FONT COLOR= "669900">';
     	if (Seed.tech[i] ==0) m+='<FONT COLOR= "CC0000">';
     	m+=Seed.tech[i];
@@ -7943,7 +7943,20 @@ Tabs.OverView = {
     	}
     	m+='</td></tr>';
     }	
-    m+='</table></div>';
+    m += '</table><br />';
+    m += '<table class="ptBuilds" border="1px" cellpadding="2" cellspacing="0"><tr valign="top" align="left">';
+    for (i in uW.techcost2) {
+        m += '<td border="1px" style="width: 150px; background: #ffffff;">' + uW.techcost2[i][0] + '</td>';
+        m += '<td align="center" style="width: 50px; max-width: 150px; background: #ffffff;">';
+        if (Seed.tech2[i] >= 9) m += '<font color="669900">';
+        if (Seed.tech2[i] == 0) m += '<font color="cc0000">';
+        m += Seed.tech2[i];
+        if (Seed.tech2[i] >= 9 || Seed.tech2[i] == 0) m += '</font>';
+        // to do: show missing requirements
+        //if (t.showReq) {}
+        m += '</td></tr>';
+    }
+    m += '</table></div>';
     t.Overv.innerHTML = m;
     document.getElementById('showReq').addEventListener ('change', function (){
     	t.showReq = document.getElementById('showReq').checked;
