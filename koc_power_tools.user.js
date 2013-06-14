@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130612b
+// @version        20130613a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130612b';
+var Version = '20130613a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -5966,6 +5966,9 @@ Tabs.Train = {
         <TD width=50% style='padding-left:15px; padding-right:15px'><DIV style='text-align:center'><B>"+uW.g_js_strings.modal_openWalls.defqueue+"&nbsp; (<SPAN\ id=statDTtot></span>)</b><BR><HR></div><DIV id=divSTright style='overflow-y: auto; height:210px; max-height:210px'></div></td></tr>\
       </div></div>";
     t.cont.innerHTML = s;
+    t.clickCitySelect;
+    if (document.getElementById('ptttInpPS').value != "")
+            t.dispTroopTrainTimes();
     document.getElementById('ptttInpPS').addEventListener('keyup',function(){
         if (document.getElementById('ptttInpPS').value != ""){
             t.dispTroopTrainTimes();
@@ -6054,7 +6057,9 @@ Tabs.Train = {
   		document.getElementById('pbTroopTimeEst').innerHTML = message;
   },
  calcBaseTrainTime:function(d, f) {
- 	var uw = unsafeWindow
+    var t = Tabs.Train;
+    var cityId = t.selectedCity.id;
+    var uw = unsafeWindow;
     var c = +(uw.unitcost["unt" + d][7]) * f,
         e, k = {}, h = uw.seed.buildings["city" + uw.currentcityid],
         j = {}, l = uw.seed.knights["city" + uw.currentcityid],
@@ -6068,17 +6073,32 @@ Tabs.Train = {
     unsafeWindow.jQuery.each(h, function (n, m) {
         m.id = +(m[0]);
         m.level = +(m[1]);
-        if (m.id === 13 && m.level > 0) {
-            k.barracks += (m.level + 9)
-        }
+	if (d < 13) {
+          if (m.id === 13 && m.level > 0) {
+            k.barracks += (m.level + 9);
+          }
+	} else if (d == 13) {
+	    if (m.id === 22 && m.level > 0) {
+            k.barracks += (m.level + 9);
+	  }
+	} else if (d == 14) {
+	    if (m.id === 24 && m.level > 0) {
+            k.barracks += (m.level + 9);
+	  }
+	} else if (d == 15) {
+	  if (m.id === 26 && m.level > 0) {
+            k.barracks += (m.level + 9);
+	  }
+        } else {
+	}
         if (m.id === 16 && m.level > 0) {
             if (+(d) >= 9) {
-                k.workshop = m.level
+                k.workshop = m.level;
             }
         }
         if (m.id === 17 && m.level > k.stable) {
             if (+(d) >= 7) {
-                k.stable = m.level
+                k.stable = m.level;
             }
         }
     });
@@ -6088,22 +6108,23 @@ Tabs.Train = {
     if (l) {
         a = l["knt" + g.combatKnightId];
         if (a) {
-            k.knight = (+(a.combatBoostExpireUnixtime) - uw.unixtime() > 0) ? (a.combat * 1.25) : a.combat
+            k.knight = (+(a.combatBoostExpireUnixtime) - uw.unixtime() > 0) ? (a.combat * 1.25) : a.combat;
         } else {
-            k.knight = 0
+            k.knight = 0;
         }
     }
     if (uw.seed.tech) {
-        k.tech = uw.seed.tech.tch5
+//        k.tech = uw.seed.tech.tch5;
+        k.tech = parseInt(uw.seed.tech.tch5);
     }
     k.ultimate = k.workshop + k.stable + k.tech;
     e = e * (1 + (0.1 * k.ultimate) + (0.005 * k.knight));
     if (uw.cm.WorldSettings.isOn("GUARDIAN_MARCH_EFFECT")) {
         var b = uw.cm.guardianModalModel.getStoneTrainingSpeedBonus();
-        e = e * (1 + b)
+        e = e * (1 + b);
     }
     c = Math.max(1, Math.ceil(c / e));
-    return c
+    return c;
 },
   calcTRBoosts : function (StatID){
 		var equipped = Seed.throne.slotEquip[1];
@@ -6147,8 +6168,13 @@ Tabs.Train = {
     if (isNaN(slots) || slots<0)
       slots = 0;
     t.TTspMax.innerHTML = t.stats.MaxTrain;
-    t.TTspMaxSlots.innerHTML = t.stats.barracks - t.stats.queued;
-    if (slots<1 || (t.stats.barracks-t.stats.queued < 1))
+//    t.TTspMaxSlots.innerHTML = t.stats.barracks - t.stats.queued;
+    if (t.lastTroopSelect > 12 )
+      t.TTspMaxSlots.innerHTML = t.stats.barracks - t.stats.spqueued;
+    else
+      t.TTspMaxSlots.innerHTML = t.stats.barracks - t.stats.queued;
+//    if (slots<1 || (t.stats.barracks-t.stats.queued < 1))
+    if (slots<1 || t.TTspMaxSlots.innerHTML < 1 )
       t.TTspMaxPS.innerHTML = 0;
     else
       t.TTspMaxPS.innerHTML = parseInt(t.stats.MaxTrain / slots);
@@ -6167,7 +6193,10 @@ Tabs.Train = {
 
   clickTroopMaxSlots : function (){
     var t = Tabs.Train;
-    t.TTinpSlots.value = t.stats.barracks - t.stats.queued;
+    if (t.lastTroopSelect > 12 )
+      t.TTinpSlots.value = t.stats.barracks - t.stats.spqueued;
+    else
+      t.TTinpSlots.value = t.stats.barracks - t.stats.queued;
   },
   
   clickCitySelect : function (city){
@@ -6314,11 +6343,34 @@ Tabs.Train = {
         }
       }
     }
+
+    if (t.lastTroopSelect == 13){
+	var numdruidbarrack = getCityBuilding (cityId, 22).count;
+	if (numdruidbarrack == 0) {
+	    t.stats.MaxTrain = 0;
+            t.limitingFactor = null;
+        }
+    } else if (t.lastTroopSelect == 14){
+	var numfeybarrack = getCityBuilding (cityId, 24).count;
+	if (numfeybarrack == 0) {
+	    t.stats.MaxTrain = 0;
+            t.limitingFactor = null;
+        }
+    } else if (t.lastTroopSelect == 15){
+	var numbritonbarrack = getCityBuilding (cityId, 26).count;
+	if (numbritonbarrack == 0) {
+	    t.stats.MaxTrain = 0;
+            t.limitingFactor = null;
+        }
+    }
+
 	if (t.limitingFactor){
 	  document.getElementById('ptttr_'+ t.limitingFactor).className = 'boldRed';
 	  document.getElementById('ptttr2_'+ t.limitingFactor).className = 'boldRed';
 	}    
     t.updateTopTroops();
+    if (isPrestige && t.lastTroopSelect > 12)
+	t.TTspMaxSlots.innerHTML++;
   },
 
   clickTroopDo : function (){
@@ -6388,6 +6440,10 @@ Tabs.Train = {
     var id = t.TDselType.value;
     t.lastDefSelect = id;
     t.stats.defOwned = parseInt(Seed.fortifications['city' + cityId]['fort'+id]);    
+//
+// Check if ascended city
+    var isPrestige = Seed.cityData.city[cityId].isPrestigeCity;
+//
     var uc = uW.fortcost['frt'+id];
     var max = 9999999999;
     if ( (t.stats.food / uc[1]) < max)
@@ -6404,8 +6460,23 @@ Tabs.Train = {
     if (t.stats.MaxDefTrain < 0)
       t.stats.MaxDefTrain = 0;
     if (matTypeof(uc[8]) == 'object'){
+
       for (k in uc[8]){  // check building requirement
         var b = getCityBuilding (cityId, k.substr(1));
+	if(isPrestige){
+	  var bid = parseInt(k.substr(1));
+	  logit(bid);
+	  switch(bid){
+	    case 17: //Stable
+	      b.maxLevel = 12;
+	    case 16: //Workshop
+	      b.maxLevel = 12;
+	    case 15: //Blacksmith
+	      b.maxLevel = 12;
+	  }
+	}
+	logit(isPrestige);
+	logit(inspect(b,3,1));
         if (b.maxLevel < uc[8][k][1]){
           t.stats.MaxDefTrain = 0;
           break;
@@ -6573,13 +6644,14 @@ Tabs.Train = {
       // totTime = q[q.length-1][3] - now;
     if ( qs == t.lastQueString){
       if (q!=null && q.length>0){
-		var cur = 0;
+       var cur = q[0][3] - now;
+//		var cur = 0;
 		for(var i = 0; i<q.length; i++){
 			if(q[i][7] && isSpecial){
 				cur = q[i][3] - now;
 				break;
 			}
-			if(!q[i][7] && !isSpecial){
+			if(!q[i][7] && isSpecial){
 				cur = q[i][3] - now;
 				break;
 			}
@@ -6590,25 +6662,30 @@ Tabs.Train = {
     } else {
       t.lastQueString = qs;
       t.stats.queued = 0;
+      t.stats.spqueued = 0;
       m = '<TABLE align=center class=ptTab>';
       if (q!=null && q.length>0 ){
 		if(!getCityPrestige(cityId))
 			t.fixQueTimes (q);
         // t.stats.queued = q.length;
         first = true;
+		first_special = true;
         for (var i=0; i<q.length; i++){
-		  if(isSpecial && q[i][0] < 13){
-			continue;
-		  }
-		  if(!isSpecial && q[i][0] >= 13){
-			continue;
-		  }
-		  
-          start = q[i][2];
+          var now = unixTime();
+//	  if(isSpecial && q[i][0] < 13){
+// 		continue;
+//	  }
+// 	  if(!isSpecial && q[i][0] >= 13){
+// 		continue;
+// 	  }
+
+           start = q[i][2];
           end = q[i][3];
-		  if(end > totTime)
-			totTime = end;
-          if (first)
+	if(end > totTime)
+ 		totTime = end;
+// 	if (first)
+//          if (first || (q[i][7] && first_special))
+          if (first || first_special)
             actual = end - now;
           else
             actual = end - lastEnd;
@@ -6619,25 +6696,40 @@ Tabs.Train = {
 		  
           m += '<TR align=right><TD width="5px"><A><DIV onclick="cancelTrain('+ q[i][0]+','+q[i][1]+','+q[i][2]+','+q[i][3]+','+q[i][5]+','+q[i][6]+','+i +')">X</div></a></td>';
           m += '<TD>'+ q[i][1] +' </td><TD align=left> '+ uW.unitcost['unt'+q[i][0]][0];
-          if (first)
+//          if (first)
+//          if (first || (q[i][7] && first_special))
+          if (first || first_special)
             m += '</td><TD> &nbsp; '+  timestr(end-start, true) +'</td><TD> (<SPAN id=ptttfq>'+ timestr(actual, true) +'</span>)';
           else
             m += '</td><TD> &nbsp; '+  timestr(actual, true) +'</td></tr>'; 
           lastEnd = end;
-          first = false;
-		  t.stats.queued++;
+	  if (first && !q[i][7])
+            first = false;
+//	  if(q[i][7])
+//	    first_special = false;
+//	  t.stats.queued++;
+	  if(q[i][7]) {
+	    first_special = false;
+	    t.stats.spqueued++;
+	  } else {
+	    t.stats.queued++;
+	  }
         }
       }
       m += '</table>';
       document.getElementById ('divSTleft').innerHTML = m;
 	  t.totTime = totTime;
     }
-    m = t.stats.queued +' ' + uW.g_js_strings.commonstr.oftx +' ';
-    if (t.stats.queued >= 0)
-	  m += t.stats.barracks;
-	
-    if ((t.totTime-now) > 0)
-      m += ' - '+ uW.g_js_strings.commonstr.time + ': '+ uW.timestr(t.totTime-now);
+//    m = t.stats.queued +' ' + uW.g_js_strings.commonstr.oftx +' ';
+//    if (t.stats.queued >= 0)
+    t.stats.qtotal = t.stats.queued +t.stats.spqueued;
+    m = t.stats.qtotal +' ' + uW.g_js_strings.commonstr.oftx +' ';
+    if (t.stats.qtotal >= 0)
+	m += t.stats.barracks;
+//    if (totTime > 0)
+//      m += ' - '+ uW.g_js_strings.commonstr.time + ': '+ uW.timestr(totTime);
+      if ((t.totTime-now) > 0)
+ 	m += ' - '+ uW.g_js_strings.commonstr.time + ': '+ uW.timestr(t.totTime-now);
     document.getElementById ('statTTtot').innerHTML = m;
     
 // defense queue ....
@@ -6719,6 +6811,8 @@ Tabs.Train = {
         method: "post",
         parameters: params,
         onSuccess: function (message) {
+ 	    if (rslt.updateSeed)
+	 	unsafeWindow.update_seed(rslt.updateSeed);
         var rslt=eval("("+message.responseText+")");
         if (rslt.ok) {
 					var k=0;
@@ -6760,8 +6854,10 @@ Tabs.Train = {
        method: "post",
        parameters: params,
        onSuccess: function (message) {
-       var rslt=eval("("+message.responseText+")");
-       if (rslt.ok) {
+	  if (rslt.updateSeed)
+ 		unsafeWindow.update_seed(rslt.updateSeed);
+          var rslt=eval("("+message.responseText+")");
+          if (rslt.ok) {
  			var k=0;
  			for(var j=0;j<Seed.queue_fort["city"+cityId].length;j++){
  				if(j>queueId){
