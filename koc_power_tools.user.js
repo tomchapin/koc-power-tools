@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130613a
+// @version        20130615a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130613a';
+var Version = '20130615a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -10623,6 +10623,7 @@ Tabs.Marches = {
   tabLabel : uW.g_js_strings.commonstr.marching,
   cont:null,
   displayTimer:null,
+  displayPopupTimer:null,
   curTabBut : null,
   curTabName : null,
   widescreen:true,
@@ -10798,8 +10799,8 @@ Tabs.Marches = {
 		t.marchDivP.getMainDiv().innerHTML = z;
 		t.marchDivP.getTopDiv().innerHTML = '<DIV align=center><B>INCOMING!</B></DIV>';
 		t.marchDivP.show(true);
-//  		document.getElementById('ptShowIncoming_X').addEventListener ('click', function(){t.MarchDivP=null; return;}, false);
-		setTimeout (function(){t.showIncoming('popup');}, 1000);
+		t.displayPopupTimer = setTimeout (function(){t.showIncoming('popup');}, 1000);
+		t.marchDivP.onClose = function(){clearTimeout (t.displayPopupTimer);}
 	} else {
 		t.marchDiv.innerHTML = z;
 		t.displayTimer = setTimeout (function(){t.showIncoming('');}, 500);  
