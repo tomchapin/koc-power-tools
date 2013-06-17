@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130615a
+// @version        20130617a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130615a';
+var Version = '20130617a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -148,6 +148,7 @@ var Options = {
   AttackKnight : 0,
   enhancedinbox : true,
   EnhCBtns	:	false,
+  DbClkDefBtns 	: true,
   miniRefresh   : false,
   miniRefreshIntvl: 3,
   ChatIcons : true,
@@ -5506,6 +5507,7 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=togAtkDelete type=checkbox /></td><TD>Enable delete button when displaying battle report</td></tr>';
 	  m+='<TR><TD><INPUT id=togRptGift type=checkbox /></td><TD>Enable delete gifts report button in inbox</td></tr>';
 	  m+='<TR><TD><INPUT id=togCV type=checkbox /></td><TD>Enable enhanced city buttons currently alpha WIP</td></tr>';
+	  m+='<TR><TD></td><TD><INPUT id=togDbClkDef type=checkbox /> Also enable hide/defend by double clicking city icon</td></tr>';
 	  m+='<TR><TD colspan=2><BR><BR><B>KofC Bug Fixes:</b></td></tr>';
 	  m+='<TR><TD><INPUT id=togTowerFix type=checkbox /></td><TD>Fix tower report to show exact target (city, wild or invalid)</td></tr>';
 	  m+='<TR><TD><INPUT id=togKnightSelect type=checkbox /></td><TD>Do not automatically select a knight when changing march type to scout, transport or reassign</td></tr>';
@@ -5540,6 +5542,7 @@ Tabs.Options = {
       t.togOpt ('togAttackPicker', 'attackCityPicker', AttackDialog.setEnable, AttackDialog.isCityPickerAvailable);
       t.togOpt ('togRptGift', 'enhancedinbox', DispReport.setEnable, DispReport.isDispReportAvailable);
       t.togOpt ('togCV', 'EnhCBtns');
+      t.togOpt ('togDbClkDef', 'DbClkDefBtns');
       t.togOpt ('togCoordBox', 'mapCoordsTop', CoordBox.setEnable, CoordBox.isAvailable);
       t.togOpt ('togMapInfo', 'mapInfo', mapinfoFix.setEnable, mapinfoFix.isAvailable);
       t.togOpt ('togMapInfo2', 'mapInfo2', mapinfoFix.setEnable2, mapinfoFix.isAvailable2);
@@ -14335,6 +14338,7 @@ var cdtd = {
 				unsafeWindow.update_citylist2(e);
 				unsafeWindow.cdtdhook();
 			};
+			t.replace();
 			t.drawdefendstatus();
 		};
 	},
@@ -14360,36 +14364,66 @@ var cdtd = {
 			} else {
 				city.style.color='red';
 			}
-			city.ondblclick=function () {
+			if(Options.DbClkDefBtns) {
+			   city.ondblclick=function () {
 				logit('id is '+this.id);
 				logit('target is '+this.name);
 				t.setdefendstatus(this.name);
 				//setTimeout(t.drawdefendstatus,1000);
-			};
+			   };
+			}
 		}
 	},
   
-  setdefendstatus : function (city) {
-	var t = cdtd;
-    var state = 1;
-    if (uW.seed.citystats["city" + city].gate != 0)
-      state = 0;
-	var params = uW.Object.clone(uW.g_ajaxparams);
-	params.cid = city;
-    params.state = state;
-	new AjaxRequest(uW.g_ajaxpath + "ajax/gate.php" + uW.g_ajaxsuffix, {
-		method: "post",
-		parameters: params,
-		onSuccess: function (message) {
-			uW.seed.citystats["city" + city].gate = state;
-			t.drawdefendstatus();
-		},
-		onFailure: function () {
-			t.drawdefendstatus();
-		},
-	});  
-  },
-  
+  	setdefendstatus : function (city) {
+		var t = cdtd;
+    		var state = 1;
+    		if (uW.seed.citystats["city" + city].gate != 0)
+      		state = 0;
+		var params = uW.Object.clone(uW.g_ajaxparams);
+		params.cid = city;
+    		params.state = state;
+		new AjaxRequest(uW.g_ajaxpath + "ajax/gate.php" + uW.g_ajaxsuffix, {
+			method: "post",
+			parameters: params,
+			onSuccess: function (message) {
+				uW.seed.citystats["city" + city].gate = state;
+				t.drawdefendstatus();
+			},
+			onFailure: function () {
+				t.drawdefendstatus();
+			},
+		});  
+  	},
+
+// Nico's code with revised colors
+	insert : function (){	
+        	var t =cdtd;
+		for (i=0;i < unsafeWindow.seed.cities.length;i++) {
+			color = "black";
+			cityID = unsafeWindow.seed.cities[i][0];
+			if (unsafeWindow.seed.cityData.city[cityID].isPrestigeCity) {
+				if (unsafeWindow.seed.cityData.city[cityID].prestigeInfo.prestigeType) {
+					switch (parseInt(unsafeWindow.seed.cityData.city[cityID].prestigeInfo.prestigeType)){
+	    					case 1: color = "#228b22";break;
+	    					case 2: color = "#A944DB";break;
+	    					case 3: color = "#E36600";break;
+	    				}
+	    			}
+			}
+			document.getElementById('mod_citylist').children[i].innerHTML = "<SPAN><FONT fontFamily='georgia,​arial,​sans-serif' font-weight=700 font-size=10px color="+color+">"+ unsafeWindow.roman[i] +"</font></span>";
+		}
+  	},
+
+	replace : function (){
+        	var t =cdtd;
+		var oldFunction = unsafeWindow.update_citylist;
+		unsafeWindow.update_citylist = function() {
+			t.insert();
+			return oldFunction();
+		};
+  	},
+
 }
 
 function CheckCityMarches(cityID){
