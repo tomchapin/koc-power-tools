@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130617a
+// @version        20130619a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130617a';
+var Version = '20130619a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -149,6 +149,7 @@ var Options = {
   enhancedinbox : true,
   EnhCBtns	:	false,
   DbClkDefBtns 	: true,
+  ColrCityBtns	: true,
   miniRefresh   : false,
   miniRefreshIntvl: 3,
   ChatIcons : true,
@@ -5507,7 +5508,7 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=togAtkDelete type=checkbox /></td><TD>Enable delete button when displaying battle report</td></tr>';
 	  m+='<TR><TD><INPUT id=togRptGift type=checkbox /></td><TD>Enable delete gifts report button in inbox</td></tr>';
 	  m+='<TR><TD><INPUT id=togCV type=checkbox /></td><TD>Enable enhanced city buttons currently alpha WIP</td></tr>';
-	  m+='<TR><TD></td><TD><INPUT id=togDbClkDef type=checkbox /> Also enable hide/defend by double clicking city icon</td></tr>';
+	  m+='<TR><TD></td><TD><INPUT id=togDbClkDef type=checkbox /> Enable hide/defend by double clicking city icon <INPUT id=togColrCty type=checkbox /> Enable color icon for city type (refresh required)</td></tr>';
 	  m+='<TR><TD colspan=2><BR><BR><B>KofC Bug Fixes:</b></td></tr>';
 	  m+='<TR><TD><INPUT id=togTowerFix type=checkbox /></td><TD>Fix tower report to show exact target (city, wild or invalid)</td></tr>';
 	  m+='<TR><TD><INPUT id=togKnightSelect type=checkbox /></td><TD>Do not automatically select a knight when changing march type to scout, transport or reassign</td></tr>';
@@ -5543,6 +5544,7 @@ Tabs.Options = {
       t.togOpt ('togRptGift', 'enhancedinbox', DispReport.setEnable, DispReport.isDispReportAvailable);
       t.togOpt ('togCV', 'EnhCBtns');
       t.togOpt ('togDbClkDef', 'DbClkDefBtns');
+      t.togOpt ('togColrCty', 'ColrCityBtns');
       t.togOpt ('togCoordBox', 'mapCoordsTop', CoordBox.setEnable, CoordBox.isAvailable);
       t.togOpt ('togMapInfo', 'mapInfo', mapinfoFix.setEnable, mapinfoFix.isAvailable);
       t.togOpt ('togMapInfo2', 'mapInfo2', mapinfoFix.setEnable2, mapinfoFix.isAvailable2);
@@ -14338,7 +14340,7 @@ var cdtd = {
 				unsafeWindow.update_citylist2(e);
 				unsafeWindow.cdtdhook();
 			};
-			t.replace();
+			if(Options.ColrCityBtns) t.replace();
 			t.drawdefendstatus();
 		};
 	},
