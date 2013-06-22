@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130621a
+// @version        20130622a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130621a';
+var Version = '20130622a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -2218,42 +2218,45 @@ show : function () {
 	    tournyhtml.push("</tr>")
 	   } // fin du for
 	
-	      if(rslt.type!=24){
+	   if(rslt.type!=24){
 
-	    for(var i= Options.TournoiLigne;i<rslt.data.length;i++){
+	       for(var i= Options.TournoiLigne;i<rslt.data.length;i++){
+	    	    if (rslt.data[i]==null) break;
 	   	    var row=rslt.data[i];
 	   	 
+	    	    var couleur="";
 	   	    if (Seed.player.prefix + ' '+ Seed.player.name == row.name ) {
-	   	      var rewardString=row.itemCount+" ";
-	   	     	    if(row.itemType==0){
-	   	     	     rewardString+=unsafeWindow.g_js_strings.commonstr.gems;
-	   	     	    }else{
+	      		couleur=" style='background-color:#FF0000' ";
+	    	    }
+	   	    var rewardString=row.itemCount+" ";
+	   	    if(row.itemType==0){
+	   	   	     rewardString+=unsafeWindow.g_js_strings.commonstr.gems;
+	   	    }else{
 	   	     	     rewardString+=unsafeWindow.itemlist["i"+row.itemType].name;
-	   	     	    }
-	   	     	    tournyhtml.push("<tr class='stripe' >")
-	   	     	    tournyhtml.push("<td class='rankcol' style='background-color:#FF0000'>");
-	   	     	    tournyhtml.push("<div><b>"+row.ranking+"</b></div>");
-	   	     	    tournyhtml.push("</td>");
-	   	     	    tournyhtml.push("<td style='background-color:#FF0000'>");
-	   	     	    tournyhtml.push("<div>"+row.name+"</div>");
-	   	     	    tournyhtml.push("</td>");
-	   	     	    tournyhtml.push("<td style='background-color:#FF0000'>");
-	   	     	    tournyhtml.push("<div>"+(row.alliance||"----")+"</div>");
-	   	     	    tournyhtml.push("</td>");
-	   	     	    tournyhtml.push("<td style='background-color:#FF0000'>");
-	   	     	    tournyhtml.push("<div>"+addCommas(row.contestValue)+"</div>");
-	   	     	    tournyhtml.push("</td>");
-	   	     	    tournyhtml.push("<td style='background-color:#FF0000'>");
-	   	     	    tournyhtml	.push("<div>"+rewardString+"</div>");
-	   	     	    tournyhtml.push("</td>");
-	   	            tournyhtml.push("</tr>")
-	   	   }    
-	   }
+	   	    }
+	   	    tournyhtml.push("<tr class='stripe' >")
+	   	    tournyhtml.push("<td class='rankcol' "+couleur+">");
+	   	    tournyhtml.push("<div><b>"+row.ranking+"</b></div>");
+	   	    tournyhtml.push("</td>");
+	   	    tournyhtml.push("<td "+couleur+">");
+	   	    tournyhtml.push("<div>"+row.name+"</div>");
+	   	    tournyhtml.push("</td>");
+	   	    tournyhtml.push("<td "+couleur+">");
+	   	    tournyhtml.push("<div>"+(row.alliance||"----")+"</div>");
+	   	    tournyhtml.push("</td>");
+	   	    tournyhtml.push("<td "+couleur+">");
+	   	    tournyhtml.push("<div>"+addCommas(row.contestValue)+"</div>");
+	   	    tournyhtml.push("</td>");
+	   	    tournyhtml.push("<td "+couleur+">");
+	   	    tournyhtml.push("<div>"+rewardString+"</div>");
+	   	    tournyhtml.push("</td>");
+	   	    tournyhtml.push("</tr>")
+	       }
 	   }
 	   tournyhtml.push("</tbody>");
 	   tournyhtml.push("</table>");
-      tournyhtml.push("</div>");
-      t.cont.innerHTML += tournyhtml.join("");      
+      	   tournyhtml.push("</div>");
+      	   t.cont.innerHTML += tournyhtml.join("");      
            document.getElementById('BOTournoiPM').addEventListener ('click', function() { 
             var lg=rslt.data.length;
             if (rslt.type!=24) lg=25;
