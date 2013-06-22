@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130619a
+// @version        20130621a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130619a';
+var Version = '20130621a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -6816,25 +6816,24 @@ Tabs.Train = {
         method: "post",
         parameters: params,
         onSuccess: function (message) {
+            var rslt=eval("("+message.responseText+")");
  	    if (rslt.updateSeed)
 	 	unsafeWindow.update_seed(rslt.updateSeed);
-        var rslt=eval("("+message.responseText+")");
-        if (rslt.ok) {
-					var k=0;
-					for(var j=0;j<Seed.queue_unt["city"+cityId].length;j++){
-						if(j>trainingId){
-							Seed.queue_unt["city"+cityId][j][2]=parseInt(rslt.dateTraining[k]["start"]);
-							Seed.queue_unt["city"+cityId][j][3]=parseInt(rslt.dateTraining[k]["end"]);
-							k++;
-						}
-					}
-			
+            if (rslt.ok) {
+			var k=0;
+			for(var j=0;j<Seed.queue_unt["city"+cityId].length;j++){
+				if(j>trainingId){
+					Seed.queue_unt["city"+cityId][j][2]=parseInt(rslt.dateTraining[k]["start"]);
+					Seed.queue_unt["city"+cityId][j][3]=parseInt(rslt.dateTraining[k]["end"]);
+					k++;
+				}
+			}
 			Seed.queue_unt["city"+cityId].splice(trainingId,1);
 			for(var i=1;i<5;i++){
 				var totalReturn=parseInt(uW.unitcost["unt"+typetrn][i])*parseInt(numtrptrn)*3600/2;
 				Seed.resources["city"+cityId]["rec"+i][0]=parseInt(Seed.resources["city"+cityId]["rec"+i][0])+totalReturn;
 			}
-        } 
+            } 
         },
         onFailure: function () {
         },
