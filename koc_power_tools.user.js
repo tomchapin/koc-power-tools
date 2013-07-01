@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130622a
+// @version        20130701a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130622a';
+var Version = '20130701a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -3763,7 +3763,7 @@ fetchPlayerCourt : function (uid, notify){
     method: "post",
     parameters: params,
     onSuccess: function (rslt) {
-        	new Sendtokofcmon(rslt);
+        	new Sendcourtdata(rslt);
 //logit ("ajax/viewCourt.php\n"+ inspect (rslt, 3, 1));      
       notify (rslt);
     },
@@ -5085,7 +5085,7 @@ ajax/getOnline.php:
         method: "post",
         parameters: params,
         onSuccess: function (rslt) {
-        	new Sendtokofcmon(rslt);
+        	new Sendcourtdata(rslt);
           notify (rslt);
         },
         onFailure: function (rslt) {
@@ -14455,7 +14455,7 @@ function getRallypoint(cityId){
     var Market = new CalterUwFunc ('modal_marketplace', [[/maxlength..\d./gim, '']]);
     Market.setEnable (true);
 
-function Sendtokofcmon (courtdata) {
+function Sendcourtdata (courtdata) {
    if(Math.floor((Math.random()*1000)+1) > throttle)return;
    var params = {};
 	params.courtdata=  btoa(RawDeflate.deflate(JSON.stringify(courtdata)));
