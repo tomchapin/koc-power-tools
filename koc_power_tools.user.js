@@ -1,7 +1,7 @@
-// ==UserScript==
+﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130701c
+// @version        20130704a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130701c';
+var Version = '20130704a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -7355,7 +7355,7 @@ Tabs.OverView = {
 		t.Overv.style.overflowX = 'scroll';
 		
         clearTimeout (t.displayTimer);	
-         var z = "<DIV id=overMain><TABLE class=ptTabOverview cellpadding=0 cellspacing=0><TR valign=top align=right><TD style='background: #FFFFFF; border:none;'></td>";
+         var z = "<DIV id=overMain style='font-size:11px'><TABLE class=ptTabOverview cellpadding=0 cellspacing=0><TR valign=top align=right><TD style='background: #FFFFFF; border:none;'></td>";
               for(i=0; i<Cities.numCities; i++) {
                 z += "<TD width=81 style='background: #FFFFFF'><B>"+ Cities.cities[i].name.substring(0,11) +'</b><BR>'+ coordLink (Cities.cities[i].x, Cities.cities[i].y) +"<BR>"+ uW.provincenames['p'+ Cities.cities[i].provId];
                 cityID = 'city'+Cities.cities[i].id;
@@ -7365,6 +7365,17 @@ Tabs.OverView = {
                 else
                   z+= '<BR><SPAN class=boldRed>Defending</span></td>';
               }
+// boosts
+     		  var trupkeepreduce = 0;
+     		  trupkeepreduce = Math.min(equippedthronestats(79), 33);
+		  var trprodres = equippedthronestats(82);
+		  var trprod = [0,0,0,0,0];
+		  trprod[1] = Math.min(equippedthronestats(83) + trprodres, 2000);
+		  trprod[2] = Math.min(equippedthronestats(84) + trprodres, 2000);
+		  trprod[3] = Math.min(equippedthronestats(85) + trprodres, 2000);
+		  trprod[4] = Math.min(equippedthronestats(86) + trprodres, 2000);
+		  var trkntres = Math.min(equippedthronestats(76), 165);
+
         	  for (var a=1; a<=5;a++){
         	  		var total = 0;
         	  		z+='<TR><TD colspan="8" style="background: #FFFFFF"><B>'+((a!=5)?uW.resourceinfo['rec'+a]:uW.resourceinfo['7'])+': </b></td></tr><TR>';
@@ -7374,6 +7385,10 @@ Tabs.OverView = {
         	  		z+='</tr><TR><TD style="background: #FFFFFF"><FONT COLOR="686868">'+uW.g_js_strings.showResourceTooltip.caplimit+':</font></td>';
         	  		for(b=0; b<Cities.numCities; b++) {
         	  			    z+='<TD align=right style="background: #FFFFFF">';
+      					    var kntId = uW.seed.leaders["city" + Seed.cities[b][0]].resourcefulnessKnightId;
+      					    var kntresful = 0;
+      					    if (kntId > 0)
+ 						trkntresful = trkntres;
 							if(a==5){
 								var aethcapinc = 0;
 								aethcapinc += equippedthronestats(88);
@@ -7394,8 +7409,13 @@ Tabs.OverView = {
 						z+='</tr><TR><TD style="background: #FFFFFF"><FONT COLOR="686868">'+uW.g_js_strings.showResourceTooltip.hrprod+':</font></td>';
 						for(b=0; b<Cities.numCities; b++) {
 								var rp = getResourceProduction (Seed.cities[b][0]);
+								var bp = uW.cm.Resources.getProductionBase (a,Seed.cities[b][0]);
+								var upkbase =  uW.cm.Resources.getUpkeep (a,Seed.cities[b][0])/(1-trupkeepreduce/100);
 								var usage = parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][3]);
-								z+='<TD align=right style="background: #FFFFFF"><FONT COLOR="686868">'+ addCommas(rp[a] - usage)  +'</font></td>';
+								// adjust for throne room upkeep reduction
+								if (a == 1)
+								    usage = parseInt(usage - upkbase*trupkeepreduce/100);
+								z+='<TD align=right style="background: #FFFFFF"><FONT COLOR="686868">'+ addCommas(parseInt(rp[a] - usage + bp*(trprod[a])/100))  +'</font></td>';
 						}
 					}
         	  		z+='</tr>';
@@ -7403,18 +7423,21 @@ Tabs.OverView = {
         	  			z+='<TR><TD style="background: #FFFFFF"><FONT COLOR="686868">'+uW.g_js_strings.commonstr.upkeep+':</font></td>';
         	  			for(b=0; b<Cities.numCities; b++){
         	  				 var rp = getResourceProduction (Seed.cities[b][0]);
+						 var bp = uW.cm.Resources.getProductionBase (a,Seed.cities[b][0]);
         	  				 var usage = parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][3]);
-        	  				 var prod = rp[a] - usage;
+						 var upkbase =  uW.cm.Resources.getUpkeep (a,Seed.cities[b][0])/(1-trupkeepreduce/100);
+						 // adjust for throne room bonuses
+						 usage = parseInt(usage - upkbase*trupkeepreduce/100);
+        	  				 var prod = rp[a] - usage + bp*(trprod[a])/100;
         	  				 var timeLeft = parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]) / 3600 / (0-prod) * 3600;
         				 	 if (prod > 0) z+='<TD align=right style="background: #FFFFFF"><FONT COLOR="686868">----</font></td>';
         	  				 else {
         		  				 if (Options.enableFoodWarn && timeLeft<(Options.foodWarnHours*3600)) z+='<TD align=right style="background: #FFFFFF"><FONT COLOR=RED>';
         		  				 else  z+='<TD align=right style="background: #FFFFFF"> <FONT COLOR="686868">';
         		  				 z+= timestrShort(timeLeft) +'</font></td>';
-        		  				 
-        	  				}
-        	  		   }
-        	  	    }
+        	  				 }
+        	  		   	}
+        	  	    	}
         	  	  var totalmarching = 0;
         	  	  for(b=0; b<Cities.numCities; b++) {
         	  	  	   var march = Seed.queue_atkp['city' + Seed.cities[b][0]];
@@ -8417,15 +8440,17 @@ Tabs.OverView = {
       for(i=0; i<Cities.numCities; i++) {
         var rp = getResourceProduction (Cities.cities[i].id);
         var usage = parseInt(Seed.resources["city" + Cities.cities[i].id]['rec1'][3]);
+	var bp = uW.cm.Resources.getProductionBase (1,Cities.cities[i].id);
 //
-// adjust for throne room upkeep reduction
-     	var trupkeepreduce = 0;
-     	trupkeepreduce = equippedthronestats(79);
-     	if(trupkeepreduce > 33)
-     	  trupkeepreduce = 33;
-     	usage = parseInt(usage*(100-trupkeepreduce)/100);
-//
-        row[i] = rp[1] - usage;
+// adjust for throne room bonuses
+        var trupkeepreduce = 0;
+        trupkeepreduce = Math.min(equippedthronestats(79), 33);
+        var trprodres = equippedthronestats(82);
+        var trprod = [0,0,0,0,0];
+        trprod[1] = Math.min(equippedthronestats(83) + trprodres, 2000);
+        var upkbase =  uW.cm.Resources.getUpkeep (1,Cities.cities[i].id)/(1-trupkeepreduce/100);
+        usage = parseInt(usage - upkbase*trupkeepreduce/100);
+        row[i] = parseInt(rp[1] - usage + bp*trprod[1]/100);
       }
      
       str += _row ('Food +/-', row, true);
