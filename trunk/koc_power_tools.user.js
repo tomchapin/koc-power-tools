@@ -1,7 +1,7 @@
-// ==UserScript==
+﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130710a
+// @version        20130710b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130710a';
+var Version = '20130710b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -344,7 +344,7 @@ if (TEST_WIDE){
   AllianceReportsCheck.init();
   
   uW.cm.unitFrontendType["9"] = "specialist";  //change type of wagons from siege to avoid siege load bug
-  uW.cm.unitFrontendType["15"] = "infantry";   //change type of wagons from siege to avoid siege load bug
+  uW.cm.unitFrontendType["15"] = "specialist";   //change type of wagons from siege to avoid siege load bug
   
   if (Options.ptWinIsOpen){
     mainPop.show (true);
@@ -368,6 +368,7 @@ if (TEST_WIDE){
 
 function multiBrowserOverride()
 {
+   return;//disabled until fix?
    // get a pointer to the function
    var old_usa = unsafeWindow.update_seed_ajax;
    
@@ -5523,7 +5524,7 @@ Tabs.Options = {
  	  m+='<TR><TD><INPUT id=togLoadCapFix type=checkbox /></td><TD>Limit load capacity to not exceed throne room load cap</td></tr>';
  	  m+='<TR><TD><INPUT id=togApothTimeFix type=checkbox /></td><TD>Fix revival time calculator (not working for max button clicked)</td></tr>';
  	  m+='<TR><TD><INPUT id=togTRAetherCostFix type=checkbox /></td><TD>Fix display of aetherstones for throne room upgrade/enhance</td></tr>';
-	  m+='<TR><TD><INPUT id=togAllowMulti type=checkbox /></td><TD>Disable Multi-Browser check (experimental)</td></tr>';
+	  m+='<TR><TD><INPUT id=togAllowMulti type=checkbox  disabled=true /></td><TD>Disable Multi-Browser check (experimental)</td></tr>';
 	  m+='<TR><TD colspan=2><B>Auto Training:</b></td></tr>';
 	  m+='<TR><TD></TD><TD><INPUT id=optAutoTrainMins type=text size=1 value="'+ parseInt(AutoTrainOptions.intervalSecs/60) +'"> minutes between auto-training.</td></tr>';
 	  m+='</table><BR><BR><HR>Note that if a checkbox is greyed out there has probably been a change of KofC\'s code, rendering the option inoperable.';
