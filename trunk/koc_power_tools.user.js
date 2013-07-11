@@ -1,7 +1,7 @@
-﻿// ==UserScript==
+// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130708a
+// @version        20130710a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130708a';
+var Version = '20130710a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -5497,7 +5497,7 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=ptEnableTowerAlert type=checkbox /></td><TD>Enable sound alert on tower alert in chat</td></tr>';
       m+='<TR><TD><INPUT id=ptupdate type=checkbox '+ (GlobalOptions.ptupdate?'CHECKED ':'') +'/></td><TD>Check updates on '+ htmlSelector({0:'Userscripts', 1:'Google Code'},GlobalOptions.ptupdatebeta,'id=ptupdatebeta') +' (all domains) &nbsp; &nbsp; <INPUT id=ptupdatenow type=submit value="Update Now" /></td></tr>';
 	  
-      m+='<TR><TD><INPUT id=ptEnableMiniRefresh type=checkbox ' + (Options.miniRefresh?'CHECKED ':'') + '/></td><TD> Refresh data/marches every ';
+      m+='<TR><TD><INPUT id=ptEnableMiniRefresh type=checkbox disabled=true ' + (Options.miniRefresh?'CHECKED ':'') + '/></td><TD> Refresh data/marches every ';
       m+='<INPUT id=optMiniRefreshIntvl type=text size=3 value="'+ Options.miniRefreshIntvl +'"> minutes</td></tr>';
       
       m+='<TR><TD colspan=2><B>KofC Features:</b></td></tr>';
@@ -5739,6 +5739,7 @@ Tabs.Options = {
   // This function grabs a fresh copy of the main_src and replaces the seed variable with the returned data.
   // This refreshes the data without a full web page refresh.
   updateAll : function () {
+  	return;//disabled until fix?
 	  //potential fix for missing troop recalls:  true flag forces troop march update
 	   //unsafeWindow.update_seed_ajax(true);
       // update the timestamps
