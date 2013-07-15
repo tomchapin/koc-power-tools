@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130712a
+// @version        20130715a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130712a';
+var Version = '20130715a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -156,6 +156,7 @@ var Options = {
   mapInfo: false,
   mapInfo2: false,
   mapInfo3: false,
+  dispStatus: true,
   fixApothTime: true,
   fixTRAetherCost: true,
   multiBrowserAllow : false
@@ -338,6 +339,7 @@ if (TEST_WIDE){
   TRAetherCostFix.init();
   towho.init();
   cdtd.init();
+  playerNotes.init();
   tabManager.init (mainPop.getMainDiv());
   
   AudioManager.init();
@@ -402,6 +404,179 @@ var knightRoles = [
   ['Alchemystic', 'intelligence', 'Int'],
   ['Steward', 'resourcefulness', 'Res'],
 ];
+
+var rats = ["2466324"];//people who openly tried to destroy script development including reporting scripters to kabam.  now the joke is on them.
+var scripters = ["7552815","10681588","1747877","2865067","10153485","15182839","1550996","1617431819","9688786","8184813","9863346","11107993","9751486","5614388","424090","14845619","8480468","7042380","731589"];
+
+var playerNotes = {
+    init: function () {
+	
+	// override the map tooltips
+	var oldSMTT  = unsafeWindow.showMapTileTooltip;
+	
+	var newSMTT = function (j, h, n, f, l, k) {
+	    // add our stuff to the tooltip
+	    var j2 = playerNotes.updateTooltip(unescape(j));
+	    if (j2) {
+		j = escape(j2);
+	    }
+	    oldSMTT(j, h, n, f, l, k);
+	};
+	unsafeWindow.showMapTileTooltip= newSMTT;
+	
+	// create a regular expression object to use
+	playerNotes.re = new RegExp(unsafeWindow.g_js_strings.MapObject.ownedby + ": (\\w*)");
+	
+	// add a new option to the context menus
+	var cityType = unsafeWindow.cm.CITY_STATUS.ANOTHER_PLAYER_CITY_AND_NOT_IN_YOUR_ALLIANCE;
+	uW.cm.ContextMenuMapController.prototype.MapContextMenus.City[cityType].push("ttMod");
+	cityType = unsafeWindow.cm.CITY_STATUS.ANOTHER_PLAYER_CITY_AND_IN_YOUR_ALLIANCE;
+	uW.cm.ContextMenuMapController.prototype.MapContextMenus.City[cityType].push("ttMod");
+	
+	var wildContext;
+	
+	wildContext = uW.cm.ContextMenuMapController.prototype.MapContextMenus.EnemyWilderness;
+	for (wild in wildContext ) {
+	    wildContext[wild].push("ttMod");
+	}
+	
+	wildContext = uW.cm.ContextMenuMapController.prototype.MapContextMenus.Wilderness;
+	for (wild in wildContext ) {
+	    wildContext[wild].push("ttMod");
+	}
+	
+	wildContext = uW.cm.ContextMenuMapController.prototype.MapContextMenus.FriendlyWilderness;
+	for (wild in wildContext ) {
+	    wildContext[wild].push("ttMod");
+	}
+	
+	wildContext = uW.cm.ContextMenuMapController.prototype.MapContextMenus.AllianceWilderness;
+	for (wild in wildContext ) {
+	    wildContext[wild].push("ttMod");
+	}
+	
+	// add actions to the menu item
+	var mod = new CalterUwFunc('cm.ContextMenuMapController.prototype.calcButtonInfo',
+		[['default:', 'case "ttMod":' +
+		  '  b.text = "Player Notes"; b.color = "green"; ' +
+		  '  b.action = function () { ' +
+		  '    edit_notes(e.user); ' +
+		  '  }; ' +
+		  '  if (e.user.id) d.push(b); break; ' +
+		  ' default: ']]);
+	mod.setEnable(true);
+
+	
+	// callback function for the context menu option
+	unsafeWindow.edit_notes = playerNotes.createPopup;
+
+	// load saved values
+	playerNotes.load();
+	
+    },
+
+    save: function () 
+    {
+	var serverID = GetServerId();
+	var s = JSON2.stringify(playerNotes.noteValues);
+	if (s) {
+	  // use setTimeout to fix the context
+	  setTimeout(function() {
+	      GM_setValue('PlayerNotes_'+serverID, s);
+	    }, 0);
+	}
+    },
+
+    load : function ()
+    {
+	var serverID = GetServerId();
+	try {
+	    var s =JSON.parse(GM_getValue('PlayerNotes_'+serverID));
+	    if (s) playerNotes.noteValues = s;
+	} catch (e) {
+	    logit(e);
+	}
+    },
+    
+    createPopup : function(user) {
+	
+	// get the current note
+	var notes = "";
+	if (playerNotes.noteValues[user.username]) {
+	    notes = playerNotes.noteValues[user.username];
+	    notes = notes.text.replace(/<br\/>/g, "\n");
+	}
+	
+	// popup
+	unsafeWindow.Modal.multiButton({
+	    buttons: [{
+		txt: "Save",
+		exe: function b() {
+		    playerNotes.saveNote(user);
+		    unsafeWindow.Modal.hideModal();
+		}
+
+	    }, {
+		txt: unsafeWindow.g_js_strings.commonstr.cancel,
+		exe: function () {
+		    unsafeWindow.Modal.hideModal()
+		}
+
+	    }],
+	    body: "<strong> Enter notes for player: </strong><span id='notes_player'>" + user.username + "</span><br/><br/><textarea id='notes_text' rows='4' columns='50' style='width:300px;' >"  + notes +"</textarea>",
+	    title: "Player Notes"
+	});
+    },
+    
+
+    // callback for the save button
+    saveNote: function (user) {
+
+	var player = user.username;
+	if (player)
+	{
+	    var noteData = {};
+	    var notes = unsafeWindow.jQuery("#notes_text").val();
+
+	    noteData.text = notes.replace(/\n/g, "<br/>");
+	    noteData.id     = user.id;
+
+	    playerNotes.noteValues[player] = noteData;
+	    playerNotes.save();
+	}
+    },
+    
+    // add the notes to the map tooltip
+    updateTooltip: function ( ttHtml) {
+	var newTT = null;
+	var result = playerNotes.re.exec(ttHtml);
+
+	if (result && result[1]) {
+	    var note;
+	    if (note = playerNotes.noteValues[result[1]] )
+	    {
+		var element_class = "";
+		var id = "" + note.id;
+
+		if (rats.indexOf(id) >= 0 && id != uW.tvuid) {
+		    alert('rat');
+		    element_class = 'ptChatRat';
+		}
+		if (scripters.indexOf(id) >= 0) {
+		    element_class = 'ptChatScripter';
+		}
+		
+	       newTT = ttHtml.replace("<div>Might:", "<div style='position: relative; left: 5%; width: 90%;' class ='" + element_class + "'>" + note.text + "</div><div>Might:" );
+	    }
+	}
+	return newTT;
+    },
+    
+    // object to store the notes
+    noteValues: {},
+	
+};
+
 
 
 var CoordBox = {
@@ -559,57 +734,69 @@ var battleReports = {
 
 var mapinfoFix = {
 	init : function(){
-		var t = mapinfoFix;
-		t.calcButtonInfo =  new CalterUwFunc('cm.ContextMenuMapController.prototype.calcButtonInfo', 
-		      [[/case\s*"reassign":b\.text\s*=\s*g_js_strings\.commonstr\.reassign;b\.color\s*=\s*"blue";b\.action\s*=\s*function\s*\(\)\s*{modal_attack\(2,\s*e\.tile\.x,\s*e\.tile\.y\);*};d\.push\(b\);break;/,
-		        'case "reassign":b.text=g_js_strings.commonstr.reassign;b.color="blue";b.action=function(){modal_attack(5,e.tile.x,e.tile.y);};d.push(b);break;']]);
-		
-	   t.bookMarkMod = new CalterUwFunc('cm.ContextMenuMapController.prototype.calcButtonInfo',
-		      [[/case\s*"bookmark":/, 'case "bookmark": try { if (e.city && cm.tileInfo[e.tile.id] && cm.tileInfo[e.tile.id].cityName ) {e.tile.name = e.user.username + "/" + cm.tileInfo[e.tile.id].cityName;}} catch (err1) {} ']]);
-		
-		t.MapContextMenus = new CalterUwFunc ('cm.ContextMenuMapController.prototype.calcCityType', [['return c', 'c = calcCityTypeFix(c,d);return c']]);
-		t.calcButtonInfo.setEnable(Options.mapInfo);
-		t.MapContextMenus.setEnable(Options.mapInfo2);
-		t.bookMarkMod.setEnable(Options.mapInfo3);
-      
-		uW.cm.ContextMenuMapController.prototype.MapContextMenus.City["2"].splice(4,0, "reassign");
-// add reinforcement of wilds
-		for (jj in uW.cm.ContextMenuMapController.prototype.MapContextMenus.AllianceWilderness) {
-			uW.cm.ContextMenuMapController.prototype.MapContextMenus.AllianceWilderness[jj] = ["profile", "throne", "reinforce", "reinforcements", "message", "bookmark"];
-		}
-		uW.calcCityTypeFix = t.calcCityType_hook;
-		
+	    var t = mapinfoFix;
+	    t.calcButtonInfo =  new CalterUwFunc('cm.ContextMenuMapController.prototype.calcButtonInfo', 
+		    [[/case\s*"reassign":b\.text\s*=\s*g_js_strings\.commonstr\.reassign;b\.color\s*=\s*"blue";b\.action\s*=\s*function\s*\(\)\s*{modal_attack\(2,\s*e\.tile\.x,\s*e\.tile\.y\);*};d\.push\(b\);break;/,
+		      'case "reassign":b.text=g_js_strings.commonstr.reassign;b.color="blue";b.action=function(){modal_attack(5,e.tile.x,e.tile.y);};d.push(b);break;']]);
+
+	    t.bookMarkMod = new CalterUwFunc('cm.ContextMenuMapController.prototype.calcButtonInfo',
+		    [[/case\s*"bookmark":/, 'case "bookmark": try { if (e.city && cm.tileInfo[e.tile.id] && cm.tileInfo[e.tile.id].cityName ) {e.tile.name = e.user.username + "/" + cm.tileInfo[e.tile.id].cityName;}} catch (err1) {} ']]);
+
+	    t.MapContextMenus = new CalterUwFunc ('cm.ContextMenuMapController.prototype.calcCityType', [['return c', 'c = calcCityTypeFix(c,d);return c']]);
+	    t.calcButtonInfo.setEnable(Options.mapInfo);
+	    t.MapContextMenus.setEnable(Options.mapInfo2);
+	    t.bookMarkMod.setEnable(Options.mapInfo3);
+
+	    uW.cm.ContextMenuMapController.prototype.MapContextMenus.City["2"].splice(4,0, "reassign");
+//	    add reinforcement of wilds
+	    for (jj in uW.cm.ContextMenuMapController.prototype.MapContextMenus.AllianceWilderness) {
+		uW.cm.ContextMenuMapController.prototype.MapContextMenus.AllianceWilderness[jj] = ["profile", "throne", "reinforce", "reinforcements", "message", "bookmark"];
+	    }
+	    uW.calcCityTypeFix = t.calcCityType_hook;
+
+	    // add the city status (Normal/Truce) to the tooltips
+	    t.dispStatusMod = new CalterUwFunc('MapObject.prototype.populateSlots',
+		    [[ /var\s*Q\s*=\s*"";/,  ' var Q = "";' +
+		       ' if (G) g += "<div>Status: " + G + "</div>";']]);
+	    t.dispStatusMod.setEnable(Options.dispStatus);
 	},
 	setEnable : function(tf){
-		var t = mapinfoFix;
-		t.calcButtonInfo.setEnable(tf);
+	    var t = mapinfoFix;
+	    t.calcButtonInfo.setEnable(tf);
 	},
 	setEnable2 : function(tf){
-		var t = mapinfoFix;
-		t.MapContextMenus.setEnable(tf);
+	    var t = mapinfoFix;
+	    t.MapContextMenus.setEnable(tf);
 	},
-   setEnable3 : function(tf){
-      var t = mapinfoFix;
-      t.bookMarkMod.setEnable(tf);
-   },
+	setEnable3 : function(tf){
+	    var t = mapinfoFix;
+	    t.bookMarkMod.setEnable(tf);
+	},
+	setEnableDispStatus : function (tf) {
+	    var t = mapinfoFix;
+	    t.dispStatusMod.setEnable(tf);
+	},
 	calcCityType_hook : function (c,d){
-		if(Cities.byID[d.city.id] && c != 1)
-			c = uW.cm.CITY_STATUS.MY_CITY_AND_NOT_CURRENT_CITY;
-		return c;
+	    if(Cities.byID[d.city.id] && c != 1)
+		c = uW.cm.CITY_STATUS.MY_CITY_AND_NOT_CURRENT_CITY;
+	    return c;
 	},
 	isAvailable : function(){
-		var t = mapinfoFix;
-		return t.calcButtonInfo.isAvailable();
+	    var t = mapinfoFix;
+	    return t.calcButtonInfo.isAvailable();
 	},
 	isAvailable2 : function(){
-		var t = mapinfoFix;
-		return t.MapContextMenus.isAvailable();
+	    var t = mapinfoFix;
+	    return t.MapContextMenus.isAvailable();
 	},
 	isAvailable3 : function(){
-	   var t = mapinfoFix;
-	   return t.bookMarkMod.isAvailable();
+	    var t = mapinfoFix;
+	    return t.bookMarkMod.isAvailable();
 	},
-	
+	isAvailableDispStatus : function(){
+	    var t = mapinfoFix;
+	    return t.dispStatusMod.isAvailable();
+	},
 }
 
 var ApothTimeFix = {
@@ -853,8 +1040,6 @@ var ChatStuff = {
 		if (Options.chatbold)
 			element_class += ' ptChatBold ';
 	}
-	var rats = ["2466324"];//people who openly tried to destroy script development including reporting scripters to kabam.  now the joke is on them.
-	var scripters = ["7552815","10681588","1747877","2865067","10153485","15182839","1550996","1617431819","9688786","8184813","9863346","11107993","9751486","5614388","424090","14845619","8480468","7042380","731589"];
 	var suid = /viewProfile\(this,([0-9]+),false/i.exec(m[0]);
 	if(!suid)
 		suid = uW.tvuid;
@@ -5511,6 +5696,7 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=togBatRounds type=checkbox /></td><TD>Display # of rounds in battle reports</td></tr>';
 	  m+='<TR><TD><INPUT id=togAtkDelete type=checkbox /></td><TD>Enable delete button when displaying battle report</td></tr>';
 	  m+='<TR><TD><INPUT id=togRptGift type=checkbox /></td><TD>Enable delete gifts report button in inbox</td></tr>';
+	  m+='<TR><TD><INPUT id=togMapInfo4 type=checkbox /></td><TD>Display truce status in map tooltips</td></tr>';
 	  m+='<TR><TD><INPUT id=togCV type=checkbox /></td><TD>Enable enhanced city buttons currently alpha WIP</td></tr>';
 	  m+='<TR><TD></td><TD><INPUT id=togDbClkDef type=checkbox /> Enable hide/defend by double clicking city icon <INPUT id=togColrCty type=checkbox /> Enable color icon for city type (refresh required)</td></tr>';
 	  m+='<TR><TD colspan=2><BR><BR><B>KofC Bug Fixes:</b></td></tr>';
@@ -5553,6 +5739,7 @@ Tabs.Options = {
       t.togOpt ('togMapInfo', 'mapInfo', mapinfoFix.setEnable, mapinfoFix.isAvailable);
       t.togOpt ('togMapInfo2', 'mapInfo2', mapinfoFix.setEnable2, mapinfoFix.isAvailable2);
       t.togOpt ('togMapInfo3', 'mapInfo3', mapinfoFix.setEnable3, mapinfoFix.isAvailable3);
+      t.togOpt ('togMapInfo4', 'dispStatus', mapinfoFix.setEnableDispStatus, mapinfoFix.isAvailableDispStatus);
       t.togOpt ('togMarchUnits', 'fixMarchUnits', MarchUnitsFix.setEnable, MarchUnitsFix.isAvailable);
       t.togOpt ('togLoadCapFix', 'fixLoadCap', LoadCapFix.setEnable, LoadCapFix.isAvailable);
       t.togOpt ('togApothTimeFix', 'fixApothTime', ApothTimeFix.setEnable, ApothTimeFix.isAvailable);
