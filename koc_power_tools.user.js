@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130715a
+// @version        20130715b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130715a';
+var Version = '20130715b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -8867,7 +8867,7 @@ Tabs.Attaque = {
            </tr><tr align=center valign=top>\
            <td colspan=4 align=left><table border=0 bordercolor=black cellspacing=0 cellpadding=0 width=100% style='text-align:center'><tr><td rowspan=17><div id=RAAstatsource></div></td><td colspan=2><a href='javascript:void(0)' id=BO_RAZ_Units title='Clear' >Units Selected</a></td><td>Attack Time</td><td>Reinforce Time</td></tr>";
             for (r=1; r<nTroopType+1; r++){
-   	     m += '<tr><td align=right><img height=20 title="'+unsafeWindow.unitcost['unt'+r][0]+'" src=http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/units/unit_'+r+'_30.jpg></td><td align=left><input style="border:1px solid black;height:16px;font-size:11px;" id="RAAnbunit'+r+'" type=text size=7 value="0" ></td><td><span id="BOEstimationTT'+r+'">&nbsp;</span></td><td><span id="BOEstimationTZ'+r+'">&nbsp;</span></td></tr>';
+   	     m += '<tr><td align=right><img height=20 title="'+unsafeWindow.unitcost['unt'+r][0] +'" alt="'+unsafeWindow.unitcost['unt'+r][0]+'" src=http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/units/unit_'+r+'_30.jpg></td><td align=left><input style="border:1px solid black;height:16px;font-size:11px;" id="RAAnbunit'+r+'" type=text size=7 value="0" ></td><td><span id="BOEstimationTT'+r+'">&nbsp;</span></td><td><span id="BOEstimationTZ'+r+'">&nbsp;</span></td></tr>';
       	}
       	var itemlist=[55,57,931,932];
 	var BOitems="";
@@ -9466,7 +9466,7 @@ Tabs.Attaque = {
      m="<table cellspacing=0 cellpadding=0 width=80%><tr><td colspan=2>Units Available</td></tr>";
      var cityID = 'city'+ t.sourceCity.id;
      for (r=1; r<nTroopType+1; r++){   
-       m += '<tr><td align=right><img title="'+unsafeWindow.unitcost['unt'+r][0]+'" height=20 src=http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/units/unit_'+r+'_30.jpg></td>\
+       m += '<tr><td align=right><img title="'+unsafeWindow.unitcost['unt'+r][0] +'" alt="'+unsafeWindow.unitcost['unt'+r][0] + '" height=20 src=http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/units/unit_'+r+'_30.jpg></td>\
              <td align=left><input style="border:1px solid black;height:20px;font-size:11px;" id="RAAdestunit'+r+'" type=text size=10 readonly value="'+parseInt(Seed.units[cityID]['unt'+r])+'">&nbsp;\
              <input type=button value="--->" id="RAApdestunit'+r+'"  style="border:1px solid black;height:16px;font-size:11px;"></td></tr>';
      }
