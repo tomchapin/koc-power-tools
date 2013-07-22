@@ -1,7 +1,7 @@
-// ==UserScript==
+﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130715c
+// @version        20130722a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130715c';
+var Version = '20130722a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -361,6 +361,7 @@ if (TEST_WIDE){
   
   AddMainTabLink('TOOLS', eventHideShow, mouseMainTab);
   
+  var ss_onload = unsafeWindow.seed.ss;
   multiBrowserOverride();
 //TestSomething.init ();  
 //setInterval (function(){logit (inspect (getClientCoords (mainPop.getMainDiv()), 3, 1))}, 2000);  
@@ -379,7 +380,8 @@ function multiBrowserOverride()
       if (Options.allowMultiBroswer)
       {
          // remove a variable
-         delete unsafeWindow.seed.ss;
+//         delete unsafeWindow.seed.ss;
+	 unsafeWindow.seed.ss = ss_onload;
       }
       
       // call the original function
@@ -5710,7 +5712,8 @@ Tabs.Options = {
  	  m+='<TR><TD><INPUT id=togLoadCapFix type=checkbox /></td><TD>Limit load capacity to not exceed throne room load cap</td></tr>';
  	  m+='<TR><TD><INPUT id=togApothTimeFix type=checkbox /></td><TD>Fix revival time calculator (not working for max button clicked)</td></tr>';
  	  m+='<TR><TD><INPUT id=togTRAetherCostFix type=checkbox /></td><TD>Fix display of aetherstones for throne room upgrade/enhance</td></tr>';
-	  m+='<TR><TD><INPUT id=togAllowMulti type=checkbox  disabled=true /></td><TD>Disable Multi-Browser check (experimental)</td></tr>';
+//	  m+='<TR><TD><INPUT id=togAllowMulti type=checkbox  disabled=true /></td><TD>Disable Multi-Browser check (experimental)</td></tr>';
+	  m+='<TR><TD><INPUT id=togAllowMulti type=checkbox /></td><TD>Eliminate spurious Multi-Browser check warning (experimental)</td></tr>';
 	  m+='<TR><TD colspan=2><B>Auto Training:</b></td></tr>';
 	  m+='<TR><TD></TD><TD><INPUT id=optAutoTrainMins type=text size=1 value="'+ parseInt(AutoTrainOptions.intervalSecs/60) +'"> minutes between auto-training.</td></tr>';
 	  m+='</table><BR><BR><HR>Note that if a checkbox is greyed out there has probably been a change of KofC\'s code, rendering the option inoperable.';
