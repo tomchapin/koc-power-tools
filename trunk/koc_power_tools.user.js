@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130722b
+// @version        20130722c
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130722b';
+var Version = '20130722c';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -159,6 +159,7 @@ var Options = {
   dispStatus: true,
   fixApothTime: true,
   fixTRAetherCost: true,
+  fixMMBImage: true,
   multiBrowserAllow : false
 };
 
@@ -337,6 +338,7 @@ if (TEST_WIDE){
   LoadCapFix.init();
   ApothTimeFix.init();
   TRAetherCostFix.init();
+  mmbImageFix.init();
   towho.init();
   cdtd.init();
   playerNotes.init();
@@ -824,7 +826,7 @@ var ApothTimeFix = {
 
 
   isAvailable : function (){
-	t = ApothTimeFix;
+	var t = ApothTimeFix;
 	return t.apothFix.isAvailable();
 	return t.apothFixCB.isAvailable();
   },
@@ -862,9 +864,36 @@ var TRAetherCostFix = {
   },
 
   isAvailable : function (){
-	t = TRAetherCostFix;
+	var t = TRAetherCostFix;
 	return t.aethercostFix.isAvailable();
 	return t.aethercostFixCB.isAvailable();
+  },
+
+}
+
+var mmbImageFix = {
+  imageFix : null,
+
+  init : function (){
+    t = mmbImageFix;
+
+    unsafeWindow.template_data_85 = eval({"feedtype":85,"title":"","body":"","oltitle":"","sstitle":"","ssbody":"","img1link":"http:\/\/apps.facebook.com\/kingdomsofcamelot\/convert.php?pl=1&ty=3&si=85&wccc=fcf-feed-85&ln=1&da=20130722&in=731589&ex=cid:REPLACE_CiTyId|gid:REPLACE_AsSeTiD|lid:REPLACE_LeVeLiD|s:355|sid:731589|mid:REPLACE_mArCh_RePortiD|side:REPLACE_sIdE|raidId:REPLACE_RaIdId|img:http:\/\/www.kingdomsofcamelot.com\/fb\/e2\/src\/img\/bronze_vip.png|&page=convert","actiontxt1":"Get that Token!","actiontxt2":"","actiontxt3":"","actiontxt4":"","actionurl1":"http:\/\/apps.facebook.com\/kingdomsofcamelot\/convert.php?pl=1&ty=3&si=85&wccc=fcf-feed-85&ln=31&da=20130722&in=731589&ex=cid:REPLACE_CiTyId|gid:REPLACE_AsSeTiD|lid:REPLACE_LeVeLiD|s:355|sid:731589|mid:REPLACE_mArCh_RePortiD|side:REPLACE_sIdE|raidId:REPLACE_RaIdId|img:http:\/\/www.kingdomsofcamelot.com\/fb\/e2\/src\/img\/bronze_vip.png|&page=convert","actionurl2":"","actionurl3":"","actionurl4":"","href":"http:\/\/apps.facebook.com\/kingdomsofcamelot\/convert.php?pl=1&ty=3&si=85&wccc=fcf-feed-85&ln=11&da=20130722&in=731589&ex=cid:REPLACE_CiTyId|gid:REPLACE_AsSeTiD|lid:REPLACE_LeVeLiD|s:355|sid:731589|mid:REPLACE_mArCh_RePortiD|side:REPLACE_sIdE|raidId:REPLACE_RaIdId|img:http:\/\/www.kingdomsofcamelot.com\/fb\/e2\/src\/img\/bronze_vip.png|&page=convert","name":"Claim this Magical Token!","caption":"I won a REPLACE_ItEmNaMe from Merlin while playing Kingdoms of Camelot! Take one of these 5 tokens and try your luck.","images":[],"media":[{"type":"image","href":"http:\/\/apps.facebook.com\/kingdomsofcamelot\/convert.php?pl=1&ty=3&si=85&wccc=fcf-feed-85&ln=1&da=20130722&in=731589&ex=cid:REPLACE_CiTyId|gid:REPLACE_AsSeTiD|lid:REPLACE_LeVeLiD|s:355|sid:731589|mid:REPLACE_mArCh_RePortiD|side:REPLACE_sIdE|raidId:REPLACE_RaIdId|img:http:\/\/www.kingdomsofcamelot.com\/fb\/e2\/src\/img\/bronze_vip.png|&page=convert"}]});
+
+    unsafeWindow.template_data_202 = eval({"feedtype":202,"title":"","body":"","oltitle":"","sstitle":"","ssbody":"","img1link":"http:\/\/apps.facebook.com\/kingdomsofcamelot\/convert.php?pl=1&ty=3&si=202&wccc=fcf-feed-202&ln=1&da=20130722&in=731589&ex=cid:REPLACE_CiTyId|gid:REPLACE_AsSeTiD|lid:REPLACE_LeVeLiD|s:367|sid:731589|mid:REPLACE_mArCh_RePortiD|side:REPLACE_sIdE|raidId:REPLACE_RaIdId|img:http:\/\/www.kingdomsofcamelot.com\/fb\/e2\/src\/img\/bronze_vip.png|&page=convert","actiontxt1":"Get that Token!","actiontxt2":"","actiontxt3":"","actiontxt4":"","actionurl1":"http:\/\/apps.facebook.com\/kingdomsofcamelot\/convert.php?pl=1&ty=3&si=202&wccc=fcf-feed-202&ln=31&da=20130722&in=731589&ex=cid:REPLACE_CiTyId|gid:REPLACE_AsSeTiD|lid:REPLACE_LeVeLiD|s:367|sid:731589|mid:REPLACE_mArCh_RePortiD|side:REPLACE_sIdE|raidId:REPLACE_RaIdId|img:http:\/\/www.kingdomsofcamelot.com\/fb\/e2\/src\/img\/bronze_vip.png|&page=convert","actionurl2":"","actionurl3":"","actionurl4":"","href":"http:\/\/apps.facebook.com\/kingdomsofcamelot\/convert.php?pl=1&ty=3&si=202&wccc=fcf-feed-202&ln=11&da=20130722&in=731589&ex=cid:REPLACE_CiTyId|gid:REPLACE_AsSeTiD|lid:REPLACE_LeVeLiD|s:367|sid:731589|mid:REPLACE_mArCh_RePortiD|side:REPLACE_sIdE|raidId:REPLACE_RaIdId|img:http:\/\/www.kingdomsofcamelot.com\/fb\/e2\/src\/img\/bronze_vip.png|&page=convert","name":"Claim this Magical Token!","caption":"I won a REPLACE_ItEmNaMe from Merlin while playing Kingdoms of Camelot! Take one of these 5 tokens and try your luck.","images":[],"media":[{"type":"image","href":"http:\/\/apps.facebook.com\/kingdomsofcamelot\/convert.php?pl=1&ty=3&si=202&wccc=fcf-feed-202&ln=1&da=20130722&in=731589&ex=cid:REPLACE_CiTyId|gid:REPLACE_AsSeTiD|lid:REPLACE_LeVeLiD|s:367|sid:731589|mid:REPLACE_mArCh_RePortiD|side:REPLACE_sIdE|raidId:REPLACE_RaIdId|img:http:\/\/www.kingdomsofcamelot.com\/fb\/e2\/src\/img\/bronze_vip.png|&page=convert"}]});
+
+    unsafeWindow.template_data_203 = eval({"feedtype":203,"title":"","body":"","oltitle":"","sstitle":"","ssbody":"","img1link":"http:\/\/apps.facebook.com\/kingdomsofcamelot\/convert.php?pl=1&ty=3&si=203&wccc=fcf-feed-203&ln=1&da=20130722&in=731589&ex=cid:REPLACE_CiTyId|gid:REPLACE_AsSeTiD|lid:REPLACE_LeVeLiD|s:367|sid:731589|mid:REPLACE_mArCh_RePortiD|side:REPLACE_sIdE|raidId:REPLACE_RaIdId|img:http:\/\/www.kingdomsofcamelot.com\/fb\/e2\/src\/img\/bronze_vip.png|&page=convert","actiontxt1":"Get that Token!","actiontxt2":"","actiontxt3":"","actiontxt4":"","actionurl1":"http:\/\/apps.facebook.com\/kingdomsofcamelot\/convert.php?pl=1&ty=3&si=203&wccc=fcf-feed-203&ln=31&da=20130722&in=731589&ex=cid:REPLACE_CiTyId|gid:REPLACE_AsSeTiD|lid:REPLACE_LeVeLiD|s:367|sid:731589|mid:REPLACE_mArCh_RePortiD|side:REPLACE_sIdE|raidId:REPLACE_RaIdId|img:http:\/\/www.kingdomsofcamelot.com\/fb\/e2\/src\/img\/bronze_vip.png|&page=convert","actionurl2":"","actionurl3":"","actionurl4":"","href":"http:\/\/apps.facebook.com\/kingdomsofcamelot\/convert.php?pl=1&ty=3&si=203&wccc=fcf-feed-203&ln=11&da=20130722&in=731589&ex=cid:REPLACE_CiTyId|gid:REPLACE_AsSeTiD|lid:REPLACE_LeVeLiD|s:367|sid:731589|mid:REPLACE_mArCh_RePortiD|side:REPLACE_sIdE|raidId:REPLACE_RaIdId|img:http:\/\/www.kingdomsofcamelot.com\/fb\/e2\/src\/img\/bronze_vip.png|&page=convert","name":"Claim this Magical Token!","caption":"I want to share a Magical Token from Kingdoms of Camelot!  Take one of these 5 tokens and try your luck.","images":[],"media":[{"type":"image","href":"http:\/\/apps.facebook.com\/kingdomsofcamelot\/convert.php?pl=1&ty=3&si=203&wccc=fcf-feed-203&ln=1&da=20130722&in=731589&ex=cid:REPLACE_CiTyId|gid:REPLACE_AsSeTiD|lid:REPLACE_LeVeLiD|s:367|sid:731589|mid:REPLACE_mArCh_RePortiD|side:REPLACE_sIdE|raidId:REPLACE_RaIdId|img:http:\/\/www.kingdomsofcamelot.com\/fb\/e2\/src\/img\/bronze_vip.png|&page=convert"}]});
+      t.imageFix = new CalterUwFunc ('cm.mww.mmb_share', [[/img\/items\/130/im,'img/items/70/'],[/common_postToProfile\(\"85\"/im,'template_data_85.img1=template_data_85.media[0].src; common_postToProfile(\"85\"']]);
+      t.imageFix.setEnable(Options.fixMMBImage);
+  },
+
+  setEnable : function (tf){
+	var t = mmbImageFix;
+	t.imageFix.setEnable (tf);
+  },
+
+  isAvailable : function (){
+	var t = mmbImageFix;
+	return t.imageFix.isAvailable();
   },
 
 }
@@ -5712,6 +5741,7 @@ Tabs.Options = {
  	  m+='<TR><TD><INPUT id=togLoadCapFix type=checkbox /></td><TD>Limit load capacity to not exceed throne room load cap</td></tr>';
  	  m+='<TR><TD><INPUT id=togApothTimeFix type=checkbox /></td><TD>Fix revival time calculator (not working for max button clicked)</td></tr>';
  	  m+='<TR><TD><INPUT id=togTRAetherCostFix type=checkbox /></td><TD>Fix display of aetherstones for throne room upgrade/enhance</td></tr>';
+ 	  m+='<TR><TD><INPUT id=togMMBImageFix type=checkbox /></td><TD>Post correct image to facebook for Merlin Box</td></tr>';
 //	  m+='<TR><TD><INPUT id=togAllowMulti type=checkbox  disabled=true /></td><TD>Disable Multi-Browser check (experimental)</td></tr>';
 	  m+='<TR><TD><INPUT id=togAllowMulti type=checkbox /></td><TD>Eliminate spurious Multi-Browser check warning (experimental)</td></tr>';
 	  m+='<TR><TD colspan=2><B>Auto Training:</b></td></tr>';
@@ -5747,6 +5777,7 @@ Tabs.Options = {
       t.togOpt ('togLoadCapFix', 'fixLoadCap', LoadCapFix.setEnable, LoadCapFix.isAvailable);
       t.togOpt ('togApothTimeFix', 'fixApothTime', ApothTimeFix.setEnable, ApothTimeFix.isAvailable);
       t.togOpt ('togTRAetherCostFix', 'fixTRAetherCost', TRAetherCostFix.setEnable, TRAetherCostFix.isAvailable);
+      t.togOpt ('togMMBImageFix', 'fixMMBImage', mmbImageFix.setEnable, mmbImageFix.isAvailable);
       t.togOpt ('togBatRounds', 'dispBattleRounds', null, battleReports.isRoundsAvailable);
       t.togOpt ('togAtkDelete', 'reportDeleteButton', null, battleReports.isRoundsAvailable);
       t.togOpt ('togAllowMulti', 'allowMultiBroswer');
