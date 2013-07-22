@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130722a
+// @version        20130722b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130722a';
+var Version = '20130722b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -371,7 +371,7 @@ if (TEST_WIDE){
 
 function multiBrowserOverride()
 {
-   return;//disabled until fix?
+//   return;//disabled until fix?
    // get a pointer to the function
    var old_usa = unsafeWindow.update_seed_ajax;
    
