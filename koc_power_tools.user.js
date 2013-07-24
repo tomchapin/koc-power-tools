@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130723a
+// @version        20130723b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130723a';
+var Version = '20130723b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -339,6 +339,7 @@ if (TEST_WIDE){
   ApothTimeFix.init();
   TRAetherCostFix.init();
   mmbImageFix.init();
+  bypassMulti.init();
   towho.init();
   cdtd.init();
   playerNotes.init();
@@ -363,8 +364,8 @@ if (TEST_WIDE){
   
   AddMainTabLink('TOOLS', eventHideShow, mouseMainTab);
   
-  var ss_onload = unsafeWindow.seed.ss;
-  multiBrowserOverride();
+//  var ss_onload = unsafeWindow.seed.ss;
+//  multiBrowserOverride();
 //TestSomething.init ();  
 //setInterval (function(){logit (inspect (getClientCoords (mainPop.getMainDiv()), 3, 1))}, 2000);  
 
@@ -889,6 +890,28 @@ var mmbImageFix = {
   isAvailable : function (){
 	var t = mmbImageFix;
 	return t.imageFix.isAvailable();
+  },
+
+}
+
+var bypassMulti = {
+  MultiBrowserBypass : null,
+
+  init : function (){
+      t = bypassMulti;
+
+      t.MultiBrowserBypass = new CalterUwFunc ('update_seed_ajax', [[/if\(typeof\s*isCancelTraining/im,'var l_lastCallTime = 0; var reload_requests = 0; var l_callIntervalMin = 10; if(typeof isCancelTraining'],[/if\(rslt\.error_code\s*==\s*60\)/im,'return; if(rslt.error_code == 60)']]);
+      t.MultiBrowserBypass.setEnable(Options.allowMultiBroswer);
+  },
+
+  setEnable : function (tf){
+	var t = bypassMulti;
+	t.MultiBrowserBypass.setEnable (tf);
+  },
+
+  isAvailable : function (){
+	var t = bypassMulti;
+	return t.MultiBrowserBypass.isAvailable();
   },
 
 }
@@ -5737,8 +5760,9 @@ Tabs.Options = {
  	  m+='<TR><TD><INPUT id=togApothTimeFix type=checkbox /></td><TD>Fix revival time calculator (not working for max button clicked)</td></tr>';
  	  m+='<TR><TD><INPUT id=togTRAetherCostFix type=checkbox /></td><TD>Fix display of aetherstones for throne room upgrade/enhance</td></tr>';
  	  m+='<TR><TD><INPUT id=togMMBImageFix type=checkbox /></td><TD>Post correct image to facebook for Merlin Box</td></tr>';
-	  m+='<TR><TD><INPUT id=togAllowMulti type=checkbox  disabled=true /></td><TD>Disable Multi-Browser check (experimental)</td></tr>';
+//	  m+='<TR><TD><INPUT id=togAllowMulti type=checkbox /></td><TD>Disable Multi-Browser check (experimental)</td></tr>';
 //	  m+='<TR><TD><INPUT id=togAllowMulti type=checkbox /></td><TD>Eliminate spurious Multi-Browser check warning (experimental)</td></tr>';
+	  m+='<TR><TD><INPUT id=togAllowMulti type=checkbox /></td><TD>Disable Multi-Browser check v2 (experimental)</td></tr>';
 	  m+='<TR><TD colspan=2><B>Auto Training:</b></td></tr>';
 	  m+='<TR><TD></TD><TD><INPUT id=optAutoTrainMins type=text size=1 value="'+ parseInt(AutoTrainOptions.intervalSecs/60) +'"> minutes between auto-training.</td></tr>';
 	  m+='</table><BR><BR><HR>Note that if a checkbox is greyed out there has probably been a change of KofC\'s code, rendering the option inoperable.';
@@ -5775,7 +5799,8 @@ Tabs.Options = {
       t.togOpt ('togMMBImageFix', 'fixMMBImage', mmbImageFix.setEnable, mmbImageFix.isAvailable);
       t.togOpt ('togBatRounds', 'dispBattleRounds', null, battleReports.isRoundsAvailable);
       t.togOpt ('togAtkDelete', 'reportDeleteButton', null, battleReports.isRoundsAvailable);
-      t.togOpt ('togAllowMulti', 'allowMultiBroswer');
+//      t.togOpt ('togAllowMulti', 'allowMultiBroswer');
+      t.togOpt ('togAllowMulti', 'allowMultiBroswer', bypassMulti.setEnable, bypassMulti.isAvailable);
       
       document.getElementById('ptupdate').addEventListener ('change', t.e_updateChanged, false);
       document.getElementById('ptEnableMiniRefresh').addEventListener ('change', t.e_miniRefreshChanged, false);
