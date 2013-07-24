@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130723b
+// @version        20130723c
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130723b';
+var Version = '20130723c';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -900,7 +900,8 @@ var bypassMulti = {
   init : function (){
       t = bypassMulti;
 
-      t.MultiBrowserBypass = new CalterUwFunc ('update_seed_ajax', [[/if\(typeof\s*isCancelTraining/im,'var l_lastCallTime = 0; var reload_requests = 0; var l_callIntervalMin = 10; if(typeof isCancelTraining'],[/if\(rslt\.error_code\s*==\s*60\)/im,'return; if(rslt.error_code == 60)']]);
+//      t.MultiBrowserBypass = new CalterUwFunc ('update_seed_ajax', [[/if\(typeof\s*isCancelTraining/im,'var l_lastCallTime = 0; var reload_requests = 0; var l_callIntervalMin = 10; if(typeof isCancelTraining'],[/if\(rslt\.error_code\s*==\s*60\)/im,'return; if(rslt.error_code == 60)']]);
+      t.MultiBrowserBypass = new CalterUwFunc ('update_seed_ajax', [[/if\s*\(typeof\s*isCancelTraining/im,'var l_lastCallTime = 0; var reload_requests = 0; var l_callIntervalMin = 10; if(typeof isCancelTraining'],[/if\s*\(rslt\.error_code\s*==\s*60\)/im,'return; if(rslt.error_code == 60)']]);
       t.MultiBrowserBypass.setEnable(Options.allowMultiBroswer);
   },
 
