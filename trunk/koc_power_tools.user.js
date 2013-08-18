@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130810a
+// @version        20130817
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130810a';
+var Version = '20130817';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -10278,6 +10278,7 @@ Tabs.Rpt = {
 		woodImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/wood_30.png></TD><TD>Wood';
 		stoneImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/stone_30.png></TD><TD>Stone';
 		oreImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/iron_30.png></TD><TD>Ore';
+		astoneImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/aetherstone_30.png></TD><TD>Aetherstone';
 
 		function buildHeader () {
 			var h='<TABLE class=ptTab width=100%>';
