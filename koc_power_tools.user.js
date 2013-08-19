@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130817
+// @version        20130818a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130817';
+var Version = '20130818a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -342,7 +342,6 @@ if (TEST_WIDE){
   bypassMulti.init();
   towho.init();
   cdtd.init();
-  playerNotes.init();
   tabManager.init (mainPop.getMainDiv());
   
   AudioManager.init();
@@ -383,7 +382,7 @@ function multiBrowserOverride()
       if (Options.allowMultiBroswer)
       {
          // remove a variable
-//         delete unsafeWindow.seed.ss;
+         //delete unsafeWindow.seed.ss;
 //	 unsafeWindow.seed.ss = ss_onload;
       }
       
@@ -413,15 +412,44 @@ var knightRoles = [
 var rats = ["2466324","	5801935","14737553"];//people who openly tried to destroy script development including reporting scripters to kabam.  now the joke is on them.
 var scripters = ["7552815","10681588","1747877","2865067","10153485","15182839","1550996","1617431819","9688786","8184813","9863346","11107993","9751486","5614388","424090","14845619","8480468","7042380","731589"];
 
-var playerNotes = {
-    init: function () {
+
+Tabs.Notes = {
+	tabOrder : 999,
+	tabLabel : "Notes",
+	myDiv: null,
+
+	show : function() {
+	    var h = "<div align=center> <b>Saved Notes</b></div>";
+	    h += "<div style='height: 700px; overflow-y: scroll;'>";
+	    
+	    for (player in Tabs.Notes.noteValues) {
+		var note = Tabs.Notes.noteValues[player];
+		h += "<hr/>";
+		h += "<div align=center margin=5px><button type='button' onclick=\'removeNote(\""+ player +"\") \'>Delete</button></div>";
+		h += "<div align=center> <b>Player: </b> </div><div align=center>" + player;
+		h += " / " + note.id + "</div>";
+		h += '<div style="margin-left:100px; margin-right:100px; text-align: center;"><span onclick="PTpl(this, '+ note.id +')"><a>Details</a></span></div>';
+		h += "<div align=center> <b>Note: </b> </div>";
+		h += "<div align=center>" + note.text + "</div>";
+	    }
+	    h += "</div>";
+	    myDiv.innerHTML = h;
+	},
+	
+	hide : function() {
+
+	},
+
+       init: function (div) {
+	  myDiv = div;
+	  unsafeWindow.removeNote = Tabs.Notes.removeNote;
 	
 	// override the map tooltips
 	var oldSMTT  = unsafeWindow.showMapTileTooltip;
 	
 	var newSMTT = function (j, h, n, f, l, k) {
 	    // add our stuff to the tooltip
-	    var j2 = playerNotes.updateTooltip(unescape(j));
+	    var j2 = Tabs.Notes.updateTooltip(unescape(j));
 	    if (j2) {
 		j = escape(j2);
 	    }
@@ -430,7 +458,7 @@ var playerNotes = {
 	unsafeWindow.showMapTileTooltip= newSMTT;
 	
 	// create a regular expression object to use
-	playerNotes.re = new RegExp(unsafeWindow.g_js_strings.MapObject.ownedby + ": (\\w*)");
+	Tabs.Notes.re = new RegExp(unsafeWindow.g_js_strings.MapObject.ownedby + ": (\\w*)");
 	
 	// add a new option to the context menus
 	var cityType = unsafeWindow.cm.CITY_STATUS.ANOTHER_PLAYER_CITY_AND_NOT_IN_YOUR_ALLIANCE;
@@ -473,17 +501,18 @@ var playerNotes = {
 
 	
 	// callback function for the context menu option
-	unsafeWindow.edit_notes = playerNotes.createPopup;
+	unsafeWindow.edit_notes = Tabs.Notes.createPopup;
 
 	// load saved values
-	playerNotes.load();
+	Tabs.Notes.load();
 	
+	Tabs.Notes.show();
     },
 
     save: function () 
     {
 	var serverID = GetServerId();
-	var s = JSON2.stringify(playerNotes.noteValues);
+	var s = JSON2.stringify(Tabs.Notes.noteValues);
 	if (s) {
 	  // use setTimeout to fix the context
 	  setTimeout(function() {
@@ -497,7 +526,7 @@ var playerNotes = {
 	var serverID = GetServerId();
 	try {
 	    var s =JSON.parse(GM_getValue('PlayerNotes_'+serverID));
-	    if (s) playerNotes.noteValues = s;
+	    if (s) Tabs.Notes.noteValues = s;
 	} catch (e) {
 	    logit(e);
 	}
@@ -507,8 +536,8 @@ var playerNotes = {
 	
 	// get the current note
 	var notes = "";
-	if (playerNotes.noteValues[user.username]) {
-	    notes = playerNotes.noteValues[user.username];
+	if (Tabs.Notes.noteValues[user.username]) {
+	    notes = Tabs.Notes.noteValues[user.username];
 	    notes = notes.text.replace(/<br\/>/g, "\n");
 	}
 	
@@ -517,7 +546,7 @@ var playerNotes = {
 	    buttons: [{
 		txt: "Save",
 		exe: function b() {
-		    playerNotes.saveNote(user);
+		    Tabs.Notes.saveNote(user);
 		    unsafeWindow.Modal.hideModal();
 		}
 
@@ -546,19 +575,29 @@ var playerNotes = {
 	    noteData.text = notes.replace(/\n/g, "<br/>");
 	    noteData.id     = user.id;
 
-	    playerNotes.noteValues[player] = noteData;
-	    playerNotes.save();
+	    Tabs.Notes.noteValues[player] = noteData;
+	    Tabs.Notes.save();
 	}
+    },
+    
+    // callback for the delete button
+    removeNote: function (player) {
+	if (player && Tabs.Notes.noteValues[player])
+	{
+	    delete Tabs.Notes.noteValues[player];
+	    Tabs.Notes.save();
+	}
+	Tabs.Notes.show();
     },
     
     // add the notes to the map tooltip
     updateTooltip: function ( ttHtml) {
 	var newTT = null;
-	var result = playerNotes.re.exec(ttHtml);
+	var result = Tabs.Notes.re.exec(ttHtml);
 
 	if (result && result[1]) {
 	    var note;
-	    if (note = playerNotes.noteValues[result[1]] )
+	    if (note = Tabs.Notes.noteValues[result[1]] )
 	    {
 		var element_class = "";
 		var id = "" + note.id;
@@ -871,7 +910,7 @@ var TRAetherCostFix = {
   },
 
 }
-
+ 
 var mmbImageFix = {
   imageFix : null,
 
@@ -2253,48 +2292,48 @@ show : function () {
   mhtl += "</tr><tr><td><img height=18 src=http://koc-power-pdx.googlecode.com/svn/trunk/img/troops/unit_2_50_s34.jpg title=Militiaman> Militiaman/h</td>";
   var temps=[];
   for(var i=0; i<Cities.numCities; i++) {
-   temps[i]=((Cities.cities[i]['Troop2Time'] > 0)?(3600 / Cities.cities[i]['Troop2Time']):0);
-   mhtl += "<td>" + addCommas(parseInt(temps[i])) +"</td>";
+      temps[i]=((Cities.cities[i]['Troop2Time'] > 0)?(3600 / Cities.cities[i]['Troop2Time']):0);
+      mhtl += "<td>" + addCommas(parseInt(temps[i])) +"</td>";
   }
-    mhtl += "</tr><tr><td><img height=18 src=https://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/population_40.png title=Population> Population/h</td>";
-	var pop=[];
+  mhtl += "</tr><tr><td><img height=18 src=https://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/population_40.png title=Population> Population/h</td>";
+  var pop=[];
   for(var i=0; i<Cities.numCities; i++) {
-   cityID = 'city'+ Cities.cities[i].id;
-   pop[i] =  parseInt(Seed.citystats[cityID]["pop"][1]) / 2;
-   mhtl += "<td>" + addCommas(parseInt(pop[i])) +"</td>";
+      cityID = 'city'+ Cities.cities[i].id;
+      pop[i] =  parseInt(Seed.citystats[cityID]["pop"][1]) / 2;
+      mhtl += "<td>" + addCommas(parseInt(pop[i])) +"</td>";
   }
   mhtl += "</tr><tr><td><b>Difference</b></td>";
   var diff=0;
   for(var i=0; i<Cities.numCities; i++) {
-   diff = parseInt(pop[i] - temps[i]);
-   var couleur=" style='font-color:green' ";
-   if (diff<0) couleur=" style='background-color:red' ";
-   mhtl += "<td "+couleur+"><b>" + addCommas(parseInt(diff)) +"</b></td>";
+      diff = parseInt(pop[i] - temps[i]);
+      var couleur=" style='font-color:green' ";
+      if (diff<0) couleur=" style='background-color:red' ";
+      mhtl += "<td "+couleur+"><b>" + addCommas(parseInt(diff)) +"</b></td>";
   }
-  
-   mhtl += "</tr><tr><td><img height=18 src=https://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/happiness.png title=happiness> happiness</td>";
+
+  mhtl += "</tr><tr><td><img height=18 src=https://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/happiness.png title=happiness> happiness</td>";
+  for(var i=0; i<Cities.numCities; i++) {
+      cityID = 'city'+ Cities.cities[i].id;
+      var bon = parseInt(Seed.citystats[cityID]["pop"][2]); 
+      var bonc = "red";
+      if (bon>99) bonc="green";
+      mhtl += "<td style='background-color:"+bonc+"'><center><b>"+bon+"</td>";
+  }
+   var now = unixTime();
+   mhtl += "</tr><tr><td><b>Queue</b></td>";
    for(var i=0; i<Cities.numCities; i++) {
-   cityID = 'city'+ Cities.cities[i].id;
-   var bon = parseInt(Seed.citystats[cityID]["pop"][2]); 
-   var bonc = "red";
-   if (bon>99) bonc="green";
-   mhtl += "<td style='background-color:"+bonc+"'><center><b>"+bon+"</td>";
-  }
-  var now = unixTime();
-  mhtl += "</tr><tr><td><b>Queue</b></td>";
-    for(var i=0; i<Cities.numCities; i++) {
-     cityID = 'city'+ Cities.cities[i].id;
-     var totTime = 0;
-     var q = Seed.queue_unt[cityID]; 
-     if (q!=null && q.length>0)
-         totTime = q[q.length-1][3] - now;
-     if (totTime < 0) totTime = 0;
-     if (totTime < 3600)
-      var bonc="style='background-color:red'";
-     else
-      var bonc="";
-     mhtl += "<td "+bonc+"><center><b>"+timestr(totTime)+"</td>";
-    }
+       cityID = 'city'+ Cities.cities[i].id;
+       var totTime = 0;
+       var q = Seed.queue_unt[cityID]; 
+       if (q!=null && q.length>0)
+	   totTime = q[q.length-1][3] - now;
+       if (totTime < 0) totTime = 0;
+       if (totTime < 3600)
+	   var bonc="style='background-color:red'";
+       else
+	   var bonc="";
+       mhtl += "<td "+bonc+"><center><b>"+timestr(totTime)+"</td>";
+   }
     
   mhtl += "</tr></table><br>";
   t.cont.innerHTML += mhtl;
