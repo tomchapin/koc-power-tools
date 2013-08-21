@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130818a
+// @version        20130821
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130818a';
+var Version = '20130821';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -11097,10 +11097,10 @@ Tabs.Marches = {
 				}
         		
 				if (marchType == 3)
-				    if (Seed.queue_atkinc[k]["unts"] > 0) 
+				    if (Object.keys(Seed.queue_atkinc[k]["unts"]).length > 0) 
 					if (Seed.queue_atkinc[k]["unts"]["u3"] > 0) z += '<TD>'+uW.unitcost.unt3[0]+': '+ addCommas(Seed.queue_atkinc[k]["unts"]["u3"]) +'</td>';
 				if (marchType == 4){
-				    if (Seed.queue_atkinc[k]["unts"] > 0) 
+				    if (Object.keys(Seed.queue_atkinc[k]["unts"]).length > 0)
 					for(ui=1; ui<nTroopType+1; ui++){
 						if (Seed.queue_atkinc[k]["unts"]["u"+ui] > 0) z += '<TD>'+ uW.unitcost['unt'+ui][0] +': '+ addCommas(Seed.queue_atkinc[k]["unts"]["u"+ui]) +'</td>';
 					}
