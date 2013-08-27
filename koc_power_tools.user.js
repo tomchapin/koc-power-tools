@@ -1,7 +1,7 @@
-// ==UserScript==
+﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130821
+// @version        20130827a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130821';
+var Version = '20130827a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -4197,7 +4197,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     var t = Tabs.AllianceList;
     document.getElementById('ptplayErr').innerHTML='';
     var name = document.getElementById('allPlayName').value;
-    name = name.replace(/\'/g,"_");
+    name = name.replace(/\'/g,"_").replace(/\,/g,"_").replace(/\-/g,"_");
     t.pName = name;
     if (name.length < 3){
       document.getElementById('ptplayErr').innerHTML = uW.g_js_strings.getAllianceSearchResults.entryatleast3;
@@ -4211,7 +4211,8 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
   eventGotPlayerList : function (rslt){
     var t = Tabs.AllianceList;
     if (!rslt.ok){
-      document.getElementById('allListOut').innerHTML = rslt.errorMsg;
+//      document.getElementById('allListOut').innerHTML = rslt.errorMsg;
+      document.getElementById('allListOut').innerHTML = rslt.msg;
       return;
     }
     t.playerList = rslt.matchedUsers;
