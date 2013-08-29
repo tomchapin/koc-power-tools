@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130827a
+// @version        20130829a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130827a';
+var Version = '20130829a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -2999,7 +2999,7 @@ Tabs.Knights = {
 	      	  t.clickedAssignPoints(null,cid,knight.knightId,1);
             }
             ass += '<td class="ptentry" align="left" style="' + sty + '">';
-            if (knight[knightRoles[i][1]] < 255) {
+            if (knight[knightRoles[i][1]] < 300) {
                 ass += '<a title="' + uW.g_js_strings.modaltitles.assignskills + '" style="' + sty + '" onclick="ptAssignSkill(this,' + cid + ',' + knight.knightId + ',' + i + ')">[' + knightRoles[i][2] + ']</a>';
             } else {
                 ass += '<span style="color: #006600; font-size: 10px; font-weight: normal;">(max)</span>';
@@ -3115,9 +3115,9 @@ Tabs.Knights = {
       sk[i] = parseInt(knight[knightRoles[i][1]]);
       if (i == rid)
         sk[i] += unassigned;
-      if(sk[i] > 255){
-		sk[i] = 255;
-		unassigned = parseInt(255 - parseInt(knight[knightRoles[i][1]]));
+      if(sk[i] > 300){
+		sk[i] = 300;
+		unassigned = parseInt(300 - parseInt(knight[knightRoles[i][1]]));
 	  }
     }
 	if (unassigned==0) return;
