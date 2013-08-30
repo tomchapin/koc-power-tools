@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130829a
+// @version        20130829b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130829a';
+var Version = '20130829b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -206,7 +206,7 @@ var KOCversion = null;
 var ptStartupTimer = null;
 var uW = unsafeWindow;
 var ResetColors = false;
-var nTroopType = 16;
+var nTroopType = 17;
 
 function ptStartup (){
   clearTimeout (ptStartupTimer);
@@ -6654,6 +6654,10 @@ Tabs.Train = {
 	    t.stats.MaxTrain = 0;
             t.limitingFactor = null;
         }
+    } else if (t.lastTroopSelect > 15){
+// set to zero til i figure this out
+	    t.stats.MaxTrain = 0;
+            t.limitingFactor = null;
     }
 
 	if (t.limitingFactor){
@@ -6661,7 +6665,7 @@ Tabs.Train = {
 	  document.getElementById('ptttr2_'+ t.limitingFactor).className = 'boldRed';
 	}    
     t.updateTopTroops();
-    if (isPrestige && t.lastTroopSelect > 12)
+    if (isPrestige && t.lastTroopSelect > 12 && t.lastTroopSelect < 16)
 	t.TTspMaxSlots.innerHTML++;
   },
 
@@ -6923,6 +6927,8 @@ Tabs.Train = {
     	if (i>6) m += '<TD width=75px></td><TD width=60px></td>';
     	m+='</tr>';
     }
+    m += '<TR><TD width=75px></td><TD width=60px></td>';
+    m += '<TD width=75px>'+uW.unitcost['unt'+(17)][0]+'</td><TD width=60px>'+addCommas(parseInt(Seed.units['city'+cityId]['unt'+(17)]))+'</td>';
     m+='</table>';
     document.getElementById ('divSTtop').innerHTML = m;
     
@@ -8546,6 +8552,7 @@ Tabs.OverView = {
       		_displayrow ("Executioner", infoRows[20]);
       		_displayrow ("Siege Wall", infoRows[21]);
       		_displayrow ("Flame Archer", infoRows[22]);
+      		_displayrow ("Hussar", infoRows[23]);
       		u += "<TR><TD></TD><TD nowrap align=center colspan="+(Cities.numCities)+"><B>Wall Defense Hourly Production</B></TD></TR>";
       		_displayrow ("XBow", infoRows[nTroopType+7]);
       		_displayrow ("Trebuchet", infoRows[nTroopType+7]);
@@ -8718,6 +8725,7 @@ Tabs.OverView = {
       str += _row ('Executioner', rows[14]);
       str += _row ('Siege Wall', rows[15]);
       str += _row ('Flame Archer', rows[16]);
+      str += _row ('Hussar', rows[17]);
       str += '<TR><TD colspan=11><BR></td></tr>';
       
       row = [];
@@ -8960,7 +8968,7 @@ Tabs.Attaque = {
            <td><b><u>Destination</b></u><br>X:<input type=text id=RAAtypetrpx size=3>&nbsp;Y:<input type=text id=RAAtypetrpy size=3><br><a href='javascript:void(0);' id='BOchargelistelieux'>Fetch Members</a> : <select id='listeFavori'></select></td>\
            <td><b><u>Distance</u></b><br><span id='BOEstimationD'>&nbsp;</span><td><b><u>Closest City</u></b><br><span id=BOVilleProche></span>\
            </tr><tr align=center valign=top>\
-           <td colspan=4 align=left><table border=0 bordercolor=black cellspacing=0 cellpadding=0 width=100% style='text-align:center'><tr><td rowspan=17><div id=RAAstatsource></div></td><td colspan=2><a href='javascript:void(0)' id=BO_RAZ_Units title='Clear' >Units Selected</a></td><td>Attack Time</td><td>Reinforce Time</td></tr>";
+           <td colspan=4 align=left><table border=0 bordercolor=black cellspacing=0 cellpadding=0 width=100% style='text-align:center'><tr><td rowspan="+nTroopType+1+"><div id=RAAstatsource></div></td><td colspan=2><a href='javascript:void(0)' id=BO_RAZ_Units title='Clear' >Units Selected</a></td><td>Attack Time</td><td>Reinforce Time</td></tr>";
             for (r=1; r<nTroopType+1; r++){
    	     m += '<tr><td align=right><img height=20 title="'+unsafeWindow.unitcost['unt'+r][0] +'" alt="'+unsafeWindow.unitcost['unt'+r][0]+'" src=http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/units/unit_'+r+'_30.jpg></td><td align=left><input style="border:1px solid black;height:16px;font-size:11px;" id="RAAnbunit'+r+'" type=text size=7 value="0" ></td><td><span id="BOEstimationTT'+r+'">&nbsp;</span></td><td><span id="BOEstimationTZ'+r+'">&nbsp;</span></td></tr>';
       	}
@@ -9367,6 +9375,7 @@ Tabs.Attaque = {
  	 params.u14 = 0;
  	 params.u15 = 0;
  	 params.u16 = 0;
+ 	 params.u17 = 0;
  
  
          if (typemarche!=3) {
@@ -9386,6 +9395,7 @@ Tabs.Attaque = {
 	if (ById("RAAnbunit14").value>0) params.u14 = ById("RAAnbunit14").value;
 	if (ById("RAAnbunit15").value>0) params.u15 = ById("RAAnbunit15").value;
 	if (ById("RAAnbunit16").value>0) params.u16 = ById("RAAnbunit16").value;
+	if (ById("RAAnbunit17").value>0) params.u17 = ById("RAAnbunit17").value;
 	
 	}else {
 	 params.u3 = ById("RAAnbunit3").value;
