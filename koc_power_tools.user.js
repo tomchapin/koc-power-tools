@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130829b
+// @version        20130830a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130829b';
+var Version = '20130830a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -6365,7 +6365,7 @@ Tabs.Train = {
     unsafeWindow.jQuery.each(h, function (n, m) {
         m.id = +(m[0]);
         m.level = +(m[1]);
-	if (d < 13) {
+	if (d < 13 || d == 16) {
           if (m.id === 13 && m.level > 0) {
             k.barracks += (m.level + 9);
           }
@@ -6384,12 +6384,12 @@ Tabs.Train = {
         } else {
 	}
         if (m.id === 16 && m.level > 0) {
-            if (+(d) >= 9) {
+            if (+(d) >= 9 && +(d) <=12 ) {
                 k.workshop = m.level;
             }
         }
         if (m.id === 17 && m.level > k.stable) {
-            if (+(d) >= 7) {
+            if (+(d) >= 7 && +(d) <=8 ) {
                 k.stable = m.level;
             }
         }
@@ -6461,7 +6461,7 @@ Tabs.Train = {
       slots = 0;
     t.TTspMax.innerHTML = t.stats.MaxTrain;
 //    t.TTspMaxSlots.innerHTML = t.stats.barracks - t.stats.queued;
-    if (t.lastTroopSelect > 12 )
+    if (t.lastTroopSelect > 12 && t.lastTroopSelect < 16 )
       t.TTspMaxSlots.innerHTML = t.stats.barracks - t.stats.spqueued;
     else
       t.TTspMaxSlots.innerHTML = t.stats.barracks - t.stats.queued;
@@ -6485,7 +6485,7 @@ Tabs.Train = {
 
   clickTroopMaxSlots : function (){
     var t = Tabs.Train;
-    if (t.lastTroopSelect > 12 )
+    if (t.lastTroopSelect > 12 && t.lastTroopSelect < 16 )
       t.TTinpSlots.value = t.stats.barracks - t.stats.spqueued;
     else
       t.TTinpSlots.value = t.stats.barracks - t.stats.queued;
@@ -6580,6 +6580,7 @@ Tabs.Train = {
 		else
 			actualuc[r] = uc[r];
 	}
+	if (id == 16) actualuc[5] = uc[11]["34001"];
     var max = 9999999999;
     if ( (t.stats.food / actualuc[1]) < max){
       max = t.stats.food / actualuc[1];
@@ -6596,6 +6597,11 @@ Tabs.Train = {
     if ( (t.stats.ore / actualuc[4]) < max){
       max = t.stats.ore / actualuc[4];
       t.limitingFactor = uW.resourceinfo['rec4'];
+    }
+  if (id == 16)
+    if ( (t.stats.yew / actualuc[5]) < max){
+      max = t.stats.yew / actualuc[5];
+      t.limitingFactor = 'yew';
     }
     if ( (t.stats.idlePop / uc[6]) < max){
       max = t.stats.idlePop / uc[6];
@@ -6654,8 +6660,7 @@ Tabs.Train = {
 	    t.stats.MaxTrain = 0;
             t.limitingFactor = null;
         }
-    } else if (t.lastTroopSelect > 15){
-// set to zero til i figure this out
+    } else if (t.lastTroopSelect > 16){
 	    t.stats.MaxTrain = 0;
             t.limitingFactor = null;
     }
@@ -6902,13 +6907,14 @@ Tabs.Train = {
     var t = Tabs.Train;
     var cityId = t.selectedCity.id;
 	var isSpecial = false;
-	if(t.TTselType.value > 12){
+	if(t.TTselType.value > 12 && t.TTselType.value < 16 ){
 		isSpecial = true;
 	}
     t.stats.food = parseInt (Seed.resources['city'+cityId].rec1[0]/3600);
     t.stats.wood = parseInt (Seed.resources['city'+cityId].rec2[0]/3600);
     t.stats.stone = parseInt (Seed.resources['city'+cityId].rec3[0]/3600);
     t.stats.ore = parseInt (Seed.resources['city'+cityId].rec4[0]/3600);
+    t.stats.yew = parseInt(Seed.items.i34001);
     t.stats.gold = Seed.citystats['city'+cityId].gold[0];
     if (Options.maxIdlePop)
       t.stats.idlePop = parseInt(Seed.citystats['city'+cityId].pop[0]);
@@ -6924,7 +6930,8 @@ Tabs.Train = {
     	if (i<=4) m += '<TD width=75px><SPAN id=ptttr_'+uW.resourceinfo['rec'+i]+'>'+uW.resourceinfo['rec'+i]+'</span></td><TD width=60px><SPAN id=ptttr2_'+uW.resourceinfo['rec'+i]+'>'+addCommas(parseInt(Seed.resources['city'+cityId]['rec'+i][0]/3600))+'</span></td>';
     	if (i==5) m += '<TD width=75px><SPAN id=ptttr_gold>'+uW.resourceinfo['rec0']+'</span></td><TD width=60px><SPAN id=ptttr2_gold>'+addCommas(Seed.citystats['city'+cityId].gold[0])+'</span></td>';
     	if (i==6) m += '<TD width=75px><SPAN id=ptttr_pop>Available Population</td><TD width=60px><SPAN id=ptttr2_pop>'+addCommas(t.stats.idlePop)+'</td>';
-    	if (i>6) m += '<TD width=75px></td><TD width=60px></td>';
+    	if (i==7) m += '<TD width=75px><SPAN id=ptttr_yew>Pristine Yew Branch</td><TD width=60px><SPAN id=ptttr2_yew>'+addCommas(t.stats.yew)+'</td>';
+    	if (i>7) m += '<TD width=75px></td><TD width=60px></td>';
     	m+='</tr>';
     }
     m += '<TR><TD width=75px></td><TD width=60px></td>';
@@ -13476,6 +13483,8 @@ function doTrain (cityId, tut, gamble, unitId, num, notify){
         }
         uW.seed.citystats["city" + cityId].gold[0] = parseInt(uW.seed.citystats["city" + cityId].gold[0]) - parseInt(uW.unitcost["unt" + unitId][5]) * parseInt(num);
         uW.seed.citystats["city" + cityId].pop[0] = parseInt(uW.seed.citystats["city" + cityId].pop[0]) - parseInt(uW.unitcost["unt" + unitId][6]) * parseInt(num);
+	if (unitId == 16)
+          uW.seed.items.i34001 = parseInt(uW.seed.items.i34001) - parseInt(uW.unitcost["unt" + unitId][11]["34001"]) * parseInt(num);
         uW.seed.queue_unt["city" + cityId].push([unitId, num, rslt.initTS, parseInt(rslt.initTS) + time, 0, time, null]);
         if (notify != null)
           setTimeout (function (){notify(null);}, 500);
