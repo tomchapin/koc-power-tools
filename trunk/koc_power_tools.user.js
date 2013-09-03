@@ -1,7 +1,7 @@
-﻿// ==UserScript==
+// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130902
+// @version        20130903a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130902';
+var Version = '20130903a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -996,7 +996,7 @@ anticd.init ();
 
 
 /***
-<img src='http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/avatars/25/m16.jpg'/>
+<img src='https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/avatars/25/m16.jpg'/>
 <div class='content'>
   <div class='info'> 
     <a  class='nm' onclick='Chat.viewProfile(this,9640194,false);return false;'>Lord Sasuke_of_leaf</a>
@@ -1010,7 +1010,7 @@ anticd.init ();
 </div>
 
 
-<img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/avatars/25/f9.jpg">
+<img src="https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/avatars/25/f9.jpg">
 <div class="content">
   <div class="info">
     <a class="nm" onclick="Chat.viewProfile(this,3813948,false);return false;">Lady Aerwyn</a>
@@ -1027,7 +1027,7 @@ anticd.init ();
 
 WHISPER (chatDivContentHook) .....
 
-<img src='http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/avatars/25/m1.jpg'/>
+<img src='https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/avatars/25/m1.jpg'/>
 <div class='content'>
   <div class='info'>
     <a  class='nm' onclick='Chat.viewProfile(this,2282354,false);return false;'>Lord Jetson</a>
@@ -1043,7 +1043,7 @@ WHISPER (chatDivContentHook) .....
 
 
 <div class="chatwrap clearfix direct">
-  <img src="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/avatars/25/m1.jpg">
+  <img src="https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/avatars/25/m1.jpg">
   <div class="content">
     <div class="info">
       <span class="nm">Lord Jetson</span>
@@ -1215,9 +1215,9 @@ var ChatStuff = {
 	msg = msg.replace (/#([0-9]+)#/g, '<a onclick=\'ptChatReportClicked($1,0)\'>$1</a>');
 	msg = msg.replace (/(\byoutu([0-9a-z\.\?\/\=\-\_]+))/gi, '<a onclick=\"window.open\(\'http\:\/\/www\.$1\',\'_blank\'\)\">$1</a>');
 	
-	msg = msg.replace (/(\W)(bot)(\W)/gi,'$1<a onclick=window.open("http://userscripts.org/scripts/show/101052")>$2</a>$3');
-	msg = msg.replace (/(\W)(tools)(\W)/gi,'$1<a onclick=window.open("http://userscripts.org/scripts/show/103659")>$2</a>$3');
-	msg = msg.replace (/(\W)(tro)(\W)/gi,'$1<a onclick=window.open("http://userscripts.org/scripts/show/132329")>$2</a>$3');
+	msg = msg.replace (/(\W)(bot)(\W)/gi,'$1<a onclick=window.open("https://userscripts.org/scripts/show/101052")>$2</a>$3');
+	msg = msg.replace (/(\W)(tools)(\W)/gi,'$1<a onclick=window.open("https://userscripts.org/scripts/show/103659")>$2</a>$3');
+	msg = msg.replace (/(\W)(tro)(\W)/gi,'$1<a onclick=window.open("https://userscripts.org/scripts/show/132329")>$2</a>$3');
 	
     var m = /(Lord|Lady) (.*?)</im.exec(msg);
     if (m != null)
@@ -1441,27 +1441,27 @@ var Rpt = {
 		var m = '';
 		var unitImg = [];
 		for (var i=1;i<nTroopType+1;i++)
-			unitImg[i] = '<img src=http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/units/unit_'+i+'_30.jpg></TD><TD>' + uW.unitcost['unt'+i][0];
-		unitImg[53] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_53_30.png></TD><TD>Crossbows';
-		unitImg[55] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_55_30.png></TD><TD>Trebuchet';
-		unitImg[60] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_60_30.png></TD><TD>Trap';
-		unitImg[61] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_61_30.png></TD><TD>Caltrops';
-		unitImg[62] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_62_30.png></TD><TD>Spiked Barrier';
-		goldImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/gold_30.png></TD><TD>Gold';
-		foodImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/food_30.png></TD><TD>Food';
-		woodImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/wood_30.png></TD><TD>Wood';
-		stoneImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/stone_30.png></TD><TD>Stone';
-		oreImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/iron_30.png></TD><TD>Ore';
-		astoneImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/aetherstone_30.png></TD><TD>Aetherstone';
+			unitImg[i] = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot//fb/e2/src/img/units/unit_'+i+'_30.jpg></TD><TD>' + uW.unitcost['unt'+i][0];
+		unitImg[53] = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/units/unit_53_30.png></TD><TD>Crossbows';
+		unitImg[55] = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/units/unit_55_30.png></TD><TD>Trebuchet';
+		unitImg[60] = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/units/unit_60_30.png></TD><TD>Trap';
+		unitImg[61] = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/units/unit_61_30.png></TD><TD>Caltrops';
+		unitImg[62] = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/units/unit_62_30.png></TD><TD>Spiked Barrier';
+		goldImg = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/gold_30.png></TD><TD>Gold';
+		foodImg = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/food_30.png></TD><TD>Food';
+		woodImg = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/wood_30.png></TD><TD>Wood';
+		stoneImg = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/stone_30.png></TD><TD>Stone';
+		oreImg = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/iron_30.png></TD><TD>Ore';
+		astoneImg = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/aetherstone_30.png></TD><TD>Aetherstone';
 
 		var unitImg2 = [];
 		for (var i=1;i<nTroopType+1;i++)
-			unitImg2[i] = '<img src=http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/units/unit_'+i+'_30.jpg></TD><TD>';
-		unitImg2[53] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_53_30.png></TD><TD>';
-		unitImg2[55] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_55_30.png></TD><TD>';
-		unitImg2[60] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_60_30.png></TD><TD>';
-		unitImg2[61] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_61_30.png></TD><TD>';
-		unitImg2[62] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_62_30.png></TD><TD>';
+			unitImg2[i] = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot//fb/e2/src/img/units/unit_'+i+'_30.jpg></TD><TD>';
+		unitImg2[53] = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/units/unit_53_30.png></TD><TD>';
+		unitImg2[55] = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/units/unit_55_30.png></TD><TD>';
+		unitImg2[60] = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/units/unit_60_30.png></TD><TD>';
+		unitImg2[61] = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/units/unit_61_30.png></TD><TD>';
+		unitImg2[62] = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/units/unit_62_30.png></TD><TD>';
 
 		var trEffect = [];
 /*
@@ -1824,7 +1824,7 @@ var Rpt = {
 			if (rslt['loot'][5]) {
 				for (var crest=1101; crest < 1116; crest++) {
 					if (rslt['loot'][5][crest] == 1)
-						m+='<TR><TD><img width=30 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/' + crest + '.png></TD><TD colspan=2>' + crestname[crest] + '</TD></TR>';
+						m+='<TR><TD><img width=30 src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/items/70/' + crest + '.png></TD><TD colspan=2>' + crestname[crest] + '</TD></TR>';
 				}
 			}
 			if (rslt['loot'][6] > 0)
@@ -2300,7 +2300,7 @@ show : function () {
   for(var i=0; i<Cities.numCities; i++) {
    mhtl += "<TD align=center valign=bottom width=60px><B>" + Cities.cities[i].name + "</B></TD>";
   }
-  mhtl += "</tr><tr><td><img height=18 src=http://koc-power-pdx.googlecode.com/svn/trunk/img/troops/unit_2_50_s34.jpg title=Militiaman> Militiaman/h</td>";
+  mhtl += "</tr><tr><td><img height=18 src=https://koc-power-pdx.googlecode.com/svn/trunk/img/troops/unit_2_50_s34.jpg title=Militiaman> Militiaman/h</td>";
   var temps=[];
   for(var i=0; i<Cities.numCities; i++) {
       temps[i]=((Cities.cities[i]['Troop2Time'] > 0)?(3600 / Cities.cities[i]['Troop2Time']):0);
@@ -2668,7 +2668,7 @@ Tabs.Wilds = {
         for (var k in cWilds)
           ++totw;
       }       
-	  m += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToWilds" target="_blank">HELP</a></td></tr>';
+	  m += '<TD width = "100px" ; border:none"><a href="https://code.google.com/p/koc-power-tools/wiki/HowToWilds" target="_blank">HELP</a></td></tr>';
       m += '<TR><TD colspan=20><DIV class=ptstat><TABLE class=ptNoPad width=100%><TR><TD width=100></td><TD width=90% align=center>'+ city.name 
         +' &nbsp; ('+ city.x +','+ city.y +')</td><TD width=100 align=right>Wilds: '+ totw +' of '+ castle +' &nbsp; </TD></tr></table></div></td></tr>';
       var row = 0;  
@@ -4111,7 +4111,7 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
       }
       
        var m = '<DIV class=ptentry><TABLE width=100% cellpadding=0>';
-       m+= '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowtoPlayers" target="_blank">HELP</a></td></tr>';
+       m+= '<TD width = "100px" ; border:none"><a href="https://code.google.com/p/koc-power-tools/wiki/HowtoPlayers" target="_blank">HELP</a></td></tr>';
 	   m+='<TR><TD class=xtab align=right></td><TD class=xtab>'+uW.g_js_strings.modal_fow_leaderboard.searchuser+': &nbsp; </td>';
        m+=' <TD width=80% class=xtab><INPUT id=allPlayName size=20 type=text/> &nbsp;'; 
        m+='<INPUT id=playSubmit type=submit value="'+uW.g_js_strings.modal_fow_leaderboard.finduser+'" /> &nbsp; <INPUT id=ffbuidsubmit type=submit value="UID" /></td>\
@@ -4251,9 +4251,9 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
         cl = 'class=ptOddrow ';
       else
         cl = '';
-      m += '<TR '+ cl +'valign=top><TD>'+ u.genderAndName +'</td><TD><A target="_tab" href="http://kocscripters.com/player/server/'+GetServerId()+'/tvuid/'+ u.userId +'/">' + u.userId + '</a></td><TD align=right>'+ addCommasInt(u.might) +'</td>\
+      m += '<TR '+ cl +'valign=top><TD>'+ u.genderAndName +'</td><TD><A target="_tab" href="https://kocscripters.com/player/server/'+GetServerId()+'/tvuid/'+ u.userId +'/">' + u.userId + '</a></td><TD align=right>'+ addCommasInt(u.might) +'</td>\
           <TD>'+ (rslt.data[u.userId]?"&nbsp;<SPAN class=boldDarkRed>"+uW.g_js_strings.commonstr.online+"</span>":"") +'</td>\
-          <TD align=center><A target="_tab" href="http://www.facebook.com/profile.php?id='+ u.fbuid +'">'+uW.g_js_strings.commonstr.profile+'</a></td>\
+          <TD align=center><A target="_tab" href="https://www.facebook.com/profile.php?id='+ u.fbuid +'">'+uW.g_js_strings.commonstr.profile+'</a></td>\
           <TD><SPAN onclick="PTpd(this, '+ u.userId +')"><A>'+uW.g_js_strings.modaltitles.memberdetails+'</a> &nbsp; <BR></span><SPAN onclick="PTpl2(this,'+ u.userId+','+rslt.data[u.userId]+')"><A>'+uW.g_js_strings.modaltitles.leaderboard+'</a><BR></span><SPAN onclick="PCplo(this, \''+ u.userId +'\')"><A>'+uW.g_js_strings.modal_messages_viewreports_view.lastlogin+'</a></span></td></tr>';
     }
     m += '</table></div>';
@@ -5531,7 +5531,7 @@ Tabs.Test = {
   },
 
   reloadKOC : function (){
-    var goto = 'http://apps.facebook.com/kingdomsofcamelot/?s='+GetServerId();
+    var goto = 'https://apps.facebook.com/kingdomsofcamelot/?s='+GetServerId();
     var t = '<FORM target="_top" action="'+ goto +'" method=post><INPUT id=xxptButReload type=submit value=RELOAD><INPUT type=hidden name=s value="'+ GetServerId() +'"</form>';
     var e = document.createElement ('div');
     e.innerHTML = t;
@@ -5738,7 +5738,7 @@ Tabs.Options = {
     
     var main = '<TABLE class=ptTab align=center><TR><TD><INPUT class=pbSubtab ID=ptmrchSubU type=submit value="Options"></td>';    
 	main +='<TD><INPUT class=pbSubtab ID=ptmrchSubV type=submit value="Layout"></td></tr></table><HR class=ptThin>';
-    main += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToOptions" target="_blank">HELP</a></td></tr>';
+    main += '<TD width = "100px" ; border:none"><a href="https://code.google.com/p/koc-power-tools/wiki/HowToOptions" target="_blank">HELP</a></td></tr>';
     main +='<DIV id=ptOptOutput style="margin-top:10px; background-color:white; height:680px; overflow:auto;"></div>';
 	
     t.cont.innerHTML = main;
@@ -7597,7 +7597,7 @@ Tabs.OverView = {
     main +='<TD><INPUT class=pbSubtab ID=ptmrchSubC type=submit value='+uW.g_js_strings.modaltitles.buildings+'></td>';
     main +='<TD><INPUT class=pbSubtab ID=ptmrchSubD type=submit value='+uW.g_js_strings.commonstr.info+'></td></tr></table><BR><BR>';
     main +='<DIV id=ptOverOutput align=left style="margin-top:10px; background-color:#F8F8F8; height:680px;"></div>';
-	main += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToOverview" target="_blank">HELP</a></td></tr>';
+	main += '<TD width = "100px" ; border:none"><a href="https://code.google.com/p/koc-power-tools/wiki/HowToOverview" target="_blank">HELP</a></td></tr>';
             
     t.cont.innerHTML = main;
     t.Overv = document.getElementById('ptOverOutput');
@@ -7883,7 +7883,7 @@ Tabs.OverView = {
    	        }
    	        if (tottraining > 0) var rowsp = 3; 
    	        else var rowsp = 2; 
-  	        n+='<TR><TD rowspan="'+rowsp+'" style="background: #FFFFFF; vertical-align:top;"><img src=http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/units/unit_'+a+'_30.jpg></td>';
+  	        n+='<TR><TD rowspan="'+rowsp+'" style="background: #FFFFFF; vertical-align:top;"><img src=https://kabam1-a.akamaihd.net/silooneofcamelot//fb/e2/src/img/units/unit_'+a+'_30.jpg></td>';
    	        for(b=0; b<Cities.numCities; b++) total += parseInt(Seed.units['city' + Seed.cities[b][0]]['unt'+a]);
    	        if (total >0) n+='<TD align=right >'+addCommas(total)+'</td>';
    	        else n+='<TD align=right >&nbsp;</td>';
@@ -8411,13 +8411,13 @@ Tabs.OverView = {
 	  //Useful links
 	  var u='<DIV class=ptstat>USEFULL LINKS</div><DIV id=ptLinks><TABLE align=center cellpadding=1 cellspacing=0><TR>';
 	  u+='<TD width="300px" ; border:none">Scripts</td><TD width="300px" ; border:none">Information sites</td></tr>';
-	  u+='<TR><TD width="300px" ; border:none"><a href="http://userscripts.org/scripts/show/103659" target="_blank">Power Tools (Koc Scripters)</a></td>';
+	  u+='<TR><TD width="300px" ; border:none"><a href="https://userscripts.org/scripts/show/103659" target="_blank">Power Tools (Koc Scripters)</a></td>';
 	  u+='<TD width="300px" ; border:none"><a href="http://koctools.com/index.php?pageid=servers" target="_blank">KOCTools</a></td></tr>';
-	  u+='<TR><TD width="100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/Home?tm=6" target="_blank">Power Tools WIKI</a></td>';
+	  u+='<TR><TD width="100px" ; border:none"><a href="https://code.google.com/p/koc-power-tools/wiki/Home?tm=6" target="_blank">Power Tools WIKI</a></td>';
 	  u+='<TD width="300px" ; border:none"><a href="http://koc.dunno.com/index.sjs?f=ListServers" target="_blank">KOC Mapper</a></td></tr>';
-	  u+='<TR><TD width="100px" ; border:none"><a href="http://userscripts.org/scripts/show/101052" target="_blank">Power Bot (Koc Scripters)</a></td>';
-	  u+='<TD width="300px" ; border:none"><a href="http://kocscripters.com/">KOC scripters site</a></td></tr>';
-	  u+='<TR><TD width="100px" ; border:none"><a href="http://code.google.com/p/koc-power-bot/wiki/Home?tm=6" target="_blank">Power Bot WIKI</a></td>';
+	  u+='<TR><TD width="100px" ; border:none"><a href="https://userscripts.org/scripts/show/101052" target="_blank">Power Bot (Koc Scripters)</a></td>';
+	  u+='<TD width="300px" ; border:none"><a href="https://kocscripters.com/">KOC scripters site</a></td></tr>';
+	  u+='<TR><TD width="100px" ; border:none"><a href="https://code.google.com/p/koc-power-bot/wiki/Home?tm=6" target="_blank">Power Bot WIKI</a></td>';
 	  u+='<TD width="300px" ; border:none"><a href="http://koc.wikia.com/wiki/" target="_blank">Koc Wikia</a></td></tr>';
 	  u+='<TR><TD width="100px" ; border:none"><a href="https://addons.mozilla.org/en/firefox/addon/greasemonkey/" target="_blank">Greasemonkey</a></td><TD width="100px" ; border:none"></td>';
 	  u+='<TR><TD width="100px" ; border:none"><a href="https://addons.mozilla.org/en/firefox/addon/scriptish/" target="_blank">Scriptish</a></td><TD width="100px" ; border:none"></td>';
@@ -8988,12 +8988,12 @@ Tabs.Attaque = {
            </tr><tr align=center valign=top>\
            <td colspan=4 align=left><table border=0 bordercolor=black cellspacing=0 cellpadding=0 width=100% style='text-align:center'><tr><td rowspan="+nTroopType+1+"><div id=RAAstatsource></div></td><td colspan=2><a href='javascript:void(0)' id=BO_RAZ_Units title='Clear' >Units Selected</a></td><td>Attack Time</td><td>Reinforce Time</td></tr>";
             for (r=1; r<nTroopType+1; r++){
-   	     m += '<tr><td align=right><img height=20 title="'+unsafeWindow.unitcost['unt'+r][0] +'" alt="'+unsafeWindow.unitcost['unt'+r][0]+'" src=http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/units/unit_'+r+'_30.jpg></td><td align=left><input style="border:1px solid black;height:16px;font-size:11px;" id="RAAnbunit'+r+'" type=text size=7 value="0" ></td><td><span id="BOEstimationTT'+r+'">&nbsp;</span></td><td><span id="BOEstimationTZ'+r+'">&nbsp;</span></td></tr>';
+   	     m += '<tr><td align=right><img height=20 title="'+unsafeWindow.unitcost['unt'+r][0] +'" alt="'+unsafeWindow.unitcost['unt'+r][0]+'" src=https://kabam1-a.akamaihd.net/silooneofcamelot//fb/e2/src/img/units/unit_'+r+'_30.jpg></td><td align=left><input style="border:1px solid black;height:16px;font-size:11px;" id="RAAnbunit'+r+'" type=text size=7 value="0" ></td><td><span id="BOEstimationTT'+r+'">&nbsp;</span></td><td><span id="BOEstimationTZ'+r+'">&nbsp;</span></td></tr>';
       	}
       	var itemlist=[55,57,931,932];
 	var BOitems="";
 	for(var i=0;i<itemlist.length;i++){
-		 BOitems += "<img src='http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/items/30/"+itemlist[i]+".jpg' /><input type=checkbox id='BOitem_"+itemlist[i]+"'><span id='BOitemSpan_"+itemlist[i]+"'>" + unsafeWindow.ksoItems[itemlist[i]].count + "</span>&nbsp;";
+		 BOitems += "<img src='https://kabam1-a.akamaihd.net/silooneofcamelot//fb/e2/src/img/items/30/"+itemlist[i]+".jpg' /><input type=checkbox id='BOitem_"+itemlist[i]+"'><span id='BOitemSpan_"+itemlist[i]+"'>" + unsafeWindow.ksoItems[itemlist[i]].count + "</span>&nbsp;";
         }
         m += "</table></td></tr>\
               <tr><td colspan=4>Knight : <SELECT id='RAApiKnight' type=list></select> <br>"+BOitems+"</td></tr></table>\
@@ -9589,7 +9589,7 @@ Tabs.Attaque = {
      m="<table cellspacing=0 cellpadding=0 width=80%><tr><td colspan=2>Units Available</td></tr>";
      var cityID = 'city'+ t.sourceCity.id;
      for (r=1; r<nTroopType+1; r++){   
-       m += '<tr><td align=right><img title="'+unsafeWindow.unitcost['unt'+r][0] +'" alt="'+unsafeWindow.unitcost['unt'+r][0] + '" height=20 src=http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/units/unit_'+r+'_30.jpg></td>\
+       m += '<tr><td align=right><img title="'+unsafeWindow.unitcost['unt'+r][0] +'" alt="'+unsafeWindow.unitcost['unt'+r][0] + '" height=20 src=https://kabam1-a.akamaihd.net/silooneofcamelot//fb/e2/src/img/units/unit_'+r+'_30.jpg></td>\
              <td align=left><input style="border:1px solid black;height:20px;font-size:11px;" id="RAAdestunit'+r+'" type=text size=10 readonly value="'+parseInt(Seed.units[cityID]['unt'+r])+'">&nbsp;\
              <input type=button value="--->" id="RAApdestunit'+r+'"  style="border:1px solid black;height:16px;font-size:11px;"></td></tr>';
      }
@@ -9808,7 +9808,7 @@ Tabs.Rpt = {
 		unsafeWindow.getReport = t.getReportBody;
 
 		var tc = '<DIV class=ptstat>SEARCH INBOX, OUTBOX, PLAYER AND ALLIANCE REPORTS</DIV><DIV class=ptentry><TABLE><TR align=center valign=center>';
-		tc += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToMessages" target="_blank">HELP</a></td></tr>';
+		tc += '<TD width = "100px" ; border:none"><a href="https://code.google.com/p/koc-power-tools/wiki/HowToMessages" target="_blank">HELP</a></td></tr>';
 		tc += '<TD class=xtab align=right>Type:&nbsp;<SELECT id="idRptType">';
 		tc += '<OPTION value="alliance" ' + (Options.rptType=='alliance'?'SELECTED':'') + '>Alliance Reports</OPTION>';
 		tc += '<OPTION value="player" ' + (Options.rptType=='player'?'SELECTED':'') + '>Player Reports</OPTION>';
@@ -10335,18 +10335,18 @@ Tabs.Rpt = {
 		var m = '';
 		var unitImg = [];
 		for (var i=1;i<nTroopType+1;i++)
-			unitImg[i] = '<img src=http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/units/unit_'+i+'_30.jpg></TD><TD>' + unsafeWindow.unitcost['unt'+i][0];
-		unitImg[53] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_53_30.png></TD><TD>Crossbows';
-		unitImg[55] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_55_30.png></TD><TD>Trebuchet';
-		unitImg[60] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_60_30.png></TD><TD>Trap';
-		unitImg[61] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_61_30.png></TD><TD>Caltrops';
-		unitImg[62] = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/units/unit_62_30.png></TD><TD>Spiked Barrier';
-		goldImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/gold_30.png></TD><TD>Gold';
-		foodImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/food_30.png></TD><TD>Food';
-		woodImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/wood_30.png></TD><TD>Wood';
-		stoneImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/stone_30.png></TD><TD>Stone';
-		oreImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/iron_30.png></TD><TD>Ore';
-		astoneImg = '<img src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/aetherstone_30.png></TD><TD>Aetherstone';
+			unitImg[i] = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot//fb/e2/src/img/units/unit_'+i+'_30.jpg></TD><TD>' + unsafeWindow.unitcost['unt'+i][0];
+		unitImg[53] = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/units/unit_53_30.png></TD><TD>Crossbows';
+		unitImg[55] = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/units/unit_55_30.png></TD><TD>Trebuchet';
+		unitImg[60] = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/units/unit_60_30.png></TD><TD>Trap';
+		unitImg[61] = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/units/unit_61_30.png></TD><TD>Caltrops';
+		unitImg[62] = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/units/unit_62_30.png></TD><TD>Spiked Barrier';
+		goldImg = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/gold_30.png></TD><TD>Gold';
+		foodImg = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/food_30.png></TD><TD>Food';
+		woodImg = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/wood_30.png></TD><TD>Wood';
+		stoneImg = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/stone_30.png></TD><TD>Stone';
+		oreImg = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/iron_30.png></TD><TD>Ore';
+		astoneImg = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/aetherstone_30.png></TD><TD>Aetherstone';
 
 		function buildHeader () {
 			var h='<TABLE class=ptTab width=100%>';
@@ -10565,7 +10565,7 @@ Tabs.Rpt = {
 			if (rslt['loot'][5]) {
 				for (var crest=1101; crest < 1116; crest++) {
 					if (rslt['loot'][5][crest] == 1)
-						m+='<TR><TD><img width=30 src=http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/items/70/' + crest + '.png></TD><TD colspan=2>' + crestname[crest] + '</TD></TR>';
+						m+='<TR><TD><img width=30 src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/items/70/' + crest + '.png></TD><TD colspan=2>' + crestname[crest] + '</TD></TR>';
 				}
 			}
 			if (rslt['loot'][6] > 0)
@@ -10747,7 +10747,7 @@ Tabs.Alliance = {
     
     var m =  '<DIV class=ptstat>ALLIANCE FUNCTIONS</div><TABLE align=center cellpadding=1 cellspacing=0></table>';
     
-	m += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToAlliance" target="_blank">HELP</a></td></tr>';
+	m += '<TD width = "100px" ; border:none"><a href="https://code.google.com/p/koc-power-tools/wiki/HowToAlliance" target="_blank">HELP</a></td></tr>';
     m +='<TABLE class=ptTab><TD width=200px>List Alliance Members</td><TD>Sort by: '+ htmlSelector({Name:'Name',Might:'Might',glory:'Glory',Cities:'Cities',Position:'Position',dip:'Days in Position',uid:'User Id',fbuid:'Facebook id'},null,'id=searchAlli') +'</td>';
     m += '<TD><INPUT id=alList type=submit value="List"></td>';
     m += '<TD id=progress></td></tr>';
@@ -10821,7 +10821,7 @@ Tabs.Alliance = {
 	var row = document.getElementById('alOverviewTab').insertRow(0);
 		row.vAlign = 'top';
 		row.insertCell(0).innerHTML ='<img width=25 src="'+ avatar +'">';
-		row.insertCell(1).innerHTML ='<A target="_tab" href="http://www.facebook.com/profile.php?id='+ fbuid +'">profile</a>';
+		row.insertCell(1).innerHTML ='<A target="_tab" href="https://www.facebook.com/profile.php?id='+ fbuid +'">profile</a>';
 		row.insertCell(2).innerHTML = Name;
 		var cell2 = row.insertCell(3); 
 		cell2.width = "60" ;
@@ -11120,7 +11120,7 @@ Tabs.Marches = {
     main +='<TD><INPUT class=pbSubtab ID=ptmrchSubP type=submit value="Incoming Popup"></td>';
     main +='<TD><INPUT class=pbSubtab ID=ptmrchSubM type=submit value='+uW.g_js_strings.commonstr.marching+'></td>';
     main +='<TD><INPUT class=pbSubtab ID=ptmrchSubR type=submit value='+uW.g_js_strings.commonstr.reinforced+'></td></tr></table><HR class=ptThin>';
-    main += '<TD width = "100px" ; border:none"><a href="http://code.google.com/p/koc-power-tools/wiki/HowToMarches" target="_blank">HELP</a></td></tr>';
+    main += '<TD width = "100px" ; border:none"><a href="https://code.google.com/p/koc-power-tools/wiki/HowToMarches" target="_blank">HELP</a></td></tr>';
     main +='<DIV id=ptMarchOutput style="margin-top:10px; background-color:white; height:680px; overflow:scroll;"></div>';
 
 	
@@ -11228,14 +11228,14 @@ Tabs.Marches = {
 				if (marchType == 2 && marchStatus == 2) marchType = 102;
 				
 				switch (marchType) {
-					case 1: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status=uW.g_js_strings.commonstr.transport;break;
-					case 2: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status=uW.g_js_strings.commonstr.reinforce	;break;
-					case 3: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/scouting.jpg";status=uW.g_js_strings.commonstr.scout;break;
-					case 4: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status=uW.g_js_strings.commonstr.attack;break;
-					case 9: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/attacking.jpg";status=uW.g_js_strings.commonstr.attack;break;
-					case 5: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/transporting.jpg";status=uW.g_js_strings.commonstr.reassign;break;
-					case 100: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/returning.jpg";status=uW.g_js_strings.commonstr.returning;break;
-					case 102: icon="http://cdn1.kingdomsofcamelot.com/fb/e2/src/img/reinforce.jpg";status=uW.g_js_strings.commonstr.encamped;break;
+					case 1: icon="https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/transporting.jpg";status=uW.g_js_strings.commonstr.transport;break;
+					case 2: icon="https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/reinforce.jpg";status=uW.g_js_strings.commonstr.reinforce	;break;
+					case 3: icon="https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/scouting.jpg";status=uW.g_js_strings.commonstr.scout;break;
+					case 4: icon="https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/attacking.jpg";status=uW.g_js_strings.commonstr.attack;break;
+					case 9: icon="https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/attacking.jpg";status=uW.g_js_strings.commonstr.attack;break;
+					case 5: icon="https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/transporting.jpg";status=uW.g_js_strings.commonstr.reassign;break;
+					case 100: icon="https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/returning.jpg";status=uW.g_js_strings.commonstr.returning;break;
+					case 102: icon="https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/reinforce.jpg";status=uW.g_js_strings.commonstr.encamped;break;
 				} 
 				
 				if(status == uW.g_js_strings.commonstr.encamped)
@@ -11376,16 +11376,16 @@ Tabs.Marches = {
   				    }
   
   				    switch (marchType) {
-  					    case 1: icon="http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/transporting.jpg";status=uW.g_js_strings.commonstr.transport;break;
-  					    case 2: icon="http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/reinforce.jpg";status=uW.g_js_strings.commonstr.reinforce;break;
-  					    case 3: icon="http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/scouting.jpg";status=uW.g_js_strings.commonstr.scout;break;
-  					    case 4: icon="http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/attacking.jpg";status=uW.g_js_strings.commonstr.attack;break;
-  					    case 5: icon="http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/transporting.jpg";status=uW.g_js_strings.commonstr.reassign;break;
-  					    case 8: icon="http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/returning.jpg";status=uW.g_js_strings.commonstr.returning;break;
-  					    case 9: icon="http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/attacking.jpg";status=uW.g_js_strings.commonstr.raid;break;
-  					    case 102: icon="http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/reinforce.jpg";status=uW.g_js_strings.commonstr.encamped;break;
-						case 103: icon="http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/autoAttack/raid_stopped_desat.png";status=uW.g_js_strings.attack_generatequeue.raidstopped;break;
-						case 104: icon="http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/autoAttack/raid_resting.png";status=uW.g_js_strings.attack_generatequeue.raidresting;break;
+  					    case 1: icon="https://kabam1-a.akamaihd.net/silooneofcamelot//fb/e2/src/img/transporting.jpg";status=uW.g_js_strings.commonstr.transport;break;
+  					    case 2: icon="https://kabam1-a.akamaihd.net/silooneofcamelot//fb/e2/src/img/reinforce.jpg";status=uW.g_js_strings.commonstr.reinforce;break;
+  					    case 3: icon="https://kabam1-a.akamaihd.net/silooneofcamelot//fb/e2/src/img/scouting.jpg";status=uW.g_js_strings.commonstr.scout;break;
+  					    case 4: icon="https://kabam1-a.akamaihd.net/silooneofcamelot//fb/e2/src/img/attacking.jpg";status=uW.g_js_strings.commonstr.attack;break;
+  					    case 5: icon="https://kabam1-a.akamaihd.net/silooneofcamelot//fb/e2/src/img/transporting.jpg";status=uW.g_js_strings.commonstr.reassign;break;
+  					    case 8: icon="https://kabam1-a.akamaihd.net/silooneofcamelot//fb/e2/src/img/returning.jpg";status=uW.g_js_strings.commonstr.returning;break;
+  					    case 9: icon="https://kabam1-a.akamaihd.net/silooneofcamelot//fb/e2/src/img/attacking.jpg";status=uW.g_js_strings.commonstr.raid;break;
+  					    case 102: icon="https://kabam1-a.akamaihd.net/silooneofcamelot//fb/e2/src/img/reinforce.jpg";status=uW.g_js_strings.commonstr.encamped;break;
+						case 103: icon="https://kabam1-a.akamaihd.net/silooneofcamelot//fb/e2/src/img/autoAttack/raid_stopped_desat.png";status=uW.g_js_strings.attack_generatequeue.raidstopped;break;
+						case 104: icon="https://kabam1-a.akamaihd.net/silooneofcamelot//fb/e2/src/img/autoAttack/raid_resting.png";status=uW.g_js_strings.attack_generatequeue.raidresting;break;
   				    } 
   				      				    
   				    if (Seed.queue_atkp[cityID][k]["knightId"] !=0){
@@ -12077,7 +12077,7 @@ var AutoUpdater_103659 = {
                 // Ok
                 function(){
                     try { 
-                        location.href = this.beta ? this.betaUrl :  'http://userscripts.org/scripts/source/'+this.id+'.user.js'; 
+                        location.href = this.beta ? this.betaUrl :  'https://userscripts.org/scripts/source/'+this.id+'.user.js'; 
                     } catch(e) {}
                 },
                 // Cancel
@@ -13153,7 +13153,7 @@ function getCityPrestige (cityId){
 	return Seed.cityData.city[cityId].isPrestigeCity;
 }
 
-// example: http://www150.kingdomsofcamelot.com
+// example: https://www150.kingdomsofcamelot.com
 function GetServerId() {
   var m=/^[a-zA-Z]+([0-9]+)\./.exec(document.location.hostname);
   if(m)
@@ -14763,7 +14763,7 @@ postToCell : function (m, playerNames, cityNames){
 
   GM_xmlhttpRequest({
     method: 'POST',
-    url: 'http://hs151.digitalweb.net/index.php',
+    url: 'https://baos.kocscripters.com/index.php',
 	headers: {
 		'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
     },
@@ -14962,7 +14962,7 @@ function Sendcourtdata (courtdata) {
 	params.tvuid = Number(unsafeWindow.tvuid);
   GM_xmlhttpRequest({
     method: 'POST',
-    url: 'http://data2.kocscripters.com/courtdat.php',
+    url: 'https://data2.kocscripters.com/courtdat.php',
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
     },
