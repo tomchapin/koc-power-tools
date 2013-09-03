@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130830a
+// @version        20130902
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130830a';
+var Version = '20130902';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -193,6 +193,13 @@ var AutoTrainOptions = {
 
 var ChatIcons = {};
 
+var IRCOptions = {
+	IRCCmdEnable : false,
+	IRCCmdSeen : {enable:false},
+	IRCCmdRules : {enable:false, message:""},
+};
+	
+
 var JSON;if(!JSON){JSON={};}(function(){"use strict";function f(n){return n<10?'0'+n:n;}if(typeof Date.prototype.toJSON!=='function'){Date.prototype.toJSON=function(key){return isFinite(this.valueOf())?this.getUTCFullYear()+'-'+f(this.getUTCMonth()+1)+'-'+f(this.getUTCDate())+'T'+f(this.getUTCHours())+':'+f(this.getUTCMinutes())+':'+f(this.getUTCSeconds())+'Z':null;};String.prototype.toJSON=Number.prototype.toJSON=Boolean.prototype.toJSON=function(key){return this.valueOf();};}var cx=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,escapable=/[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,gap,indent,meta={'\b':'\\b','\t':'\\t','\n':'\\n','\f':'\\f','\r':'\\r','"':'\\"','\\':'\\\\'},rep;function quote(string){escapable.lastIndex=0;return escapable.test(string)?'"'+string.replace(escapable,function(a){var c=meta[a];return typeof c==='string'?c:'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4);})+'"':'"'+string+'"';}function str(key,holder){var i,k,v,length,mind=gap,partial,value=holder[key];if(value&&typeof value==='object'&&typeof value.toJSON==='function'){value=value.toJSON(key);}if(typeof rep==='function'){value=rep.call(holder,key,value);}switch(typeof value){case'string':return quote(value);case'number':return isFinite(value)?String(value):'null';case'boolean':case'null':return String(value);case'object':if(!value){return'null';}gap+=indent;partial=[];if(Object.prototype.toString.apply(value)==='[object Array]'){length=value.length;for(i=0;i<length;i+=1){partial[i]=str(i,value)||'null';}v=partial.length===0?'[]':gap?'[\n'+gap+partial.join(',\n'+gap)+'\n'+mind+']':'['+partial.join(',')+']';gap=mind;return v;}if(rep&&typeof rep==='object'){length=rep.length;for(i=0;i<length;i+=1){k=rep[i];if(typeof k==='string'){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v);}}}}else{for(k in value){if(Object.hasOwnProperty.call(value,k)){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v);}}}}v=partial.length===0?'{}':gap?'{\n'+gap+partial.join(',\n'+gap)+'\n'+mind+'}':'{'+partial.join(',')+'}';gap=mind;return v;}}if(typeof JSON.stringify!=='function'){JSON.stringify=function(value,replacer,space){var i;gap='';indent='';if(typeof space==='number'){for(i=0;i<space;i+=1){indent+=' ';}}else if(typeof space==='string'){indent=space;}rep=replacer;if(replacer&&typeof replacer!=='function'&&(typeof replacer!=='object'||typeof replacer.length!=='number')){throw new Error('JSON.stringify');}return str('',{'':value});};}if(typeof JSON.parse!=='function'){JSON.parse=function(text,reviver){var j;function walk(holder,key){var k,v,value=holder[key];if(value&&typeof value==='object'){for(k in value){if(Object.hasOwnProperty.call(value,k)){v=walk(value,k);if(v!==undefined){value[k]=v;}else{delete value[k];}}}}return reviver.call(holder,key,value);}text=String(text);cx.lastIndex=0;if(cx.test(text)){text=text.replace(cx,function(a){return'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4);});}if(/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,'@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']').replace(/(?:^|:|,)(?:\s*\[)+/g,''))){j=eval('('+text+')');return typeof reviver==='function'?walk({'':j},''):j;}throw new SyntaxError('JSON.parse');};}}());
 var JSON2 = JSON; 
 
@@ -225,6 +232,7 @@ function ptStartup (){
   readChatIconsOptions();
   readColors();
   readAutoTrainOptions();
+  readIRCOptions();
 	if (AutoTrainOptions.intervalSecs < 60)
 		AutoTrainOptions.intervalSecs = 60;
   saveAutoTrainOptions();
@@ -1231,8 +1239,7 @@ var ChatStuff = {
 			AudioManager.play();
 			setTimeout(function(){AudioManager.stop();}, 5000);
 		}
-
-			
+		t.sendToIRC(suid,m[2],msg);
 	}
 	//lets remove the null character which could be a problem when copy and paste web addresses Null:"­",UnicodeLS:"&#8232;",
     return msg;
@@ -1269,7 +1276,11 @@ var ChatStuff = {
 		ChatIcons[uid] = fbid;
 		saveChatIconsOptions();
 	}
-  }
+  },
+  
+  sendToIRC : function (uid,name,msg) {
+	Tabs.IRC.grabChat(uid,name,msg);
+  },
 }
 
 var AudioManager = {
@@ -10949,6 +10960,141 @@ Tabs.Alliance = {
         mainPop.div.style.width = 750 + 'px';
   },
 };
+/*********************************** IRC TAB ***********************************/
+Tabs.IRC = {
+  tabOrder : 1000,
+  tabLabel : "IRC",
+  myDiv : null,
+  seenLog : {},
+
+  
+  init : function (div){    
+    var t = Tabs.IRC;      
+    t.myDiv = div;
+    t.myDiv.style.maxHeight = '730px';
+     
+    var m =  '<DIV class=ptstat>IRC Bot Command Server</div><TABLE align=center cellpadding=1 cellspacing=0></table>';
+	m += '<INPUT id=ptIRCcmdEnable type=checkbox ' + (IRCOptions.IRCCmdEnable?'CHECKED ':'') + '> Global Enable (this must be checked for all other options to work)<br>';
+	m +=  '<DIV class=ptstat>IRC Bot Options</div><TABLE align=center cellpadding=1 cellspacing=0></table>';
+    m += '<INPUT id=ptIRCcmdSeen type=checkbox ' + (IRCOptions.IRCCmdSeen.enable?'CHECKED ':'') + '> Respond to "!seen <username>" command<br>';
+    m += '<INPUT id=ptIRCcmdRules type=checkbox ' + (IRCOptions.IRCCmdRules.enable?'CHECKED ':'') + '> Respond to "!rules" command. ';
+	m += ' Rules message: <INPUT id=ptIRCcmdRulesMsg type=text size=50 value="' + IRCOptions.IRCCmdRules.message + '">';
+    t.myDiv.innerHTML = m;
+
+    document.getElementById('ptIRCcmdEnable').addEventListener ('change', function (e){IRCOptions.IRCCmdEnable = e.target.checked;saveIRCOptions();}, false);
+    document.getElementById('ptIRCcmdSeen').addEventListener ('change', function (e){IRCOptions.IRCCmdSeen.enable = e.target.checked;saveIRCOptions();}, false);
+	document.getElementById('ptIRCcmdRules').addEventListener ('change', function (e){IRCOptions.IRCCmdRules.enable = e.target.checked;saveIRCOptions();}, false);
+	document.getElementById('ptIRCcmdRulesMsg').addEventListener ('change', function (e){IRCOptions.IRCCmdRules.message = e.target.value;saveIRCOptions();}, false);
+	
+	var a = JSON2.parse(GM_getValue ('IRCSeen_log_'+GetServerId(), '{}'));
+    if (matTypeof(a) == 'object')
+    {
+        t.seenLog = a;
+    }
+      window.addEventListener('unload', t.onUnload, false);
+  },
+
+  onUnload : function ()
+  {
+	  var t = Tabs.IRC;
+      GM_setValue ('IRCSeen_log_'+GetServerId(), JSON2.stringify(t.seenLog));
+  },  
+
+  grabChat : function (uid, name, msg) {
+	var t = Tabs.IRC; 
+	var time = "";
+	var lastPost = "";
+	
+	if (!IRCOptions.IRCCmdEnable)
+		return;
+		
+	if (name == null)
+		return;
+	if (msg == null)
+		return;
+	
+	var a = msg.indexOf("<span class='time'>");
+	var b = msg.indexOf('</span>',a);
+	if (b>a)
+		time = msg.slice(a+19,b);
+	
+	var c = msg.indexOf("<div class='tx'>");
+	var d = msg.indexOf("</div>",c);
+	if (d>c)
+		lastPost = msg.slice(c+16,d);
+
+	t.logChat(uid,name,time,lastPost);
+	if (IRCOptions.IRCCmdSeen.enable) {
+		if (msg.indexOf("!seen") >= 0) {
+			t.processSeen(msg);
+		}
+	}
+	if (IRCOptions.IRCCmdRules.enable) {
+		if (msg.indexOf("!rules") >= 0) {
+			t.processRules();
+		}
+	}
+  },
+   
+  logChat : function (uid, name, time, lastPost) {
+	var t = Tabs.IRC; 
+	if (lastPost.indexOf("I need help building my")>=0)
+		return;
+	if (lastPost.indexOf("My embassy has")>=0)
+		return;
+	if (lastPost.indexOf("My wilderness at")>=0)
+		return;
+	if (lastPost.indexOf("has been scouted by")>=0)
+		return;
+	if (lastPost.indexOf("has been attacked by")>=0)
+		return;
+	if (lastPost.indexOf("is low on food")>=0)
+		return;
+	if (lastPost.indexOf("Encamped Allies")>=0)
+		return;
+	if (lastPost.indexOf("Estimated Arrival")>=0)
+		return;
+		
+	var updateSeen = {"name":name, "timestamp":time, "lastpost":lastPost};
+	t.seenLog[uid] = updateSeen;
+  },
+  
+  processSeen : function (msg) {
+	var t = Tabs.IRC;
+	var username_string = msg.slice(msg.indexOf("!seen")+6);
+	var username = username_string.split('<');
+	if (username[0].length > 2)
+		Tabs.AllianceList.fetchPlayerList(username[0],t.eventGotPlayerList);
+  },
+
+  processRules : function () {
+	var t = Tabs.IRC;
+	var automsg = sendChat('/a '+IRCOptions.IRCCmdRules.message);
+  },  
+  eventGotPlayerList : function (rslt) {
+	var t = Tabs.IRC;
+	if (!rslt.ok) {
+		var autoerrormsgPNF = sendChat("/a Player not found. Enter a valid Player.");
+		return;
+	}
+	var uid = rslt.matchedUsers[Object.keys(rslt.matchedUsers)[0]].userId;
+	if (Object.keys(t.seenLog).length > 0)
+		if (uid in t.seenLog) {
+			var automsg = sendChat('/a '+t.seenLog[uid].name+' last seen saying: ' +t.seenLog[uid].lastpost+ ' @'+ t.seenLog[uid].timestamp);
+		}
+		else
+			var autoerrormsg = sendChat("/a I haven't seen that user");
+  },
+		
+  hide : function (){         
+    mainPop.div.style.width = 750 + 'px';
+  },
+
+  show : function (){         
+  		var t = Tabs.IRC;
+        mainPop.div.style.width = 750 + 'px';
+  },
+};
 
 /*************************************** MARCHES TAB ************************************************/
 
@@ -13211,6 +13357,29 @@ function readAutoTrainOptions (){
 function saveAutoTrainOptions (){
   var serverID = GetServerId();
 	GM_setValue ('AutoTrainOptions_'+serverID, JSON2.stringify(AutoTrainOptions));
+}
+
+function readIRCOptions (){
+  var serverID = GetServerId();
+	s = GM_getValue ('IRCOptions_'+serverID);
+	if (s != null){
+		opts = JSON2.parse (s);
+		for (k in opts){
+			if (IRCOptions[k] != undefined) {
+				if (matTypeof(opts[k]) == 'object') {
+					for (kk in opts[k])
+						if (IRCOptions[k][kk] != undefined)
+							IRCOptions[k][kk] = opts[k][kk];
+				} else
+					IRCOptions[k] = opts[k];
+			}
+		}
+	}
+}
+
+function saveIRCOptions (){
+  var serverID = GetServerId();
+	GM_setValue ('IRCOptions_'+serverID, JSON2.stringify(IRCOptions));
 }
 
 function readChatIconsOptions (){
