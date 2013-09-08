@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130905a
+// @version        2013090a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130905a';
+var Version = '20130908a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -9375,25 +9375,7 @@ Tabs.Attaque = {
 	 params.r2 = 0; 
 	 params.r3 = 0; 
 	 params.r4 = 0; 
-	 params.gold = 0; 
-	 params.u1 = 0;
-  	 params.u2 = 0;
-  	 params.u3 = 0;
-  	 params.u4 = 0;
-  	 params.u5 = 0;
-  	 params.u6 = 0;
-  	 params.u7 = 0;
-  	 params.u8 = 0;
-  	 params.u9 = 0;
-  	 params.u10 = 0;
-  	 params.u11 = 0;
- 	 params.u12 = 0;
- 	 params.u13 = 0;
- 	 params.u14 = 0;
- 	 params.u15 = 0;
- 	 params.u16 = 0;
- 	 params.u17 = 0;
- 
+	 params.gold = 0;
  
          if (typemarche!=3) {
         if (ById("RAAnbunit1").value>0) params.u1 = ById("RAAnbunit1").value;
@@ -9473,6 +9455,9 @@ Tabs.Attaque = {
                   t.clickRAACitySourceSelect(t.sourceCity);
                } else {
                   t.statutRAA.innerHTML ="<font color=red size='3px'><b>Error sending march!<b></font>";
+                  if(rslt.error_code && (rslt.error_code == 212 || rslt.error_code == 213)) {
+              		  Seed.knights['city'+params.cid]['knt'+params.kid].knightStatus = 10;
+                  };
                   if (rslt.msg) {
                      t.statutRAA.innerHTML +="<br><font color=black size='2px'>" + rslt.msg +"</font>";
                   }else{
