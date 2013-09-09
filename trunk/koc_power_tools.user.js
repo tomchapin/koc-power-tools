@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130909a
+// @version        20130909b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130909a';
+var Version = '20130909b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -5780,7 +5780,7 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=ptEnableFoodWarn type=checkbox /></td><TD>Show \'food left\' in RED if food will run out in less than';
 	  m+='<INPUT id=optFoodHours type=text size=3 value="'+ Options.foodWarnHours +'"> hours, does NOT affect the food alert anymore!</td></tr>';
 //	  m+='<TR><TD><INPUT id=ptEnableFoodTower type=checkbox /></td><TD>Enable Tower food alert. (Warning set to 6 hours, checked every 30min.)</td></tr>';
-	  m+='<TR><TD><INPUT id=ptEnableFoodTower type=checkbox disable=true/></td><TD>Disabled Tower food alert in Power Tools - instead, use the Power Bot function.</td></tr>';
+	  m+='<TR><TD><INPUT id=ptEnableFoodTower type=checkbox disabled=true /></td><TD>Disabled Tower food alert in Power Tools - instead, use the Power Bot function.</td></tr>';
 	  m+='<TR><TD><INPUT id=ptEnableWisperAlert type=checkbox /></td><TD>Enable sound alert on whisper'+ htmlSelector({whisper:'arrow', whisper2:'doorbell'},Options.whisperplay,'id=ptwhisplay') +'</td></tr>';
 	  m+='<TR><TD><INPUT id=ptEnableTowerAlert type=checkbox /></td><TD>Enable sound alert on tower alert in chat</td></tr>';
       m+='<TR><TD><INPUT id=ptupdate type=checkbox '+ (GlobalOptions.ptupdate?'CHECKED ':'') +'/></td><TD>Check updates on '+ htmlSelector({0:'Userscripts', 1:'Google Code'},GlobalOptions.ptupdatebeta,'id=ptupdatebeta') +' (all domains) &nbsp; &nbsp; <INPUT id=ptupdatenow type=submit value="Update Now" /></td></tr>';
