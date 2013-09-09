@@ -1,7 +1,7 @@
-// ==UserScript==
+﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        2013090a
+// @version        20130909a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130908a';
+var Version = '20130909a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -329,7 +329,7 @@ if (TEST_WIDE){
 
   GM_addStyle (gmstyles);  
   mainPop.getMainDiv().innerHTML = '<STYLE>'+ styles +'</style>';
-  FoodAlerts.init();
+//  FoodAlerts.init();
   TowerAlerts.init();
   MapDistanceFix.init ();
   AllianceReports.init ();
@@ -3755,6 +3755,7 @@ modal_alliance_report_view("6043602",1,51,9,13487684,"Fred8135i","M","Jetson","M
 
 
 /************************ Food Alerts *************************/
+/*
 var FoodAlerts = {
 
   init : function (){
@@ -3788,7 +3789,7 @@ var FoodAlerts = {
   f.minuteTimer = setTimeout (f.e_eachMinute, 1800000);
   }, 
 }
-
+*/
 
 
 /************************ Tower Alerts ************************/
@@ -4751,7 +4752,7 @@ return 0;
       var newColNum = e.id.substr(8);
       document.getElementById('clickCol'+t.sortColNum).className = 'clickable';
       e.className='clickable clickableSel';
-      alert(t.dat[0].toSource());
+//      alert(t.dat[0].toSource());
       if (newColNum == t.sortColNum)
         t.sortDir *= -1;
       else
@@ -5778,7 +5779,8 @@ Tabs.Options = {
 	  m+='<TR><TD><INPUT id=ptHideOnGoto type=checkbox /></td><TD>Hide window when clicking on map coordinates.</td></tr>';
 	  m+='<TR><TD><INPUT id=ptEnableFoodWarn type=checkbox /></td><TD>Show \'food left\' in RED if food will run out in less than';
 	  m+='<INPUT id=optFoodHours type=text size=3 value="'+ Options.foodWarnHours +'"> hours, does NOT affect the food alert anymore!</td></tr>';
-	  m+='<TR><TD><INPUT id=ptEnableFoodTower type=checkbox /></td><TD>Enable Tower food alert. (Warning set to 6 hours, checked every 30min.)</td></tr>';
+//	  m+='<TR><TD><INPUT id=ptEnableFoodTower type=checkbox /></td><TD>Enable Tower food alert. (Warning set to 6 hours, checked every 30min.)</td></tr>';
+	  m+='<TR><TD><INPUT id=ptEnableFoodTower type=checkbox disable=true/></td><TD>Disabled Tower food alert in Power Tools - instead, use the Power Bot function.</td></tr>';
 	  m+='<TR><TD><INPUT id=ptEnableWisperAlert type=checkbox /></td><TD>Enable sound alert on whisper'+ htmlSelector({whisper:'arrow', whisper2:'doorbell'},Options.whisperplay,'id=ptwhisplay') +'</td></tr>';
 	  m+='<TR><TD><INPUT id=ptEnableTowerAlert type=checkbox /></td><TD>Enable sound alert on tower alert in chat</td></tr>';
       m+='<TR><TD><INPUT id=ptupdate type=checkbox '+ (GlobalOptions.ptupdate?'CHECKED ':'') +'/></td><TD>Check updates on '+ htmlSelector({0:'Userscripts', 1:'Google Code'},GlobalOptions.ptupdatebeta,'id=ptupdatebeta') +' (all domains) &nbsp; &nbsp; <INPUT id=ptupdatenow type=submit value="Update Now" /></td></tr>';
