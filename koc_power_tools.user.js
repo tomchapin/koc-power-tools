@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130909b
+// @version        20130917a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130909b';
+var Version = '20130917a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -134,7 +134,7 @@ var Options = {
   arTarget:'Them',
   arPageFrom : 1,
   arPageTo : 5,
-  TournoiLigne : 25,
+  TournoiLigne : 250,
   Xrenfort:0,
   Yrenfort:0,
   AttackHorloge:"21:00:00",
@@ -1635,13 +1635,14 @@ var Rpt = {
 				else if (rslt['conquered']==0)
 					h+='<TD><FONT color="#66CC33"><B>Secured</B></font></td>';
 			} else if (rpt.marchName == 'Reinforce' || rpt.marchName == 'Transport') {
-				h+='<TD align=left width=5%>'+rpt.side1CityName+'<BR />';
+				if (rpt.side1CityName) h+='<TD align=left width=5%>'+rpt.side1CityName+'<BR />';
+				if (rpt.side0CityName) {
 				if (rpt.side0CityName != '')
 					h+=rpt.side0CityName+'</TD>';
 				else
 					h+=rpt.side0TileTypeText+' Level '+ rpt.side0TileLevel+'</TD>';
 			}
-
+			}
 			h+='<TD align=right>' + formatUnixTime(rpt.reportUnixTime,'24hour') + '<BR />Report No: ' + reportId + '</TD></TR></TABLE>';
 			return h;
 		}
@@ -2279,6 +2280,12 @@ Tabs.Tournament = {
 init : function (div){
 	var t = Tabs.Tournament;
 	t.cont = div;
+	t.tourneyPos = 0;
+	uW.ptSetTourneyPos = function(tab) {
+		var t = Tabs.Tournament;
+		t.tourneyPos = tab;
+		t.show();
+	};
 },
 
 hide : function (){
@@ -2299,67 +2306,99 @@ show : function () {
   for(var i=0; i<Cities.numCities; i++) {
    mhtl += "<TD align=center valign=bottom width=60px><B>" + Cities.cities[i].name + "</B></TD>";
   }
-  mhtl += "</tr><tr><td><img height=18 src=https://koc-power-pdx.googlecode.com/svn/trunk/img/troops/unit_2_50_s34.jpg title=Militiaman> Militiaman/h</td>";
+  mhtl += "</tr><tr><td>";
+	mhtl +='<SELECT id="TTroopsPerHr">';
+    for (y in uW.unitnamedesctranslated) {
+		if (!Options.TourneyTroopType) {
+			Options.TourneyTroopType = 2;
+			saveOptions();
+		}
+		if (y.substr(3) == Options.TourneyTroopType)
+			mhtl +='<option selected value="'+y.substr(3)+'">'+uW.unitnamedesctranslated[y][0]+'</option>';
+		else	
+			mhtl +='<option value="'+y.substr(3)+'">'+uW.unitnamedesctranslated[y][0]+'</option>';
+		if (y.substr(3) > 4) break; // only 1 pop per troop makes sense	here
+    }
+	mhtl +='</select>';
+	mhtl += "&nbsp;/h</td>";
+
   var temps=[];
   for(var i=0; i<Cities.numCities; i++) {
-      temps[i]=((Cities.cities[i]['Troop2Time'] > 0)?(3600 / Cities.cities[i]['Troop2Time']):0);
-      mhtl += "<td>" + addCommas(parseInt(temps[i])) +"</td>";
+   temps[i]=((Cities.cities[i]['Troop'+Options.TourneyTroopType+'Time'] > 0)?(3600 / Cities.cities[i]['Troop'+Options.TourneyTroopType+'Time']):0);
+   temps[i] = temps[i]+parseInt(temps[i]*equippedthronestats(77)/100);
+   mhtl += "<td>" + addCommas(parseInt(temps[i])) +"</td>";
   }
-  mhtl += "</tr><tr><td><img height=18 src=https://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/population_40.png title=Population> Population/h</td>";
-  var pop=[];
+    mhtl += "</tr><tr><td><img height=18 src=https://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/population_40.png title=Population> Population/h</td>";
+	var pop=[];
   for(var i=0; i<Cities.numCities; i++) {
-      cityID = 'city'+ Cities.cities[i].id;
-      pop[i] =  parseInt(Seed.citystats[cityID]["pop"][1]) / 2;
-      mhtl += "<td>" + addCommas(parseInt(pop[i])) +"</td>";
+   cityID = 'city'+ Cities.cities[i].id;
+   pop[i] =  parseInt(Seed.citystats[cityID]["pop"][1]) / 2;
+   mhtl += "<td>" + addCommas(parseInt(pop[i])) +"</td>";
   }
   mhtl += "</tr><tr><td><b>Difference</b></td>";
   var diff=0;
   for(var i=0; i<Cities.numCities; i++) {
-      diff = parseInt(pop[i] - temps[i]);
-      var couleur=" style='font-color:green' ";
-      if (diff<0) couleur=" style='background-color:red' ";
-      mhtl += "<td "+couleur+"><b>" + addCommas(parseInt(diff)) +"</b></td>";
+   diff = parseInt(pop[i] - temps[i]);
+   var couleur=" style='font-color:green' ";
+   if (diff<0) couleur=" style='background-color:red' ";
+   mhtl += "<td "+couleur+"><b>" + addCommas(parseInt(diff)) +"</b></td>";
   }
 
-  mhtl += "</tr><tr><td><img height=18 src=https://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/happiness.png title=happiness> happiness</td>";
-  for(var i=0; i<Cities.numCities; i++) {
-      cityID = 'city'+ Cities.cities[i].id;
-      var bon = parseInt(Seed.citystats[cityID]["pop"][2]); 
-      var bonc = "red";
-      if (bon>99) bonc="green";
-      mhtl += "<td style='background-color:"+bonc+"'><center><b>"+bon+"</td>";
-  }
-   var now = unixTime();
-   mhtl += "</tr><tr><td><b>Queue</b></td>";
+   mhtl += "</tr><tr><td><img height=18 src=https://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/happiness.png title=happiness> happiness</td>";
    for(var i=0; i<Cities.numCities; i++) {
-       cityID = 'city'+ Cities.cities[i].id;
-       var totTime = 0;
-       var q = Seed.queue_unt[cityID]; 
-       if (q!=null && q.length>0)
-	   totTime = q[q.length-1][3] - now;
-       if (totTime < 0) totTime = 0;
-       if (totTime < 3600)
-	   var bonc="style='background-color:red'";
-       else
-	   var bonc="";
-       mhtl += "<td "+bonc+"><center><b>"+timestr(totTime)+"</td>";
-   }
-    
+
+   cityID = 'city'+ Cities.cities[i].id;
+   var bon = parseInt(Seed.citystats[cityID]["pop"][2]); 
+   var bonc = "red";
+   if (bon>99) bonc="green";
+   mhtl += "<td style='background-color:"+bonc+"'><center><b>"+bon+"</td>";
+  }
+  var now = unixTime();
+  mhtl += "</tr><tr><td><b>Queue</b></td>";
+    for(var i=0; i<Cities.numCities; i++) {
+
+     cityID = 'city'+ Cities.cities[i].id;
+     var totTime = 0;
+     var q = Seed.queue_unt[cityID]; 
+     if (q!=null && q.length>0)
+         totTime = q[q.length-1][3] - now;
+     if (totTime < 0) totTime = 0;
+     if (totTime < 3600)
+      var bonc="style='background-color:red'";
+     else
+      var bonc="";
+     mhtl += "<td "+bonc+"><center><b>"+timestr(totTime)+"</td>";
+    }
+
+
+	
   mhtl += "</tr></table><br>";
   t.cont.innerHTML += mhtl;
+
   var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
   params.format=2;
-  params.tournyPos=0;
+  params.tournyPos=t.tourneyPos;
   new AjaxRequest(unsafeWindow.g_ajaxpath+"ajax/getLeaderboard.php"+unsafeWindow.g_ajaxsuffix, {  method:"post",  parameters:params,
   
   onSuccess:function(transport){
    var rslt=eval("("+transport.responseText+")");
    if(rslt.ok){
+
+	var prevs = [];
+	for (var s = 0; s < 4; s++) {
+		w = rslt["previous"+s];
+		if (w && w > -1) {
+			prevs.push(uW.formatDateByUnixTime(w));
+		}
+	}
    
     if(!rslt.data){
 	   
-	t.cont.innerHTML +="<div class=ptstat>TOURNAMENT CHECK</div><div class='tourny_modal_upsell'><br><center><b>"+unsafeWindow.g_js_strings.modal_tourny_changetab.notourny+"</b></center></div>";
-	  
+	t.cont.innerHTML +="<div class=ptstat>TOURNAMENT CHECK</div><div class='tourny_modal_upsell'><br><center><b>No Active Tournaments!</b></center></div>";
+
+	for ( var s = 0; s< prevs.length; s++) {
+		t.cont.innerHTML +="<div class='tourny_modal_upsell'><br><center><b><a onclick='ptSetTourneyPos("+s+1+")'>Show Tournament that ended on "+prevs[s]+"</a></b></center></div>";
+	}
 	  
     }else{ //  rslt.data
      var tournyhtml=new Array();
@@ -2370,14 +2409,21 @@ show : function () {
 	    tournyhtml.push("<div class='tournymodaltitle'><center>"+unsafeWindow.g_js_strings.commonstr.tournament+"</div>")
      }
 	   tournyhtml.push("<div>");
+
+	 if (t.tourneyPos != 0) {
+		tournyhtml.push("<div class='tourny_modal_upsell'><br><center><b><a onclick='ptSetTourneyPos(0)'>Show Current Tournament (if any)</a></b></center></div>");
+	 }	 
+	for ( var s = 0; s< prevs.length; s++) {
+		if (t.tourneyPos != (s+1)) {
+			tournyhtml.push("<div class='tourny_modal_upsell'><br><center><b><a onclick='ptSetTourneyPos("+s+1+")'>Show Tournament that ended on "+prevs[s]+"</a></b></center></div>"); }
+	}
+   tournyhtml.push("<div>&nbsp;</div>");
 	   
-	   
-	   
-	   if(rslt.startdate&&rslt.enddate){
-	   	   	    var startTime=rslt.startdate;
-	   	   	    var endTime=rslt.enddate;
+	   if(rslt.startDate&&rslt.endDate){
+	   	   	    var startTime=rslt.startDate;
+	   	   	    var endTime=rslt.endDate;
 	   	   	    var now=parseInt(new Date().getTime()/1000);
-	   	   	    tournyhtml.push("<table width=100% align=center class=pbTab><tr bgcolor=#FE8888><td width=40%><b>Starts</td><td width=40%><b>Ends</td><td width=20%><b>Ends</td></tr>");
+	   	   	    tournyhtml.push("<table width=100% align=center class=pbTab><tr bgcolor=#FE8888><td width=40%><b>Starts</td><td width=40%><b>Ends</td><td width=20%><b>Time Left</td></tr>");
 	   	   	    dt = new Date ();
 	   	            dt.setTime (startTime * 1000);
 	   	            dtf = new Date ();
@@ -2390,11 +2436,25 @@ show : function () {
 	   	   	     tournyhtml.push("" + dt.toLocaleDateString() + " - "+ dt.toLocaleTimeString());
 	   	   	    tournyhtml.push("</td><td>");
 	   	   	    tournyhtml.push("" + dtf.toLocaleDateString()+ " - "+ dtf.toLocaleTimeString());
-	   	   	    tournyhtml.push("</td><td>"+timestr(restant,1)+"</td></tr></table>");
+				if (restant > 0) 
+					{tournyhtml.push("</td><td>"+timestr(restant,1)+"</td></tr></table>");}
+				else	
+					{tournyhtml.push("</td><td>ENDED!</td></tr></table>");}
 	   	     tournyhtml.push("<br>");
 	   
 	   }
-	   
+		if ((Options.TourneyBoardType != 2) || !rslt.worldData) {
+			tourneystats = rslt.data;
+			Options.TourneyBoardType = 1;
+			saveOptions();
+		}	
+		else {	
+			tourneystats = rslt.worldData;
+		}	
+
+		if (rslt.worldData) {
+			tournyhtml.push("<div align=center ><input type=button id='BTLeaders' value='-'></div>");
+		}
 	
 	   tournyhtml.push("<center><table class='tourny_list_table' cellpadding='0' cellspacing='0' border='0' width=90% style='margin:5px'>");
 	   tournyhtml.push("<thead>");
@@ -2426,7 +2486,12 @@ show : function () {
 	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.alliance+"</div>");
 	    tournyhtml.push("</td>");
 	    tournyhtml.push("<td  style='background-color:red'>");
-	    tournyhtml.push("<div>"+rslt.contestcategory+"</div>");
+
+
+		if (rslt.type==31)
+			tournyhtml.push("<div>"+unsafeWindow.g_js_strings.modal_tourny_changetab.mightgained+"</div>");
+		else
+			tournyhtml.push("<div>"+rslt.contestcategory+"</div>");
 	    tournyhtml.push("</td>");
 	    tournyhtml.push("<td  style='background-color:red'>");
 	    tournyhtml.push("<div>"+unsafeWindow.g_js_strings.commonstr.reward+"</div>");
@@ -2435,10 +2500,10 @@ show : function () {
 	   tournyhtml.push("</tr>");
 	   tournyhtml.push("</thead>");
 	   tournyhtml.push("</tbody>");
-	   var nb=rslt.data.length;
+	   var nb=tourneystats.length;
 	   var votrepuissance = 0;
-	   for(var i=0;i<rslt.data.length;i++){
-	    var row=rslt.data[i];
+	   for(var i=0;i<tourneystats.length;i++){
+	    var row=tourneystats[i];
 	    if(rslt.type==24){ // Tournament
 	     if (getMyAlliance()[1] == row.alliance) {
 	      votrepuissance=row.contestValue;
@@ -2452,14 +2517,18 @@ show : function () {
 	    }
 	   }
 	   for(var i=0;i< Options.TournoiLigne;i++){
-	    if (rslt.data[i]==null) break;
-	    var row=rslt.data[i];
-	    var rewardString=row.itemCount+" ";
-	    if(row.itemType==0){
-	     rewardString+=unsafeWindow.g_js_strings.commonstr.gems;
-	    }else{
-	     rewardString+=unsafeWindow.itemlist["i"+row.itemType].name;
-	    }
+	    if (tourneystats[i]==null) break;
+	    var row=tourneystats[i];
+		var rewardString=" ";
+		if (row.itemType) {
+			rewardString=row.itemCount+" ";
+			if(row.itemType==0){
+				rewardString+=unsafeWindow.g_js_strings.commonstr.gems;
+			}else{
+				rewardString+=unsafeWindow.itemlist["i"+row.itemType].name;
+			}
+		}
+
 	    var couleur="";
 	    if(rslt.type==24){ //Alliance Tournament
 	     if (getMyAlliance()[1] == row.alliance) {
@@ -2505,20 +2574,20 @@ show : function () {
 	
 	   if(rslt.type!=24){
 
-	       for(var i= Options.TournoiLigne;i<rslt.data.length;i++){
-	    	    if (rslt.data[i]==null) break;
-	   	    var row=rslt.data[i];
-	   	 
+	       for(var i= Options.TournoiLigne;i<tourneystats.length;i++){
+	    	    if (tourneystats[i]==null) break;
+	   	    var row=tourneystats[i];
+
 	    	    var couleur="";
 	   	    if (Seed.player.prefix + ' '+ Seed.player.name == row.name ) {
 	      		couleur=" style='background-color:#FF0000' ";
-	    	    }
-	   	    var rewardString=row.itemCount+" ";
-	   	    if(row.itemType==0){
-	   	   	     rewardString+=unsafeWindow.g_js_strings.commonstr.gems;
-	   	    }else{
-	   	     	     rewardString+=unsafeWindow.itemlist["i"+row.itemType].name;
-	   	    }
+	   	    var rewardString=" ";
+	   	    if(row.itemType){
+				rewardString=row.itemCount+" ";
+				if(row.itemType==0){rewardString+=unsafeWindow.g_js_strings.commonstr.gems;	}
+				else{rewardString+=unsafeWindow.itemlist["i"+row.itemType].name;}
+			}
+			
 	   	    tournyhtml.push("<tr class='stripe' >")
 	   	    tournyhtml.push("<td class='rankcol' "+couleur+">");
 	   	    tournyhtml.push("<div><b>"+row.ranking+"</b></div>");
@@ -2535,16 +2604,17 @@ show : function () {
 	   	    tournyhtml.push("<td "+couleur+">");
 	   	    tournyhtml.push("<div>"+rewardString+"</div>");
 	   	    tournyhtml.push("</td>");
-	   	    tournyhtml.push("</tr>")
+	   	    tournyhtml.push("</tr>")}
 	       }
 	   }
+	   
 	   tournyhtml.push("</tbody>");
 	   tournyhtml.push("</table>");
       	   tournyhtml.push("</div>");
       	   t.cont.innerHTML += tournyhtml.join("");      
            document.getElementById('BOTournoiPM').addEventListener ('click', function() { 
-            var lg=rslt.data.length;
-            if (rslt.type!=24) lg=25;
+            var lg=tourneystats.length;
+            if (rslt.type!=24) lg=250;
             t.plusmoins(lg);
            }, false);      
            
@@ -2552,11 +2622,21 @@ show : function () {
 	        document.getElementById('BOTournoiPM').value="Maximize";
 	    } else {
 	        document.getElementById('BOTournoiPM').value="Minimize";           
-        }
-          } // fin rslt.data 
+		}	
+			
+        if (Options.TourneyBoardType !=2) {
+	        document.getElementById('BTLeaders').value="Show Domain Leaders";
+	    } else {
+	        document.getElementById('BTLeaders').value="Show Your Bracket ("+rslt.bracketName+")";
+		}		
+        document.getElementById('BTLeaders').addEventListener ('click', function() {t.leadertoggle();}, false);      
+
+
+		} // fin rslt.data 
          } else {
             t.cont.innerHTML = "<div class='tourny_modal_upsell'><center>No Info</div>";
          }
+	document.getElementById('TTroopsPerHr').addEventListener ('change',function () {t.changetroops(this);},false);
        }, onFailure:function()  {
          t.cont.innerHTML = "<div class='tourny_modal_upsell'><center>No Info</div>";
        }
@@ -2577,6 +2657,24 @@ show : function () {
    t.show();
   },  
 
+  leadertoggle: function () {
+   var t = Tabs.Tournament;
+   if (document.getElementById('BTLeaders').value=="Show Domain Leaders") {
+     Options.TourneyBoardType = 2;
+   } else {
+     Options.TourneyBoardType = 1;
+   }
+   saveOptions();
+   clearTimeout (t.displayTimer);
+   t.show();
+  },
+  changetroops: function (el) {
+   var t = Tabs.Tournament;
+   Options.TourneyTroopType = el.value;
+   saveOptions();
+   clearTimeout (t.displayTimer);
+   t.show();
+  },
 /*
 checktourney: function() {
  var t = Tabs.Tournament;
@@ -2604,7 +2702,6 @@ mainPop.show (true);
 },
 */
 }
-
 /*************** WILDS TAB *********************/
 
 var wildNames = {
@@ -3683,6 +3780,8 @@ modal_alliance_report_view("6043602",1,51,9,13487684,"Fred8135i","M","Jetson","M
           
           
           // 'view report' link ...
+          if (rpt.marchType != 2) {
+
           if (Options.allowAlterAR)
             msg.push("</div></td><TD class="+ colClass  +"><div><a onclick=' modal_alliance_report_view(\"");   // ONCLICK ???
           else
@@ -3738,6 +3837,14 @@ modal_alliance_report_view("6043602",1,51,9,13487684,"Fred8135i","M","Jetson","M
           }
           msg.push(");return false;'>View</a></div></td></tr>");
         }
+		  else
+		  {
+		  // reinforcement!!
+            msg.push("</div></td><TD class="+ colClass  +"><div><a onclick='FindReport(\"");   // ONCLICK ???
+            msg.push(rpt.reportId);
+            msg.push("\",0);return false;'>View</a></div></td></tr>");
+		  }
+        }
         msg.push("</tbody></table></div>");
       }
       msg.push("</div><div id='modal_report_list_pagination'></div>");
@@ -3752,7 +3859,7 @@ modal_alliance_report_view("6043602",1,51,9,13487684,"Fred8135i","M","Jetson","M
 
 }   // end AllianceReports singleton
 
-
+unsafeWindow.FindReport = Rpt.FindReport;
 
 /************************ Food Alerts *************************/
 /*
