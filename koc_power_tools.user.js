@@ -9539,7 +9539,7 @@ Tabs.Attaque = {
                      resources[i] = params["r"+i];
                   }
                   var currentcityid =  t.sourceCity.id;
-                  unsafeWindow.attach_addoutgoingmarch(rslt.marchId, rslt.marchUnixTime, ut + timediff, params.xcoord, params.ycoord, unitsarr, params.type, params.kid, resources, rslt.tileId, rslt.tileType, rslt.tileLevel, currentcityid, true, ut + timediff);
+                  unsafeWindow.attach_addoutgoingmarch(rslt.marchId, rslt.marchUnixTime, ut + timediff, params.xcoord, params.ycoord, unitsarr, params.type, params.kid, resources, rslt.tileId, rslt.tileType, rslt.tileLevel, currentcityid, true, ut + rtimediff);
                   if(rslt.updateSeed){unsafeWindow.update_seed(rslt.updateSeed)};
 
                   for(var i=0;i<iused.length;i++){
