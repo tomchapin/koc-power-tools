@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130917a
+// @version        20130918a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130917a';
+var Version = '20130918a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -5170,6 +5170,7 @@ MaxScouts : function (city){
 			        logit(rslt.toSource());
 			        if (rslt.ok) {
 			           var timediff = parseInt(rslt.eta) - parseInt(rslt.initTS);
+ 					   var rtimediff=parseInt(rslt.returnTS)-parseInt(rslt.initTS);
 			           var ut = unsafeWindow.unixtime();
 			           var unitsarr=[0,0,0,0,0,0,0,0,0,0,0,0,0];
 			           for(i = 0; i <= unitsarr.length; i++){
@@ -5183,7 +5184,7 @@ MaxScouts : function (city){
 			              resources[i] = params["r"+i];
 			           }
 			           var currentcityid =  params.cid;
-			           unsafeWindow.attach_addoutgoingmarch(rslt.marchId, rslt.marchUnixTime, ut + timediff, params.xcoord, params.ycoord, unitsarr, params.type, params.kid, resources, rslt.tileId, rslt.tileType, rslt.tileLevel, currentcityid, true);
+			           unsafeWindow.attach_addoutgoingmarch(rslt.marchId, rslt.marchUnixTime, ut + timediff, params.xcoord, params.ycoord, unitsarr, params.type, params.kid, resources, rslt.tileId, rslt.tileType, rslt.tileLevel, currentcityid, true, ut + rtimediff);
 			           unsafeWindow.update_seed(rslt.updateSeed)
 			           if(rslt.updateSeed){unsafeWindow.update_seed(rslt.updateSeed)};
 			           document.getElementById(box).checked = false;        
@@ -9522,6 +9523,7 @@ Tabs.Attaque = {
                var rslt = transport;
                if (rslt.ok) {
                   var timediff = parseInt(rslt.eta) - parseInt(rslt.initTS);
+				  var rtimediff=parseInt(rslt.returnTS)-parseInt(rslt.initTS);
                   var ut = unsafeWindow.unixtime();
 
                   var unitsarr = [];
@@ -9537,7 +9539,7 @@ Tabs.Attaque = {
                      resources[i] = params["r"+i];
                   }
                   var currentcityid =  t.sourceCity.id;
-                  unsafeWindow.attach_addoutgoingmarch(rslt.marchId, rslt.marchUnixTime, ut + timediff, params.xcoord, params.ycoord, unitsarr, params.type, params.kid, resources, rslt.tileId, rslt.tileType, rslt.tileLevel, currentcityid, true);
+                  unsafeWindow.attach_addoutgoingmarch(rslt.marchId, rslt.marchUnixTime, ut + timediff, params.xcoord, params.ycoord, unitsarr, params.type, params.kid, resources, rslt.tileId, rslt.tileType, rslt.tileLevel, currentcityid, true, ut + timediff);
                   if(rslt.updateSeed){unsafeWindow.update_seed(rslt.updateSeed)};
 
                   for(var i=0;i<iused.length;i++){
