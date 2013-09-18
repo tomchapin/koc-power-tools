@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130918a
+// @version        20130918b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130918a';
+var Version = '20130918b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -4984,6 +4984,7 @@ return 0;
 					   			   id = y["effects"]["slot"+i]["id"];
 								   tier = parseInt(y["effects"]["slot"+i]["tier"]);
 								   level = y["level"];
+								if (y["unique"]==30286 && i==5) p = uW.cm.thronestats.tiers[id][4]; else  // temporary patch
 								   p = uW.cm.thronestats.tiers[id][tier];
 								   Current = p.base + ((level * level + level) * p.growth * 0.5);
 								   if (i<=parseInt(y["quality"])) t.HisStatEffects[id] += Current;
@@ -4997,6 +4998,7 @@ return 0;
 				   			id = y["effects"]["slot"+i]["id"];
 				   			tier = parseInt(y["effects"]["slot"+i]["tier"]);
 				   			level = y["level"];
+						if (y["unique"]==30286 && i==5) p = uW.cm.thronestats.tiers[id][4]; else  // temporary patch
 				   			p = uW.cm.thronestats.tiers[id][tier];
 				   			Current = p.base + ((level * level + level) * p.growth * 0.5);
 				   			if (y.isEquipped && i<=y["quality"]) t.MyStatEffects[id] += Current
