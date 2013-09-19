@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130918b
+// @version        20130918c
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130918b';
+var Version = '20130918c';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -348,6 +348,7 @@ if (TEST_WIDE){
   TRAetherCostFix.init();
   mmbImageFix.init();
   bypassMulti.init();
+  BarbRaidMarchPatch.init();
   towho.init();
   cdtd.init();
   tabManager.init (mainPop.getMainDiv());
@@ -959,6 +960,28 @@ var bypassMulti = {
   isAvailable : function (){
 	var t = bypassMulti;
 	return t.MultiBrowserBypass.isAvailable();
+  },
+
+}
+
+var BarbRaidMarchPatch = {
+  marchFix : null,
+
+  init : function (){
+    t = BarbRaidMarchPatch;
+
+      t.marchFix = new CalterUwFunc ('update_march', [[/D\.toTileLevel,\s*n,\s*M\)/im,'D.toTileLevel, n, M, Math.floor(unixtime()+D.returnUnixTime-D.marchUnixTime))']]);
+      t.marchFix.setEnable(true);
+  },
+
+  setEnable : function (tf){
+	var t = BarbRaidMarchPatch;
+	t.marchFix.setEnable (tf);
+  },
+
+  isAvailable : function (){
+	var t = BarbRaidMarchPatch;
+	return t.marchFix.isAvailable();
   },
 
 }
