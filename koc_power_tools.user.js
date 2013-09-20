@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130918c
+// @version        20130919a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130918c';
+var Version = '20130919a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -5007,7 +5007,7 @@ return 0;
 					   			   id = y["effects"]["slot"+i]["id"];
 								   tier = parseInt(y["effects"]["slot"+i]["tier"]);
 								   level = y["level"];
-								if (y["unique"]==30286 && i==5) p = uW.cm.thronestats.tiers[id][4]; else  // temporary patch
+								if (y["unique"]==30286 && id==9) p = uW.cm.thronestats.tiers[id][4]; else  // temporary patch
 								   p = uW.cm.thronestats.tiers[id][tier];
 								   Current = p.base + ((level * level + level) * p.growth * 0.5);
 								   if (i<=parseInt(y["quality"])) t.HisStatEffects[id] += Current;
@@ -5021,7 +5021,7 @@ return 0;
 				   			id = y["effects"]["slot"+i]["id"];
 				   			tier = parseInt(y["effects"]["slot"+i]["tier"]);
 				   			level = y["level"];
-						if (y["unique"]==30286 && i==5) p = uW.cm.thronestats.tiers[id][4]; else  // temporary patch
+						if (y["unique"]==30286 && id==9) p = uW.cm.thronestats.tiers[id][4]; else  // temporary patch
 				   			p = uW.cm.thronestats.tiers[id][tier];
 				   			Current = p.base + ((level * level + level) * p.growth * 0.5);
 				   			if (y.isEquipped && i<=y["quality"]) t.MyStatEffects[id] += Current
@@ -6575,7 +6575,8 @@ Tabs.Train = {
 				if(id == StatID){
 					var tier = parseInt(item["effects"]["slot"+i]["tier"]);
 					var level = item["level"];
-					var p = unsafeWindow.cm.thronestats.tiers[id][tier];
+					if (item.unique==30286 && id==9) var p = unsafeWindow.cm.thronestats.tiers[id][4]; else
+					  var p = unsafeWindow.cm.thronestats.tiers[id][tier];
 					var Percent = p.base + ((level * level + level) * p.growth * 0.5);
 					total += Percent;
 				}
@@ -9834,7 +9835,8 @@ function equippedthronestats (stat_id){
 			if(id == stat_id){
 				var tier = parseInt(item["effects"]["slot"+i]["tier"]);
 				var level = item["level"];
-				var p = uW.cm.thronestats.tiers[id][tier];
+				if (item.unique==30286 && id==9) var p = uW.cm.thronestats.tiers[id][4]; else
+				  var p = uW.cm.thronestats.tiers[id][tier];
 				var Percent = p.base + ((level * level + level) * p.growth * 0.5);
 				total += Percent;
 			}
