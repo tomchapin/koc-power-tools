@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130919a
+// @version        20130920a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130919a';
+var Version = '20130920a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -31,6 +31,7 @@ var TEST_WIDE_CITIES = 7;
 var ENABLE_ALERT_TO_CHAT = true;
 var History=[];
 var throttle=10;
+var TimeOffset = parseInt(new Date().getTimezoneOffset()*(-1))+420; // difference between local time and PST in mins. All KoC TimeStamps appear to be in PST...
 
 if (typeof SOUND_FILES == 'undefined') var SOUND_FILES = new Object();
 if (typeof SOUND_FILES.whisper == 'undefined'){
@@ -160,7 +161,8 @@ var Options = {
   fixApothTime: true,
   fixTRAetherCost: true,
   fixMMBImage: true,
-  multiBrowserAllow : false
+  multiBrowserAllow : false,
+  fixChatTime : true,
 };
 
 var Colors ={
@@ -291,6 +293,7 @@ function ptStartup (){
     table.ptMainTab tr td.notSel {font-weight:bold; font-size:13px; color: #ffffff; border: 1px solid #000000; background: -moz-linear-gradient(top, #cfeef7 0%, #73cee7 24%, #0aaad6 44%, #53c2e1 79%, #88d5ea 100%);}\
     tr.ptPopTop td { background-color:transparent; border:none; height: 21px;  padding:0px; }\
     tr.ptretry_ptPopTop td { background-color:#a00; color:#fff; border:none; height: 21px; padding:0px; }\
+	.kocHeader .timeAndDomain {margin: 13px 0px 0px 15px;}\
     input.ptButCancel {background-color:#a00; font-weight:bold; color:#fff}\
     .CPopMain { border:1px solid #000000; -moz-box-shadow:inset 0px 0px 10px #6a6a6a; -moz-border-radius-bottomright: 20px; -moz-border-radius-bottomleft: 20px;}\
     .CPopup  {border:5px ridge #666; opacity:'+Colors.Opacity+'; -moz-border-radius:25px; -moz-box-shadow: 1px 1px 5px #000000;}';
@@ -347,6 +350,7 @@ if (TEST_WIDE){
   ApothTimeFix.init();
   TRAetherCostFix.init();
   mmbImageFix.init();
+  ChatTimeFix.init();
   bypassMulti.init();
   BarbRaidMarchPatch.init();
   towho.init();
@@ -939,6 +943,34 @@ var mmbImageFix = {
 	return t.imageFix.isAvailable();
   },
 
+}
+
+var ChatTimeFix = {
+  ChatTime : null,
+
+  init : function (){
+      t = ChatTimeFix;
+
+    uW.ptConvertTime = function(timestr) {
+    	time = timestr.split(/:/);
+	    var min = (parseInt(time[0])*60)+parseInt(time[1])+TimeOffset;
+	    if (min >= 1440) {min = min - 1440;}
+	    return parseInt(min / 60)+':'+('00'+parseInt(min % 60).toString()).slice(-2);
+    }
+
+      t.ChatTime = new CalterUwFunc("Chat.getChat",[['rslt.data.newChats[i][j][1],','ptConvertTime(rslt.data.newChats[i][j][1]),'],['rslt.data.newChats[i][j][1],','ptConvertTime(rslt.data.newChats[i][j][1]),']]);
+      t.ChatTime.setEnable(Options.fixChatTime);
+	},
+
+  setEnable : function (tf){
+	var t = ChatTimeFix;
+	t.ChatTime.setEnable (tf);
+  },
+
+  isAvailable : function (){
+	var t = ChatTimeFix;
+	return t.ChatTime.isAvailable();
+  },
 }
 
 var bypassMulti = {
@@ -4470,8 +4502,11 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
           if (p.cities[c].prestigeType ==1) prestige = "Druid";
           if (p.cities[c].prestigeType ==2) prestige = "Fey";
           if (p.cities[c].prestigeType ==3) prestige = "Briton";
+          if (p.cities[c].prestigeLevel ==0) {prestigelvl = "";} else {prestigelvl = " ("+p.cities[c].prestigeLevel+")";}
+		  ExpTime = t.convertTime(new Date(p.cities[c].prestigeBuffExpire.replace(" ","T")),TimeOffset);
+		  if ((ExpTime +(3600*24) < unixTime()) || isNaN(ExpTime)) {prestigeexp = "";} else {prestigeexp = t.getDuration(p.cities[c].prestigeBuffExpire,TimeOffset);}
           t.dat.push ([p.displayName, parseInt(p.might), p.officerType, parseInt(p.numCities), parseInt(p.cities[c].tileLevel),
-               parseInt(p.cities[c].xCoord), parseInt(p.cities[c].yCoord), p.cities[c].cityName, 0, status,0,p.userId,prestige,p.userId]);
+               parseInt(p.cities[c].xCoord), parseInt(p.cities[c].yCoord), p.cities[c].cityName, 0, status,0,p.userId,prestige,p.userId,prestigelvl,prestigeexp,p.cities[c].prestigeBuffExpire,prestige+prestigelvl]);
         }
         t.setDistances (Cities.cities[0].x, Cities.cities[0].y);
         t.ModelCity=Cities.cities[0];
@@ -4725,8 +4760,11 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
           if (p.cities[c].prestigeType ==1) prestige = "Druid";
           if (p.cities[c].prestigeType ==2) prestige = "Fey";
           if (p.cities[c].prestigeType ==3) prestige = "Briton";
+          if (p.cities[c].prestigeLevel ==0){prestigelvl = "";} else {prestigelvl = " ("+p.cities[c].prestigeLevel+")";}
+		  ExpTime = t.convertTime(new Date(p.cities[c].prestigeBuffExpire.replace(" ","T")),TimeOffset);
+		  if ((ExpTime + (3600*24) < unixTime()) || isNaN(ExpTime)) {prestigeexp = "";} else {prestigeexp = t.getDuration(p.cities[c].prestigeBuffExpire,TimeOffset);}
           t.dat.push ([p.displayName, parseInt(p.might), p.officerType, parseInt(p.numCities), parseInt(p.cities[c].tileLevel),
-               parseInt(p.cities[c].xCoord), parseInt(p.cities[c].yCoord), p.cities[c].cityName, 0, rslt.data[p.userId]?1:0,'--',p.userId,prestige,p.userId]);
+               parseInt(p.cities[c].xCoord), parseInt(p.cities[c].yCoord), p.cities[c].cityName, 0, rslt.data[p.userId]?1:0,'--',p.userId,prestige,p.userId,prestigelvl,prestigeexp,p.cities[c].prestigeBuffExpire,prestige+prestigelvl]);
         }
       }
     }
@@ -4736,6 +4774,23 @@ logit ("ajax/allianceGetMembersInfo.php:\n"+ inspect (rslt, 5, 1));
     t.displayMembers (t.memberListRslt.allianceName, numPlayers);
   },
 
+  convertTime : function (datestr,AddMins){
+	// KoC timestamps are PST, which is 420 minutes (7 hours) behind UTC...?
+	return parseInt (datestr.getTime() / 1000) + (AddMins*60) + uW.g_timeoff;
+	},
+
+	getDuration : function (datestr,AddMins){
+    var t = Tabs.AllianceList;
+		var Interval = t.convertTime(new Date(datestr.replace(" ","T")),AddMins) - uW.g_timeoff - unixTime();
+		if (Interval >= 0) {
+			return uW.timestr(Interval);
+		}
+		else
+			return '<span style="color:#f00;">Expired '+uW.timestr(Interval*(-1))+' Ago</span>';
+		
+	},	
+	
+	
   // sort and display
   reDisp : function (){
     var t = Tabs.AllianceList;
@@ -4766,7 +4821,7 @@ return 0;
       if (t.dat[i][9] ==1) status = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAVNJREFUeNrUk09OwkAUh9+gUKpAFIuIfxJilLIlMd6gaw+Ax/AY7r2AnMFFb2DcC5gYYlBotYKttEwp83zjQtFIN6x8yZfJ9PfypZM3wxARFqkELFgLC5ZnN+yyQF9YjrR12hpEiegRJghoQIQunj7PF1DlQOB5dadi6Nt6cSWlKiPu8+ZTq9bu3tUoPyPc+UcQWK9sHRh6oVIOXF91XpzE2AtUXTss72tlQ+axR4AQjb313aJlWSCEAM75J3JS2dVMUebUdREjECWcojLwBiCZRJOvKB2mFZnH/wEXvb7b5zbaKmR+No6jMZd5/Bg5mt3HByupJQE24Js8gD/0LJnHC0zecNuO6d06HcGmAWRBTCEK/NZbh9+PTJn/FrDZq8wYS0GeVeE4cQIldkT6TZq/DT28gWtxBa/YpP73OMESLWuE8seli4gh9YdzBf/zMX0IMACs96WetcYlTQAAAABJRU5ErkJggg=="/>';      
 
       m += '<TR style="max-height:30px"><TD class=xxtab>'+ status + '<SPAN onclick="PTPlayClick(this, \''+ t.dat[i][13] +'\',\''+ t.dat[i][9] +'\')"><A>'+ t.dat[i][0] +'</a></span></td><TD align=right class=xxtab>'+ addCommasInt(t.dat[i][1]);
-      m +='</td><TD align=center class=xxtab>'+ t.dat[i][12] +'</td><TD class=xxtab>'+ officerId2String(t.dat[i][2]);
+      m +='</td><TD align=left class=xxtab nowrap>'+ t.dat[i][12]+t.dat[i][14]+'</td><TD align=center class=xxtab nowrap>'+ t.dat[i][15] +'</td><TD class=xxtab>'+ officerId2String(t.dat[i][2]);
       m +='</td><TD class=xxtab><INPUT id=ScoutCheckbox_'+cityName+' type=checkbox unchecked=true></td><TD class=xxtab>'+ t.dat[i][7] +'</td><TD align=right class=xxtab>'+ t.dat[i][4];
       m +='</td><TD align=center class=xxtab><DIV onclick="ptGotoMap('+ t.dat[i][5] +','+ t.dat[i][6] +')"><A>'+ t.dat[i][5] +','+ t.dat[i][6] +'</a></div></td>';
       m +='<TD align=right class=xxtab style="padding-right:20px;">'+ t.dat[i][8].toFixed(2) +'</td>'
@@ -4842,7 +4897,8 @@ return 0;
        <div style="max-height:500px; height:500px; overflow-y:auto;"><TABLE id=tabAllMembers align=center cellpadding=0 cellspacing=0><THEAD style="overflow-y:auto;">\
       <TR style="font-weight:bold"><TD id=clickCol0 onclick="PTalClickSort(this)" class=clickable><A><DIV>'+uW.g_js_strings.commonstr.player+'</div></a></td>\
          <TD id=clickCol1 onclick="PTalClickSort(this)" class=clickable align=center><A><DIV>Might</a></div></td>\
-        <TD id=clickCol3 onclick="PTalClickSort(this)" class=clickable><A><DIV>Faction</a></div></td>\
+        <TD id=clickCol17 onclick="PTalClickSort(this)" class=clickable><A><DIV>Faction</a></div></td>\
+        <TD id=clickCol16 onclick="PTalClickSort(this)" class=clickable><A><DIV>Protection Left</a></div></td>\
         <TD id=clickCol2 onclick="PTalClickSort(this)" class=clickable align=center><A><DIV>Rank</a></div></td>\
         <TD id=clickCol9 class=clickable align=center><DIV><INPUT id=ToggleScoutCheckbox type=checkbox unchecked=true></div></td>\
         <TD id=clickCol7 onclick="PTalClickSort(this)" class=clickable><A><DIV>City Name</a></div></td>\
@@ -4915,7 +4971,8 @@ return 0;
       <div style="max-height:470px; height:470px; overflow-y:auto;"><TABLE id=tabAllMembers align=center cellpadding=0 cellspacing=0><THEAD style="overflow-y:hidden;">\
       <TR style="font-weight:bold"><TD id=clickCol0 onclick="PTalClickSort(this)" class=clickable><A><DIV>Player</div></a></td>\
         <TD id=clickCol1 onclick="PTalClickSort(this)" class=clickable align=center><A><DIV>Might</a></div></td>\
-        <TD id=clickCol3 onclick="PTalClickSort(this)" class=clickable><A><DIV>Faction</a></div></td>\
+        <TD id=clickCol17 onclick="PTalClickSort(this)" class=clickable><A><DIV>Faction</a></div></td>\
+        <TD id=clickCol16 onclick="PTalClickSort(this)" class=clickable><A><DIV>Protection Left</a></div></td>\
         <TD id=clickCol2 onclick="PTalClickSort(this)" class=clickable align=center><A><DIV>Rank</a></div></td>\
         <TD id=clickCol9 class=clickable align=center><DIV><INPUT id=ToggleScoutCheckbox type=checkbox unchecked=true></div></td>\
         <TD id=clickCol7 onclick="PTalClickSort(this)" class=clickable><A><DIV>City Name</a></div></td>\
@@ -4941,12 +4998,17 @@ return 0;
     if (t.dat.length ==0) m+= '<TR><TD class=xtab><B>MISTED?</b></td><TD><TD class=xtab>Expires: ' + rslt.playerInfo.fogExpireTimestamp +'</td></tr>';
     m+= '<TR><TD class=xtab>Glory:</td><TD class=xtab><DIV id=PaintGlory></div></td></tr><TR><TD class=xtab>Max Glory:</td><TD class=xtab><DIV id=PaintMaxGlory></div></td></tr>';
 
-    m +='</table><BR>Compare Throne Room : <INPUT id=CompareTR type=submit value="Compare"><INPUT id=CalcTR type=submit value="Calculate"><BR><BR>';
+	if (uW.btLoaded)
+		m +='</table><BR>Compare Throne Room : <INPUT id=CompareTR type=submit value="Compare"><INPUT id=CalcTR type=submit value="Calculate"><INPUT id=MonitorTR type=submit value="Monitor"><BR><BR>';
+	else	
+		m +='</table><BR>Compare Throne Room : <INPUT id=CompareTR type=submit value="Compare"><INPUT id=CalcTR type=submit value="Calculate"><BR><BR>';
 
     document.getElementById('playerInfo').innerHTML = m;
     document.getElementById('ToggleScoutCheckbox').addEventListener ('change', t.doSelectall,false);
     document.getElementById('CompareTR').addEventListener ('click', function (){t.TRStats(rslt.playerInfo.userId,rslt.playerInfo.displayName,"Compare")},false);
     document.getElementById('CalcTR').addEventListener ('click', function (){t.TRStats(rslt.playerInfo.userId,rslt.playerInfo.displayName,"Calc")},false);
+	if (uW.btLoaded)
+		document.getElementById('MonitorTR').addEventListener ('click', function (){uW.btMonitorExternalCall(rslt.playerInfo.displayName)},false);
     document.getElementById('clickCol'+t.sortColNum).className = 'clickable clickableSel';
 
     t.PaintGlory(rslt.playerInfo.userId);
@@ -5946,6 +6008,7 @@ Tabs.Options = {
  	  m+='<TR><TD><INPUT id=togApothTimeFix type=checkbox /></td><TD>Fix revival time calculator (not working for max button clicked)</td></tr>';
  	  m+='<TR><TD><INPUT id=togTRAetherCostFix type=checkbox /></td><TD>Fix display of aetherstones for throne room upgrade/enhance</td></tr>';
  	  m+='<TR><TD><INPUT id=togMMBImageFix type=checkbox /></td><TD>Post correct image to facebook for Merlin Box</td></tr>';
+ 	  m+='<TR><TD><INPUT id=togChatTimeFix type=checkbox /></td><TD>Always show local time on chat posts</td></tr>';
 //	  m+='<TR><TD><INPUT id=togAllowMulti type=checkbox /></td><TD>Disable Multi-Browser check (experimental)</td></tr>';
 //	  m+='<TR><TD><INPUT id=togAllowMulti type=checkbox /></td><TD>Eliminate spurious Multi-Browser check warning (experimental)</td></tr>';
 	  m+='<TR><TD><INPUT id=togAllowMulti type=checkbox /></td><TD>Disable Multi-Browser check v2 (experimental)</td></tr>';
@@ -5983,6 +6046,7 @@ Tabs.Options = {
       t.togOpt ('togApothTimeFix', 'fixApothTime', ApothTimeFix.setEnable, ApothTimeFix.isAvailable);
       t.togOpt ('togTRAetherCostFix', 'fixTRAetherCost', TRAetherCostFix.setEnable, TRAetherCostFix.isAvailable);
       t.togOpt ('togMMBImageFix', 'fixMMBImage', mmbImageFix.setEnable, mmbImageFix.isAvailable);
+      t.togOpt ('togChatTimeFix', 'fixChatTime', ChatTimeFix.setEnable, ChatTimeFix.isAvailable);
       t.togOpt ('togBatRounds', 'dispBattleRounds', null, battleReports.isRoundsAvailable);
       t.togOpt ('togAtkDelete', 'reportDeleteButton', null, battleReports.isRoundsAvailable);
 //      t.togOpt ('togAllowMulti', 'allowMultiBroswer');
@@ -8789,7 +8853,7 @@ Tabs.OverView = {
         str += '<TD width=81><B>Marching</b></td>';
       if (Options.includeTrainingExt)
         str += '<TD width=81><B>Training</b></td>';
-      str += "</tr>";
+      str += "<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>";
   
     str += '<TR valign=top align=right><TD></td><TD style=\'background: #ffc\'></td>';
     for(i=0; i<Cities.numCities; i++){
