@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130922
+// @version        20130922a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130922';
+var Version = '20130922a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -200,7 +200,22 @@ var IRCOptions = {
 	IRCCmdSeen : {enable:false},
 	IRCCmdRules : {enable:false, message:""},
 };
-	
+
+var GameIcons = {
+    goldImgTiny   : '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/chrome_icon_gold.png>',
+    foodImgTiny   : '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/chrome_icon_food.png>',
+    woodImgTiny   : '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/chrome_icon_wood.png>',
+    stoneImgTiny  : '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/chrome_icon_stone.png>',
+    oreImgTiny    : '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/chrome_icon_ore.png>',
+    astoneImgTiny : '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/chrome_icon_aetherstone.png>',
+    goldImg       : '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/gold_30.png>',
+    foodImg       : '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/food_30.png>',
+    woodImg       : '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/wood_30.png>',
+    stoneImg      : '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/stone_30.png>',
+    oreImg        : '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/iron_30.png>',
+    astoneImg     : '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/aetherstone_30.png>',
+    
+};	
 
 var JSON;if(!JSON){JSON={};}(function(){"use strict";function f(n){return n<10?'0'+n:n;}if(typeof Date.prototype.toJSON!=='function'){Date.prototype.toJSON=function(key){return isFinite(this.valueOf())?this.getUTCFullYear()+'-'+f(this.getUTCMonth()+1)+'-'+f(this.getUTCDate())+'T'+f(this.getUTCHours())+':'+f(this.getUTCMinutes())+':'+f(this.getUTCSeconds())+'Z':null;};String.prototype.toJSON=Number.prototype.toJSON=Boolean.prototype.toJSON=function(key){return this.valueOf();};}var cx=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,escapable=/[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,gap,indent,meta={'\b':'\\b','\t':'\\t','\n':'\\n','\f':'\\f','\r':'\\r','"':'\\"','\\':'\\\\'},rep;function quote(string){escapable.lastIndex=0;return escapable.test(string)?'"'+string.replace(escapable,function(a){var c=meta[a];return typeof c==='string'?c:'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4);})+'"':'"'+string+'"';}function str(key,holder){var i,k,v,length,mind=gap,partial,value=holder[key];if(value&&typeof value==='object'&&typeof value.toJSON==='function'){value=value.toJSON(key);}if(typeof rep==='function'){value=rep.call(holder,key,value);}switch(typeof value){case'string':return quote(value);case'number':return isFinite(value)?String(value):'null';case'boolean':case'null':return String(value);case'object':if(!value){return'null';}gap+=indent;partial=[];if(Object.prototype.toString.apply(value)==='[object Array]'){length=value.length;for(i=0;i<length;i+=1){partial[i]=str(i,value)||'null';}v=partial.length===0?'[]':gap?'[\n'+gap+partial.join(',\n'+gap)+'\n'+mind+']':'['+partial.join(',')+']';gap=mind;return v;}if(rep&&typeof rep==='object'){length=rep.length;for(i=0;i<length;i+=1){k=rep[i];if(typeof k==='string'){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v);}}}}else{for(k in value){if(Object.hasOwnProperty.call(value,k)){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v);}}}}v=partial.length===0?'{}':gap?'{\n'+gap+partial.join(',\n'+gap)+'\n'+mind+'}':'{'+partial.join(',')+'}';gap=mind;return v;}}if(typeof JSON.stringify!=='function'){JSON.stringify=function(value,replacer,space){var i;gap='';indent='';if(typeof space==='number'){for(i=0;i<space;i+=1){indent+=' ';}}else if(typeof space==='string'){indent=space;}rep=replacer;if(replacer&&typeof replacer!=='function'&&(typeof replacer!=='object'||typeof replacer.length!=='number')){throw new Error('JSON.stringify');}return str('',{'':value});};}if(typeof JSON.parse!=='function'){JSON.parse=function(text,reviver){var j;function walk(holder,key){var k,v,value=holder[key];if(value&&typeof value==='object'){for(k in value){if(Object.hasOwnProperty.call(value,k)){v=walk(value,k);if(v!==undefined){value[k]=v;}else{delete value[k];}}}}return reviver.call(holder,key,value);}text=String(text);cx.lastIndex=0;if(cx.test(text)){text=text.replace(cx,function(a){return'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4);});}if(/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,'@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']').replace(/(?:^|:|,)(?:\s*\[)+/g,''))){j=eval('('+text+')');return typeof reviver==='function'?walk({'':j},''):j;}throw new SyntaxError('JSON.parse');};}}());
 var JSON2 = JSON; 
@@ -1406,12 +1421,12 @@ var Rpt = {
 		unitImg[60] = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/units/unit_60_30.png></TD><TD>Trap';
 		unitImg[61] = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/units/unit_61_30.png></TD><TD>Caltrops';
 		unitImg[62] = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/units/unit_62_30.png></TD><TD>Spiked Barrier';
-		goldImg = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/gold_30.png></TD><TD>Gold';
-		foodImg = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/food_30.png></TD><TD>Food';
-		woodImg = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/wood_30.png></TD><TD>Wood';
-		stoneImg = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/stone_30.png></TD><TD>Stone';
-		oreImg = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/iron_30.png></TD><TD>Ore';
-		astoneImg = '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/aetherstone_30.png></TD><TD>Aetherstone';
+		goldImg   = GameIcons.goldImg   + '</TD><TD>Gold';
+		foodImg   = GameIcons.foodImg   + '</TD><TD>Food';
+		woodImg   = GameIcons.woodImg   + '</TD><TD>Wood';
+		stoneImg  = GameIcons.stoneImg  + '</TD><TD>Stone';
+		oreImg    = GameIcons.oreImg    + '</TD><TD>Ore';
+		astoneImg = GameIcons.astoneImg + '</TD><TD>Aetherstone';
 
 		var unitImg2 = [];
 		for (var i=1;i<nTroopType+1;i++)
@@ -10930,11 +10945,11 @@ Tabs.Marches = {
 				z +='<TD>'+uW.g_js_strings.commonstr.might+': ' + addCommas(FROMmight) + '</td>';
 				if (Seed.queue_atkinc[k]["knt"] != undefined) z +='<TD>'+uW.g_js_strings.commonstr.knight+': '+ Seed.queue_atkinc[k]["knt"]["cbt"]+'</td>';
 				
-				if (Seed.queue_atkinc[k]["gold"] > 0) z += '<TD>'+uW.resourceinfo.rec0 +': '+ addCommas(Seed.queue_atkinc[k]["gold"]) +'</td>';
-				if (Seed.queue_atkinc[k]["resource1"] > 0) z += '<TD>'+uW.resourceinfo.rec1 +': '+ addCommas(Seed.queue_atkinc[k]["resource1"]) +'</td>';
-				if (Seed.queue_atkinc[k]["resource2"] > 0) z += '<TD>'+uW.resourceinfo.rec2 +': '+ addCommas(Seed.queue_atkinc[k]["resource2"]) +'</td>';
-				if (Seed.queue_atkinc[k]["resource3"] > 0) z += '<TD>'+uW.resourceinfo.rec3 +': '+ addCommas(Seed.queue_atkinc[k]["resource3"]) +'</td>';
-				if (Seed.queue_atkinc[k]["resource4"] > 0) z += '<TD>'+uW.resourceinfo.rec4 +': '+ addCommas(Seed.queue_atkinc[k]["resource4"]) +'</td>';
+				if (Seed.queue_atkinc[k]["gold"] > 0) z += '<TD>'+GameIcons.goldImgTiny + addCommas(Seed.queue_atkinc[k]["gold"]) +'</td>';
+				if (Seed.queue_atkinc[k]["resource1"] > 0) z += '<TD>'+GameIcons.foodImgTiny + addCommas(Seed.queue_atkinc[k]["resource1"]) +'</td>';
+				if (Seed.queue_atkinc[k]["resource2"] > 0) z += '<TD>'+GameIcons.woodImgTiny + addCommas(Seed.queue_atkinc[k]["resource2"]) +'</td>';
+				if (Seed.queue_atkinc[k]["resource3"] > 0) z += '<TD>'+GameIcons.stoneImgTiny + addCommas(Seed.queue_atkinc[k]["resource3"]) +'</td>';
+				if (Seed.queue_atkinc[k]["resource4"] > 0) z += '<TD>'+GameIcons.oreImgTiny + addCommas(Seed.queue_atkinc[k]["resource4"]) +'</td>';
         		    
 				for(i=1; i<nTroopType+1; i++){
 					if(Seed.queue_atkinc[k]["unit"+i+"Count"] > 0 && marchdir == "going") z += '<TD>'+ uW.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkinc[k]["unit"+i+"Count"]) +'</td>';
@@ -11101,11 +11116,11 @@ Tabs.Marches = {
   				    else if (Seed.queue_atkp[cityID][k]["toTileType"] == 50) m+='<TD>Plain Lvl: ' + Seed.queue_atkp[cityID][k]["toTileLevel"] + '</td>';
   					else if (Seed.queue_atkp[cityID][k]["toCityId"] ==0) m +='<TD>'+uW.g_js_strings.commonstr.barbariancamp+' '+uW.g_js_strings.commonstr.lvl+': '+Seed.queue_atkp[cityID][k]["toTileLevel"]+'</td>';
   		
-  				    if (Seed.queue_atkp[cityID][k]["gold"] > 0) m += '<TD>'+uW.resourceinfo.rec0 +': '+ Seed.queue_atkp[cityID][k]["gold"] +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["resource1"] > 0) m += '<TD>'+uW.resourceinfo.rec1 +': '+ addCommas(Seed.queue_atkp[cityID][k]["resource1"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["resource2"] > 0) m += '<TD>'+uW.resourceinfo.rec2 +': '+ addCommas(Seed.queue_atkp[cityID][k]["resource2"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["resource3"] > 0) m += '<TD>'+uW.resourceinfo.rec3 +': '+ addCommas(Seed.queue_atkp[cityID][k]["resource3"]) +'</td>';
-  				    if (Seed.queue_atkp[cityID][k]["resource4"] > 0) m += '<TD>'+uW.resourceinfo.rec4 +': '+ addCommas(Seed.queue_atkp[cityID][k]["resource4"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["gold"] > 0) m += '<TD>'+GameIcons.goldImgTiny + addCommas(Seed.queue_atkp[cityID][k]["gold"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["resource1"] > 0) m += '<TD>'+GameIcons.foodImgTiny + addCommas(Seed.queue_atkp[cityID][k]["resource1"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["resource2"] > 0) m += '<TD>'+GameIcons.woodImgTiny + addCommas(Seed.queue_atkp[cityID][k]["resource2"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["resource3"] > 0) m += '<TD>'+GameIcons.stoneImgTiny + addCommas(Seed.queue_atkp[cityID][k]["resource3"]) +'</td>';
+  				    if (Seed.queue_atkp[cityID][k]["resource4"] > 0) m += '<TD>'+GameIcons.oreImgTiny + addCommas(Seed.queue_atkp[cityID][k]["resource4"]) +'</td>';
   				    
   				    for(i=1; i<nTroopType+1; i++){
 						if(Seed.queue_atkp[cityID][k]["unit"+i+"Count"] > 0 && type == "going") m += '<TD>'+ uW.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkp[cityID][k]["unit"+i+"Count"]) +'</td>';
