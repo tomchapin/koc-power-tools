@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130922a
+// @version        20130923
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130922a';
+var Version = '20130923';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -355,6 +355,7 @@ if (TEST_WIDE){
   PageNavigator.init ();
   ChatStuff.init ();
   AttackDialog.init();
+  battleReports.init ();
   CoordBox.init ();
   GMTclock.init ();
   DispReport.init();
@@ -706,6 +707,100 @@ setTimeout ( function(){
     logit ('uW.tvuid: '+ uW.tvuid);    
   }, 
   
+}
+
+var battleReports = {
+  init : function (){
+    var t = battleReports; 
+//    t.getReportDisplayFunc = new CalterUwFunc ('getReportDisplay', [['return K.join("")', 'var themsg=K.join(""); themsg=getReportDisplay_hook(themsg, arguments[1]); return themsg']]); //Alliance report battle rounds function
+    t.getReportDisplayFunc = new CalterUwFunc ('getReportDisplay', [['return K.join("")', 'var themsg=K.join(""); themsg=getReportDisplay_hook(themsg, arguments[1]); themsg=getReportDisplay_hookz(themsg, arguments[1]); return themsg']]); //Alliance report battle rounds function
+    uW.getReportDisplay_hook = t.hook;
+    uW.getReportDisplay_hookz = t.hookz;
+    t.getReportDisplayFunc.setEnable (true);
+    t.renderBattleReportFunc = new CalterUwFunc ('Messages.viewMarchReport', [[/\$\("modal_msg_list"\)\.innerHTML\s*=\s*cm\.MarchReportController\.getMarchReport\(c,\s*w\)/, 'var msg = cm.MarchReportController.getMarchReport(c, s); $("modal_msg_list").innerHTML = renderBattleReport_hook(msg,c,s);']]); //March reports battle rounds function
+    uW.renderBattleReport_hook = t.hook2;
+    t.renderBattleReportFunc.setEnable (true);
+    uW.deleteAreport = t.e_deleteReport;
+    uW.MoreReport = t.e_MoreReport;
+    uW.PostReport = t.e_PostReport;
+  },
+
+  setEnable : function (){
+  },
+
+  isRoundsAvailable : function (){
+    var t = battleReports; 
+    return t.getReportDisplayFunc.isAvailable() || t.renderBattleReportFunc.isAvailable();
+  },
+  
+  e_deleteReport : function (rptid){
+    var t = battleReports; 
+    t.ajaxDeleteMyReport (rptid);
+  },
+  
+  e_MoreReport : function (rptid,side){
+    var t = battleReports; 
+    alert('WIP ;)');
+  },
+  
+  e_PostReport : function (rptid){
+      var msg = 'Report No: ' + rptid; 
+      sendChat ("/a "+  msg);
+  },
+  
+  SendChat:function(name,mess) {
+    	var inp=document.getElementById('mod_comm_input');
+    	inp.value="@"+name+' '+mess;
+    	unsafeWindow.Chat.sendChat();
+  },
+      
+  ajaxDeleteMyReport : function (rptid, isUnread, side, isCityReport, notify){
+    var params = uW.Object.clone(uW.g_ajaxparams);
+    params.s0rids = rptid;
+    params.s1rids = '';
+    params.cityrids = '';
+    new MyAjaxRequest(uW.g_ajaxpath + "ajax/deleteCheckedReports.php" + uW.g_ajaxsuffix, {
+      method: "post",
+      parameters: params,
+      onSuccess: function (rslt) {
+        if (rslt.ok && isUnread){
+          uW.seed.newReportCount = parseInt(seed.newReportCount) - 1;
+          uW.messages_notify_bug()
+        }    
+        if (notify)
+          notify (rslt.errorMsg);
+      },
+      onFailure: function () {
+        if (notify)
+          notify ('AJAX ERROR');
+      },
+    });
+  },
+  
+  hookz : function (msg, rslt) {
+    msg = msg.replace (/(\bReport\sNo\:\s([0-9]+))/g, '<a onclick=\'ptChatReportClicked($2,0)\'>$1</a>');
+  return msg;
+  },
+
+  hook2 : function (msg, args, rslt){
+	//alert('hook2 '+rslt);
+    if (rslt.rnds && Options.dispBattleRounds){
+      msg = msg.replace (/<\/ul>.*\s*<\/div>.*\s*<div class="unitsContainer">/im, '<li><span class=\'label\'>Rounds: </span><span class=\'value\'>'+ rslt.rnds +'</span></li></ul></div><div class="unitsContainer">');
+    }
+	if (Options.reportDeleteButton){
+		msg = msg.replace(/Reports<\/span><\/a>/im, 'Reports</span></a><a class=\'button20\' onclick=\'PostReport('+args[0]+',false)\'><span>Post To Chat</span></a>'); //Post to Chat button
+		msg = msg.replace(/Reports<\/span><\/a>/im, 'Reports</span></a><a class=\'button20\' onclick=\'MoreReport('+args[0]+','+args[1]+',false)\'><span>More</span></a>'); //More button
+		msg = msg.replace(/Reports<\/span><\/a>/im, 'Reports</span></a><a class=\'button20\' onclick=\'deleteAreport('+args[0]+',false)\'><span>'+uW.g_js_strings.commonstr.deletetx+'</span></a>'); //Delete button
+	}
+    return msg;
+  },
+  hook : function (msg, rslt){
+	//alert('hook '+rslt);
+    if (rslt.rnds && Options.dispBattleRounds){
+      msg = msg.replace (/(Attackers <span.*?)<\/div>/im, '$1<BR>Rounds: '+ rslt.rnds +'</div>');
+    }
+    return msg;
+  },
 }
 
 var mapinfoFix = {
@@ -5967,6 +6062,8 @@ Tabs.Options = {
       t.togOpt ('togTRAetherCostFix', 'fixTRAetherCost', TRAetherCostFix.setEnable, TRAetherCostFix.isAvailable);
       t.togOpt ('togMMBImageFix', 'fixMMBImage', mmbImageFix.setEnable, mmbImageFix.isAvailable);
       t.togOpt ('togChatTimeFix', 'fixChatTime', ChatTimeFix.setEnable, ChatTimeFix.isAvailable);
+      t.togOpt ('togBatRounds', 'dispBattleRounds', null, battleReports.isRoundsAvailable);
+      t.togOpt ('togAtkDelete', 'reportDeleteButton', null, battleReports.isRoundsAvailable);
 //      t.togOpt ('togAllowMulti', 'allowMultiBroswer');
       t.togOpt ('togAllowMulti', 'allowMultiBroswer', bypassMulti.setEnable, bypassMulti.isAvailable);
       
