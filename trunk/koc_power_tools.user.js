@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130926
+// @version        20130928a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130926';
+var Version = '20130928a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -2437,10 +2437,12 @@ show : function () {
   mhtl += "</tr><tr><td><b>Difference</b></td>";
   var diff=0;
   for(var i=0; i<Cities.numCities; i++) {
+   if (temps[i] <= 0) {diff = 'N/A';}
    diff = parseInt(pop[i] - temps[i]);
    var couleur=" style='font-color:green' ";
    if (diff<0) couleur=" style='background-color:red' ";
-   mhtl += "<td "+couleur+"><b>" + addCommas(parseInt(diff)) +"</b></td>";
+   if (temps[i] <= 0) {mhtl += "<td style='background-color:red'><center><b>n/a</b></center></td>";}
+   else {mhtl += "<td "+couleur+"><b>" + addCommas(parseInt(diff)) +"</b></td>";}
   }
 
    mhtl += "</tr><tr><td><img height=18 src=https://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/happiness.png title=happiness> happiness</td>";
@@ -2551,9 +2553,20 @@ show : function () {
 			tourneystats = rslt.worldData;
 		}	
 
-		if (rslt.worldData) {
-			tournyhtml.push("<div align=center ><input type=button id='BTLeaders' value='-'></div>");
+		mhtl = '<center><table width="90%" cellpadding="0" cellspacing="0" border="0"><tr><td width="40%"><div align=left><b>&nbsp;&nbsp;&nbsp;';
+        if (Options.TourneyBoardType !=2) { mhtl += rslt.bracketName;}
+	    else { mhtl += 'Domain Leaders';}
+		mhtl += '</b></div></td><td>';
+		if (rslt.worldData) { mhtl += "<div align=center ><input type=button id='BTLeaders' value='-'></div>"; }
+		mhtl += '</td><td width="40%">';
+		
+		if (rslt.lastUpdated && (t.tourneyPos == 0)) {
+   	   	    var now=parseInt(new Date().getTime()/1000);
+ 	        var updated = now - rslt.lastUpdated; 
+			mhtl += "<div align=right >Last updated "+timestr(updated,1)+" ago.</div>";
 		}
+		mhtl += '</td></tr></table></center>';
+		tournyhtml.push(mhtl);
 	
 	   tournyhtml.push("<center><table class='tourny_list_table' cellpadding='0' cellspacing='0' border='0' width=90% style='margin:5px'>");
 	   tournyhtml.push("<thead>");
@@ -2657,10 +2670,10 @@ show : function () {
 	    if (votrepuissance>0) {
 	      var ecartavecvous = parseInt(row.contestValue - votrepuissance);
 	      if (ecartavecvous>0) {
-	       tournyhtml.push("&nbsp;(+ " + addCommas(ecartavecvous) +")");
+	       tournyhtml.push(" (+" + addCommas(ecartavecvous) +")");
 	      } 
 	      if (ecartavecvous<0) {
-	       tournyhtml.push("&nbsp;(" + addCommas(ecartavecvous) +")");
+	       tournyhtml.push(" (" + addCommas(ecartavecvous) +")");
 	      }
 	    }
 	    tournyhtml.push("</div>");
@@ -5278,6 +5291,17 @@ MaxScouts : function (city){
 
   doScout : function (x,y,box) {
   	var t = Tabs.AllianceList;
+
+
+
+
+
+
+
+
+
+
+
 	  	var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
 		params.cid= t.ScoutInfo.id;
 	    params.type = 3
@@ -11285,6 +11309,8 @@ Tabs.Marches = {
             cityID = 'city' + Seed.cities[c][0];
             (function(cityID,c){
                 document.getElementById('ptRaidHdr'+cityID).addEventListener ('click', function () {ToggleDivDisplay(500,500,"ptRaid"+cityID);Options.marchRaidState[c] = !(Options.marchRaidState[c]);saveOptions();}, false);
+
+
                 if (Options.marchRaidState[c]){
                     ToggleDivDisplay(500,500,"ptRaid"+cityID);
                 }
