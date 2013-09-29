@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20130928a
+// @version        20130929
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20130928a';
+var Version = '20130929';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -7844,6 +7844,8 @@ Tabs.OverView = {
   displayTimer:null,
   curTabBut : null,
   curTabName : null,
+  resTotal : {},
+  troopTotal : {},
   	
   init : function (div){
     var t = Tabs.OverView;
@@ -8885,6 +8887,10 @@ Tabs.OverView = {
         for (i=0; i<row.length; i++)
           tot += row[i];
         m.push ('<TD style="background: #ffc">');
+        if (name == 'Gold' || name == 'Food' || name == 'Wood' || name == 'Stone' || name == 'Ore' || name == 'Aetherstone')
+            t.resTotal[name] = tot;
+        else
+            t.troopTotal[name] = tot;
       if (TEST_WIDE)
           m.push ('X,');        
         m.push (addCommas(tot));
@@ -8923,7 +8929,7 @@ Tabs.OverView = {
         str += '<TD width=81><B>Training</b></td>';
       str += "<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>";
   
-    str += '<TR valign=top align=right><TD></td><TD style=\'background: #ffc\'></td>';
+    str += '<TR valign=top align=right><TD><input id=ptpostres style="font-size:'+ Options.overviewFontSize +'px" type="submit" value="Post To Chat"></input></td><TD style=\'background: #ffc\'></td>';
     for(i=0; i<Cities.numCities; i++){
       cityID = 'city'+Cities.cities[i].id;
       Gate = parseInt(Seed.citystats[cityID].gate);
@@ -8962,7 +8968,7 @@ Tabs.OverView = {
       str += _row ('Stone', rows[3]);
       str += _row ('Ore', rows[4]);
       str += _row ('Aetherstone', rows[5]);
-      str += '<TR><TD colspan=11><BR></td></tr>';
+      str += '<TR><td><input id=ptposttroop style="font-size:'+ Options.overviewFontSize +'px" type="submit" value="Post To Chat"></input></td><TD colspan=11><BR></td></tr>';
       for (r=1; r<nTroopType+1; r++){
         rows[r] = [];
         for(i=0; i<Cities.numCities; i++) {
@@ -9169,6 +9175,8 @@ Tabs.OverView = {
       document.getElementById('ptoverIncTrainExt').addEventListener('click', e_clickEnableTrainingExt, false);
       document.getElementById('ptOverOver').addEventListener('click', e_allowWidthOverflow, false);
       document.getElementById('ptoverfont').addEventListener('change', e_fontSize, false);
+      document.getElementById('ptpostres').addEventListener('click', postRes, false);
+      document.getElementById('ptposttroop').addEventListener('click', postTroop, false);
     //DebugTimer.display ('Draw Overview');    
     } catch (e){
       new CdialogCancelContinue ('<PRE>'+ inspect(e,3,1) +'</pre>', null, null, true);
@@ -9207,6 +9215,26 @@ Tabs.OverView = {
       else
         t.Overv.style.overflowX = 'auto';
       t.paintOld ();
+    }
+    
+    function postRes () {
+        var t = Tabs.OverView;
+        var msg = ':::. Total Resources |'
+        for (var key in t.resTotal) {
+            msg += '||' + key + ': ' + addCommas(t.resTotal[key]);
+        }
+        msg += '|';
+        var automsg = sendChat('/a ' +msg);
+    }
+    
+    function postTroop () {
+        var t = Tabs.OverView;
+        var msg = ':::. Total Troops |'
+        for (var key in t.troopTotal) {
+            msg += '||' + key + ': ' + addCommas(t.troopTotal[key]);
+        }
+        msg += '|';
+        var automsg = sendChat('/a ' +msg);
     }
   },
 };
