@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131004a
+// @version        20131004b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131004a';
+var Version = '20131004b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -163,6 +163,7 @@ var Options = {
   fixMMBImage: true,
   multiBrowserAllow : false,
   fixChatTime : true,
+  togRaidPatch: false,
   marchRaidState: {0:false,1:false,2:false,3:false,4:false,5:false,6:false,7:false},
 };
 
@@ -1047,7 +1048,7 @@ var BarbRaidMarchPatch = {
     t = BarbRaidMarchPatch;
 
       t.marchFix = new CalterUwFunc ('update_march', [[/D\.toTileLevel,\s*n,\s*M\)/im,'D.toTileLevel, n, M, Math.floor(unixtime()+D.returnEta-D.marchUnixTime))']]);
-      t.marchFix.setEnable(true);
+      t.marchFix.setEnable(Options.togRaidPatch);
   },
 
   setEnable : function (tf){
