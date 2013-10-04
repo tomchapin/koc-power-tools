@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131003b
+// @version        20131004a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131003b';
+var Version = '20131004a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -382,7 +382,7 @@ if (TEST_WIDE){
   mmbImageFix.init();
   ChatTimeFix.init();
   bypassMulti.init();
-//  BarbRaidMarchPatch.init();
+  BarbRaidMarchPatch.init();
   towho.init();
   cdtd.init();
   tabManager.init (mainPop.getMainDiv());
@@ -1046,7 +1046,7 @@ var BarbRaidMarchPatch = {
   init : function (){
     t = BarbRaidMarchPatch;
 
-      t.marchFix = new CalterUwFunc ('update_march', [[/D\.toTileLevel,\s*n,\s*M\)/im,'D.toTileLevel, n, M, Math.floor(unixtime()+D.returnUnixTime-D.marchUnixTime))']]);
+      t.marchFix = new CalterUwFunc ('update_march', [[/D\.toTileLevel,\s*n,\s*M\)/im,'D.toTileLevel, n, M, Math.floor(unixtime()+D.returnEta-D.marchUnixTime))']]);
       t.marchFix.setEnable(true);
   },
 
@@ -6077,9 +6077,8 @@ Tabs.Options = {
  	  m+='<TR><TD><INPUT id=togTRAetherCostFix type=checkbox /></td><TD>Fix display of aetherstones for throne room upgrade/enhance</td></tr>';
  	  m+='<TR><TD><INPUT id=togMMBImageFix type=checkbox /></td><TD>Post correct image to facebook for Merlin Box</td></tr>';
  	  m+='<TR><TD><INPUT id=togChatTimeFix type=checkbox /></td><TD>Always show local time on chat posts</td></tr>';
-//	  m+='<TR><TD><INPUT id=togAllowMulti type=checkbox /></td><TD>Disable Multi-Browser check (experimental)</td></tr>';
-//	  m+='<TR><TD><INPUT id=togAllowMulti type=checkbox /></td><TD>Eliminate spurious Multi-Browser check warning (experimental)</td></tr>';
 	  m+='<TR><TD><INPUT id=togAllowMulti type=checkbox /></td><TD>Disable Multi-Browser check v2 (experimental)</td></tr>';
+	  m+='<TR><TD><INPUT id=togRaidPatch type=checkbox /></td><TD>Fix stuck raid marches (experimental)</td></tr>';
 	  m+='<TR><TD colspan=2><B>Auto Training:</b></td></tr>';
 	  m+='<TR><TD></TD><TD><INPUT id=optAutoTrainMins type=text size=1 value="'+ parseInt(AutoTrainOptions.intervalSecs/60) +'"> minutes between auto-training.</td></tr>';
 	  m+='</table><BR><BR><HR>Note that if a checkbox is greyed out there has probably been a change of KofC\'s code, rendering the option inoperable.';
@@ -6117,8 +6116,8 @@ Tabs.Options = {
       t.togOpt ('togChatTimeFix', 'fixChatTime', ChatTimeFix.setEnable, ChatTimeFix.isAvailable);
       t.togOpt ('togBatRounds', 'dispBattleRounds', null, battleReports.isRoundsAvailable);
       t.togOpt ('togAtkDelete', 'reportDeleteButton', null, battleReports.isRoundsAvailable);
-//      t.togOpt ('togAllowMulti', 'allowMultiBroswer');
       t.togOpt ('togAllowMulti', 'allowMultiBroswer', bypassMulti.setEnable, bypassMulti.isAvailable);
+      t.togOpt ('togRaidPatch', 'raidPatch', BarbRaidMarchPatch.setEnable, BarbRaidMarchPatch.isAvailable);
       
       document.getElementById('ptupdate').addEventListener ('change', t.e_updateChanged, false);
       document.getElementById('ptEnableMiniRefresh').addEventListener ('change', t.e_miniRefreshChanged, false);
