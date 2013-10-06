@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131004b
+// @version        20131005a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131004b';
+var Version = '20131005a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -12877,7 +12877,7 @@ var LoadCapFix = {
     var t = LoadCapFix;
     t.capLoadEffect = new CalterUwFunc ('cm.MarchModal.updateTroopResource', [
       [/\$\("#modal/ig, 'jQuery("#modal'] ,
-      [/1\s*\+\s*loadBoost\)/i, '1 + Math.min(loadBoost,6.25+loadEffectBoost+techLoadBoost));load=Math.floor(load);'] ]);
+      [/1\s*\+\s*loadBoost\)/i, '1 + Math.min(loadBoost,6.25+loadEffectBoost+techLoadBoost)); for(var sacIndex = 0; sacIndex < seed.queue_sacr["city" + currentcityid].length; sacIndex ++ ) if(seed.queue_sacr["city" + currentcityid][sacIndex]["unitType"] == untid) load *= seed.queue_sacr["city" + currentcityid][sacIndex]["multiplier"][0]; load=Math.floor(load-1);'] ]);
     t.capLoadEffect.setEnable(Options.fixLoadCap);
   },
 
