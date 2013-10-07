@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131005b
+// @version        20131006a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131005b';
+var Version = '20131006a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -747,7 +747,7 @@ var battleReports = {
     uW.getReportDisplay_hook = t.hook;
     uW.getReportDisplay_hookz = t.hookz;
     t.getReportDisplayFunc.setEnable (true);
-    t.renderBattleReportFunc = new CalterUwFunc ('Messages.viewMarchReport', [[/\$\("modal_msg_list"\)\.innerHTML\s*=\s*cm\.MarchReportController\.getMarchReport\(c,\s*w\)/, 'var msg = cm.MarchReportController.getMarchReport(c, s); $("modal_msg_list").innerHTML = renderBattleReport_hook(msg,c,s);']]); //March reports battle rounds function
+    t.renderBattleReportFunc = new CalterUwFunc ('Messages.viewMarchReport', [[/\$\("modal_msg_list"\)\.innerHTML\s*=\s*cm\.MarchReportController\.getMarchReport\(c,\s*y\)/, 'var msg = cm.MarchReportController.getMarchReport(c, y); $("modal_msg_list").innerHTML = renderBattleReport_hook(msg,c,y);']]); //March reports battle rounds function
     uW.renderBattleReport_hook = t.hook2;
     t.renderBattleReportFunc.setEnable (true);
     uW.deleteAreport = t.e_deleteReport;
