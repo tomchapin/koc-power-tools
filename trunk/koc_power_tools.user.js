@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131006a
+// @version        20131012
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131006a';
+var Version = '20131012';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -7743,31 +7743,36 @@ Tabs.Train = {
 
 /*************************************** OVERVIEW TAB ************************************************/
 var GMTclock = {
-  span : null,
-  timer : null,
+    span : null,
+    timer : null,
   
-  init : function (){
-    this.span = document.createElement ('span');
-    this.span.style.fontWeight = 'bold';
-    document.getElementById('kochead_time').parentNode.appendChild (this.span);
-    this.setEnable (Options.gmtClock);
-  },
+    init : function (){
+        this.span = document.createElement ('span');
+        this.span.style.fontWeight = 'bold';
+        document.getElementById('kochead_time').parentNode.appendChild (this.span);
+        this.setEnable (Options.gmtClock);
+    },
 
-  setEnable : function (tf){
-    var t = GMTclock;
-    clearInterval (t.timer);
-    if (tf){
-      t.timer = setInterval (t.everySecond, 900);
-    } else {
-      t.span.innerHTML = '';
-    }
-  },
+    setEnable : function (tf){
+        var t = GMTclock;
+        if (tf){
+            setTimeout(function(){t.everySecond();},1000);
+        } else {
+        t.span.innerHTML = '';
+        }
+    },
     
-  everySecond : function (){
-    var now = new Date();  
-    now.setTime(now.getTime() + (now.getTimezoneOffset()*60000));
-  	GMTclock.span.innerHTML = ' &nbsp; ('+ now.toLocaleFormat('%H:%M') +')';
-  },
+    everySecond : function (){
+        var t = GMTclock;
+        var now = new Date();  
+        now.setTime(now.getTime() + (now.getTimezoneOffset()*60000));
+        GMTclock.span.innerHTML = ' &nbsp; ('+ now.toLocaleFormat('%H:%M') +')';
+        if(Options.gmtClock) {
+            setTimeout(function(){t.everySecond();},1000);
+        } else {
+            GMTclock.span.innerHTML = '';
+        }
+    },
 }
 
 
