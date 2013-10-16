@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131014a
+// @version        20131015a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131014a';
+var Version = '20131015a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -391,8 +391,8 @@ if (TEST_WIDE){
   AudioManager.init();
   AllianceReportsCheck.init();
   
-  uW.cm.unitFrontendType["9"] = "specialist";  //change type of wagons from siege to avoid siege load bug
-  uW.cm.unitFrontendType["15"] = "specialist";   //change type of wagons from siege to avoid siege load bug
+//  uW.cm.unitFrontendType["9"] = "specialist";  //change type of wagons from siege to avoid siege load bug
+  uW.cm.unitFrontendType["15"] = "specialist";   //change type of siege walls from siege to avoid siege load bug
   
   if (Options.ptWinIsOpen){
     mainPop.show (true);
