@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131024a
+// @version        20131028a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131024a';
+var Version = '20131028a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -6303,6 +6303,9 @@ Tabs.Options = {
   // This refreshes the data without a full web page refresh.
   updateAll : function () {
 
+	// stop update_seed_ajax while this is happening. This is a kabam indicator (but it does still fire on a cancel training.. who knows why they've done it like that)
+	uW.g_update_seed_ajax_do = true;
+  
 	  //potential fix for missing troop recalls:  true flag forces troop march update
 	   //unsafeWindow.update_seed_ajax(true);
       // update the timestamps
@@ -6321,6 +6324,8 @@ Tabs.Options = {
                   method: "POST",
                   parameters: params,
                   onSuccess: function (rslt) {
+					  // let update_seed_ajax run again in game
+					  uW.g_update_seed_ajax_do = false;
                       var mainSrcHTMLCode = rslt.responseText;
                       var myregexp = /var seed=\{.*?\};/;                      
                       var match = myregexp.exec(mainSrcHTMLCode);
@@ -6375,8 +6380,11 @@ Tabs.Options = {
                          
 
                       }
+					  
                   },
                   onFailure: function () {
+					  // let update_seed_ajax run again in game
+					  uW.g_update_seed_ajax_do = false;
                       logit("ERROR ********: ", inspect(rslt,3,1));
                       if (notify != null)
                           notify(rslt.errorMsg);
