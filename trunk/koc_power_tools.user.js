@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131028a
+// @version        20131030a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131028a';
+var Version = '20131030a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -10852,138 +10852,139 @@ Tabs.Alliance = {
 };
 /*********************************** IRC TAB ***********************************/
 Tabs.IRC = {
-  tabOrder : 1000,
-  tabLabel : "IRC",
-  myDiv : null,
-  seenLog : {},
+    tabOrder : 1000,
+    tabLabel : "IRC",
+    myDiv : null,
+    seenLog : {},
 
   
-  init : function (div){    
-    var t = Tabs.IRC;      
-    t.myDiv = div;
-    t.myDiv.style.maxHeight = '730px';
+    init : function (div){    
+        var t = Tabs.IRC;      
+        t.myDiv = div;
+        t.myDiv.style.maxHeight = '730px';
      
-    var m =  '<DIV class=ptstat>IRC Bot Command Server</div><TABLE align=center cellpadding=1 cellspacing=0></table>';
-	m += '<INPUT id=ptIRCcmdEnable type=checkbox ' + (IRCOptions.IRCCmdEnable?'CHECKED ':'') + '> Global Enable (this must be checked for all other options to work)<br>';
-	m +=  '<DIV class=ptstat>IRC Bot Options</div><TABLE align=center cellpadding=1 cellspacing=0></table>';
-    m += '<INPUT id=ptIRCcmdSeen type=checkbox ' + (IRCOptions.IRCCmdSeen.enable?'CHECKED ':'') + '> Respond to "!seen <username>" command<br>';
-    m += '<INPUT id=ptIRCcmdRules type=checkbox ' + (IRCOptions.IRCCmdRules.enable?'CHECKED ':'') + '> Respond to "!rules" command. ';
-	m += ' Rules message: <INPUT id=ptIRCcmdRulesMsg type=text size=50 value="' + IRCOptions.IRCCmdRules.message + '">';
-    t.myDiv.innerHTML = m;
+        var m =  '<DIV class=ptstat>IRC Bot Command Server</div><TABLE align=center cellpadding=1 cellspacing=0></table>';
+        m += '<INPUT id=ptIRCcmdEnable type=checkbox ' + (IRCOptions.IRCCmdEnable?'CHECKED ':'') + '> Global Enable (this must be checked for all other options to work)<br>';
+        m += '<DIV class=ptstat>IRC Bot Options</div><TABLE align=center cellpadding=1 cellspacing=0></table>';
+        m += '<INPUT id=ptIRCcmdSeen type=checkbox ' + (IRCOptions.IRCCmdSeen.enable?'CHECKED ':'') + '> Respond to "!seen <username>" command<br>';
+        m += '<INPUT id=ptIRCcmdRules type=checkbox ' + (IRCOptions.IRCCmdRules.enable?'CHECKED ':'') + '> Respond to "!rules" command. ';
+        m += ' Rules message: <INPUT id=ptIRCcmdRulesMsg type=text size=50 value="' + IRCOptions.IRCCmdRules.message + '">';
+        t.myDiv.innerHTML = m;
 
-    document.getElementById('ptIRCcmdEnable').addEventListener ('change', function (e){IRCOptions.IRCCmdEnable = e.target.checked;saveIRCOptions();}, false);
-    document.getElementById('ptIRCcmdSeen').addEventListener ('change', function (e){IRCOptions.IRCCmdSeen.enable = e.target.checked;saveIRCOptions();}, false);
-	document.getElementById('ptIRCcmdRules').addEventListener ('change', function (e){IRCOptions.IRCCmdRules.enable = e.target.checked;saveIRCOptions();}, false);
-	document.getElementById('ptIRCcmdRulesMsg').addEventListener ('change', function (e){IRCOptions.IRCCmdRules.message = e.target.value;saveIRCOptions();}, false);
-	
-	var a = JSON2.parse(GM_getValue ('IRCSeen_log_'+GetServerId(), '{}'));
-    if (matTypeof(a) == 'object')
+        document.getElementById('ptIRCcmdEnable').addEventListener ('change', function (e){IRCOptions.IRCCmdEnable = e.target.checked;saveIRCOptions();}, false);
+        document.getElementById('ptIRCcmdSeen').addEventListener ('change', function (e){IRCOptions.IRCCmdSeen.enable = e.target.checked;saveIRCOptions();}, false);
+        document.getElementById('ptIRCcmdRules').addEventListener ('change', function (e){IRCOptions.IRCCmdRules.enable = e.target.checked;saveIRCOptions();}, false);
+        document.getElementById('ptIRCcmdRulesMsg').addEventListener ('change', function (e){IRCOptions.IRCCmdRules.message = e.target.value;saveIRCOptions();}, false);
+    
+        var a = JSON2.parse(localStorage.getItem('IRCSeen_log_'+GetServerId()));
+        if (matTypeof(a) == 'object')
+        {
+            t.seenLog = a;
+        }
+        window.addEventListener('unload', t.onUnload, false);
+    },
+
+    onUnload : function ()
     {
-        t.seenLog = a;
-    }
-      window.addEventListener('unload', t.onUnload, false);
-  },
+        var t = Tabs.IRC;
+        localStorage.setItem('IRCSeen_log_'+GetServerId(), JSON2.stringify(t.seenLog));
+    },  
 
-  onUnload : function ()
-  {
-	  var t = Tabs.IRC;
-      GM_setValue ('IRCSeen_log_'+GetServerId(), JSON2.stringify(t.seenLog));
-  },  
+    grabChat : function (uid, name, msg) {
+        var t = Tabs.IRC; 
+        var time = "";
+        var lastPost = "";
+    
+        if (!IRCOptions.IRCCmdEnable)
+            return;
+        
+        if (name == null)
+            return;
+        if (msg == null)
+            return;
+        
+        var a = msg.indexOf("<span class='time'>");
+        var b = msg.indexOf('</span>',a);
+        if (b>a)
+            time = msg.slice(a+19,b);
+        
+        var c = msg.indexOf("<div class='tx'>");
+        var d = msg.indexOf("</div>",c);
+        if (d>c)
+            lastPost = msg.slice(c+16,d);
 
-  grabChat : function (uid, name, msg) {
-	var t = Tabs.IRC; 
-	var time = "";
-	var lastPost = "";
-	
-	if (!IRCOptions.IRCCmdEnable)
-		return;
-		
-	if (name == null)
-		return;
-	if (msg == null)
-		return;
-	
-	var a = msg.indexOf("<span class='time'>");
-	var b = msg.indexOf('</span>',a);
-	if (b>a)
-		time = msg.slice(a+19,b);
-	
-	var c = msg.indexOf("<div class='tx'>");
-	var d = msg.indexOf("</div>",c);
-	if (d>c)
-		lastPost = msg.slice(c+16,d);
-
-	t.logChat(uid,name,time,lastPost);
-	if (IRCOptions.IRCCmdSeen.enable) {
-		if (msg.indexOf("!seen") >= 0) {
-			t.processSeen(msg);
-		}
-	}
-	if (IRCOptions.IRCCmdRules.enable) {
-		if (msg.indexOf("!rules") >= 0) {
-			t.processRules();
-		}
-	}
-  },
+        t.logChat(uid,name,time,lastPost);
+        if (IRCOptions.IRCCmdSeen.enable) {
+            if (msg.indexOf("!seen") >= 0) {
+                t.processSeen(msg);
+            }
+        }
+        if (IRCOptions.IRCCmdRules.enable) {
+            if (msg.indexOf("!rules") >= 0) {
+                t.processRules();
+            }
+        }
+    },
    
-  logChat : function (uid, name, time, lastPost) {
-	var t = Tabs.IRC; 
-	if (lastPost.indexOf("I need help building my")>=0)
-		return;
-	if (lastPost.indexOf("My embassy has")>=0)
-		return;
-	if (lastPost.indexOf("My wilderness at")>=0)
-		return;
-	if (lastPost.indexOf("has been scouted by")>=0)
-		return;
-	if (lastPost.indexOf("has been attacked by")>=0)
-		return;
-	if (lastPost.indexOf("is low on food")>=0)
-		return;
-	if (lastPost.indexOf("Encamped Allies")>=0)
-		return;
-	if (lastPost.indexOf("Estimated Arrival")>=0)
-		return;
-		
-	var updateSeen = {"name":name, "timestamp":time, "lastpost":lastPost};
-	t.seenLog[uid] = updateSeen;
-  },
+    logChat : function (uid, name, time, lastPost) {
+        var t = Tabs.IRC; 
+        if (lastPost.indexOf("I need help building my")>=0)
+            return;
+        if (lastPost.indexOf("My embassy has")>=0)
+            return;
+        if (lastPost.indexOf("My wilderness at")>=0)
+            return;
+        if (lastPost.indexOf("has been scouted by")>=0)
+            return;
+        if (lastPost.indexOf("has been attacked by")>=0)
+            return;
+        if (lastPost.indexOf("is low on food")>=0)
+            return;
+        if (lastPost.indexOf("Encamped Allies")>=0)
+            return;
+        if (lastPost.indexOf("Estimated Arrival")>=0)
+            return;
+        
+        var updateSeen = {"name":name, "timestamp":time, "lastpost":lastPost};
+        t.seenLog[uid] = updateSeen;
+        localStorage.setItem('IRCSeen_log_'+GetServerId(), JSON2.stringify(t.seenLog));
+    },
   
-  processSeen : function (msg) {
-	var t = Tabs.IRC;
-	var username_string = msg.slice(msg.indexOf("!seen")+6);
-	var username = username_string.split('<');
-	if (username[0].length > 2)
-		Tabs.AllianceList.fetchPlayerList(username[0],t.eventGotPlayerList);
-  },
+    processSeen : function (msg) {
+        var t = Tabs.IRC;
+        var username_string = msg.slice(msg.indexOf("!seen")+6);
+        var username = username_string.split('<');
+        if (username[0].length > 2)
+            Tabs.AllianceList.fetchPlayerList(username[0],t.eventGotPlayerList);
+    },
 
-  processRules : function () {
-	var t = Tabs.IRC;
-	var automsg = sendChat('/a '+IRCOptions.IRCCmdRules.message);
-  },  
-  eventGotPlayerList : function (rslt) {
-	var t = Tabs.IRC;
-	if (!rslt.ok) {
-		var autoerrormsgPNF = sendChat("/a Player not found. Enter a valid Player.");
-		return;
-	}
-	var uid = rslt.matchedUsers[Object.keys(rslt.matchedUsers)[0]].userId;
-	if (Object.keys(t.seenLog).length > 0)
-		if (uid in t.seenLog) {
-			var automsg = sendChat('/a '+t.seenLog[uid].name+' last seen saying: ' +t.seenLog[uid].lastpost+ ' @'+ t.seenLog[uid].timestamp);
-		}
-		else
-			var autoerrormsg = sendChat("/a I haven't seen that user");
-  },
-		
-  hide : function (){         
-    mainPop.div.style.width = 750 + 'px';
-  },
-
-  show : function (){         
-  		var t = Tabs.IRC;
+    processRules : function () {
+        var t = Tabs.IRC;
+        var automsg = sendChat('/a '+IRCOptions.IRCCmdRules.message);
+    },  
+    eventGotPlayerList : function (rslt) {
+        var t = Tabs.IRC;
+        if (!rslt.ok) {
+            var autoerrormsgPNF = sendChat("/a Player not found. Enter a valid Player.");
+            return;
+        }
+        var uid = rslt.matchedUsers[Object.keys(rslt.matchedUsers)[0]].userId;
+        if (Object.keys(t.seenLog).length > 0)
+            if (uid in t.seenLog) {
+                var automsg = sendChat('/a '+t.seenLog[uid].name+' last seen saying: ' +t.seenLog[uid].lastpost+ ' @'+ t.seenLog[uid].timestamp);
+            }
+            else
+                var autoerrormsg = sendChat("/a I haven't seen that user");
+    },
+        
+    hide : function (){         
         mainPop.div.style.width = 750 + 'px';
-  },
+    },
+
+    show : function (){         
+        var t = Tabs.IRC;
+        mainPop.div.style.width = 750 + 'px';
+    },
 };
 
 /****************************  Unit Stats Calculator Tab  ******************************/
@@ -11341,7 +11342,7 @@ Tabs.UnitCalc = {
         var itemAtk = 0;
         var itemDef = 0;
         var feyAltarAct = document.getElementById('ptucFeyAltarActive').checked ? 1 : 0;
-		var feyAltar = parseFloat(document.getElementById('ptucFeyAltarBonus').value)/100;
+        var feyAltar = parseFloat(document.getElementById('ptucFeyAltarBonus').value)/100;
         var orderDef = 0;
         
         if (document.getElementById('ptucOrder').checked)
@@ -13817,7 +13818,7 @@ function saveAutoTrainOptions (){
 
 function readIRCOptions (){
   var serverID = GetServerId();
-	s = GM_getValue ('IRCOptions_'+serverID);
+	s = localStorage.getItem('IRCOptions_'+serverID);
 	if (s != null){
 		opts = JSON2.parse (s);
 		for (k in opts){
@@ -13835,7 +13836,7 @@ function readIRCOptions (){
 
 function saveIRCOptions (){
   var serverID = GetServerId();
-	GM_setValue ('IRCOptions_'+serverID, JSON2.stringify(IRCOptions));
+    localStorage.setItem('IRCOptions_'+serverID, JSON2.stringify(IRCOptions));
 }
 
 function readChatIconsOptions (){
