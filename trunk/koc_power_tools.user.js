@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131030a
+// @version        20131101a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131030a';
+var Version = '20131101a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -6765,7 +6765,12 @@ Tabs.Train = {
   clickTroopMaxPS : function (){
     var t = Tabs.Train;
     var slots = parseInt(t.TTinpSlots.value, 10);
-    if (slots<1 || (t.stats.barracks-t.stats.queued < 1))
+    var queued;
+    if (t.lastTroopSelect > 12 && t.lastTroopSelect < 16)
+      queued = t.stats.spqueued;
+    else
+      queued = t.stats.queued;
+    if (slots<1 || (t.stats.barracks-queued < 1))
       t.TTinpPerSlot.value = 0;
     else
       t.TTinpPerSlot.value = parseInt(t.stats.MaxTrain / slots);
@@ -6969,6 +6974,11 @@ Tabs.Train = {
     var unitId = t.TTselType.value;
     var perSlot = parseInt(t.TTinpPerSlot.value, 10);
     var numSlots = parseInt(t.TTinpSlots.value, 10);
+    var queued;
+    if (t.lastTroopSelect > 12 && t.lastTroopSelect < 16)
+      queued = t.stats.spqueued;
+    else
+      queued = t.stats.queued;
     
     t.displayCityStats ();
     if (t.running){
@@ -6983,7 +6993,7 @@ Tabs.Train = {
       t.divTrainStatus.innerHTML = '<FONT COLOR=#550000>Can\'t train that many troops (max is '+ t.stats.MaxTrain +' total)</font>';
       return;
     }
-    if (numSlots<1 || numSlots>t.stats.barracks - t.stats.queued){
+    if (numSlots<1 || numSlots>t.stats.barracks - queued){
       t.divTrainStatus.innerHTML = '<FONT COLOR=#550000>'+uW.g_js_strings.commonstr.invalid +' ('+uW.buildingcost.bdg13[0]+')</font>';
       return;
     }
