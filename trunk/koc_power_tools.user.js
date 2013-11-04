@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131104a
+// @version        20131104b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131104a';
+var Version = '20131104b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -31,7 +31,7 @@ var TEST_WIDE_CITIES = 7;
 var ENABLE_ALERT_TO_CHAT = true;
 var History=[];
 var throttle=10;
-var TimeOffset = parseInt(new Date().getTimezoneOffset()*(-1))+480; // difference between local time and PST in mins. All KoC TimeStamps appear to be in PST...
+var TimeOffset = parseInt(new Date().getTimezoneOffset()*(-1))+480-getDST(); // difference between local time and PST/PDT in mins. All KoC TimeStamps appear to be in PST or PDT...
 
 if (typeof SOUND_FILES == 'undefined') var SOUND_FILES = new Object();
 if (typeof SOUND_FILES.whisper == 'undefined'){
@@ -5295,6 +5295,14 @@ MaxScouts : function (city){
 
   doScout : function (x,y,box) {
   	var t = Tabs.AllianceList;
+
+
+
+
+
+
+
+
 
 
 
@@ -15446,6 +15454,24 @@ function Sendcourtdata (courtdata) {
 		  },
     })
 };
+
+function getDST() {
+	var local = new Date;
+	var utc = local.getTime() + (local.getTimezoneOffset() * 60000);
+	var today = new Date(utc + (3600000*(-8))); // pacific time
+	var yr = today.getFullYear();
+	var dst_start = new Date("March 14, "+yr+" 02:00:00"); // 2nd Sunday in March can't occur after the 14th 
+	var dst_end = new Date("November 07, "+yr+" 02:00:00"); // 1st Sunday in November can't occur after the 7th
+	var day = dst_start.getDay(); // day of week of 14th
+	dst_start.setDate(14-day); // Calculate 2nd Sunday in March of this year
+	day = dst_end.getDay(); // day of the week of 7th
+	dst_end.setDate(7-day); // Calculate first Sunday in November of this year
+	var dstadj = 0;
+	if (today >= dst_start && today < dst_end) { //does today fall inside of DST period?
+		dstadj = (-60); 
+	}
+	return dstadj;
+}
 
 ptStartup ();
 
