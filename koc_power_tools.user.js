@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131101a
+// @version        20131104a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131101a';
+var Version = '20131104a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -31,7 +31,7 @@ var TEST_WIDE_CITIES = 7;
 var ENABLE_ALERT_TO_CHAT = true;
 var History=[];
 var throttle=10;
-var TimeOffset = parseInt(new Date().getTimezoneOffset()*(-1))+420; // difference between local time and PST in mins. All KoC TimeStamps appear to be in PST...
+var TimeOffset = parseInt(new Date().getTimezoneOffset()*(-1))+480; // difference between local time and PST in mins. All KoC TimeStamps appear to be in PST...
 
 if (typeof SOUND_FILES == 'undefined') var SOUND_FILES = new Object();
 if (typeof SOUND_FILES.whisper == 'undefined'){
