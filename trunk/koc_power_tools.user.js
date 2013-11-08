@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131104b
+// @version        20131107a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131104b';
+var Version = '20131107a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -11466,7 +11466,7 @@ Tabs.UnitCalc = {
                         document.getElementById('ptucTrp'+ui+'Atk').innerHTML  = t.round1decimals( (1 + guardAtk)  * ( (1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][1] + (1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][1] * (resAtk  + knight + itemAtk            + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod' ).value),parseFloat(document.getElementById('ptucAtkModSig' ).value))/100)));
                         document.getElementById('ptucTrp'+ui+'Def').innerHTML  = t.round1decimals(                   ( (1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][2] + (1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][2] * (resDef  + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod' ).value),parseFloat(document.getElementById('ptucDefModSig' ).value))/100)));
                         document.getElementById('ptucTrp'+ui+'Spd').innerHTML  = t.round1decimals(                   ( (1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][3] + (1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][3] * (resSpd                                + t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod' ).value),parseFloat(document.getElementById('ptucSpdModSig' ).value))/100)));
-                        document.getElementById('ptucTrp'+ui+'Rng').innerHTML  = t.round1decimals(                   ( (1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][4] + (1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][4] * (                                        t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod' ).value),parseFloat(document.getElementById('ptucRngModSig' ).value))/100)));
+                        document.getElementById('ptucTrp'+ui+'Rng').innerHTML  = t.round1decimals(                   ( (1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][4] + (1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][4] * (resRng                                + t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod' ).value),parseFloat(document.getElementById('ptucRngModSig' ).value))/100)));
                     }
                     break;
             }
