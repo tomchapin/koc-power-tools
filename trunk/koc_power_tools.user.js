@@ -1,7 +1,7 @@
-// ==UserScript==
+﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131110a
+// @version        20131111a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131110a';
+var Version = '20131111a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -8007,8 +8007,9 @@ Tabs.OverView = {
 								var currSet = uW.cm.ThroneController.hasFactionBonus(equippedItems);
 								if(currSet.hazBonus && currSet.faction === "fey")
 							           aethcapinc += uW.cm.ThroneController.effectBonus(95);
-								z+= (parseInt(2000000*(1+aethcapinc/100)) > parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]))? '<FONT COLOR= "669900">':'<FONT COLOR="686868">';
-								z+= addCommas(2000000*(1+aethcapinc/100));
+								var aethercap = Math.round(2000000*(1+Math.min(aethcapinc,unsafeWindow.cm.thronestats.boosts["ResourceCap"].Max)/100));
+								z+= (aethercap > parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]))? '<FONT COLOR= "669900">':'<FONT COLOR="686868">';
+								z+= addCommas(aethercap);
 							} else{
 								if (parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][1]/3600) > parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec'+a][0]/3600)) z+='<FONT COLOR= "669900">';
 								else z+='<FONT COLOR="686868">';
