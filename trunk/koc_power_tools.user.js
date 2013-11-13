@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131111a
+// @version        20131112a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131111a';
+var Version = '20131112a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -11550,6 +11550,55 @@ Tabs.UnitCalc = {
             return 0;
     },
 
+}
+
+/*********************************** Accuracy Matrix Tab ***********************************/
+Tabs.Accuracy = {
+  tabOrder : 1200,
+  tabLabel : 'Accuracy',
+  cont:null,
+  	
+  init : function (div){
+    var t = Tabs.Accuracy;
+    t.cont = div;
+
+    var main = '<DIV class=ptstat>ACCURACY MATRIX<TABLE align=center cellpadding=1 cellspacing=0></table></div>';  
+    main +='<DIV style="height:420px; width:720px; overflow-x:scroll;"><TABLE class=ptTab align=left><TR>';
+    main +='<TD></td><TD>Target</td></tr>';
+    main +='<TR><TD></td>';
+
+    var z = uW.cm.WorldSettings.getSettingAsObject("UNIT_ACCURACY_MODIFIER");
+    var keyz = unsafeWindow.Object.keys(z);
+    var troopa,troopb;
+
+    for (iu=1; iu < nTroopType+2; iu++) 
+	if (iu < 13) main +='<TD>' +uW.unitcost['unt'+iu][0]+ '</td>';
+	else if (iu == 13) main +='<TD>WM Crossbow</td>';
+	else main +='<TD>' +uW.unitcost['unt'+(iu-1)][0]+ '</td>';
+    main +='</tr>';
+
+    for (iu=1; iu < nTroopType+2; iu++) {
+	if (iu < 13) main +='<TR><TD>' +uW.unitcost['unt'+iu][0]+ '</td>';
+	else if (iu == 13) main +='<TR><TD>WM Crossbow</td>';
+	else main +='<TR><TD>' +uW.unitcost['unt'+(iu-1)][0]+ '</td>';
+	troopa = keyz[iu-1];
+    	for (ju=1; ju < nTroopType+2; ju++) {
+	    troopb = keyz[ju-1];
+	    main +='<TD>' +z[troopa][troopb]+ '</td>';
+	}
+	main +='</tr>';
+    }
+    main +='</table></div>';
+            
+    t.cont.innerHTML = main;
+  },
+
+  hide : function (){
+  },
+  
+  show : function (){
+  },
+  
 }
 
 /*************************************** MARCHES TAB ************************************************/
