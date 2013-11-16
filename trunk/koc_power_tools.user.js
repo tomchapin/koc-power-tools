@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131112a
+// @version        20131116a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131112a';
+var Version = '20131116a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -2065,9 +2065,21 @@ var Rpt = {
 			if (rslt['s1ThroneRoomBoosts']) {
 				m+='<TR><TD colspan=4> </TD></TR>';
 				m+='<TR><TD colspan=4><b>Throne Room Bonuses:</b></TD></TR>';
-				for (var i=1;i<99;i++) {
+				for (var i=1;i<trEffect.length+1;i++) {
 					if (rslt['s1ThroneRoomBoosts'][i]) {
 						m+='<TR><TD colspan=4>' + trEffect[i] +': ' + rslt['s1ThroneRoomBoosts'][i] + '%</TD></TR>';
+					}
+				}
+			}
+
+
+			if (rslt.bonus['cmp']) {
+				m+='<TR><TD colspan=4> </TD></TR>';
+				m+='<TR><TD colspan=4><b>Champion Adjustments:</b></TD></TR>';
+				for (var i=0;i<24;i++) {
+					if (rslt.bonus['cmp']['s1'][i]) {
+					    if (i==0) m+='<TR><TD colspan=4>Life: ' + rslt.bonus['cmp']['s1'][i] + '</TD></TR>'; else
+						m+='<TR><TD colspan=4>' + trEffect[i] +': ' + rslt.bonus['cmp']['s1'][i] + '</TD></TR>';
 					}
 				}
 			}
@@ -2303,7 +2315,7 @@ var Rpt = {
 			if (rslt['s0ThroneRoomBoosts']) {
 				m+='<TR><TD colspan=4> </TD></TR>';
 				m+='<TR><TD colspan=4><b>Throne Room Bonuses:</b></TD></TR>';
-				for (var i=1;i<99;i++) {
+				for (var i=1;i<trEffect.length+1;i++) {
 					if (rslt['s0ThroneRoomBoosts'][i]) {
 						m+='<TR><TD colspan=4>' + trEffect[i] +': ' + rslt['s0ThroneRoomBoosts'][i] + '%</TD></TR>';
 					}
@@ -2311,6 +2323,16 @@ var Rpt = {
 
 			}
 
+			if (rslt.bonus['cmp']) {
+				m+='<TR><TD colspan=4> </TD></TR>';
+				m+='<TR><TD colspan=4><b>Champion Adjustments:</b></TD></TR>';
+				for (var i=0;i<24;i++) {
+					if (rslt.bonus['cmp']['s0'][i]) {
+					    if (i==0) m+='<TR><TD colspan=4>Life: ' + rslt.bonus['cmp']['s0'][i] + '</TD></TR>'; else
+						m+='<TR><TD colspan=4>' + trEffect[i] +': ' + rslt.bonus['cmp']['s0'][i] + '</TD></TR>';
+					}
+				}
+			}
 
 			if (rslt.bonus['tch2']) {
 				m+='<TR><TD colspan=4> </TD></TR>';
