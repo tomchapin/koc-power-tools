@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131116a
+// @version        20131118a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131116a';
+var Version = '20131118a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -1666,6 +1666,8 @@ var Rpt = {
 */
 		for (var k in uW.cm.thronestats.effects)
 			trEffect[k] = uW.cm.thronestats.effects[k][1];
+		var chEffect = ["hpm","hpr","dam","arm","str","dex","con","hit","cri","blk"];
+		var chEffectName = [uW.g_js_strings.champion_stats.hp,uW.g_js_strings.report_view.hp_remaining,uW.g_js_strings.champion_stats.damage,uW.g_js_strings.effects.name_203,uW.g_js_strings.effects.name_204,uW.g_js_strings.effects.name_205,uW.g_js_strings.effects.name_206,uW.g_js_strings.effects.name_207,uW.g_js_strings.effects.name_208,uW.g_js_strings.effects.name_209];
 
 		if (rpt.marchType == 0)
 			rpt.marchName = 'Desertion';
@@ -2084,6 +2086,16 @@ var Rpt = {
 				}
 			}
 
+			if (rslt['champion_stats']) {
+				m+='<TR><TD colspan=4> </TD></TR>';
+				m+='<TR><TD colspan=4><b>Champion Stats:</b></TD></TR>';
+				for (var i=1;i<chEffect.length;i++) {
+					if (rslt.champion_stats['s1'][chEffect[i]]) {
+						m+='<TR><TD colspan=4>' + chEffectName[i] +': ' + rslt.champion_stats['s1'][chEffect[i]] + '</TD></TR>';
+					}
+				}
+			}
+
 			if (rslt.bonus['tch2']) {
 				m+='<TR><TD colspan=4> </TD></TR>';
 				m+='<TR><TD colspan=4><b>Briton Research Bonuses:</b></TD></TR>';
@@ -2330,6 +2342,16 @@ var Rpt = {
 					if (rslt.bonus['cmp']['s0'][i]) {
 					    if (i==0) m+='<TR><TD colspan=4>Life: ' + rslt.bonus['cmp']['s0'][i] + '</TD></TR>'; else
 						m+='<TR><TD colspan=4>' + trEffect[i] +': ' + rslt.bonus['cmp']['s0'][i] + '</TD></TR>';
+					}
+				}
+			}
+
+			if (rslt['champion_stats']) {
+				m+='<TR><TD colspan=4> </TD></TR>';
+				m+='<TR><TD colspan=4><b>Champion Stats:</b></TD></TR>';
+				for (var i=1;i<chEffect.length;i++) {
+					if (rslt.champion_stats['s0'][chEffect[i]]) {
+						m+='<TR><TD colspan=4>' + chEffectName[i] +': ' + rslt.champion_stats['s0'][chEffect[i]] + '</TD></TR>';
 					}
 				}
 			}
