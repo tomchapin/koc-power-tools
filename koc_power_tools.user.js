@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131118a
+// @version        20131122a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131118a';
+var Version = '20131122a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -14036,6 +14036,8 @@ function AddMainTabLink(text, eventListener, mouseListener) {
       gmTabs.style.width='735px';
       gmTabs.lang = 'en_PT';
     }
+	gmTabs.style.height='0%';
+	gmTabs.style.overflow='auto';
     if (gmTabs.firstChild)
       gmTabs.insertBefore (a, gmTabs.firstChild);
     else
