@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131123b
+// @version        20131124a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131123b';
+var Version = '20131124a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -11100,12 +11100,11 @@ Tabs.UnitCalc = {
         msg += '<div class="ptdivHeader" style="background: #99CCFF;" align=left><a id=cfgGuardianHdr class=ptdivLink >Guardian&nbsp;<img id=cfgGuardianArrow height="10" src="'+GameIcons.DownArrow+'"></a></div>';
         msg += '<div id=cfgGuardian align=left class="">';
         msg += '<table border=1><tr><td>Guardians</td><td>Levels</td><td>Active</td></tr>\
-                       <tr><td>Wood </td><td><input id=ptucWood  type=text value=9 size=4></td><td><input id=ptucWoodAct type=radio name=ptucGuard checked></td></tr>\
-                       <tr><td>Ore  </td><td><input id=ptucOre   type=text value=9 size=4></td><td><input id=ptucOreAct type=radio name=ptucGuard></td></tr>\
-                       <tr><td>Food </td><td><input id=ptucFood  type=text value=9 size=4></td><td><input id=ptucFoodAct type=radio name=ptucGuard></td></tr>\
-                       <tr><td>Stone</td><td><input id=ptucStone type=text value=9 size=4></td><td><input id=ptucStoneAct type=radio name=ptucGuard></td></tr></table>';
-        msg += 'Set Bonus<input id=ptucGuardSet type=checkbox unchecked><br>\
-                Troops on Defense<input id=ptucDefending type=checkbox unchecked></div>';
+                       <tr><td>Wood          </td><td><input id=ptucWood  type=text value=9 size=4></td><td><input id=ptucWoodAct type=radio name=ptucGuard checked></td></tr>\
+                       <tr><td>Ore<sup>*<sup></td><td><input id=ptucOre   type=text value=9 size=4></td><td><input id=ptucOreAct type=radio name=ptucGuard></td></tr>\
+                       <tr><td>Food          </td><td><input id=ptucFood  type=text value=9 size=4></td><td><input id=ptucFoodAct type=radio name=ptucGuard></td></tr>\
+                       <tr><td>Stone         </td><td><input id=ptucStone type=text value=9 size=4></td><td><input id=ptucStoneAct type=radio name=ptucGuard></td></tr></table>';
+        msg += 'Set Bonus<input id=ptucGuardSet type=checkbox unchecked></div>';
         msg += '<div class="ptdivHeader" style="background: #99CCFF;" align=left><a id=cfgItemsHdr class=ptdivLink >Items&nbsp;<img id=cfgItemsArrow height="10" src="'+GameIcons.DownArrow+'"></a></div>';
         msg += '<div id=cfgItems align=left class="">';
         msg += '<table border=1>\
@@ -11118,7 +11117,7 @@ Tabs.UnitCalc = {
         msg += '<table border=1><tr><td>Fey Altar Active: <input id=ptucFeyAltarActive type=checkbox unchecked></td></tr>\
                 <td>Bonus Amount <input id=ptucFeyAltarBonus type=text value=40 size=4></td></tr></table>\
                 <input id=ptucOreBless type=checkbox unchecked> Empowered Iron Blessing<br>\
-                <input id=ptucBloodBless type=checkbox unchecked>Blood Lust</div>';
+                <input id=ptucBloodBless type=checkbox unchecked>Blood Lust<sup>*<sup></div>';
         msg += '<div class="ptdivHeader" style="background: #99CCFF;" align=left><a id=cfgBritonHdr class=ptdivLink >Briton&nbsp;<img id=cfgBritonArrow height="10" src="'+GameIcons.DownArrow+'"></a></div>';
         msg += '<div id=cfgBriton align=left class="">';
         msg += '<table border=1>\
@@ -11129,10 +11128,16 @@ Tabs.UnitCalc = {
         msg += '<td style="vertical-align:top">'
         msg += '<div class="ptdivHeader" style="background: #99CCFF;" align=left><a id=cfgKnightHdr class=ptdivLink >Knight&nbsp;<img id=cfgKnightArrow height="10" src="'+GameIcons.DownArrow+'"></a></div>';
         msg += '<div id=cfgKnight align=left class="">';
-        msg += 'Knight Combat Points<input id="ptucKnightLevel" type=text value=300 size=4></div>';
-        msg += '<div class="ptdivHeader" style="background: #99CCFF;" align=left><a id=cfgOrderHdr class=ptdivLink >Order of the Round Table&nbsp;<img id=cfgOrderArrow height="10" src="'+GameIcons.DownArrow+'"></a></div>';
+        msg += 'Combat Points<input id="ptucKnightLevel" type=text value=300 size=4></div>';
+        msg += '<div class="ptdivHeader" style="background: #99CCFF;" align=left><a id=cfgOrderHdr class=ptdivLink >Order of the Round&nbsp;<img id=cfgOrderArrow height="10" src="'+GameIcons.DownArrow+'"></a></div>';
         msg += '<div id=cfgOrder align=left class="">';
         msg += '<input id=ptucOrder type=checkbox unchecked>Subscriber</div>';
+        msg += '<div class="ptdivHeader" style="background: #99CCFF;" align=left>Defender Stats</div>\
+                Troops on Defense<input id=ptucDefending type=checkbox unchecked><br><sup>*</sup>Active only when attacking';
+
+        msg += '</td>';
+        
+        msg += '<td style="vertical-align:top">'
         msg += '<div class="ptdivHeader" style="background: #99CCFF;" align=left><a id=cfgThroneHdr class=ptdivLink >Throne&nbsp;<img id=cfgThroneArrow height="10" src="'+GameIcons.DownArrow+'"></a></div>';
         msg += '<div id=cfgThrone align=left class="">';
         msg += '<table border=1>\
@@ -11469,33 +11474,41 @@ Tabs.UnitCalc = {
             itemDef = 0.2 + itemDef;
         if (document.getElementById('ptucItemDef50').checked)
             itemDef = 0.5 + itemDef;           
+        if (defending)
+            bloodLustBlessAtkSpd = 1;
             
         // calculate guardian
         if (guardSetAct) { //if you have set bonus
             if (guardLifeAct && defending) { //if your want defending troop stats
                 guardLife = (guardLife/2 + guardLife) / 100;
-                guardAtk = (guardAtk/200) + guardOreBless*0.15 + guardOreBless*0.15*(guardAtk/200);
+                guardAtk = 0;
             }
             else if (guardAtkAct) {
-                guardAtk = (1.5*guardAtk/100) + guardOreBless*0.15 + guardOreBless*(1.5*guardAtk/100);
-                if(defending)
+                if(defending) {
+                    guardAtk = 0;
                     guardLife = guardLife/200;
-                else
+                }
+                else {
+                    guardAtk = (1.5*guardAtk/100) + guardOreBless*0.15 + guardOreBless*(1.5*guardAtk/100);
                     guardLife = 0;
+                }
             }
             else {
-                guardAtk = (guardAtk/200) + guardOreBless*0.15 + guardOreBless*0.15*(guardAtk/200);
-                if(defending)
+                if(defending) {
+                    guardAtk = 0;
                     guardLife = guardLife/200;
-                else
+                }
+                else {
+                    guardAtk = (guardAtk/200) + guardOreBless*0.15 + guardOreBless*0.15*(guardAtk/200);
                     guardLife = 0;
+                }
             }
         } else { // don't have set bonus
            if (guardLifeAct && defending) {
                 guardLife = guardLife / 100;
                 guardAtk = 0;
             }
-            else if (guardAtkAct) {
+            else if (guardAtkAct && !defending) {
                 guardAtk = (guardAtk/100) + guardOreBless*0.15 + guardOreBless*0.15*(guardAtk/100);
                 guardLife = 0;
             }
