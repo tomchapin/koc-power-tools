@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131122b
+// @version        20131123a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131122b';
+var Version = '20131123a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -2081,6 +2081,13 @@ var Rpt = {
 				for (var i=0;i<24;i++) {
 					if (rslt.bonus['cmp']['s1'][i]) {
 					    if (i==0) m+='<TR><TD colspan=4>Life: ' + rslt.bonus['cmp']['s1'][i] + '</TD></TR>'; else
+                        // verified atk = 1
+                        // verified def = 2
+                        // 3 = ?? .... can no longer be life. it is remapped to 0
+                        if (i==4) m+='<TR><TD colspan=4>Range: ' + rslt.bonus['cmp']['s1'][i] + '</TD></TR>'; else
+                        // 5 = ?? .... can no longer be range. it is remapped to 4
+                        // 6 can no longer be load. it is remapped to accuracy
+                        if (i==6) m+='<TR><TD colspan=4>Accuracy: ' + rslt.bonus['cmp']['s1'][i] + '</TD></TR>'; else
 						m+='<TR><TD colspan=4>' + trEffect[i] +': ' + rslt.bonus['cmp']['s1'][i] + '</TD></TR>';
 					}
 				}
@@ -2341,6 +2348,13 @@ var Rpt = {
 				for (var i=0;i<24;i++) {
 					if (rslt.bonus['cmp']['s0'][i]) {
 					    if (i==0) m+='<TR><TD colspan=4>Life: ' + rslt.bonus['cmp']['s0'][i] + '</TD></TR>'; else
+                        // verified atk = 1
+                        // verified def = 2
+                        // 3 = ?? .... can no longer be life. it is remapped to 0
+                        if (i==4) m+='<TR><TD colspan=4>Range: ' + rslt.bonus['cmp']['s0'][i] + '</TD></TR>'; else
+                        // 5 = ?? .... can no longer be range. it is remapped to 4
+                        // 6 can no longer be load. it is remapped to accuracy
+                        if (i==6) m+='<TR><TD colspan=4>Accuracy: ' + rslt.bonus['cmp']['s0'][i] + '</TD></TR>'; else
 						m+='<TR><TD colspan=4>' + trEffect[i] +': ' + rslt.bonus['cmp']['s0'][i] + '</TD></TR>';
 					}
 				}
