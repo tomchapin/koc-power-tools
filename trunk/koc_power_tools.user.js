@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131123a
+// @version        20131123b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131123a';
+var Version = '20131123b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -2075,20 +2075,22 @@ var Rpt = {
 			}
 
 
+// rather than fix the index for life, kabam remapped efects
+// 0:g_js_strings.effects.name_3,
+// 1:g_js_strings.effects.name_1,
+// 2:g_js_strings.effects.name_2,
+// 3:g_js_strings.commonstr.speed,
+// 4:g_js_strings.effects.name_5,
+// 5:g_js_strings.effects.name_6,
+// 6:g_js_strings.effects.name_7
 			if (rslt.bonus['cmp']) {
 				m+='<TR><TD colspan=4> </TD></TR>';
 				m+='<TR><TD colspan=4><b>Champion Adjustments:</b></TD></TR>';
 				for (var i=0;i<24;i++) {
 					if (rslt.bonus['cmp']['s1'][i]) {
-					    if (i==0) m+='<TR><TD colspan=4>Life: ' + rslt.bonus['cmp']['s1'][i] + '</TD></TR>'; else
-                        // verified atk = 1
-                        // verified def = 2
-                        // 3 = ?? .... can no longer be life. it is remapped to 0
-                        if (i==4) m+='<TR><TD colspan=4>Range: ' + rslt.bonus['cmp']['s1'][i] + '</TD></TR>'; else
-                        // 5 = ?? .... can no longer be range. it is remapped to 4
-                        // 6 can no longer be load. it is remapped to accuracy
-                        if (i==6) m+='<TR><TD colspan=4>Accuracy: ' + rslt.bonus['cmp']['s1'][i] + '</TD></TR>'; else
-						m+='<TR><TD colspan=4>' + trEffect[i] +': ' + rslt.bonus['cmp']['s1'][i] + '</TD></TR>';
+					    if (i==0) m+='<TR><TD colspan=4>Life: ' + rslt.bonus['cmp']['s1'][i] + '</TD></TR>'; 
+					    else if (i < 3 ) m+='<TR><TD colspan=4>' + trEffect[i] +': ' + rslt.bonus['cmp']['s1'][i] + '</TD></TR>';
+					         else m+='<TR><TD colspan=4>' + trEffect[i+1] +': ' + rslt.bonus['cmp']['s1'][i] + '</TD></TR>';
 					}
 				}
 			}
@@ -2347,15 +2349,9 @@ var Rpt = {
 				m+='<TR><TD colspan=4><b>Champion Adjustments:</b></TD></TR>';
 				for (var i=0;i<24;i++) {
 					if (rslt.bonus['cmp']['s0'][i]) {
-					    if (i==0) m+='<TR><TD colspan=4>Life: ' + rslt.bonus['cmp']['s0'][i] + '</TD></TR>'; else
-                        // verified atk = 1
-                        // verified def = 2
-                        // 3 = ?? .... can no longer be life. it is remapped to 0
-                        if (i==4) m+='<TR><TD colspan=4>Range: ' + rslt.bonus['cmp']['s0'][i] + '</TD></TR>'; else
-                        // 5 = ?? .... can no longer be range. it is remapped to 4
-                        // 6 can no longer be load. it is remapped to accuracy
-                        if (i==6) m+='<TR><TD colspan=4>Accuracy: ' + rslt.bonus['cmp']['s0'][i] + '</TD></TR>'; else
-						m+='<TR><TD colspan=4>' + trEffect[i] +': ' + rslt.bonus['cmp']['s0'][i] + '</TD></TR>';
+					    if (i==0) m+='<TR><TD colspan=4>Life: ' + rslt.bonus['cmp']['s0'][i] + '</TD></TR>';
+					    else if (i < 3 ) m+='<TR><TD colspan=4>' + trEffect[i] +': ' + rslt.bonus['cmp']['s0'][i] + '</TD></TR>';
+					         else m+='<TR><TD colspan=4>' + trEffect[i+1] +': ' + rslt.bonus['cmp']['s0'][i] + '</TD></TR>';
 					}
 				}
 			}
