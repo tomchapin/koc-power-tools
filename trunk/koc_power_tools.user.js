@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131124a
+// @version        20131126a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131124a';
+var Version = '20131126a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -32,6 +32,7 @@ var ENABLE_ALERT_TO_CHAT = true;
 var History=[];
 var throttle=10;
 var TimeOffset = parseInt(new Date().getTimezoneOffset()*(-1))+480-getDST(); // difference between local time and PST/PDT in mins. All KoC TimeStamps appear to be in PST or PDT...
+var FFVersion = getFirefoxVersion();
 
 if (typeof SOUND_FILES == 'undefined') var SOUND_FILES = new Object();
 if (typeof SOUND_FILES.whisper == 'undefined'){
@@ -241,6 +242,14 @@ var ptStartupTimer = null;
 var uW = unsafeWindow;
 var ResetColors = false;
 var nTroopType = 17;
+
+function getFirefoxVersion (){
+	var ver='', i;
+	var ua = navigator.userAgent;  
+	if (ua==null || (i = ua.indexOf('Firefox/'))<0)
+		return;
+	return ua.substr(i+8);
+}
 
 function ptStartup (){
   clearTimeout (ptStartupTimer);
@@ -1047,7 +1056,10 @@ var BarbRaidMarchPatch = {
   init : function (){
     t = BarbRaidMarchPatch;
 
-      t.marchFix = new CalterUwFunc ('update_march', [[/D\.toTileLevel,\s*n,\s*M\)/im,'D.toTileLevel, n, M, Math.floor(unixtime()+D.returnEta-D.marchUnixTime))']]);
+	if (FFVersion.substring(0,4) > 16)
+		t.marchFix = new CalterUwFunc ('update_march', [[/D\.toTileLevel,\s*n,\s*M\)/im,'D.toTileLevel, n, M, Math.floor(unixtime()+D.returnEta-D.marchUnixTime))']]);
+	else	
+		t.marchFix = new CalterUwFunc ('update_march', [['D.toTileLevel, n, M)','D.toTileLevel, n, M, Math.floor(unixtime()+D.returnEta-D.marchUnixTime))']]);
       t.marchFix.setEnable(Options.togRaidPatch);
   },
 
@@ -5349,24 +5361,6 @@ MaxScouts : function (city){
 
   doScout : function (x,y,box) {
   	var t = Tabs.AllianceList;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	  	var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
 		params.cid= t.ScoutInfo.id;
@@ -13013,7 +13007,10 @@ var LoadCapFix = {
   init : function (){
     var t = LoadCapFix;
 //    t.capLoadEffect = new CalterUwFunc ('cm.MarchModal.updateTroopResource', [[/\$\("#modal/ig, 'jQuery("#modal'] , [/1\s*\+\s*loadBoost\)/i, '1 + Math.min(loadBoost,6.25+loadEffectBoost+techLoadBoost)); for(var sacIndex = 0; sacIndex < seed.queue_sacr["city" + currentcityid].length; sacIndex ++ ) if(seed.queue_sacr["city" + currentcityid][sacIndex]["unitType"] == untid) load *= seed.queue_sacr["city" + currentcityid][sacIndex]["multiplier"][0]; load=Math.floor(load-1);'] ]);
-    t.capLoadEffect = new CalterUwFunc ('cm.MarchModal.updateTroopResource', [[/\$\("#modal/ig, 'jQuery("#modal'] , [/if\(jQuery/i, 'loadBoost = Math.min(loadBoost,6.25+techLoadBoost); for(var sacIndex = 0; sacIndex < seed.queue_sacr["city" + currentcityid].length; sacIndex ++ ) if(seed.queue_sacr["city" + currentcityid][sacIndex]["unitType"] == untid) unit_number *= seed.queue_sacr["city" + currentcityid][sacIndex]["multiplier"][0]; if(jQuery'],[/var\s*resources/i,'load=load-1;var resources'] ]);
+	if (FFVersion.substring(0,4) > 16)
+		t.capLoadEffect = new CalterUwFunc ('cm.MarchModal.updateTroopResource', [[/\$\("#modal/ig, 'jQuery("#modal'] , [/if\(jQuery/i, 'loadBoost = Math.min(loadBoost,6.25+techLoadBoost); for(var sacIndex = 0; sacIndex < seed.queue_sacr["city" + currentcityid].length; sacIndex ++ ) if(seed.queue_sacr["city" + currentcityid][sacIndex]["unitType"] == untid) unit_number *= seed.queue_sacr["city" + currentcityid][sacIndex]["multiplier"][0]; if(jQuery'],[/var\s*resources/i,'load=load-1;var resources'] ]);
+	else
+		t.capLoadEffect = new CalterUwFunc ('cm.MarchModal.updateTroopResource', [[/\$\("#modal/ig, 'jQuery("#modal'] , ['if (jQuery', 'loadBoost = Math.min(loadBoost,6.25+techLoadBoost); for(var sacIndex = 0; sacIndex < seed.queue_sacr["city" + currentcityid].length; sacIndex ++ ) if(seed.queue_sacr["city" + currentcityid][sacIndex]["unitType"] == untid) unit_number *= seed.queue_sacr["city" + currentcityid][sacIndex]["multiplier"][0]; if(jQuery'],['var resources','load=load-1;var resources'] ]);
     t.capLoadEffect.setEnable(Options.fixLoadCap);
   },
 
@@ -14145,9 +14142,9 @@ uW.ptGotoMap = function (x, y){
     uW.reCenterMapWithCoor();
     var a = document.getElementById("mod_views").getElementsByTagName("a");
     for (var b = 0; b < a.length; b++) {
-        a[b].className = ""
+        a[b].className = "buttonv2 nav h20"
     }
-    document.getElementById('mod_views_map').className = "sel";
+    document.getElementById('mod_views_map').className = "buttonv2 nav h20 sel";
     document.getElementById("maparea_city").style.display = 'none';
     document.getElementById("maparea_fields").style.display = 'none';
     document.getElementById("maparea_map").style.display = 'block';
