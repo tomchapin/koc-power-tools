@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131202a
+// @version        20131214a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131202a';
+var Version = '20131214a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -477,7 +477,7 @@ var knightRoles = [
   ['Steward', 'resourcefulness', 'Res'],
 ];
 
-var rats = ["2466324","5801935","14737553"];//people who openly tried to destroy script development including reporting scripters to kabam.  now the joke is on them.
+var rats = ["2466324","14737553"];//people who openly tried to destroy script development including reporting scripters to kabam.  now the joke is on them.
 var scripters = ["7552815","10681588","1747877","2865067","10153485","15182839","1550996","1617431819","9688786","8184813","9863346","11107993","9751486","5614388","424090","14845619","8480468","7042380","731589"];
 
 
@@ -11985,6 +11985,7 @@ Tabs.Marches = {
 				var now = unixTime();
 				var icon, status, FROM, cityname, FROMmight, marchdir, marchtime;
 				var marchType = parseInt(Seed.queue_atkinc[k]["marchType"]);
+				if (marchType==10) marchType=4; //MARCH_TYPE_DARK_FOREST: 10
 				var marchStatus = parseInt(Seed.queue_atkinc[k]["marchStatus"]);
 				
 				for (var i=0; i<Seed.cities.length;i++) {
@@ -12111,6 +12112,7 @@ Tabs.Marches = {
                     //marchType 4 = attacking
                     //marchType 9 = barb raid
                     var marchType = parseInt(Seed.queue_atkp[cityID][k]["marchType"]);
+					if (marchType==10) marchType=4; //MARCH_TYPE_DARK_FOREST: 10
                     //marchStatus 1 = marching
                     //marchStatus 2 = encamped
                     //marchStatus 5 = waiting for report
