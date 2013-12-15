@@ -1,7 +1,7 @@
-﻿// ==UserScript==
+// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131214a
+// @version        20131214b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131214a';
+var Version = '20131214b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -477,7 +477,7 @@ var knightRoles = [
   ['Steward', 'resourcefulness', 'Res'],
 ];
 
-var rats = ["2466324","14737553"];//people who openly tried to destroy script development including reporting scripters to kabam.  now the joke is on them.
+var rats = ["2466324","5801935","14737553"];//people who openly tried to destroy script development including reporting scripters to kabam.  now the joke is on them.
 var scripters = ["7552815","10681588","1747877","2865067","10153485","15182839","1550996","1617431819","9688786","8184813","9863346","11107993","9751486","5614388","424090","14845619","8480468","7042380","731589"];
 
 
