@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131216b
+// @version        20131216c
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131216b';
+var Version = '20131216c';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -9133,7 +9133,7 @@ Tabs.OverView = {
       		_displayrow ("Siege Wall", infoRows[21]);
       		_displayrow ("Flame Archer", infoRows[22]);
       		_displayrow ("Hussar", infoRows[23]);
-      		_displayrow ("Halderbier", infoRows[24]);
+      		_displayrow ("Halberdier", infoRows[24]);
       		u += "<TR><TD></TD><TD nowrap align=center colspan="+(Cities.numCities)+"><B>Wall Defense Hourly Production</B></TD></TR>";
       		_displayrow ("XBow", infoRows[nTroopType+7]);
       		_displayrow ("Trebuchet", infoRows[nTroopType+7]);
@@ -9311,7 +9311,7 @@ Tabs.OverView = {
       str += _row ('Siege Wall', rows[15]);
       str += _row ('Flame Archer', rows[16]);
       str += _row ('Hussar', rows[17]);
-      str += _row ('Halderbier', rows[18]);
+      str += _row ('Halberdier', rows[18]);
       str += '<TR><TD colspan=11><BR></td></tr>';
       
       row = [];
