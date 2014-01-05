@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20131216c
+// @version        20140104a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20131216c';
+var Version = '20140104a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -9968,29 +9968,18 @@ Tabs.Attaque = {
 	 params.r4 = 0; 
 	 params.gold = 0;
  
+	 for (var i=1;i<nTroopType+1;i++) {
+	   params["u"+i] = 0;
+	 }
          if (typemarche!=3) {
-        if (ById("RAAnbunit1").value>0) params.u1 = ById("RAAnbunit1").value;
-	if (ById("RAAnbunit2").value>0) params.u2 = ById("RAAnbunit2").value;
-	if (ById("RAAnbunit3").value>0) params.u3 = ById("RAAnbunit3").value;
-	if (ById("RAAnbunit4").value>0) params.u4 = ById("RAAnbunit4").value;
-	if (ById("RAAnbunit5").value>0) params.u5 = ById("RAAnbunit5").value;
-	if (ById("RAAnbunit6").value>0) params.u6 = ById("RAAnbunit6").value;
-	if (ById("RAAnbunit7").value>0) params.u7 = ById("RAAnbunit7").value;
-	if (ById("RAAnbunit8").value>0) params.u8 = ById("RAAnbunit8").value;
-	if (ById("RAAnbunit9").value>0) params.u9 = ById("RAAnbunit9").value;
-	if (ById("RAAnbunit10").value>0) params.u10 = ById("RAAnbunit10").value;
-	if (ById("RAAnbunit11").value>0) params.u11 = ById("RAAnbunit11").value;
-	if (ById("RAAnbunit12").value>0) params.u12 = ById("RAAnbunit12").value;
-	if (ById("RAAnbunit13").value>0) params.u13 = ById("RAAnbunit13").value;
-	if (ById("RAAnbunit14").value>0) params.u14 = ById("RAAnbunit14").value;
-	if (ById("RAAnbunit15").value>0) params.u15 = ById("RAAnbunit15").value;
-	if (ById("RAAnbunit16").value>0) params.u16 = ById("RAAnbunit16").value;
-	if (ById("RAAnbunit17").value>0) params.u17 = ById("RAAnbunit17").value;
-	
-	}else {
-	 params.u3 = ById("RAAnbunit3").value;
-	 ById("RAAnbunit3").value=0;
-	}
+	   for (var i=1;i<nTroopType+1;i++) {
+  	     if (ById("RAAnbunit"+i).value>0) params["u"+i] = ById("RAAnbunit"+i).value;
+	   }
+	 } else {
+	   params.u3 = ById("RAAnbunit3").value;
+	   ById("RAAnbunit3").value=0;
+	 }
+
          t.actionRAA.disabled=true;
          t.actionREN.disabled=true;
          t.actionREE.disabled=true;
