@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140104a
+// @version        20140104b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20140104a';
+var Version = '20140104b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -9953,16 +9953,16 @@ Tabs.Attaque = {
       var res=0;
       if (bouffe==1) {
        for (var i=1;i<nTroopType+1;i++) {
-        res += parseInt(unsafeWindow.unitstats['unt'+i][5] * ById("RAAnbunit"+i).value * (1 + (0.10 * Seed.tech.tch10)));
+        res += parseInt(unsafeWindow.unitstats['unt'+i][5] * ById("RAAnbunit"+i).value * (1 + (0.10 * Seed.tech.tch10) + Math.min(equippedthronestats(6)/100,6.25)));
        }
-       }
+      }
       params.items=iused.join(","); 
          params.cid= t.sourceCity.id;
          params.type = typemarche; // 5 = REASSIGNER - 4 = ATTAQUE - 2 = RENFORCER
          params.xcoord = x;
          params.ycoord = y;
    	 params.kid= ById("RAApiKnight").value;
-	 params.r1 = res; 
+	 params.r1 = res-1; // reduce max by 1 to avoid load capacity errors due to roundoff
 	 params.r2 = 0; 
 	 params.r3 = 0; 
 	 params.r4 = 0; 
