@@ -1,7 +1,7 @@
-// ==UserScript==
+﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140112c
+// @version        20140124a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20140112c';
+var Version = '20140124a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -2310,32 +2310,32 @@ var Rpt = {
                 m+='<div class="ptdivHeader" style="background: #99CCFF;" align=left>Loot:</div><TABLE style="width:100%;" class=ptTab>';
                 m+='<TR><TD style="width:18%">'+GameIcons.goldImgTiny;
                 if (rslt['loot'][0] > 0)
-                    m+=addCommas(rslt['loot'][0])+'</TD>';
+                    m+=addCommas(rslt['loot'][0].toFixed(0))+'</TD>';
                 else
                     m+='0</td>'
                 m+='<TD style="width:18%">'+GameIcons.foodImgTiny;
                 if (rslt['loot'][1] > 0)
-                    m+=addCommas(rslt['loot'][1])+'</TD>';
+                    m+=addCommas(rslt['loot'][1].toFixed(0))+'</TD>';
                 else
                     m+= '0</TD>';
                 m+='<TD style="width:18%">'+GameIcons.woodImgTiny;
                 if (rslt['loot'][2] > 0)
-                    m+=addCommas(rslt['loot'][2])+'</TD>';
+                    m+=addCommas(rslt['loot'][2].toFixed(0))+'</TD>';
                 else
                     m+='0</td>'
                 m+='<TD style="width:18%">'+GameIcons.stoneImgTiny;
                 if (rslt['loot'][3] > 0)
-                    m+=addCommas(rslt['loot'][3])+'</TD>';
+                    m+=addCommas(rslt['loot'][3].toFixed(0))+'</TD>';
                 else
                     m+= '0</TD>';
                 m+='<TD style="width:18%">'+GameIcons.oreImgTiny;
                 if (rslt['loot'][4] > 0)
-                    m+=addCommas(rslt['loot'][4])+'</TD>';
+                    m+=addCommas(rslt['loot'][4].toFixed(0))+'</TD>';
                 else
                     m+='0</td>'
                 m+='<TD style="width:15%">'+GameIcons.astoneImgTiny;
                 if (rslt['loot'][6] > 0)
-                    m+=addCommas(rslt['loot'][6])+'</TD>';
+                    m+=addCommas(rslt['loot'][6].toFixed(0))+'</TD>';
                 else
                     m+= '0 </TD>';
                 m+='</tr>'
@@ -2468,32 +2468,32 @@ var Rpt = {
                         m+='<div class="ptdivHeader" style="background: #99CCFF;" align=left>Goodies Found:</div><TABLE style="width:100%;" class=ptTab>';
                     m+='<TR><TD style="width:18%">'+GameIcons.goldImgTiny;
                     if (rslt['gld'] > 0)
-                        m+=addCommasInt(rslt['gld'])+'</TD>';
+                        m+=addCommasInt(rslt['gld'].toFixed(0))+'</TD>';
                     else
                         m+='0</td>';
                     m+='<TD style="width:18%">'+GameIcons.foodImgTiny;
                     if (rslt['rsc']['r1'] > 0)
-                        m+=addCommasInt(rslt['rsc']['r1'])+'</TD>';
+                        m+=addCommasInt(rslt['rsc']['r1'].toFixed(0))+'</TD>';
                     else
                         m+='0</td>';
                     m+='<TD style="width:18%">'+GameIcons.woodImgTiny;
                     if (rslt['rsc']['r2'] > 0)
-                        m+=addCommasInt(rslt['rsc']['r2'])+'</TD>';
+                        m+=addCommasInt(rslt['rsc']['r2'].toFixed(0))+'</TD>';
                     else
                         m+='0</td>';
                     m+='<TD style="width:18%">'+GameIcons.stoneImgTiny;
                     if (rslt['rsc']['r3'] > 0)
-                        m+=addCommasInt(rslt['rsc']['r3'])+'</TD>';
+                        m+=addCommasInt(rslt['rsc']['r3'].toFixed(0))+'</TD>';
                     else
                         m+='0</td>';
                     m+='<TD style="width:18%">'+GameIcons.oreImgTiny;
                     if (rslt['rsc']['r4'] > 0)
-                        m+=addCommasInt(rslt['rsc']['r4'])+'</TD>';
+                        m+=addCommasInt(rslt['rsc']['r4'].toFixed(0))+'</TD>';
                     else
                         m+='0</td>';
                     m+='<TD style="width:15%">'+GameIcons.astoneImgTiny;
                     if (rslt['rsc']['r5'] > 0)
-                        m+=addCommasInt(rslt['rsc']['r5'])+'</TD>';
+                        m+=addCommasInt(rslt['rsc']['r5'].toFixed(0))+'</TD>';
                     else
                         m+='0</td>';
                     m+='</TABLE>';
