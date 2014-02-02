@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140129a
+// @version        20140201a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20140129a';
+var Version = '20140201a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -176,6 +176,7 @@ var Options = {
   togRaidPatch: false,
   marchRaidState: {0:false,1:false,2:false,3:false,4:false,5:false,6:false,7:false},
   MoveFurniture       : true,
+  fixMapDblClick : false,
 };
 
 var Colors ={
@@ -414,6 +415,7 @@ if (TEST_WIDE){
   ChatTimeFix.init();
   bypassMulti.init();
   BarbRaidMarchPatch.init();
+  MapDoubleClickFix.init();
   towho.init();
   cdtd.init();
   tabManager.init (mainPop.getMainDiv());
@@ -1022,6 +1024,29 @@ var mmbImageFix = {
   isAvailable : function (){
 	var t = mmbImageFix;
 	return t.imageFix.isAvailable();
+  },
+
+}
+
+var MapDoubleClickFix = {
+  doubleClickFix : null,
+
+  init : function (){
+    t = MapDoubleClickFix;
+//      t.doubleClickFix = new CalterUwFunc ('g_mapObject.populateSlots', [[/that\.controller\.onTileClick\(this\)/im,'setTimeout(that.controller.onTileClick(this),1000)}).off("dblclick", "**").on("dblclick", "a", function(){that.controller.onTileDblClick(this)']]);
+// replace with previous map mouse event handler coding
+      t.doubleClickFix = new CalterUwFunc ('g_mapObject.populateSlots', [[/map1.*Tooltip/img,'map1 a").unbind("click").clicks(function(){setTimeout(that.controller.onTileClick(this),200)}, function(){that.controller.onTileDblClick(this)}).unbind("hover").hover(function(i){that.controller.onTileEnter(this, i)}, function(){removeTooltip']]);
+      t.doubleClickFix.setEnable(Options.fixMapDblClick);
+  },
+
+  setEnable : function (tf){
+	var t = MapDoubleClickFix;
+	t.doubleClickFix.setEnable (tf);
+  },
+
+  isAvailable : function (){
+	var t = MapDoubleClickFix;
+	return t.doubleClickFix.isAvailable();
   },
 
 }
@@ -6354,7 +6379,8 @@ Tabs.Options = {
  	  m+='<TR><TD><INPUT id=togChatTimeFix type=checkbox /></td><TD>Always show local time on chat posts</td></tr>';
 	  m+='<TR><TD><INPUT id=togAllowMulti type=checkbox /></td><TD>Disable Multi-Browser check v2 (experimental)</td></tr>';
 	  m+='<TR><TD><INPUT id=togRaidPatch type=checkbox /></td><TD>Fix stuck raid marches (experimental)</td></tr>';
-	  m += '<TR><td><INPUT id=MoveFurnitureChk type=checkbox /></td><td>Rearrange throne room furniture for better visibility&nbsp;(needs refresh)</td></tr>';
+	  m+='<TR><td><INPUT id=MoveFurnitureChk type=checkbox /></td><td>Rearrange throne room furniture for better visibility&nbsp;(needs refresh)</td></tr>';
+	  m+='<TR><TD><INPUT id=togMapDblClickFix type=checkbox /></td><TD>Restore double click map tile</td></tr>';
 	  m+='<TR><TD colspan=2><B>Auto Training:</b></td></tr>';
 	  m+='<TR><TD></TD><TD><INPUT id=optAutoTrainMins type=text size=1 value="'+ parseInt(AutoTrainOptions.intervalSecs/60) +'"> minutes between auto-training.</td></tr>';
 	  m+='</table><BR><BR><HR>Note that if a checkbox is greyed out there has probably been a change of KofC\'s code, rendering the option inoperable.';
@@ -6394,7 +6420,8 @@ Tabs.Options = {
       t.togOpt ('togAtkDelete', 'reportDeleteButton', null, battleReports.isRoundsAvailable);
       t.togOpt ('togAllowMulti', 'allowMultiBroswer', bypassMulti.setEnable, bypassMulti.isAvailable);
       t.togOpt ('togRaidPatch', 'raidPatch', BarbRaidMarchPatch.setEnable, BarbRaidMarchPatch.isAvailable);
-	  t.togOpt ('MoveFurnitureChk', 'MoveFurniture');
+      t.togOpt ('MoveFurnitureChk', 'MoveFurniture');
+      t.togOpt ('togMapDblClickFix', 'fixMapDblClick', MapDoubleClickFix.setEnable, MapDoubleClickFix.isAvailable);
       
       document.getElementById('ptupdate').addEventListener ('change', t.e_updateChanged, false);
       document.getElementById('ptEnableMiniRefresh').addEventListener ('change', t.e_miniRefreshChanged, false);
