@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140202a
+// @version        20140203a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20140202a';
+var Version = '20140203a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -12329,6 +12329,7 @@ Tabs.Defend = {
                 var nomcha3 = this.id.replace("DAApdestun", "DAArsrvun");
                 ById(nomcha2).value = 0;
                 ById(nomcha2).value = ById(nomcha).value - ById(nomcha3).value;
+		if (ById(nomcha2).value < 0) ById(nomcha2).value = 0;
             }, false);
 
             ById("DAArsrvunit" + r).addEventListener('change', function () {
