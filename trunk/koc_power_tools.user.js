@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140203a
+// @version        20140204a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -14,7 +14,7 @@ if(window.self.location != window.top.location){
 	}
 }
 
-var Version = '20140203a';
+var Version = '20140204a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -478,6 +478,10 @@ function ToggleDivDisplay(h,w,div) {
             uW.jQuery('#'+div).attr('class','');
             uW.jQuery('#'+div+'Arrow').attr('src',GameIcons.DownArrow);
         }
+		else {
+			uW.jQuery('#'+div).attr('class','ptdivHide');
+			uW.jQuery('#'+div+'Arrow').attr('src',GameIcons.RightArrow);
+		}
     }
     else
     {
@@ -1775,16 +1779,41 @@ var Rpt = {
         else
             rpt.side0TileTypeText='City';
 
+		function MonitorLink (n,cl){
+			var m = [];
+			if (uW.btLoaded) {
+				if (cl)
+					m.push ('<a class="'+cl+'" onclick="btMonitorExternalCall (\'');
+				else	
+					m.push ('<a onclick="btMonitorExternalCall (\'');
+				m.push (n);
+				m.push ('\'); return false">');
+				m.push (n);
+				m.push ('</a>');  
+			}
+			else {			
+				m.push (n);
+			}	
+			return m.join('');
+		}
+					
         function buildHeader () {
             var h='<div id=reportHeader style="width:100%;">';
             h+='<div id=reportHeaderLeft style="float:left;width:30%;text-align:left;">';
             h+= formatUnixTime(rpt.reportUnixTime,'24hour');
             h+= '<br>';
+            h+='<b>Glory Gained: ';
+            if (rslt['glory'])
+                h+=addCommas(rslt['glory']);
+            else
+                h+='0';
+            h+='</b></div>';
+            h+='<div id=reportHeaderCenter style="float:left;width:40%;text-align:center;">';
             if (rpt.side0TileTypeText != 'City' && rpt.side0TileTypeText != 'Barb' && rpt.marchName == 'Attack') {
                 if (rslt['conquered']==1)
                     h+='<FONT color="#CC0000"><B>Conquered</B></font>';
                 else if (rslt['conquered']==0)
-                    h+='<FONT color="#66CC33"><B>Secured</B></font>';
+                    h+='<FONT color="#080"><B>Secured</B></font>';
             }
             else if ((rslt['winner']==1 && rpt.sideId==0) || (rslt['winner']==0 && rpt.sideId==1)) {
                 if (rpt.marchName == 'Scout')
@@ -1793,24 +1822,17 @@ var Rpt = {
                     h+='<FONT color="#CC0000"><B>You were defeated</B></font>';
             }
             else if (rslt['winner']==0 && rpt.sideId==0)
-                h+='<FONT color="#66CC33"><B>You defended successfully!</B></font>';
+                h+='<FONT color="#080"><B>You defended successfully!</B></font>';
             else if (rslt['winner']==1 && rpt.sideId==1) {
                 if (rpt.marchName == 'Scout')
-                    h+='<FONT color="#66CC33"><B>Scouting Report</B></font>';
+                    h+='<FONT color="#080"><B>Scouting Report</B></font>';
                 else
-                    h+='<FONT color="#66CC33"><B>You were victorious!</B></font>';
+                    h+='<FONT color="#080"><B>You were victorious!</B></font>';
             }
             h+='</div>';
-            h+='<div id=reportHeaderCenter style="float:left;width:40%;text-align:center;">';
-            h+='<b>Glory Gained: ';
-            if (rslt['glory'])
-                h+=addCommas(rslt['glory']);
-            else
-                h+='0';
-            h+='</b></div>';
-            h+='<div id=reportHeaderRight style="float:left;width:30%;text-align:right;">';
+            h+='<div id=reportHeaderRight style="float:right;width:30%;text-align:right;">';
             h+= 'Report No: ' + reportId;
-            h+='<input id=ptpostreportid onclick="Chat.sendChat(\'/a Report No: '+reportId +'\')" style="font-size:'+ Options.overviewFontSize +'px" type="submit" value="Post To Chat"></div>';
+            h+='<br><input id=ptpostreportid onclick="Chat.sendChat(\'/a Report No: '+reportId +'\')" style="font-size:'+ Options.overviewFontSize +'px" type="submit" value="Post To Chat"></div>';
             h+='</div><div style="clear:both;"></div>';
             return h;
         }
@@ -1823,7 +1845,7 @@ var Rpt = {
             m+='<div id=battleSummaryContainer>';
             //summary - attacker
             m+='<div style="width:50%;float:left;">';
-            m+='<B>Attackers:</B> '+rpt.side1Name+' (<A onclick="ptGotoMap('+ rpt.side1XCoord +','+ rpt.side1YCoord +')">'+ rpt.side1XCoord +','+ rpt.side1YCoord +'</a>) ';
+            m+='<B>Attackers:</B> '+MonitorLink(rpt.side1Name)+' (<A onclick="ptGotoMap('+ rpt.side1XCoord +','+ rpt.side1YCoord +')">'+ rpt.side1XCoord +','+ rpt.side1YCoord +'</a>) ';
             if (rslt['winner']==1)
                 m+='<FONT color="#CC0000"><B> Winner</B></FONT>';
             m+='<br>';
@@ -1843,7 +1865,7 @@ var Rpt = {
             m+='Might Lost: '+addCommas(atkmight)+'</div>';
             //summary - defender
             m+='<div style="width:50%;float:left;">';
-            m+='<B>Defenders</B> '+rpt.side0Name+' (<A onclick="ptGotoMap('+ rpt.side0XCoord +','+ rpt.side0YCoord +')">'+ rpt.side0XCoord +','+ rpt.side0YCoord +'</a>) ';
+            m+='<B>Defenders</B> '+MonitorLink(rpt.side0Name)+' (<A onclick="ptGotoMap('+ rpt.side0XCoord +','+ rpt.side0YCoord +')">'+ rpt.side0XCoord +','+ rpt.side0YCoord +'</a>) ';
             if (rslt['winner']==0)
                 m+='<FONT color="#CC0000"><B> Winner</B></FONT>';
             m+='<br>';
@@ -1905,8 +1927,8 @@ var Rpt = {
                         }
                     }
                 }
+				m+='Might Lost: '+addCommas(defmight)+'<br>';
             }
-            m+='Might Lost: '+addCommas(defmight)+'<br>';
             m+='Rounds: ' + rslt['rnds'] + '<br>';
             if (rslt['wall']) {
                 if (rslt['wall'] == 100)
@@ -2095,58 +2117,27 @@ var Rpt = {
                     }
                 }
             }
-            m+='</div></div>'; //end reportTroopStats div
-            m+='<div style="clear:both"></div>';
+            m+='</div>';
+			m+='<div style="clear:both">&nbsp;</div>';
+            m+='</div>'; //end reportTroopStats div
             return m;
         }
 
         function buildChampDuel () {
             var m = '';
             //header
-            m+='<div class="ptdivHeader" style="background: #99CCFF;" align=left>Champion Duel:</div>';
+            m+='<div class="ptdivHeader" style="background: #99CCFF;" align=left><a id=reportChampDuelHdr class=ptdivLink >Champion Duel:&nbsp;<img id=reportChampDuelArrow height="10" src="'+GameIcons.DownArrow+'"></a></div>';
             //summary
-            m+='<div id=ChampDuelContainer>';
-            m+='<div id=ChampAdjContainer>';
-            m+='<div style="width:50%;float:left;">';
-            // rather than fix the index for life, kabam remapped efects
-            // 0:g_js_strings.effects.name_3,
-            // 1:g_js_strings.effects.name_1,
-            // 2:g_js_strings.effects.name_2,
-            // 3:g_js_strings.commonstr.speed,
-            // 4:g_js_strings.effects.name_5,
-            // 5:g_js_strings.effects.name_6,
-            // 6:g_js_strings.effects.name_7
-            if (rslt.bonus['cmp']) {
-                m+='<b>Champion Adjustments:</b><br><TABLE class=ptTab width=100%>';
-                for (var i=0;i<24;i++) {
-                    if (rslt.bonus['cmp']['s1'][i]) {
-                        if (i==0) m+='<TR><TD colspan=4>Life: ' + rslt.bonus['cmp']['s1'][i] + '</TD></TR>'; 
-                        else if (i < 3 ) m+='<TR><TD colspan=4>' + trEffect[i] +': ' + rslt.bonus['cmp']['s1'][i] + '</TD></TR>';
-                             else m+='<TR><TD colspan=4>' + trEffect[i+1] +': ' + rslt.bonus['cmp']['s1'][i] + '</TD></TR>';
-                    }
-                }
-                m+='</table></br>'
-            }
-            m+='</div>';//attacker
-            m+='<div style="width:50%;float:left;">';
-            if (rslt.bonus['cmp']) {
-                m+='<b>Champion Adjustments:</b><br><TABLE class=ptTab width=100%>';
-                for (var i=0;i<24;i++) {
-                    if (rslt.bonus['cmp']['s0'][i]) {
-                        if (i==0) m+='<TR><TD colspan=4>Life: ' + rslt.bonus['cmp']['s0'][i] + '</TD></TR>';
-                        else if (i < 3 ) m+='<TR><TD colspan=4>' + trEffect[i] +': ' + rslt.bonus['cmp']['s0'][i] + '</TD></TR>';
-                             else m+='<TR><TD colspan=4>' + trEffect[i+1] +': ' + rslt.bonus['cmp']['s0'][i] + '</TD></TR>';
-                    }
-                }
-                m+='</table></br>'
-            }
-            m+='</div>';//defender
-            m+='</div>';//ChampAdjContainer
-            m+='<div id=ChampStatContainer style="clear:both">';
+            m+='<div id=reportChampDuel>';
+            m+='<div id=ChampStatContainer>';
             m+='<div style="width:50%;float:left;">';
 
             if (rslt['champion_stats']) {
-                m+='<b>Champion Stats:</b><br>';
+				chname = rslt.champion_stats['s1'].nam;
+				chwin  = rslt.champion_stats['s1'].won;
+				if (chname=='') {chname = 'No Champion';}
+				if (chwin) { chname += '&nbsp;(Winner)'; }
+                m+='<b>'+chname+'</b><br>';
                 for (var i=1;i<chEffect.length;i++) {
                     if (rslt.champion_stats['s1'][chEffect[i]]) {
                         m+= chEffectName[i] +': ' + rslt.champion_stats['s1'][chEffect[i]] + '<br>';
@@ -2157,7 +2148,11 @@ var Rpt = {
             m+='<div style="width:50%;float:left;">';
 
             if (rslt['champion_stats']) {
-                m+='<b>Champion Stats:</b><br>';
+				chname = rslt.champion_stats['s0'].nam;
+				chwin  = rslt.champion_stats['s0'].won;
+				if (chname=='') {chname = 'No Champion';}
+				if (chwin) { chname += '&nbsp;(Winner)'; }
+                m+='<b>'+chname+'</b><br>';
                 for (var i=1;i<chEffect.length;i++) {
                     if (rslt.champion_stats['s0'][chEffect[i]]) {
                         m+= chEffectName[i] +': ' + rslt.champion_stats['s0'][chEffect[i]] + '<br>';
@@ -2166,8 +2161,8 @@ var Rpt = {
             }
             m+='</div>';//defender
             m+='</div>';//ChampStatContainer
-            m+='</div>';//ChampDuelContainer
-            m+='<div style="clear:both"></div>';
+			m+='<div style="clear:both">&nbsp;</div>';
+            m+='</div>';//reportChampDuel
             return m;
         }
 
@@ -2187,9 +2182,9 @@ var Rpt = {
             var DebuffEffects = [17,18,19,20,22,21,23,29,39,50,54,61,30,40,51,31,41,52,42,63,64,32,53,62];
             
             //header
-            m+='<div class="ptdivHeader" style="background: #99CCFF;" align=left>Throne Stats:</div>';
+            m+='<div class="ptdivHeader" style="background: #99CCFF;" align=left><a id=reportThroneHdr class=ptdivLink >Throne Stats:&nbsp;<img id=reportThroneArrow height="10" src="'+GameIcons.DownArrow+'"></a></div>';
             //summary
-            m+='<div id=ThroneContainer>';     
+            m+='<div id=reportThrone>';     
             m+='<div style="width:50%;float:left;">';
             if (rslt['s1ThroneRoomBoosts']) {
                 for (var i=1;i<trEffect.length+1;i++) {
@@ -2254,87 +2249,149 @@ var Rpt = {
                 }
             }
             m+='</div>';//defender
+            m+='<div style="clear:both">&nbsp;</div>';
             m+='</div>';//throne container
-            m+='<div style="clear:both"></div>';
             return m;
         }
 
         function buildBoosts () {
             var m = '';
             //header
-            m+='<div class="ptdivHeader" style="background: #99CCFF;" align=left>Boosts:</div>';
+            m+='<div class="ptdivHeader" style="background: #99CCFF;" align=left><a id=reportBoostsHdr class=ptdivLink >Troop Adjustments:&nbsp;<img id=reportBoostsArrow height="10" src="'+GameIcons.DownArrow+'"></a></div>';
             //summary
-            m+='<div id=BoostsContainer>';     
-            m+='<div style="width:50%;float:left;">';
+            m+='<div id=reportBoosts>';     
 
-            m+='Attack Boosted: ' + 100*rslt['s1atkBoost'] + '%<br>';
-            m+='Defense Boosted: ' + 100*rslt['s1defBoost'] + '%<br>';
+            if (rslt['s1atkBoost'] || rslt['s1defBoost'] || rslt['s0atkBoost'] || rslt['s0defBoost']) {
+				m+='<div style="width:50%;float:left;">';
+				m+='<b>Item Boosts</b><br>';
+				if (rslt['s1atkBoost'])
+					m+='Attack Boosted: ' + 100*rslt['s1atkBoost'] + '%<br>';
+				if (rslt['s1defBoost'])
+					m+='Defense Boosted: ' + 100*rslt['s1defBoost'] + '%<br>';
+				m+='</div>';//attacker
+				m+='<div style="width:50%;float:left;">';
+				m+='<b>Item Boosts</b><br>';
+				if (rslt['s0atkBoost'])
+					m+='Attack Boosted: ' + 100*rslt['s0atkBoost'] + '%<br>';
+				if (rslt['s0defBoost'])
+					m+='Defense Boosted: ' + 100*rslt['s0defBoost'] + '%<br>';
+				m+='</div>';//defender
+				m+='<div style="clear:both">&nbsp;</div>';
+			}	
 
-            if (rslt['s1guardianAtkBoost'])
-                m+='Guardian Attack Boost: ' + parseFloat(100*rslt['s1guardianAtkBoost']).toFixed(1) + '%<br>';
-            if (rslt['s1guardianDefBoost'])
-                m+='Guardian Life Boost: ' + parseFloat(100*rslt['s1guardianDefBoost']).toFixed(1) + '%<br>';
-            if (rslt['s1guardianMarchBoost'])
-                m+='Guardian March Speed Boost: ' + parseFloat(100*rslt['s1guardianMarchBoost']).toFixed(1) + '%<br>';
-            if (rslt['s1guardianTrainBoost'])
-                m+='Guardian Training Boost: ' + parseFloat(100*rslt['s1guardianTrainBoost']).toFixed(1) + '%<br>';
-            if (rslt.bonus['tch']) {
-                for (var t1l in rslt.bonus.tch.s1) {
-                    if (t1l == 'hp') var normaltech = 'Health'; 
-                    if (t1l == 'atk') var normaltech = 'Attack'; 
-                    if (t1l == 'def') var normaltech = 'Defense'; 
-                    if (t1l == 'spd') var normaltech = 'Speed'; 
-                    if (t1l == 'rng') var normaltech = 'Range'; 
-                    if (t1l == 'ld') var normaltech = 'Load'; 
-                    m+=normaltech+': ' + parseFloat(rslt.bonus.tch.s1[t1l]*100).toFixed(0) + '%<br>';
+			if (rslt['s1guardianAtkBoost'] || rslt['s1guardianDefBoost'] || rslt['s1guardianMarchBoost'] || rslt['s1guardianTrainBoost'] || rslt['s0guardianAtkBoost'] || rslt['s0guardianDefBoost'] || rslt['s0guardianMarchBoost'] || rslt['s0guardianTrainBoost']) {
+				m+='<div style="width:50%;float:left;">';
+				m+='<b>Guardian Boosts</b><br>';
+				if (rslt['s1guardianAtkBoost'])
+					m+='Guardian Attack Boost: ' + parseFloat(100*rslt['s1guardianAtkBoost']).toFixed(1) + '%<br>';
+				if (rslt['s1guardianDefBoost'])
+					m+='Guardian Life Boost: ' + parseFloat(100*rslt['s1guardianDefBoost']).toFixed(1) + '%<br>';
+				if (rslt['s1guardianMarchBoost'])
+					m+='Guardian March Speed Boost: ' + parseFloat(100*rslt['s1guardianMarchBoost']).toFixed(1) + '%<br>';
+				if (rslt['s1guardianTrainBoost'])
+					m+='Guardian Training Boost: ' + parseFloat(100*rslt['s1guardianTrainBoost']).toFixed(1) + '%<br>';
+				m+='</div>';//attacker
+				m+='<div style="width:50%;float:left;">';
+				m+='<b>Guardian Boosts</b><br>';
+				if (rslt['s0guardianAtkBoost'])
+					m+='Guardian Attack Boost: ' + parseFloat(100*rslt['s0guardianAtkBoost']).toFixed(1) + '%<br>';
+				if (rslt['s0guardianDefBoost'])
+					m+='Guardian Life Boost: ' + parseFloat(100*rslt['s0guardianDefBoost']).toFixed(1) + '%<br>';
+				if (rslt['s0guardianMarchBoost'])
+					m+='Guardian March Speed Boost: ' + parseFloat(100*rslt['s0guardianMarchBoost']).toFixed(1) + '%<br>';
+				if (rslt['s0guardianTrainBoost'])
+					m+='Guardian Training Boost: ' + parseFloat(100*rslt['s0guardianTrainBoost']).toFixed(1) + '%<br>';
+				m+='</div>';//defender
+				m+='<div style="clear:both">&nbsp;</div>';
+			}	
+
+			if (rslt.bonus['tch'] || rslt.bonus['tch2']) {
+				m+='<div style="width:50%;float:left;">';
+				m+='<b>Research</b><br>';
+				if (rslt.bonus['tch']) {
+					for (var t1l in rslt.bonus.tch.s1) {
+						if (t1l == 'hp') var normaltech = 'Health'; 
+						if (t1l == 'atk') var normaltech = 'Attack'; 
+						if (t1l == 'def') var normaltech = 'Defense'; 
+						if (t1l == 'spd') var normaltech = 'Speed'; 
+						if (t1l == 'rng') var normaltech = 'Range'; 
+						if (t1l == 'ld') var normaltech = 'Load'; 
+						m+=normaltech+': ' + parseFloat(rslt.bonus.tch.s1[t1l]*100).toFixed(0) + '%<br>';
+					}
+				}
+				if (rslt.bonus['tch2']) {
+					for (var t2l in rslt.bonus.tch2.s1) {
+						if (t2l == 'ic') var britontech = 'Improved Cartography'; 
+						if (t2l == 'id') var britontech = 'Improved Defenses'; 
+						if (t2l == 'sr') var britontech = 'Strengthen Ranks'; 
+						if (t2l == 'if') var britontech = 'Improved Fletching'; 
+						m+=britontech+': ' + parseFloat(rslt.bonus.tch2.s1[t2l]*100).toFixed(0) + '%<br>';
+					}
+				}
+					
+				m += '</div>';//attacker
+				m+='<div style="width:50%;float:left;">';
+				m+='<b>Research</b><br>';
+				if (rslt.bonus['tch']) {
+					for (var t1l in rslt.bonus.tch.s0) {
+						if (t1l == 'hp') var normaltech = 'Health'; 
+						if (t1l == 'atk') var normaltech = 'Attack'; 
+						if (t1l == 'def') var normaltech = 'Defense'; 
+						if (t1l == 'spd') var normaltech = 'Speed'; 
+						if (t1l == 'rng') var normaltech = 'Range'; 
+						m+=normaltech+': ' + parseFloat(rslt.bonus.tch.s0[t1l]*100).toFixed(0) + '%<br>';
+					}
+				}
+				if (rslt.bonus['tch2']) {
+					for (var t2l in rslt.bonus.tch2.s0) {
+						if (t2l == 'ic') var britontech = 'Improved Cartography'; 
+						if (t2l == 'id') var britontech = 'Improved Defenses'; 
+						if (t2l == 'sr') var britontech = 'Strengthen Ranks'; 
+						if (t2l == 'if') var britontech = 'Improved Fletching'; 
+						m+=britontech+': ' + parseFloat(rslt.bonus.tch2.s0[t2l]*100).toFixed(0) + '%<br>';
+					}
+				}
+				
+				m+='</div>';//defender
+				m+='<div style="clear:both">&nbsp;</div>';
+			}	
+
+            if (rslt.bonus['cmp']) {
+				m+='<div id=ChampAdjContainer style="clear:both">';
+				m+='<div style="width:50%;float:left;">';
+				// rather than fix the index for life, kabam remapped efects
+				// 0:g_js_strings.effects.name_3,
+				// 1:g_js_strings.effects.name_1,
+				// 2:g_js_strings.effects.name_2,
+				// 3:g_js_strings.commonstr.speed,
+				// 4:g_js_strings.effects.name_5,
+				// 5:g_js_strings.effects.name_6,
+				// 6:g_js_strings.effects.name_7
+                m+='<b>Champion Adjustments</b><br><TABLE class=ptTab width=100%>';
+                for (var i=0;i<24;i++) {
+                    if (rslt.bonus['cmp']['s1'][i]) {
+                        if (i==0) m+='<TR><TD colspan=4>Life: ' + rslt.bonus['cmp']['s1'][i] + '</TD></TR>'; 
+                        else if (i < 3 ) m+='<TR><TD colspan=4>' + trEffect[i] +': ' + rslt.bonus['cmp']['s1'][i] + '</TD></TR>';
+                             else m+='<TR><TD colspan=4>' + trEffect[i+1] +': ' + rslt.bonus['cmp']['s1'][i] + '</TD></TR>';
+                    }
                 }
-            }
-            if (rslt.bonus['tch2']) {
-                for (var t2l in rslt.bonus.tch2.s1) {
-                    if (t2l == 'ic') var britontech = 'Improved Cartography'; 
-                    if (t2l == 'id') var britontech = 'Improved Defenses'; 
-                    if (t2l == 'sr') var britontech = 'Strengthen Ranks'; 
-                    if (t2l == 'if') var britontech = 'Improved Fletching'; 
-                    m+=britontech+': ' + parseFloat(rslt.bonus.tch2.s1[t2l]*100).toFixed(0) + '%<br>';
+                m+='</table></br>'
+				m+='</div>';//attacker
+				m+='<div style="width:50%;float:left;">';
+                m+='<b>Champion Adjustments</b><br><TABLE class=ptTab width=100%>';
+                for (var i=0;i<24;i++) {
+                    if (rslt.bonus['cmp']['s0'][i]) {
+                        if (i==0) m+='<TR><TD colspan=4>Life: ' + rslt.bonus['cmp']['s0'][i] + '</TD></TR>';
+                        else if (i < 3 ) m+='<TR><TD colspan=4>' + trEffect[i] +': ' + rslt.bonus['cmp']['s0'][i] + '</TD></TR>';
+                             else m+='<TR><TD colspan=4>' + trEffect[i+1] +': ' + rslt.bonus['cmp']['s0'][i] + '</TD></TR>';
+                    }
                 }
-            }
-                
-            m += '</div>';//attacker
-            
-            m+='<div style="width:50%;float:left;">';
-            if (rslt['s0atkBoost'])
-                m+='Attack Boosted: ' + 100*rslt['s0atkBoost'] + '%<br>';
-            if (rslt['s0defBoost'])
-                m+='Defense Boosted: ' + 100*rslt['s0defBoost'] + '%<br>';
-            if (rslt['s0guardianAtkBoost'])
-                m+='Guardian Attack Boost: ' + parseFloat(100*rslt['s0guardianAtkBoost']).toFixed(1) + '%<br>';
-            if (rslt['s0guardianDefBoost'])
-                m+='Guardian Life Boost: ' + parseFloat(100*rslt['s0guardianDefBoost']).toFixed(1) + '%<br>';
-            if (rslt['s0guardianMarchBoost'])
-                m+='Guardian March Speed Boost: ' + parseFloat(100*rslt['s0guardianMarchBoost']).toFixed(1) + '%<br>';
-            if (rslt['s0guardianTrainBoost'])
-                m+='Guardian Training Boost: ' + parseFloat(100*rslt['s0guardianTrainBoost']).toFixed(1) + '%<br>';
-            if (rslt.bonus['tch']) {
-                for (var t1l in rslt.bonus.tch.s0) {
-                    if (t1l == 'hp') var normaltech = 'Health'; 
-                    if (t1l == 'atk') var normaltech = 'Attack'; 
-                    if (t1l == 'def') var normaltech = 'Defense'; 
-                    if (t1l == 'spd') var normaltech = 'Speed'; 
-                    if (t1l == 'rng') var normaltech = 'Range'; 
-                    m+=normaltech+': ' + parseFloat(rslt.bonus.tch.s0[t1l]*100).toFixed(0) + '%<br>';
-                }
-            }
-            if (rslt.bonus['tch2']) {
-                for (var t2l in rslt.bonus.tch2.s0) {
-                    if (t2l == 'ic') var britontech = 'Improved Cartography'; 
-                    if (t2l == 'id') var britontech = 'Improved Defenses'; 
-                    if (t2l == 'sr') var britontech = 'Strengthen Ranks'; 
-                    if (t2l == 'if') var britontech = 'Improved Fletching'; 
-                    m+=britontech+': ' + parseFloat(rslt.bonus.tch2.s0[t2l]*100).toFixed(0) + '%<br>';
-                }
-            }
-            
-            m+='</div>';//defender
+                m+='</table></br>'
+				m+='</div>';//defender
+				m+='</div>';//ChampAdjContainer
+				m+='<div style="clear:both">&nbsp;</div>';
+			}	
+
             m+='</div>';//boosts
             m+='<div style="clear:both"></div>';
             return m;
@@ -2436,7 +2493,7 @@ var Rpt = {
             //summary - attacker
             m+='<div style="width:50%;float:left;">';
             if (rpt.marchName == 'Reinforce')
-                m+='<B>Ally:</B> '+rpt.side1Name+' (<A onclick="ptGotoMap('+ rpt.side1XCoord +','+ rpt.side1YCoord +')">'+ rpt.side1XCoord +','+ rpt.side1YCoord +'</a>)<br>';
+                m+='<B>Ally:</B> '+MonitorLink(rpt.side1Name)+' (<A onclick="ptGotoMap('+ rpt.side1XCoord +','+ rpt.side1YCoord +')">'+ rpt.side1XCoord +','+ rpt.side1YCoord +'</a>)<br>';
             if (rslt['unts'] != undefined) {
                 m+='<TABLE class=ptTab>';
                 for (var i=1;i<nTroopType+1;i++)
@@ -2450,9 +2507,10 @@ var Rpt = {
             //summary - defender
             m+='<div style="width:50%;float:left;">';
             if (rpt.marchName == 'Reinforce')
-                m+='<B>Defenders</B> '+rpt.side0Name+' (<A onclick="ptGotoMap('+ rpt.side0XCoord +','+ rpt.side0YCoord +')">'+ rpt.side0XCoord +','+ rpt.side0YCoord +'</a>)<br>';
+                m+='<B>Defenders</B> '+MonitorLink(rpt.side0Name)+' (<A onclick="ptGotoMap('+ rpt.side0XCoord +','+ rpt.side0YCoord +')">'+ rpt.side0XCoord +','+ rpt.side0YCoord +'</a>)<br>';
             if (rpt.marchName != 'Reinforce') {
                 m+='<TABLE class=ptTab width=100%>';
+				m+='<TR><TD>'+MonitorLink(rpt.side0Name)+' (<A onclick="ptGotoMap('+ rpt.side0XCoord +','+ rpt.side0YCoord +')">'+ rpt.side0XCoord +','+ rpt.side0YCoord +'</a>)</td></tr>';
                 if (rslt['lstlgn']) {
                     if (!rslt['lstlgn'])
                         m+='<TR><TD>Last Login: Not recorded</TD></TR>';
@@ -2594,16 +2652,16 @@ var Rpt = {
         }
 
         if (rpt.marchName == 'Reinforce') {
-            t.popReport = new CPopup('pbShowRein', 0, 0, 700, 680, true, function() {clearTimeout (1000);});
-            m+= '<DIV style="height:285px">';
+            t.popReport = new CPopup('pbShowRein', 0, 0, 750, 240, true, function() {clearTimeout (1000);});
+            m+= '<DIV style="height:185px">';
         } else if (rpt.marchName == 'Transport') {
-            t.popReport = new CPopup('pbShowTrans', 0, 0, 525, 240, true, function() {clearTimeout (1000);});
+            t.popReport = new CPopup('pbShowTrans', 0, 0, 750, 240, true, function() {clearTimeout (1000);});
             m+= '<DIV style="height:185px">';
         } else if (rpt.marchName == 'Scout' && rslt['winner']==1 && rpt.sideId==1){
-            t.popReport = new CPopup('pbShowOther', 0, 0, 550, 740, true, function() {clearTimeout (1000);});
-            m+= '<DIV style="max-height:705px; height:705px; overflow-y:scroll">';
+            t.popReport = new CPopup('pbShowOther', 0, 0, 750, 680, true, function() {clearTimeout (1000);});
+            m+= '<DIV style="max-height:645px; height:645px; overflow-y:scroll">';
         } else {
-            t.popReport = new CPopup('pbShowOther', 0, 0, 700, 680, true, function() {clearTimeout (1000);});
+            t.popReport = new CPopup('pbShowOther', 0, 0, 750, 680, true, function() {clearTimeout (1000);});
             m+= '<DIV style="max-height:645px; height:645px; overflow-y:scroll">';
         }
         t.popReport.centerMe (mainPop.getMainDiv());
@@ -2637,7 +2695,18 @@ var Rpt = {
         m+='</DIV>';
         t.popReport.getMainDiv().innerHTML = m;
         t.popReport.getTopDiv().innerHTML = '<DIV align=center><B>'+rpt.marchName+' Report</B></DIV>';
-        document.getElementById('reportTroopStatsHdr').addEventListener ('click', function () {ToggleDivDisplay(500,500,"reportTroopStats");}, false);
+		if (document.getElementById('reportTroopStatsHdr')) {
+			document.getElementById('reportTroopStatsHdr').addEventListener ('click', function () {ToggleDivDisplay(500,500,"reportTroopStats");}, false);
+		}
+		if (document.getElementById('reportChampDuelHdr')) {
+			document.getElementById('reportChampDuelHdr').addEventListener ('click', function () {ToggleDivDisplay(500,500,"reportChampDuel");}, false);
+		}
+		if (document.getElementById('reportThroneHdr')) {
+			document.getElementById('reportThroneHdr').addEventListener ('click', function () {ToggleDivDisplay(500,500,"reportThrone");}, false);
+		}
+		if (document.getElementById('reportBoostsHdr')) {
+			document.getElementById('reportBoostsHdr').addEventListener ('click', function () {ToggleDivDisplay(500,500,"reportBoosts");}, false);
+		}
         t.popReport.show(true);
     },
     
@@ -4125,8 +4194,8 @@ var AllianceReports = {
             msg.push(" class=stripe");
           msg.push("><TD class="+ colClass +"><div>");
           msg.push(uW.formatDateByUnixTime(rpt.reportUnixTime));
-          msg.push ('<BR>Rpt #');
-          msg.push (rpt.reportId);          
+          msg.push ('<BR>Rpt&nbsp;');
+          msg.push ("<a onclick='FindReport("+rpt.reportId+",0);return false;'>#"+rpt.reportId+"</a>");
           msg.push("</div></td><TD class="+ colClass  +"><div>");
           if (rpt.marchType == 1)
             msg.push (uW.g_js_strings.commonstr.transport);
