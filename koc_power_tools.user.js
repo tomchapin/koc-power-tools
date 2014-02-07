@@ -7164,8 +7164,8 @@ Tabs.Train = {
 			for(var i = 1; i<=maxline; i++){
 				var id = item['effects']['slot'+i]['id'];
 				if(id == StatID){
-					tier = parseInt(y["effects"]["slot"+i]["tier"]);
-					level = y["level"];
+					tier = parseInt(item["effects"]["slot"+i]["tier"]);
+					level = item["level"];
 					p = unsafeWindow.cm.thronestats.tiers[id][tier];
 					while (!p && (tier > 0)) { tier--; p = unsafeWindow.cm.thronestats.tiers[id][tier]; } 
 					if (!p) continue; // can't find stats for tier
@@ -10460,8 +10460,8 @@ function equippedthronestats (stat_id){
 		for(var i = 1; i<=maxline; i++){
 			var id = item["effects"]["slot"+i]["id"];
 			if(id == stat_id){
-				tier = parseInt(y["effects"]["slot"+i]["tier"]);
-				level = y["level"];
+				tier = parseInt(item["effects"]["slot"+i]["tier"]);
+				level = item["level"];
 				p = unsafeWindow.cm.thronestats.tiers[id][tier];
 				while (!p && (tier > 0)) { tier--; p = unsafeWindow.cm.thronestats.tiers[id][tier]; } 
 				if (!p) continue; // can't find stats for tier
