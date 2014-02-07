@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140206b
+// @version        20140207a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -18,7 +18,8 @@ if(window.self.location != window.top.location){
 //Please change it to your Userscript project name.
 var SourceName = "KOC Power Tools (SVN)";
 
-var Version = '20140206b';
+var Version = '20140207a';
+
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
 var DEBUG_TRACE = false;
@@ -1877,6 +1878,9 @@ var Rpt = {
                     }
                 }
             }
+            if (rslt['s1spell'] && (rslt['s1spell'] != "0")) {
+				m+='Spell Used: <b>'+eval('uW.g_js_strings.spells.name_'+rslt['s1spell'])+'</b><br>';
+            }
             m+='Might Lost: '+addCommas(atkmight)+'</div>';
             //summary - defender
             m+='<div style="width:50%;float:left;">';
@@ -1886,6 +1890,9 @@ var Rpt = {
             m+='<br>';
             if (rpt.marchName == 'Attack' || rpt.marchName == 'Defend')
                 m+='Knight Combat Skill: ' + rslt['s0KCombatLv'] + '<br>';
+            if (rslt['s0spell'] && (rslt['s0spell'] != "0")) {
+				m+='Spell Used: <b>'+eval('uW.g_js_strings.spells.name_'+rslt['s0spell'])+'</b><br>';
+			}
             if (rslt['fght']["s0"]) {
                 var defmight = 0;
                 if (rslt.overwhelmed) {
@@ -1984,7 +1991,7 @@ var Rpt = {
                 if (rslt.overwhelmed) {
                     m+='<TR><TH></TH><TH align=left>Troops</TH><TH align=center>Fought</TH><TH align=center>Survived</TH><TH align=center>Killed</TH></TR>';
                     for (var i=1;i<nTroopType+1;i++) {
-                        if (rslt['fght']["s0"]['u'+i]) {
+                        if (rslt['fght']["s0"]['u'+i] && (rslt['fght']["s0"]['u'+i][0] != null)) {
                             m+='<TR><TD>' + unitImg[i] + '</td>';
                             m+='<TD align=center>???</td>';
                             m+='<TD align=center>???</td>';
@@ -2023,7 +2030,7 @@ var Rpt = {
                 } else {
                     m+='<TR><TH></TH><TH align=left>Troops</TH><TH align=center>Fought</TH><TH align=center>Survived</TH><TH align=center>Killed</TH></TR>';
                     for (var i=1;i<nTroopType+1;i++) {
-                        if (rslt['fght']["s0"]['u'+i]) {
+                        if (rslt['fght']["s0"]['u'+i] && (rslt['fght']["s0"]['u'+i][0] != null)) {
                             if (rslt['fght']["s0"]['u'+i][0] > rslt['fght']["s0"]['u'+i][1]) {
                                 m+='<TR><TD>' + unitImg[i] + '</td>';
                                 m+='<TD align=center>'+addCommas(rslt['fght']["s0"]['u'+i][0])+'</td>';
@@ -5574,7 +5581,9 @@ return 0;
 					   			   id = y["effects"]["slot"+i]["id"];
 								   tier = parseInt(y["effects"]["slot"+i]["tier"]);
 								   level = y["level"];
-								   p = uW.cm.thronestats.tiers[id][tier];
+									p = unsafeWindow.cm.thronestats.tiers[id][tier];
+									while (!p && (tier > 0)) { tier--; p = unsafeWindow.cm.thronestats.tiers[id][tier]; } 
+									if (!p) continue; // can't find stats for tier
 								   Current = p.base + ((level * level + level) * p.growth * 0.5);
 								   if (i<=parseInt(y["quality"])) t.HisStatEffects[id] += Current;
 							}
@@ -5587,7 +5596,9 @@ return 0;
 				   			id = y["effects"]["slot"+i]["id"];
 				   			tier = parseInt(y["effects"]["slot"+i]["tier"]);
 				   			level = y["level"];
-				   			p = uW.cm.thronestats.tiers[id][tier];
+							p = unsafeWindow.cm.thronestats.tiers[id][tier];
+							while (!p && (tier > 0)) { tier--; p = unsafeWindow.cm.thronestats.tiers[id][tier]; } 
+							if (!p) continue; // can't find stats for tier
 				   			Current = p.base + ((level * level + level) * p.growth * 0.5);
 				   			if (y.isEquipped && i<=y["quality"]) t.MyStatEffects[id] += Current
 						}
@@ -7153,9 +7164,11 @@ Tabs.Train = {
 			for(var i = 1; i<=maxline; i++){
 				var id = item['effects']['slot'+i]['id'];
 				if(id == StatID){
-					var tier = parseInt(item["effects"]["slot"+i]["tier"]);
-					var level = item["level"];
-				        var p = unsafeWindow.cm.thronestats.tiers[id][tier];
+					tier = parseInt(y["effects"]["slot"+i]["tier"]);
+					level = y["level"];
+					p = unsafeWindow.cm.thronestats.tiers[id][tier];
+					while (!p && (tier > 0)) { tier--; p = unsafeWindow.cm.thronestats.tiers[id][tier]; } 
+					if (!p) continue; // can't find stats for tier
 					var Percent = p.base + ((level * level + level) * p.growth * 0.5);
 					total += Percent;
 				}
@@ -10447,9 +10460,11 @@ function equippedthronestats (stat_id){
 		for(var i = 1; i<=maxline; i++){
 			var id = item["effects"]["slot"+i]["id"];
 			if(id == stat_id){
-				var tier = parseInt(item["effects"]["slot"+i]["tier"]);
-				var level = item["level"];
-				var p = uW.cm.thronestats.tiers[id][tier];
+				tier = parseInt(y["effects"]["slot"+i]["tier"]);
+				level = y["level"];
+				p = unsafeWindow.cm.thronestats.tiers[id][tier];
+				while (!p && (tier > 0)) { tier--; p = unsafeWindow.cm.thronestats.tiers[id][tier]; } 
+				if (!p) continue; // can't find stats for tier
 				var Percent = p.base + ((level * level + level) * p.growth * 0.5);
 				total += Percent;
 			}
