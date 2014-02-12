@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140212a
+// @version        20140212b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -18,7 +18,7 @@ if(window.self.location != window.top.location){
 //Please change it to your Userscript project name.
 var SourceName = "KOC Power Tools (SVN)";
 
-var Version = '20140212a';
+var Version = '20140212b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -1976,12 +1976,17 @@ var Rpt = {
 				m+='Might Lost: '+addCommas(defmight)+'<br>';
             }
             m+='Rounds: ' + rslt['rnds'] + '<br>';
-            if (rslt['wall']) {
-                if (rslt['wall'] == 100)
-                    m+='Attackers breached the walls.';
-                else
-                    m+='Attackers did not breach the walls. The walls are '+rslt['wall']+'% damaged';
-            }
+			if (rslt['darkForestConflict']) {
+				m+='The forests twisted and changed.';
+			}
+			else {
+				if (rslt['wall']) {
+					if (rslt['wall'] == 100)
+						m+='Attackers breached the walls.';
+					else
+						m+='Attackers did not breach the walls. The walls are '+rslt['wall']+'% damaged';
+				}
+			}	
             m+='</div>';            
             m+='</div>'; //end battlesummary div
             //troops
