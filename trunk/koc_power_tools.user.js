@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140213a
+// @version        20140214a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -18,7 +18,7 @@ if(window.self.location != window.top.location){
 //Please change it to your Userscript project name.
 var SourceName = "KOC Power Tools (SVN)";
 
-var Version = '20140213a';
+var Version = '20140214a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -447,7 +447,6 @@ if (TEST_WIDE){
     TowerAlerts.enableFixFalseReports(true);
   
   AddMainTabLink('TOOLS', eventHideShow, mouseMainTab);
-
   
 //  var ss_onload = unsafeWindow.seed.ss;
 //  multiBrowserOverride();
@@ -514,7 +513,6 @@ var knightRoles = [
 ];
 
 var rats = ["2466324","5801935","14737553","2915086"];//people who openly tried to destroy script development including reporting scripters to kabam.  now the joke is on them.
-
 var scripters = ["7552815","10681588","1747877","2865067","10153485","15182839","1550996","1617431819","9688786","8184813","9863346","11107993","9751486","5614388","424090","14845619","8480468","7042380","731589"];
 
 
@@ -12222,6 +12220,7 @@ Tabs.Defend = {
         t.cont = div;
         t.state = null;
         clearTimeout(t.displayTimer);
+   uW.ptDefendFav = Options.DefendFav;
     },
     getContent: function () {
         var t = Tabs.Defend;
