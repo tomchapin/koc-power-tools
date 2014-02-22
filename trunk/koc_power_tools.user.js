@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140219b
+// @version        20140222a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -18,7 +18,7 @@ if(window.self.location != window.top.location){
 //Please change it to your Userscript project name.
 var SourceName = "KOC Power Tools (SVN)";
 
-var Version = '20140219b';
+var Version = '20140222a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -161,7 +161,7 @@ var Options = {
   DefendCibleX : 0,
   DefendCibleY : 0,
   DefendKnight : 0,
-  DefendRsrv : {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0,10:0,11:0,12:0,13:0,14:0,15:0,16:0,17:0,18:0},
+  DefendRsrv : {1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0,10:0,11:0,12:0,13:0,14:0,15:0,16:0,17:0,18:0,21:0},
   enhancedinbox : true,
   EnhCBtns	:	false,
   DbClkDefBtns 	: true,
@@ -258,7 +258,7 @@ var ptStartupTimer = null;
 var uW = unsafeWindow;
 var seed_player_g = uW.seed.player.g;
 var ResetColors = false;
-var nTroopType = 18;
+var nTroopType = 19;
 var reportpos = {x:-999,y:-999};
 var crestname = {};
 for (var i=1101; i < 1115; i++)
@@ -6352,6 +6352,9 @@ Tabs.Test = {
 		  <TR><TD align=right># of Executioners: </td><TD><INPUT type=text size=9 value=0 id=faketroop13></td></tr>\
 		  <TR><TD align=right># of Siege Walls: </td><TD><INPUT type=text size=9 value=0 id=faketroop14></td></tr>\
 		  <TR><TD align=right># of Flame Archers: </td><TD><INPUT type=text size=9 value=0 id=faketroop15></td></tr>\
+		  <TR><TD align=right># of Hussars: </td><TD><INPUT type=text size=9 value=0 id=faketroop16></td></tr>\
+		  <TR><TD align=right># of Halberdiers: </td><TD><INPUT type=text size=9 value=0 id=faketroop17></td></tr>\
+		  <TR><TD align=right># of Onagers: </td><TD><INPUT type=text size=9 value=0 id=faketroop18></td></tr>\
 		  <TR><TD align=right>Fake name to use: </td><TD><INPUT type=text size=15 value=oftheNOOBS id=fakeName></td></tr>\
 		  <TR><TD align=right>Target city: </td><TD>'+citySelect+'</td></tr>\
         <TR><TD colspan=2 align=center><INPUT id=testSendMarch type=submit value="Fake Attack" \></td></tr></table>\
@@ -6415,11 +6418,15 @@ Tabs.Test = {
     secs = parseInt(secs);
     march.arrivalTime = unixTime() + secs;
     march.departureTime = unixTime() - 10;
-     march.unts = {}
-	for(i=0; i<16; i++){
-	  if(troops[i] > 0)
-		march.unts["u"+(i+1)] = addCommas(troops[i]);
-	}
+    march.unts = {}
+    var unitsarr = [];
+    for (j in unsafeWindow.unitcost)
+	unitsarr.push(0);
+    for (i=0; i < unitsarr.length; i++) {
+	if(troops[i] > 0)
+	     if (i < 18) march.unts["u"+(i+1)] = addCommas(troops[i]);
+	     else march.unts["u"+(i+3)] = addCommas(troops[i]);
+    }
     march.pid = 1234567;
     march.score = 9;
     march.mid = marchId.substr(1);
@@ -6441,12 +6448,15 @@ Tabs.Test = {
     var isScout = document.getElementById('fakeIsScout').checked;
     var isWild = document.getElementById('fakeIsWild').checked;
     var isFalse = document.getElementById('fakeFalse').checked;
-	var troops = [];
-	for(i=0; i<16; i++)
-		troops[i] = parseInt(document.getElementById('faketroop'+i).value);
+    var troops = [];
+    var unitsarr = [];
+    for (j in unsafeWindow.unitcost)
+	unitsarr.push(0);
+    for (i=0; i < unitsarr.length; i++) 
+	troops[i] = parseInt(document.getElementById('faketroop'+i).value);
     var secs = parseInt(document.getElementById('fakeSeconds').value);
-	var name = document.getElementById('fakeName').value;
-	var city = document.getElementById('fakeCity').value;
+    var name = document.getElementById('fakeName').value;
+    var city = document.getElementById('fakeCity').value;
     t.createFakeAttack (city, isScout, isWild, isFalse, secs, troops ,name);
   },
 }
@@ -7805,9 +7815,9 @@ Tabs.Train = {
     var m = '<CENTER><B>'+ Cities.byID[cityId].name +' &nbsp; ('+ Cities.byID[cityId].x +','+ Cities.byID[cityId].y +')</b></center><HR>';
 
     m += '<TABLE class=ptTab width=100%><TR align=center>';
-    for(i=1;i<=8;i++){
+    for(i=1;i<=9;i++){
     	m += '<TR><TD width=75px>'+uW.unitcost['unt'+i][0]+'</td><TD width=60px>'+addCommas(parseInt(Seed.units['city'+cityId]['unt'+i]))+'</td>';
-    	m += '<TD width=75px>'+uW.unitcost['unt'+(i+8)][0]+'</td><TD width=60px>'+addCommas(parseInt(Seed.units['city'+cityId]['unt'+(i+8)]))+'</td>';
+    	m += '<TD width=75px>'+uW.unitcost['unt'+(i+9)][0]+'</td><TD width=60px>'+addCommas(parseInt(Seed.units['city'+cityId]['unt'+(i+9)]))+'</td>';
     	if (i<=4) m += '<TD width=75px><SPAN id=ptttr_'+uW.resourceinfo['rec'+i]+'>'+uW.resourceinfo['rec'+i]+'</span></td><TD width=60px><SPAN id=ptttr2_'+uW.resourceinfo['rec'+i]+'>'+addCommas(parseInt(Seed.resources['city'+cityId]['rec'+i][0]/3600))+'</span></td>';
     	if (i==5) m += '<TD width=75px><SPAN id=ptttr_gold>'+uW.resourceinfo['rec0']+'</span></td><TD width=60px><SPAN id=ptttr2_gold>'+addCommas(Seed.citystats['city'+cityId].gold[0])+'</span></td>';
     	if (i==6) m += '<TD width=75px><SPAN id=ptttr_pop>Available Population</td><TD width=60px><SPAN id=ptttr2_pop>'+addCommas(t.stats.idlePop)+'</td>';
@@ -7816,7 +7826,7 @@ Tabs.Train = {
     	m+='</tr>';
     }
     m += '<TR><TD width=75px></td><TD width=60px></td>';
-    m += '<TD width=75px>'+uW.unitcost['unt'+(17)][0]+'</td><TD width=60px>'+addCommas(parseInt(Seed.units['city'+cityId]['unt'+(17)]))+'</td>';
+    m += '<TD width=75px>'+uW.unitcost['unt'+(21)][0]+'</td><TD width=60px>'+addCommas(parseInt(Seed.units['city'+cityId]['unt'+(21)]))+'</td>';
     m+='</table>';
     document.getElementById ('divSTtop').innerHTML = m;
     
@@ -8749,7 +8759,8 @@ Tabs.OverView = {
            for(i=0; i<Cities.numCities; i++) {
              n += "<TD width=81 style='background: #FFFFFF'><B>"+ Cities.cities[i].name.substring(0,11) +'</b><BR>'+ coordLink (Cities.cities[i].x, Cities.cities[i].y) +"<BR>"+ uW.provincenames['p'+ Cities.cities[i].provId] +"</td>";
            }
-   	  for(a=1;a<nTroopType+1;a++) {
+          for (var ui in uW.cm.UNIT_TYPES){
+	  	a = uW.cm.UNIT_TYPES[ui];
    	        var total=0;
    	        var marching = 0;
    	        var raiding = 0;
@@ -8956,7 +8967,7 @@ Tabs.OverView = {
 	if (Seed.buildings[city].pos1 == null) wall = 0;
     		else wall = parseInt(Seed.buildings[city].pos1[1]);
     	var WallSpace = 0;
-    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 1000)};
+    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 3000)};
     	max = WallSpace/2/2 - parseInt(Seed.fortifications[city]["fort53"]) - parseInt(Seed.fortifications[city]["fort55"]);
     	m+= '<TD width=79 style="background:#FFFFFF">' + Seed.fortifications[city]["fort53"];
     	if (wall >=6 && blacksmith >=6 && fletching >=5 && max > 0) m+= '<br>Left: ' + max +'</td>';
@@ -8976,7 +8987,7 @@ Tabs.OverView = {
 	if (Seed.buildings[city].pos1 == null) wall = 0;
     		else wall = parseInt(Seed.buildings[city].pos1[1]);
     	var WallSpace = 0;
-    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 1000)};
+    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 3000)};
     	max = WallSpace/2/4 - parseInt(Seed.fortifications[city]["fort53"]) - parseInt(Seed.fortifications[city]["fort55"]);
     	m+=  '<TD width=79 style="background:#FFFFFF">' +Seed.fortifications[city]["fort55"];
     	if (wall >=8 && blacksmith >=8 && fletching >=7 && geometry>=7 && max > 0) m+= '<br>Left: ' + max+'</td>';
@@ -8995,7 +9006,7 @@ Tabs.OverView = {
     		else wall = parseInt(Seed.buildings[city].pos1[1]);
     	build = (parseInt(Seed.fortifications[city]["fort53"])*2)+ (parseInt(Seed.fortifications[city]["fort55"])*4);
     	var WallSpace = 0;
-    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 1000)};
+    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 3000)};
     	max = WallSpace/2;
     	if (build < max) m+='<TD width=79 style="background:#FFFFFF"><FONT COLOR= "CC0000">';
     	else m+='<TD width=79 style="background:#FFFFFF"><FONT COLOR= "669900">';
@@ -9011,7 +9022,7 @@ Tabs.OverView = {
 	if (Seed.buildings[city].pos1 == null) wall = 0;
     		else wall = parseInt(Seed.buildings[city].pos1[1]);
     	var WallSpace = 0;
-    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 1000)};
+    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 3000)};
     	max = WallSpace/2/4 - (parseInt(Seed.fortifications[city]["fort60"])*4) - (parseInt(Seed.fortifications[city]["fort61"])*1) - (parseInt(Seed.fortifications[city]["fort62"])*3);
     	m+=  '<TD width=79 style="background:#FFFFFF">'+Seed.fortifications[city]["fort60"];
     	if (wall >=4 && blacksmith >=4 && poisonededge>=4 && max>0) m+= '<br>Left: ' + max+'</td>';
@@ -9031,7 +9042,7 @@ Tabs.OverView = {
 	if (Seed.buildings[city].pos1 == null) wall = 0;
     		else wall = parseInt(Seed.buildings[city].pos1[1]);
     	var WallSpace = 0;
-    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 1000)};
+    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 3000)};
     	max = WallSpace/2/1 - (parseInt(Seed.fortifications[city]["fort60"])*4) - (parseInt(Seed.fortifications[city]["fort61"])*1) - (parseInt(Seed.fortifications[city]["fort62"])*3);
     	m+= '<TD width=79 style="background:#FFFFFF">'+Seed.fortifications[city]["fort61"];
     	if (wall >=1 && metalalloys >=1 && max>0) m+= '<br>Left: ' + max+'</td>';
@@ -9050,7 +9061,7 @@ Tabs.OverView = {
 	if (Seed.buildings[city].pos1 == null) wall = 0;
     		else wall = parseInt(Seed.buildings[city].pos1[1]);
     	var WallSpace = 0;
-    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 1000)};
+    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 3000)};
     	max = (WallSpace/2/3).toFixed(0) - (parseInt(Seed.fortifications[city]["fort60"])*4) - (parseInt(Seed.fortifications[city]["fort61"])*1) - (parseInt(Seed.fortifications[city]["fort62"])*3);
     	m+=  '<TD width=79 style="background:#FFFFFF">'+Seed.fortifications[city]["fort62"];
     	if (wall >=2 && blacksmith>=2 && logging>=2 && max>0) m+= '<br>Left: ' + max+'</td>';
@@ -9068,7 +9079,7 @@ Tabs.OverView = {
     		else wall = parseInt(Seed.buildings[city].pos1[1]);
     	build = (parseInt(Seed.fortifications[city]["fort60"])*4)+ (parseInt(Seed.fortifications[city]["fort61"])*1) + (parseInt(Seed.fortifications[city]["fort62"])*3);
     	var WallSpace = 0;
-    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 1000)};
+    	for (var b = 1; b < (wall + 1); b++) {WallSpace += (b * 3000)};
     	max = WallSpace/2;
     	if (build < max) m+='<TD width=79 style="background:#FFFFFF"><FONT COLOR= "CC0000">';
     	else m+='<TD width=79 style="background:#FFFFFF"><FONT COLOR= "669900">';
@@ -9407,7 +9418,8 @@ Tabs.OverView = {
       			infoRows[5][i] = Cities.cities[i].stableLevel;
       			infoRows[6][i] = Cities.cities[i].workshopLevel;
       			for (var j=1; j<nTroopType+1; j++)
-      				infoRows[j+6][i] = ((Cities.cities[i]['Troop'+j+'Time'] > 0)?(3600 / Cities.cities[i]['Troop'+j+'Time']):0);
+      				if (j < 19) infoRows[j+6][i] = ((Cities.cities[i]['Troop'+j+'Time'] > 0)?(3600 / Cities.cities[i]['Troop'+j+'Time']):0);
+      				else infoRows[j+6][i] = ((Cities.cities[i]['Troop'+(j+2)+'Time'] > 0)?(3600 / Cities.cities[i]['Troop'+(j+2)+'Time']):0);
       			infoRows[nTroopType+7][i] = Cities.cities[i]['Def53Time'];
       			if (infoRows[nTroopType+7][i] > 0)
       				infoRows[nTroopType+7][i] = 3600 / infoRows[nTroopType+7][i];
@@ -9451,6 +9463,7 @@ Tabs.OverView = {
       		_displayrow ("Flame Archer", infoRows[22]);
       		_displayrow ("Hussar", infoRows[23]);
       		_displayrow ("Halberdier", infoRows[24]);
+      		_displayrow ("Onager", infoRows[25]);
       		u += "<TR><TD></TD><TD nowrap align=center colspan="+(Cities.numCities)+"><B>Wall Defense Hourly Production</B></TD></TR>";
       		_displayrow ("XBow", infoRows[nTroopType+7]);
       		_displayrow ("Trebuchet", infoRows[nTroopType+8]);
@@ -9584,20 +9597,23 @@ Tabs.OverView = {
         rows[r] = [];
         for(i=0; i<Cities.numCities; i++) {
           cityID = 'city'+ Cities.cities[i].id;
-          rows[r][i] = parseIntNan(Seed.units[cityID]['unt'+r]);
+          if (r < 19) rows[r][i] = parseIntNan(Seed.units[cityID]['unt'+r]);
+	  else rows[r][i] = parseIntNan(Seed.units[cityID]['unt'+(r+2)]);
         }
       }
 	  
 	  var colnum = Cities.numCities;
       if (Options.includeMarching){
-        for (var i=0; i<nTroopType+1; i++){
-          rows[i][colnum] = parseIntNan(march.marchUnits[i]);
+        for (var i=1; i<nTroopType+1; i++){
+          if (i < 19) rows[i][colnum] = parseIntNan(march.marchUnits[i]);
+          else rows[i][colnum] = parseIntNan(march.marchUnits[i+2]);
 		}
 		colnum++;
       }
 	  if(Options.includeTrainingExt){
-		for (var i=0; i<nTroopType+1; i++){
-		  rows[i][colnum] = parseIntNan(train.trainUnts[i]);
+		for (var i=1; i<nTroopType+1; i++){
+		  if (i < 19) rows[i][colnum] = parseIntNan(train.trainUnts[i]);
+		  else rows[i][colnum] = parseIntNan(train.trainUnts[i+2]);
 		}
 	  }
       if (Options.includeTraining){
@@ -9629,6 +9645,7 @@ Tabs.OverView = {
       str += _row ('Flame Archer', rows[16]);
       str += _row ('Hussar', rows[17]);
       str += _row ('Halberdier', rows[18]);
+      str += _row ('Onager', rows[19]);
       str += '<TR><TD colspan=11><BR></td></tr>';
       
       row = [];
@@ -9853,733 +9870,776 @@ Tabs.OverView = {
 
 /*************** March Tab **********/
 Tabs.Attaque = {
- cont : null,
- displayTimer : null,
- tabLabel : 'March',
- state : null,
- curTabBut : null,
- curTabName : null,
- BOAttackTimer: null,
- sourceCity : {},
- destinationCity : {},
- rows : [],
- iused : new Array(),
- init : function (div){
-   var t = Tabs.Attaque;
-   t.cont = div;
-   t.state = null;
-   clearTimeout (t.displayTimer);
- },
-  getContent : function (){
-    var t = Tabs.Attaque;
-    return t.cont;
-  },
-  hide : function (){
-    var t = Tabs.Attaque;
-    t.state = null;
-    clearTimeout (t.displayTimer);
-  },
-  show : function (){  
-    var t = Tabs.Attaque;
-    setTimeout(t.Refreshtroops,10000);
-    var rownum = 0;
-    var ModelCity = {};
-    if (t.state == null) {  
-         m = "<DIV class=ptstat><b>QUICK MARCH TOOL</b></div>";
-         m +="<div id='statpourRAA'></div>";       
-         m += "<TABLE width=600 class=ptTab border=0 align=center>\
-           <tr><td><INPUT type=checkbox id=ptmarch_autoknight "+(Options.marchautoknight?'CHECKED':'')+" /> Auto select knight</td></tr>\
+    cont: null,
+    displayTimer: null,
+    tabLabel: 'March',
+    state: null,
+    curTabBut: null,
+    curTabName: null,
+    BOAttackTimer: null,
+    sourceCity: {},
+    destinationCity: {},
+    rows: [],
+    iused: new Array(),
+    init: function (div) {
+        var t = Tabs.Attaque;
+        t.cont = div;
+        t.state = null;
+        clearTimeout(t.displayTimer);
+    },
+    getContent: function () {
+        var t = Tabs.Attaque;
+        return t.cont;
+    },
+    hide: function () {
+        var t = Tabs.Attaque;
+        t.state = null;
+        clearTimeout(t.displayTimer);
+    },
+    show: function () {
+        var t = Tabs.Attaque;
+        setTimeout(t.Refreshtroops, 10000);
+        var rownum = 0;
+        var ModelCity = {};
+        if (t.state == null) {
+            m = "<DIV class=ptstat><b>QUICK MARCH TOOL</b></div>";
+            m += "<div id='statpourRAA'></div>";
+            m += "<TABLE width=600 class=ptTab border=0 align=center>\
+           <tr><td><INPUT type=checkbox id=ptmarch_autoknight " + (Options.marchautoknight ? 'CHECKED' : '') + " /> Auto select knight</td></tr>\
            <tr><td colspan=4 align=center><input type=button id=REEaction value='Scout'>&nbsp;<input type=button id=RAAaction value='Attack'>&nbsp<input type=button id=RARaction value='Reassign'>&nbsp;<input type=button id=RENaction value='Reinforce'>&nbsp;<input type=button id=RENBaction value='Reinforce + Max Food'></td></tr><tr align=center valign=top><td width=130><b><u>Source</b></u><br><span id=RAAsrcRptspeedcity></span></td>\
            <td><b><u>Destination</b></u><br>X:<input type=text id=RAAtypetrpx size=3>&nbsp;Y:<input type=text id=RAAtypetrpy size=3><br><a href='javascript:void(0);' id='BOchargelistelieux'>Fetch Members</a> : <select id='listeFavori'></select></td>\
            <td><b><u>Distance</u></b><br><span id='BOEstimationD'>&nbsp;</span><td><b><u>Closest City</u></b><br><span id=BOVilleProche></span>\
            </tr><tr align=center valign=top>\
-           <td colspan=4 align=left><table border=0 bordercolor=black cellspacing=0 cellpadding=0 width=100% style='text-align:center'><tr><td rowspan="+nTroopType+1+"><div id=RAAstatsource></div></td><td colspan=2><a href='javascript:void(0)' id=BO_RAZ_Units title='Clear' >Units Selected</a></td><td>Attack Time</td><td>Reinforce Time</td></tr>";
-            for (r=1; r<nTroopType+1; r++){
-   	     m += '<tr><td align=right><img height=20 title="'+unsafeWindow.unitcost['unt'+r][0] +'" alt="'+unsafeWindow.unitcost['unt'+r][0]+'" src=https://kabam1-a.akamaihd.net/silooneofcamelot//fb/e2/src/img/units/unit_'+r+'_30.jpg></td><td align=left><input style="border:1px solid black;height:16px;font-size:11px;" id="RAAnbunit'+r+'" type=text size=7 value="0" ></td><td><span id="BOEstimationTT'+r+'">&nbsp;</span></td><td><span id="BOEstimationTZ'+r+'">&nbsp;</span></td></tr>';
-      	}
-      	var itemlist=[55,57,931,932];
-	var BOitems="";
-	for(var i=0;i<itemlist.length;i++){
-		 BOitems += "<img src='https://kabam1-a.akamaihd.net/silooneofcamelot//fb/e2/src/img/items/30/"+itemlist[i]+".jpg' /><input type=checkbox id='BOitem_"+itemlist[i]+"'><span id='BOitemSpan_"+itemlist[i]+"'>" + unsafeWindow.ksoItems[itemlist[i]].count + "</span>&nbsp;";
-        }
-        m += "</table></td></tr>\
-              <tr><td colspan=4>Knight : <SELECT id='RAApiKnight' type=list></select> <br>"+BOitems+"</td></tr></table>\
+           <td colspan=4 align=left><table border=0 bordercolor=black cellspacing=0 cellpadding=0 width=100% style='text-align:center'><tr><td rowspan=" + nTroopType + 1 + "><div id=RAAstatsource></div></td><td colspan=2><a href='javascript:void(0)' id=BO_RAZ_Units title='Clear' >Units Selected</a></td><td>Attack Time</td><td>Reinforce Time</td></tr>";
+            for (var ui in uW.cm.UNIT_TYPES) {
+                r = uW.cm.UNIT_TYPES[ui];
+                m += '<tr><td align=right><img height=20 title="' + unsafeWindow.unitcost['unt' + r][0] + '" alt="' + unsafeWindow.unitcost['unt' + r][0] + '" src=https://kabam1-a.akamaihd.net/silooneofcamelot//fb/e2/src/img/units/unit_' + r + '_30.jpg></td><td align=left><input style="border:1px solid black;height:16px;font-size:11px;" id="RAAnbunit' + r + '" type=text size=7 value="0" ></td><td><span id="BOEstimationTT' + r + '">&nbsp;</span></td><td><span id="BOEstimationTZ' + r + '">&nbsp;</span></td></tr>';
+            }
+            var itemlist = [55, 57, 931, 932];
+            var BOitems = "";
+            for (var i = 0; i < itemlist.length; i++) {
+                BOitems += "<img src='https://kabam1-a.akamaihd.net/silooneofcamelot//fb/e2/src/img/items/30/" + itemlist[i] + ".jpg' /><input type=checkbox id='BOitem_" + itemlist[i] + "'><span id='BOitemSpan_" + itemlist[i] + "'>" + unsafeWindow.ksoItems[itemlist[i]].count + "</span>&nbsp;";
+            }
+            m += "</table></td></tr>\
+              <tr><td colspan=4>Knight : <SELECT id='RAApiKnight' type=list></select> <br>" + BOitems + "</td></tr></table>\
               <DIV class=ptstat>Saved Unit Configuration :</div><TABLE><tr><td colspan=2><select id=BO_AT_Fav></select><input type=button value='Reset' id=BO_AT_Fav_Sup><input type=button value='Reset All' id=BO_AT_Fav_RESET></td><td colspan=2>New : <input type=type id=BO_AT_Fav_Nom size=10 maxlength=12>&nbsp;<input type=button value='Save Troops' id=BO_AT_Fav_ajou>\
               <tr><td colspan=4><div id=ptRAAStatus style='overflow-y:auto; max-height:50px; height: 50px;'></div></td></tr></table>\
               <DIV class=ptstat>Auto Attack - Work in Progress</div><table></tr><tr><td><input type=button id='BOActiveAttack' value='ACTIVER : OFF' ></td><td colspan=3><span id='BOCompAttack'></span></tr>\
               <tr><td><b>Heure arriv&eacute;e :</b> <input type=text size=7 id='BOHorloge' value='" + Options.AttackHorloge + "'></td><td><input type=button value='Enregistrer' id='BOSaveAttack'></td><td><input type=button value='Editer l\'attaque' id='BOEditAttack' disabled></td></tr>\
               <tr><td colspan=4><span id='BOAttackProg'></span></td></tr></table>";
-        t.cont.innerHTML = m; 
-        t.statpourRAA = ById ('statpourRAA');
-        //Gestion des favoris  
-        t.Favoris = ById ('BO_AT_Fav');
-	function metajourfavori() {
-	       t.Favoris.innerHTML="<option value=''>...</option>";
-	       var lisf = Options.AttackFav;
-	       for (var m in lisf) {
-	         var lis = lisf[m];
-	          t.Favoris.innerHTML+="<option value='"+m+"'>"+lis[0]+"</option>";
-      	       }  
-	}
-	ById("ptmarch_autoknight").addEventListener('click', function(){
-		Options.marchautoknight = this.checked;
-		saveOptions();
-		t.show();
-	},false);
-       ById("BO_AT_Fav_RESET").addEventListener ('click', function() {
-		 Options.AttackFav={};
-		 saveOptions(); 
-         metajourfavori();
-       }, false); 
-       ById("BO_AT_Fav_Sup").addEventListener ('click', function() {
-       numfav=ById("BO_AT_Fav").value;
-       if (numfav!="") {
-        Options.AttackFav[numfav]={};
-        delete Options.AttackFav[numfav];
-        //Options.AttackFav=unset(Options.AttackFav, numfav);
-        saveOptions(); 
-        metajourfavori();
-       }
-       }, false); 
- 	  ById("BO_RAZ_Units").addEventListener ('click', function() {
-  	for (r=1; r<nTroopType+1; r++) ById("RAAnbunit"+r).value=0; 
-		}, false); 
-       ById("BO_AT_Fav_ajou").addEventListener ('click', function() {
-        if (ById("BO_AT_Fav_Nom").value=="") {
-         alert("Please fill in a name!");
-         return;
-        }
-        var a =ById("BO_AT_Fav_Nom").value;
-        Options.AttackFav[a]={};
-        var lisf = Options.AttackFav[a];
-        lisf[0]=ById("BO_AT_Fav_Nom").value;
-        for (r=1; r<nTroopType+1; r++) lisf[r]=ById("RAAnbunit"+r).value;
-        ById("BO_AT_Fav_Nom").value="";
-        saveOptions(); 
-	metajourfavori();
-       }, false); 
-       ById("BO_AT_Fav").addEventListener ('change', function() {
-         numfav=ById("BO_AT_Fav").value;
-         if (numfav=="") {
-          for (r=1; r<nTroopType+1; r++) ById("RAAnbunit"+r).value=0; 
-         }else {
-          var lisf = Options.AttackFav[numfav];
-          for (var m in lisf) {
-           if(m>0)
-	    if (ById("RAAnbunit"+m)) ById("RAAnbunit"+m).value=lisf[m];
-	  }
-         }
-       }, false); 
-       // Fin gestion des favoris
-       ById("BOitem_55").addEventListener ('click', function() {
-        ById("BOitem_57").checked=false;
-        t.estimerRes();
-       }, false);  
-       ById("BOitem_57").addEventListener ('click', function() {
-              ById("BOitem_55").checked=false;
-              t.estimerRes();
-       }, false);
-        t.statutRAA = ById ('ptRAAStatus');
-        t.destinationCityx = ById ('RAAtypetrpx');
-        t.destinationCityy = ById ('RAAtypetrpy');
-        t.destinationCityx.value = Options.Xrenfort;
-        t.destinationCityy.value = Options.Yrenfort;
-        if (ById ('maparea_map').style.display!="none") {
-         t.destinationCityx.value = ById ('mapXCoor').value;
-         t.destinationCityy.value = ById ('mapYCoor').value;
-        }
-        t.listeFavoris = ById ('listeFavori');
-        t.listeFavoris.addEventListener ('change', t.SelectFavoris, false);
-        t.chargelistelieux = ById ('BOchargelistelieux');
-        t.chargelistelieux.addEventListener ('click', t.chercherFavoris, false);
-        t.actionREN = ById ('RENaction');
-        t.actionRENB = ById ('RENBaction');
-        t.actionREE = ById ('REEaction');
-        t.actionRAA = ById ('RAAaction');
-        t.actionRAR = ById ('RARaction');
+            t.cont.innerHTML = m;
+            t.statpourRAA = ById('statpourRAA');
+            //Gestion des favoris  
+            t.Favoris = ById('BO_AT_Fav');
 
-  	t.actionREN.addEventListener ('click', function () { t.clickATTAQUEDo(2,0); }, false);
-        t.actionRAA.addEventListener ('click',  function () { t.clickATTAQUEDo(4,0); }, false);
-        t.actionRAR.addEventListener ('click',  function () { t.clickATTAQUEDo(5,0); }, false);
-        t.actionRENB.addEventListener ('click',  function () { t.clickATTAQUEDo(2,1); }, false);
-        t.actionREE.addEventListener ('click',  function () { t.clickATTAQUEDo(3,0); }, false);
-        t.destinationCityx.addEventListener ('change', function () { t.estimerRes(); }, false);
-        t.destinationCityy.addEventListener ('change', function () { t.estimerRes(); }, false);       
-        var dcp0 = new CdispCityPicker ('ptRAA0', ById('RAAsrcRptspeedcity'), false, t.clickRAACitySourceSelect, Cities.byID[unsafeWindow.currentcityid].idx);
-        t.estimerRes();
-        t.BOAttackProg = ById ('BOAttackProg');
-        t.BOHorloge = ById ('BOHorloge');
-        t.BOSaveAttack = ById ('BOSaveAttack');
-        t.BOEditAttack = ById ('BOEditAttack');
-        t.BOCompAttack = ById ('BOCompAttack');
-        t.BOActiveAttack  = ById ('BOActiveAttack');
-        t.BOActiveAttack.addEventListener ('click', t.AutoattackOnOff, false);
-        
-        t.BOSaveAttack.addEventListener ('click', function () {
-        
-          var itemlist=[55,57,931,932];
-	  for(var i=0;i<itemlist.length;i++){
-	        ById('BOitemSpan_'+itemlist[i]).checked=false;
-          }
-        
-         t.enregistreAttack();
-        
-        }, false);
-        if (Options.AttackCibleX!=0 && Options.AttackCibleY!=0) {
-         t.BOEditAttack.disabled=false;
+            function metajourfavori() {
+                t.Favoris.innerHTML = "<option value=''>...</option>";
+                var lisf = Options.AttackFav;
+                for (var m in lisf) {
+                    var lis = lisf[m];
+                    t.Favoris.innerHTML += "<option value='" + m + "'>" + lis[0] + "</option>";
+                }
+            }
+            ById("ptmarch_autoknight").addEventListener('click', function () {
+                Options.marchautoknight = this.checked;
+                saveOptions();
+                t.show();
+            }, false);
+            ById("BO_AT_Fav_RESET").addEventListener('click', function () {
+                Options.AttackFav = {};
+                saveOptions();
+                metajourfavori();
+            }, false);
+            ById("BO_AT_Fav_Sup").addEventListener('click', function () {
+                numfav = ById("BO_AT_Fav").value;
+                if (numfav != "") {
+                    Options.AttackFav[numfav] = {};
+                    delete Options.AttackFav[numfav];
+                    //Options.AttackFav=unset(Options.AttackFav, numfav);
+                    saveOptions();
+                    metajourfavori();
+                }
+            }, false);
+            ById("BO_RAZ_Units").addEventListener('click', function () {
+                for (var ui in uW.cm.UNIT_TYPES) ById("RAAnbunit" + uW.cm.UNIT_TYPES[ui]).value = 0;
+            }, false);
+            ById("BO_AT_Fav_ajou").addEventListener('click', function () {
+                if (ById("BO_AT_Fav_Nom").value == "") {
+                    alert("Please fill in a name!");
+                    return;
+                }
+                var a = ById("BO_AT_Fav_Nom").value;
+                Options.AttackFav[a] = {};
+                var lisf = Options.AttackFav[a];
+                lisf[0] = ById("BO_AT_Fav_Nom").value;
+                for (var ui in uW.cm.UNIT_TYPES) lisf[uW.cm.UNIT_TYPES[ui]] = ById("RAAnbunit" + uW.cm.UNIT_TYPES[ui]).value;
+                ById("BO_AT_Fav_Nom").value = "";
+                saveOptions();
+                metajourfavori();
+            }, false);
+            ById("BO_AT_Fav").addEventListener('change', function () {
+                numfav = ById("BO_AT_Fav").value;
+                if (numfav == "") {
+                    for (var ui in uW.cm.UNIT_TYPES) ById("RAAnbunit" + uW.cm.UNIT_TYPES[ui]).value = 0;
+                } else {
+                    var lisf = Options.AttackFav[numfav];
+                    for (var m in lisf) {
+                        if (m > 0)
+                            if (ById("RAAnbunit" + m)) ById("RAAnbunit" + m).value = lisf[m];
+                    }
+                }
+            }, false);
+            // Fin gestion des favoris
+            ById("BOitem_55").addEventListener('click', function () {
+                ById("BOitem_57").checked = false;
+                t.estimerRes();
+            }, false);
+            ById("BOitem_57").addEventListener('click', function () {
+                ById("BOitem_55").checked = false;
+                t.estimerRes();
+            }, false);
+            t.statutRAA = ById('ptRAAStatus');
+            t.destinationCityx = ById('RAAtypetrpx');
+            t.destinationCityy = ById('RAAtypetrpy');
+            t.destinationCityx.value = Options.Xrenfort;
+            t.destinationCityy.value = Options.Yrenfort;
+            if (ById('maparea_map').style.display != "none") {
+                t.destinationCityx.value = ById('mapXCoor').value;
+                t.destinationCityy.value = ById('mapYCoor').value;
+            }
+            t.listeFavoris = ById('listeFavori');
+            t.listeFavoris.addEventListener('change', t.SelectFavoris, false);
+            t.chargelistelieux = ById('BOchargelistelieux');
+            t.chargelistelieux.addEventListener('click', t.chercherFavoris, false);
+            t.actionREN = ById('RENaction');
+            t.actionRENB = ById('RENBaction');
+            t.actionREE = ById('REEaction');
+            t.actionRAA = ById('RAAaction');
+            t.actionRAR = ById('RARaction');
+
+            t.actionREN.addEventListener('click', function () {
+                t.clickATTAQUEDo(2, 0);
+            }, false);
+            t.actionRAA.addEventListener('click', function () {
+                t.clickATTAQUEDo(4, 0);
+            }, false);
+            t.actionRAR.addEventListener('click', function () {
+                t.clickATTAQUEDo(5, 0);
+            }, false);
+            t.actionRENB.addEventListener('click', function () {
+                t.clickATTAQUEDo(2, 1);
+            }, false);
+            t.actionREE.addEventListener('click', function () {
+                t.clickATTAQUEDo(3, 0);
+            }, false);
+            t.destinationCityx.addEventListener('change', function () {
+                t.estimerRes();
+            }, false);
+            t.destinationCityy.addEventListener('change', function () {
+                t.estimerRes();
+            }, false);
+            var dcp0 = new CdispCityPicker('ptRAA0', ById('RAAsrcRptspeedcity'), false, t.clickRAACitySourceSelect, Cities.byID[unsafeWindow.currentcityid].idx);
+            t.estimerRes();
+            t.BOAttackProg = ById('BOAttackProg');
+            t.BOHorloge = ById('BOHorloge');
+            t.BOSaveAttack = ById('BOSaveAttack');
+            t.BOEditAttack = ById('BOEditAttack');
+            t.BOCompAttack = ById('BOCompAttack');
+            t.BOActiveAttack = ById('BOActiveAttack');
+            t.BOActiveAttack.addEventListener('click', t.AutoattackOnOff, false);
+
+            t.BOSaveAttack.addEventListener('click', function () {
+
+                var itemlist = [55, 57, 931, 932];
+                for (var i = 0; i < itemlist.length; i++) {
+                    ById('BOitemSpan_' + itemlist[i]).checked = false;
+                }
+
+                t.enregistreAttack();
+
+            }, false);
+            if (Options.AttackCibleX != 0 && Options.AttackCibleY != 0) {
+                t.BOEditAttack.disabled = false;
+            }
+            t.BOEditAttack.addEventListener('click', function () {
+                t.destinationCityx.value = Options.AttackCibleX;
+                t.destinationCityy.value = Options.AttackCibleY;
+                ById("RAApiKnight").value = Options.AttackKnight;
+                nHtml.Click(ById("ptRAA0_" + Cities.byID[Options.AttackFromCity].idx));
+                for (var ui in uW.cm.UNIT_TYPES) ById("RAAnbunit" + uW.cm.UNIT_TYPES[ui]).value = Options.AttackUnits[parseInt(uW.cm.UNIT_TYPES[ui]) - 1];
+            }, false);
+
+            metajourfavori();
+            if (Options.AttackOnOff) {
+                t.BOActiveAttack.value = 'ACTIVER : ON';
+                t.activeAttack();
+            }
+            t.clickRAACitySourceSelect(t.sourceCity);
+            var closestNum = t.getclosestcity();
+            t.dcp1 = new CdispCityPicker('ptmarch_citydest', ById('BOVilleProche'), false, t.estimerRes, null).bindToXYboxes(ById("RAAtypetrpx"), ById("RAAtypetrpy"));
         }
-        t.BOEditAttack.addEventListener ('click', function () { 
-          t.destinationCityx.value = Options.AttackCibleX;
-          t.destinationCityy.value = Options.AttackCibleY;
-          ById("RAApiKnight").value=Options.AttackKnight;
-          nHtml.Click(ById("ptRAA0_"+Cities.byID[Options.AttackFromCity].idx)); 
-          for (r=1; r<nTroopType+1; r++) {
-	      ById("RAAnbunit"+r).value=Options.AttackUnits[r-1];
-          }
-        }, false);
-        
-        metajourfavori();
-        if (Options.AttackOnOff) {
-          t.BOActiveAttack.value='ACTIVER : ON';
-    	  t.activeAttack();
-        }
-        t.clickRAACitySourceSelect(t.sourceCity);
-        var closestNum = t.getclosestcity();
-		t.dcp1 = new CdispCityPicker ('ptmarch_citydest', ById('BOVilleProche'), false, t.estimerRes, null).bindToXYboxes(ById("RAAtypetrpx"),ById("RAAtypetrpy"));
-       }
 
     },
-    getclosestcity : function (){
-     var t = Tabs.Attaque;
-	 var x1 = parseInt(t.sourceCity.x);
-	 var x2 = parseInt(t.destinationCityx.value);
-	 var y1 = parseInt(t.sourceCity.y);
-	 var y2 = parseInt(t.destinationCityy.value);
-	 var dist = distance (x1, y1, x2, y2);
-	 var closestDist=999999;
-	 var closestLoc=null;
-	 var closestNum=1;
-	 for (var c=0; c<Cities.numCities; c++){
-		var city = Cities.cities[c];
-		var dist=distance(city.x,city.y,x2,y2);
-		if(dist<closestDist) {
-		 closestDist=dist;
-		 closestLoc=city.x +','+ city.y;
-		 closestNum=c;
-		}
-	 }
-	 return closestNum;
-	},
-    AutoattackOnOff:function() {
-     // click click sur le bouton Activer le compte Ãƒ  rebour !
-     var t = Tabs.Attaque;
-     t.BOCompAttack.innerHTML='';
-     clearTimeout (t.BOAttackTimer);
-     if (t.BOActiveAttack.value=='ACTIVER : OFF') {
-    	t.BOActiveAttack.value='ACTIVER : ON';
-    	     Options.AttackOnOff = true;
-    	     saveOptions();  
-    	     t.activeAttack();
-    	     
-    	    } else {
-    	     Options.AttackOnOff = false;
-    	     saveOptions();  
-    	     t.BOActiveAttack.value='ACTIVER : OFF';   
-    }   
+    getclosestcity: function () {
+        var t = Tabs.Attaque;
+        var x1 = parseInt(t.sourceCity.x);
+        var x2 = parseInt(t.destinationCityx.value);
+        var y1 = parseInt(t.sourceCity.y);
+        var y2 = parseInt(t.destinationCityy.value);
+        var dist = distance(x1, y1, x2, y2);
+        var closestDist = 999999;
+        var closestLoc = null;
+        var closestNum = 1;
+        for (var c = 0; c < Cities.numCities; c++) {
+            var city = Cities.cities[c];
+            var dist = distance(city.x, city.y, x2, y2);
+            if (dist < closestDist) {
+                closestDist = dist;
+                closestLoc = city.x + ',' + city.y;
+                closestNum = c;
+            }
+        }
+        return closestNum;
     },
-    activeAttack:function() {
-     var t = Tabs.Attaque;
-     clearTimeout (t.BOAttackTimer);
-     if (Options.AttackGoHorloge) {
-       var depart=new Date()
-       depart.setTime(Options.AttackGoHorloge);
-       var now = unixTime()*1000;
-       if (now >= Options.AttackGoHorloge) {
-	t.BOCompAttack.innerHTML='<center><font color=red>LANCEMENT ATTAQUE EFFECTUE</font></center>';
-	t.destinationCityx.value = Options.AttackCibleX;
-	t.destinationCityy.value = Options.AttackCibleY;
-	ById("RAApiKnight").value=Options.AttackKnight;
-	nHtml.Click(ById("ptRAA0_"+Cities.byID[Options.AttackFromCity].idx));
-	for (r=1; r<nTroopType+1; r++) {
-	   ById("RAAnbunit"+r).value=Options.AttackUnits[r-1];
-          }
-      t.clickATTAQUEDo(4,0);
-      clearTimeout (t.BOAttackTimer);
-      Options.AttackGoHorloge=null;
-      saveOptions();  
-     }
-     if (now > depart.getTime()) {
-         t.BOCompAttack.innerHTML='<center><font color=red>IMPOSSIBLE</font></center>';
-         clearTimeout (t.BOAttackTimer);
-       	 Options.AttackGoHorloge=null;
-         saveOptions();  
-         return false;
-     }
-       
-     t.BOAttackTimer=setTimeout(function(){
-        var depart=new Date();
-	depart.setTime(Options.AttackGoHorloge);
-        var now = unixTime()*1000;
-        var tempsrestant = depart.getTime() - now;
-        t.BOCompAttack.innerHTML='<center><font color=red><b>ATTAQUE DANS '+timestr(tempsrestant/1000)+'</b></font></center>';
-        t.activeAttack();
-      },1000);
-     }
-    
-    },
-    enregistreAttack : function() {
-     var t = Tabs.Attaque; 
-     if (t.BOHorloge.value.match("^[0-9]{2}:[0-9]{2}:[0-9]{2}$")) {
-       var horloge = t.BOHorloge.value;
-       Options.AttackHorloge = horloge;
-       
-       var ndate=new Date();
-       ndate.setHours(horloge.substr(0,2));
-       ndate.setMinutes(horloge.substr(3,2));
-       ndate.setSeconds(0);
-       var atunits=new Array();
-       for (r=1; r<nTroopType+1; r++) {
-          atunits.push(parseInt(ById("RAAnbunit"+r).value));
-       }
-       Options.AttackUnits = atunits;
-       Options.AttackFromCity = t.sourceCity.id;
-       Options.AttackKnight = ById("RAApiKnight").value;
-       Options.AttackCibleX = t.destinationCityx.value;
-       Options.AttackCibleY = t.destinationCityy.value;
-       
-       var x1 = parseInt(t.sourceCity.x);
-       var x2 = parseInt(t.destinationCityx.value);
-       var y1 = parseInt(t.sourceCity.y);
-       var y2 = parseInt(t.destinationCityy.value);
-       var dist = distance (x1, y1, x2, y2);  
-       var tempplusgrand=0;
-       for (r=1; r<nTroopType+1; r++){
-         if (parseInt(ById("RAAnbunit"+r).value)>0) {
-               var m = estETA(dist, r, t.sourceCity.id);
-               if (tempplusgrand<m.ETA) tempplusgrand=m.ETA;   
-         }
-       }
-       var departtime=ndate.getTime() - (tempplusgrand*1000);
-       var depart=new Date()
-       depart.setTime(departtime);
-       
-       var now = unixTime()*1000;
-       if (now > depart.getTime()) {
-        t.BOAttackProg.innerHTML = "Depart impossible !";
-        return false;
-       }
-       Options.AttackGoHorloge =  depart.getTime();
-       saveOptions ();
-       t.BOAttackProg.innerHTML = "Attaque sur " + Options.AttackCibleX + ","+ Options.AttackCibleY +" enregistr&eacute;e";
-       t.BOEditAttack.disabled=false;
-     } else {
-      t.BOAttackProg.innerHTML = "Mauvais format de l'horloge.";
-     }     
-    
-    },
-    clickATTAQUEDo: function(typemarche, bouffe) {
-      var t = Tabs.Attaque;  
-      var totalunit=0;
-      if (typemarche==3 && ById("RAAnbunit3").value==0) ById("RAAnbunit3").value=1;
-      for (r=1; r<nTroopType+1; r++){
-         if (typemarche==3 && r!=3) {
-          ById("RAAnbunit"+r).value=0;
-         }
-          if (parseInt(ById("RAAnbunit"+r).value) > parseInt(ById("RAAdestunit"+r).value)) {
-            ById("RAAnbunit"+r).style.backgroundColor="red";
-            return false;
-          }
-          totalunit=totalunit+parseInt(ById("RAAnbunit"+r).value);
-          ById("RAAnbunit"+r).style.backgroundColor="";
-      }
-      var errMsg = "";
-      if (isNaN (t.destinationCityx.value) ||t.destinationCityx.value<0 || t.destinationCityx.value>749)
-            errMsg = "X coordinates must be between 0 and 749<BR>"; 
-      if (isNaN (t.destinationCityy.value) || t.destinationCityy.value<0 || t.destinationCityy.value>749)
-       errMsg += "Y coordinates must be between 0 and 749<br>";
-      
-      if (ById("RAApiKnight").value==0 && typemarche==4) {
-       errMsg += "No knight selected!<BR>"; 
-      }
-      
-      if (errMsg != "") {
-           t.statutRAA.innerHTML = "<FONT COLOR=#550000>"+ errMsg +"</font>";
-           return;
-      }
-      
-      var x=t.destinationCityx.value;
-      var y=t.destinationCityy.value;
-      // On sauvegardes les coordonnes en cas de F5
-      t.SaveCoordsOptions(x,y);
-      
-      
-      // Les objets pour l'attaque !
-      var e=1;
-      var f=unsafeWindow.unixtime();
-      if(Seed.playerEffects.aurasExpire){
-      if(Seed.playerEffects.aurasExpire>f){e=1.15}}
-      if(Seed.playerEffects.auras2Expire){if(Seed.playerEffects.auras2Expire>f){e=1.3}}
+    AutoattackOnOff: function () {
+        // click click sur le bouton Activer le compte Ãƒ  rebour !
+        var t = Tabs.Attaque;
+        t.BOCompAttack.innerHTML = '';
+        clearTimeout(t.BOAttackTimer);
+        if (t.BOActiveAttack.value == 'ACTIVER : OFF') {
+            t.BOActiveAttack.value = 'ACTIVER : ON';
+            Options.AttackOnOff = true;
+            saveOptions();
+            t.activeAttack();
 
-     var l_elem=ById("BOitem_931");
-     if(l_elem&&l_elem.checked&&parseInt(Seed.items["i931"])>0){
-       e+=0.25;
-      
-     }
-     var l_elem=ById("BOitem_932");
-     if(l_elem&&l_elem.checked&&parseInt(Seed.items["i932"])>0){
-       e+=0.5;
-     }
-	 
-	 var trmarchsizebuff = Math.floor(equippedthronestats(66));
-			 if (trmarchsizebuff>unsafeWindow.cm.thronestats.boosts.MarchSize.Max)trmarchsizebuff=unsafeWindow.cm.thronestats.boosts.MarchSize.Max;
-	 if(trmarchsizebuff > 0)
-//		e+=(trmarchsizebuff/100);
-		e *=(1+trmarchsizebuff/100);
-		if(unsafeWindow.seed.cityData.city[t.sourceCity.id].isPrestigeCity){
-			var b = unsafeWindow.seed.cityData.city[t.sourceCity.id].prestigeInfo.prestigeLevel;
-			var r = unsafeWindow.cm.WorldSettings.getSetting("ASCENSION_RALLYPOINT_BOOST"),
+        } else {
+            Options.AttackOnOff = false;
+            saveOptions();
+            t.BOActiveAttack.value = 'ACTIVER : OFF';
+        }
+    },
+    activeAttack: function () {
+        var t = Tabs.Attaque;
+        clearTimeout(t.BOAttackTimer);
+        if (Options.AttackGoHorloge) {
+            var depart = new Date()
+            depart.setTime(Options.AttackGoHorloge);
+            var now = unixTime() * 1000;
+            if (now >= Options.AttackGoHorloge) {
+                t.BOCompAttack.innerHTML = '<center><font color=red>LANCEMENT ATTAQUE EFFECTUE</font></center>';
+                t.destinationCityx.value = Options.AttackCibleX;
+                t.destinationCityy.value = Options.AttackCibleY;
+                ById("RAApiKnight").value = Options.AttackKnight;
+                nHtml.Click(ById("ptRAA0_" + Cities.byID[Options.AttackFromCity].idx));
+                for (var ui in uW.cm.UNIT_TYPES) ById("RAAnbunit" + uW.cm.UNIT_TYPES[ui]).value = Options.AttackUnits[parseInt(uW.cm.UNIT_TYPES[ui]) - 1];
+                t.clickATTAQUEDo(4, 0);
+                clearTimeout(t.BOAttackTimer);
+                Options.AttackGoHorloge = null;
+                saveOptions();
+            }
+            if (now > depart.getTime()) {
+                t.BOCompAttack.innerHTML = '<center><font color=red>IMPOSSIBLE</font></center>';
+                clearTimeout(t.BOAttackTimer);
+                Options.AttackGoHorloge = null;
+                saveOptions();
+                return false;
+            }
+
+            t.BOAttackTimer = setTimeout(function () {
+                var depart = new Date();
+                depart.setTime(Options.AttackGoHorloge);
+                var now = unixTime() * 1000;
+                var tempsrestant = depart.getTime() - now;
+                t.BOCompAttack.innerHTML = '<center><font color=red><b>ATTAQUE DANS ' + timestr(tempsrestant / 1000) + '</b></font></center>';
+                t.activeAttack();
+            }, 1000);
+        }
+
+    },
+    enregistreAttack: function () {
+        var t = Tabs.Attaque;
+        if (t.BOHorloge.value.match("^[0-9]{2}:[0-9]{2}:[0-9]{2}$")) {
+            var horloge = t.BOHorloge.value;
+            Options.AttackHorloge = horloge;
+
+            var ndate = new Date();
+            ndate.setHours(horloge.substr(0, 2));
+            ndate.setMinutes(horloge.substr(3, 2));
+            ndate.setSeconds(0);
+            var atunits = new Array();
+            for (var ui in uW.cm.UNIT_TYPES) atunits.push(parseInt(ById("RAAnbunit" + uW.cm.UNIT_TYPES[ui]).value));
+            Options.AttackUnits = atunits;
+            Options.AttackFromCity = t.sourceCity.id;
+            Options.AttackKnight = ById("RAApiKnight").value;
+            Options.AttackCibleX = t.destinationCityx.value;
+            Options.AttackCibleY = t.destinationCityy.value;
+
+            var x1 = parseInt(t.sourceCity.x);
+            var x2 = parseInt(t.destinationCityx.value);
+            var y1 = parseInt(t.sourceCity.y);
+            var y2 = parseInt(t.destinationCityy.value);
+            var dist = distance(x1, y1, x2, y2);
+            var tempplusgrand = 0;
+            for (var ui in uW.cm.UNIT_TYPES) {
+                r = uW.cm.UNIT_TYPES[ui];
+                if (parseInt(ById("RAAnbunit" + r).value) > 0) {
+                    var m = estETA(dist, r, t.sourceCity.id);
+                    if (tempplusgrand < m.ETA) tempplusgrand = m.ETA;
+                }
+            }
+            var departtime = ndate.getTime() - (tempplusgrand * 1000);
+            var depart = new Date()
+            depart.setTime(departtime);
+
+            var now = unixTime() * 1000;
+            if (now > depart.getTime()) {
+                t.BOAttackProg.innerHTML = "Depart impossible !";
+                return false;
+            }
+            Options.AttackGoHorloge = depart.getTime();
+            saveOptions();
+            t.BOAttackProg.innerHTML = "Attaque sur " + Options.AttackCibleX + "," + Options.AttackCibleY + " enregistr&eacute;e";
+            t.BOEditAttack.disabled = false;
+        } else {
+            t.BOAttackProg.innerHTML = "Mauvais format de l'horloge.";
+        }
+
+    },
+    clickATTAQUEDo: function (typemarche, bouffe) {
+        var t = Tabs.Attaque;
+        var totalunit = 0;
+        if (typemarche == 3 && ById("RAAnbunit3").value == 0) ById("RAAnbunit3").value = 1;
+        for (var ui in uW.cm.UNIT_TYPES) {
+            r = uW.cm.UNIT_TYPES[ui];
+            if (typemarche == 3 && r != 3) {
+                ById("RAAnbunit" + r).value = 0;
+            }
+            if (parseInt(ById("RAAnbunit" + r).value) > parseInt(ById("RAAdestunit" + r).value)) {
+                ById("RAAnbunit" + r).style.backgroundColor = "red";
+                return false;
+            }
+            totalunit = totalunit + parseInt(ById("RAAnbunit" + r).value);
+            ById("RAAnbunit" + r).style.backgroundColor = "";
+        }
+        var errMsg = "";
+        if (isNaN(t.destinationCityx.value) || t.destinationCityx.value < 0 || t.destinationCityx.value > 749)
+            errMsg = "X coordinates must be between 0 and 749<BR>";
+        if (isNaN(t.destinationCityy.value) || t.destinationCityy.value < 0 || t.destinationCityy.value > 749)
+            errMsg += "Y coordinates must be between 0 and 749<br>";
+
+        if (ById("RAApiKnight").value == 0 && typemarche == 4) {
+            errMsg += "No knight selected!<BR>";
+        }
+
+        if (errMsg != "") {
+            t.statutRAA.innerHTML = "<FONT COLOR=#550000>" + errMsg + "</font>";
+            return;
+        }
+
+        var x = t.destinationCityx.value;
+        var y = t.destinationCityy.value;
+        // On sauvegardes les coordonnes en cas de F5
+        t.SaveCoordsOptions(x, y);
+
+
+        // Les objets pour l'attaque !
+        var e = 1;
+        var f = unsafeWindow.unixtime();
+        if (Seed.playerEffects.aurasExpire) {
+            if (Seed.playerEffects.aurasExpire > f) {
+                e = 1.15
+            }
+        }
+        if (Seed.playerEffects.auras2Expire) {
+            if (Seed.playerEffects.auras2Expire > f) {
+                e = 1.3
+            }
+        }
+
+        var l_elem = ById("BOitem_931");
+        if (l_elem && l_elem.checked && parseInt(Seed.items["i931"]) > 0) {
+            e += 0.25;
+
+        }
+        var l_elem = ById("BOitem_932");
+        if (l_elem && l_elem.checked && parseInt(Seed.items["i932"]) > 0) {
+            e += 0.5;
+        }
+
+        var trmarchsizebuff = Math.floor(equippedthronestats(66));
+        if (trmarchsizebuff > unsafeWindow.cm.thronestats.boosts.MarchSize.Max) trmarchsizebuff = unsafeWindow.cm.thronestats.boosts.MarchSize.Max;
+        if (trmarchsizebuff > 0)
+        //		e+=(trmarchsizebuff/100);
+            e *= (1 + trmarchsizebuff / 100);
+        if (unsafeWindow.seed.cityData.city[t.sourceCity.id].isPrestigeCity) {
+            var b = unsafeWindow.seed.cityData.city[t.sourceCity.id].prestigeInfo.prestigeLevel;
+            var r = unsafeWindow.cm.WorldSettings.getSetting("ASCENSION_RALLYPOINT_BOOST"),
                 m = JSON.parse(r),
                 u = m.values[b - 1][1],
                 k = parseFloat(u);
             e *= k
-            if(unsafeWindow.seed.cityData.city[t.sourceCity.id].prestigeInfo.blessings.indexOf(207) != -1)e *= 1.1;
-		}
-      var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-      
-      if (totalunit==0) {
-         t.statutRAA.innerHTML = '<FONT COLOR=#550000>You have no available units!</font>';
-           return;
-      }
-      var niveauPointRall=parseInt(getCityBuilding (t.sourceCity.id, 12).maxLevel); // 12=Point de ralliement
-         var maxtroupe=Math.round(niveauPointRall*10000*e-0.001);
-         if (niveauPointRall==11) maxtroupe=Math.round(150000*e-0.001);
-         if (niveauPointRall==12) maxtroupe=Math.round(200000*e-0.001);
-      if (totalunit>maxtroupe) {
-       t.statutRAA.innerHTML = '<FONT COLOR=#550000>You can only send '+maxtroupe+' units.</font>';
-       return;
-      }
-      var iused=new Array();
-      var itemlist=[55,57,931,932];
-      for(var i=0;i<itemlist.length;i++){
-      
-       var l_elem=ById("BOitem_"+itemlist[i]);
-       if(l_elem&&l_elem.checked&&parseInt(Seed.items["i"+itemlist[i]])>0){
-        iused.push(itemlist[i]);       
-       }      
-      }
-      var res=0;
-      if (bouffe==1) {
-       for (var i=1;i<nTroopType+1;i++) {
-        res += parseInt(unsafeWindow.unitstats['unt'+i][5] * ById("RAAnbunit"+i).value * (1 + (0.10 * Seed.tech.tch10) + Math.min(equippedthronestats(6)/100,6.25)));
-       }
-      }
-      params.items=iused.join(","); 
-         params.cid= t.sourceCity.id;
-         params.type = typemarche; // 5 = REASSIGNER - 4 = ATTAQUE - 2 = RENFORCER
-         params.xcoord = x;
-         params.ycoord = y;
-   	 params.kid= ById("RAApiKnight").value;
-	 params.r1 = res-1; // reduce max by 1 to avoid load capacity errors due to roundoff
-	 params.r2 = 0; 
-	 params.r3 = 0; 
-	 params.r4 = 0; 
-	 params.gold = 0;
- 
-	 for (var i=1;i<nTroopType+1;i++) {
-	   params["u"+i] = 0;
-	 }
-         if (typemarche!=3) {
-	   for (var i=1;i<nTroopType+1;i++) {
-  	     if (ById("RAAnbunit"+i).value>0) params["u"+i] = ById("RAAnbunit"+i).value;
-	   }
-	 } else {
-	   params.u3 = ById("RAAnbunit3").value;
-	   ById("RAAnbunit3").value=0;
-	 }
+            if (unsafeWindow.seed.cityData.city[t.sourceCity.id].prestigeInfo.blessings.indexOf(207) != -1) e *= 1.1;
+        }
+        var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
 
-         t.actionRAA.disabled=true;
-         t.actionREN.disabled=true;
-         t.actionREE.disabled=true;
-         t.statutRAA.innerHTML = "<i><b>Sending march....</b></i>";
-         new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/march.php" + unsafeWindow.g_ajaxsuffix, {
+        if (totalunit == 0) {
+            t.statutRAA.innerHTML = '<FONT COLOR=#550000>You have no available units!</font>';
+            return;
+        }
+        var niveauPointRall = parseInt(getCityBuilding(t.sourceCity.id, 12).maxLevel); // 12=Point de ralliement
+        var maxtroupe = Math.round(niveauPointRall * 10000 * e - 0.001);
+        if (niveauPointRall == 11) maxtroupe = Math.round(150000 * e - 0.001);
+        if (niveauPointRall == 12) maxtroupe = Math.round(200000 * e - 0.001);
+        if (totalunit > maxtroupe) {
+            t.statutRAA.innerHTML = '<FONT COLOR=#550000>You can only send ' + maxtroupe + ' units.</font>';
+            return;
+        }
+        var iused = new Array();
+        var itemlist = [55, 57, 931, 932];
+        for (var i = 0; i < itemlist.length; i++) {
+
+            var l_elem = ById("BOitem_" + itemlist[i]);
+            if (l_elem && l_elem.checked && parseInt(Seed.items["i" + itemlist[i]]) > 0) {
+                iused.push(itemlist[i]);
+            }
+        }
+        var res = 0;
+        if (bouffe == 1) {
+            for (var ui in uW.cm.UNIT_TYPES) {
+                i = uW.cm.UNIT_TYPES[ui];
+                res += parseInt(unsafeWindow.unitstats['unt' + i][5] * ById("RAAnbunit" + i).value * (1 + (0.10 * Seed.tech.tch10) + Math.min(equippedthronestats(6) / 100, 6.25)));
+            }
+        }
+        params.items = iused.join(",");
+        params.cid = t.sourceCity.id;
+        params.type = typemarche; // 5 = REASSIGNER - 4 = ATTAQUE - 2 = RENFORCER
+        params.xcoord = x;
+        params.ycoord = y;
+        params.kid = ById("RAApiKnight").value;
+        params.r1 = res - 1; // reduce max by 1 to avoid load capacity errors due to roundoff
+        params.r2 = 0;
+        params.r3 = 0;
+        params.r4 = 0;
+        params.gold = 0;
+
+        for (var ui in uW.cm.UNIT_TYPES) {
+            i = uW.cm.UNIT_TYPES[ui];
+            params["u" + i] = 0;
+        }
+        if (typemarche != 3) {
+            for (var ui in uW.cm.UNIT_TYPES) {
+                i = uW.cm.UNIT_TYPES[ui];
+                if (ById("RAAnbunit" + i).value > 0) params["u" + i] = ById("RAAnbunit" + i).value;
+            }
+        } else {
+            params.u3 = ById("RAAnbunit3").value;
+            ById("RAAnbunit3").value = 0;
+        }
+
+        t.actionRAA.disabled = true;
+        t.actionREN.disabled = true;
+        t.actionREE.disabled = true;
+        t.statutRAA.innerHTML = "<i><b>Sending march....</b></i>";
+        new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/march.php" + unsafeWindow.g_ajaxsuffix, {
             method: "post",
             parameters: params,
             loading: true,
             onSuccess: function (transport) {
-               var t = Tabs.Attaque;  
-               var rslt = transport;
-               if (rslt.ok) {
-                  var timediff = parseInt(rslt.eta) - parseInt(rslt.initTS);
-				  var rtimediff=parseInt(rslt.returnTS)-parseInt(rslt.initTS);
-                  var ut = unsafeWindow.unixtime();
+                var t = Tabs.Attaque;
+                var rslt = transport;
+                if (rslt.ok) {
+                    var timediff = parseInt(rslt.eta) - parseInt(rslt.initTS);
+                    var rtimediff = parseInt(rslt.returnTS) - parseInt(rslt.initTS);
+                    var ut = unsafeWindow.unixtime();
 
-                  var unitsarr = [];
-                  for (j in unsafeWindow.unitcost)
-                     unitsarr.push(0);
-                  for(i = 0; i <= unitsarr.length; i++)
-                     if(params["u"+i])
-                        unitsarr[i] = params["u"+i];
+                    var unitsarr = [];
+                    for (j in unsafeWindow.unitcost)
+                        unitsarr.push(0);
+                    for (i = 0; i <= unitsarr.length; i++)
+                        if (params["u" + i])
+                            unitsarr[i] = params["u" + i];
 
-                  var resources=new Array();
-                  resources[0] = params.gold;
-                  for(i=1; i<=5; i++){
-                     resources[i] = params["r"+i];
-                  }
-                  var currentcityid =  t.sourceCity.id;
-                  unsafeWindow.attach_addoutgoingmarch(rslt.marchId, rslt.marchUnixTime, ut + timediff, params.xcoord, params.ycoord, unitsarr, params.type, params.kid, resources, rslt.tileId, rslt.tileType, rslt.tileLevel, currentcityid, true, ut + rtimediff);
-                  if(rslt.updateSeed){unsafeWindow.update_seed(rslt.updateSeed)};
+                    var resources = new Array();
+                    resources[0] = params.gold;
+                    for (i = 1; i <= 5; i++) {
+                        resources[i] = params["r" + i];
+                    }
+                    var currentcityid = t.sourceCity.id;
+                    unsafeWindow.attach_addoutgoingmarch(rslt.marchId, rslt.marchUnixTime, ut + timediff, params.xcoord, params.ycoord, unitsarr, params.type, params.kid, resources, rslt.tileId, rslt.tileType, rslt.tileLevel, currentcityid, true, ut + rtimediff);
+                    if (rslt.updateSeed) {
+                        unsafeWindow.update_seed(rslt.updateSeed)
+                    };
 
-                  for(var i=0;i<iused.length;i++){
-                     Seed.items["i"+iused[i]]=parseInt(Seed.items["i"+iused[i]])-1;unsafeWindow.ksoItems[iused[i]].subtract();
-                  }
-                  var typeattaque = "";
-                  switch (typemarche){
-                     case 2:
-                        typeattaque="Reinforce successful";
+                    for (var i = 0; i < iused.length; i++) {
+                        Seed.items["i" + iused[i]] = parseInt(Seed.items["i" + iused[i]]) - 1;
+                        unsafeWindow.ksoItems[iused[i]].subtract();
+                    }
+                    var typeattaque = "";
+                    switch (typemarche) {
+                    case 2:
+                        typeattaque = "Reinforce successful";
                         break;
-                     case 3:
-                        typeattaque="Scout successful";
+                    case 3:
+                        typeattaque = "Scout successful";
                         break;
-                     case 4:
-                        typeattaque="Attack successful";
+                    case 4:
+                        typeattaque = "Attack successful";
                         break;
-                     case 5:
-                        typeattaque="Reassign successful";
+                    case 5:
+                        typeattaque = "Reassign successful";
                         break;
-                     default:
-                        typeattaque="March successful";
-                  }
-                  t.statutRAA.innerHTML = "<center><font size='3px'><b>"+typeattaque+"</b></font></center>";
-                  t.clickRAACitySourceSelect(t.sourceCity);
-               } else {
-                  t.statutRAA.innerHTML ="<font color=red size='3px'><b>Error sending march!<b></font>";
-                  if(rslt.error_code && (rslt.error_code == 212 || rslt.error_code == 213)) {
-              		  Seed.knights['city'+params.cid]['knt'+params.kid].knightStatus = 10;
-                  };
-                  if (rslt.msg) {
-                     t.statutRAA.innerHTML +="<br><font color=black size='2px'>" + rslt.msg +"</font>";
-                  }else{
-                     t.statutRAA.innerHTML +="<br>Waiting for 2 seconds!</font>";
-                     //setTimeout(function() { t.clickATTAQUEDo(); }, 2000);
-                  }
-               }
-               t.actionRAA.disabled=false;
-               t.actionREN.disabled=false;
-               t.actionREE.disabled=false;
+                    default:
+                        typeattaque = "March successful";
+                    }
+                    t.statutRAA.innerHTML = "<center><font size='3px'><b>" + typeattaque + "</b></font></center>";
+                    t.clickRAACitySourceSelect(t.sourceCity);
+                } else {
+                    t.statutRAA.innerHTML = "<font color=red size='3px'><b>Error sending march!<b></font>";
+                    if (rslt.error_code && (rslt.error_code == 212 || rslt.error_code == 213)) {
+                        Seed.knights['city' + params.cid]['knt' + params.kid].knightStatus = 10;
+                    };
+                    if (rslt.msg) {
+                        t.statutRAA.innerHTML += "<br><font color=black size='2px'>" + rslt.msg + "</font>";
+                    } else {
+                        t.statutRAA.innerHTML += "<br>Waiting for 2 seconds!</font>";
+                        //setTimeout(function() { t.clickATTAQUEDo(); }, 2000);
+                    }
+                }
+                t.actionRAA.disabled = false;
+                t.actionREN.disabled = false;
+                t.actionREE.disabled = false;
             },
             onFailure: function () {
-               var t = Tabs.Attaque;
-               t.statutRAA.innerHTML ="<font color=red size='3px'><b>Error communicating with server!<b></font>";
-               t.actionRAA.disabled=false;
-               t.actionREN.disabled=false;
-               t.actionREE.disabled=false;
+                var t = Tabs.Attaque;
+                t.statutRAA.innerHTML = "<font color=red size='3px'><b>Error communicating with server!<b></font>";
+                t.actionRAA.disabled = false;
+                t.actionREN.disabled = false;
+                t.actionREE.disabled = false;
             }
-         },true);
+        }, true);
 
 
     },
-  
-    estimerRes: function() {
-     var t = Tabs.Attaque;
-     // CAlcul de ETA = Estimation du temps de marches
-     var x1 = parseInt(t.sourceCity.x);
-     var x2 = parseInt(t.destinationCityx.value);
-     var y1 = parseInt(t.sourceCity.y);
-     var y2 = parseInt(t.destinationCityy.value);
-     var dist = distance (x1, y1, x2, y2);
-     ById("BOEstimationD").innerHTML = '<b>' + dist + '</b>&nbsp;<a href="javascript:void(0)" onclick="cm.utils.CoordinateLinkController.onClick(event)" class="coordinateLink">('+ t.destinationCityx.value +','+ t.destinationCityy.value +')</a>';     
-     for (r=1; r<nTroopType+1; r++){
-        var m = estETA(dist, r, t.sourceCity.id);
-        ById("BOEstimationTT"+r).innerHTML = "<b>" + m.etaStr + "</b>";
-        ById("BOEstimationTZ"+r).innerHTML = "<b>" + m.friendEtaStr + "</b>";
-     }
+
+    estimerRes: function () {
+        var t = Tabs.Attaque;
+        // CAlcul de ETA = Estimation du temps de marches
+        var x1 = parseInt(t.sourceCity.x);
+        var x2 = parseInt(t.destinationCityx.value);
+        var y1 = parseInt(t.sourceCity.y);
+        var y2 = parseInt(t.destinationCityy.value);
+        var dist = distance(x1, y1, x2, y2);
+        ById("BOEstimationD").innerHTML = '<b>' + dist + '</b>&nbsp;<a href="javascript:void(0)" onclick="cm.utils.CoordinateLinkController.onClick(event)" class="coordinateLink">(' + t.destinationCityx.value + ',' + t.destinationCityy.value + ')</a>';
+        for (var ui in uW.cm.UNIT_TYPES) {
+            r = uW.cm.UNIT_TYPES[ui];
+            var m = estETA(dist, r, t.sourceCity.id);
+            ById("BOEstimationTT" + r).innerHTML = "<b>" + m.etaStr + "</b>";
+            ById("BOEstimationTZ" + r).innerHTML = "<b>" + m.friendEtaStr + "</b>";
+        }
     },
-    SelectFavoris:function() {
-      var t = Tabs.Attaque;
-      if (t.listeFavoris.value!='') {
-       var valeur=t.listeFavoris.value;
-       var x=valeur.substr(0, valeur.lastIndexOf(','));
-       var y=valeur.substr(valeur.lastIndexOf(',')+1, valeur.length);
-       t.destinationCityx.value = x;
-       t.destinationCityy.value = y;
-      }
-      t.estimerRes();
-     },
-      chercherFavoris: function() {
-      var t = Tabs.Attaque;
-      var myA = getMyAlliance ();
-      if (myA[0]!=0) {
-         var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-         params.perPage = 100;
-         params.allianceId = myA[0];
-             new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/getUserLeaderboard.php" + unsafeWindow.g_ajaxsuffix, {
-   	        method: "post",
-   	        parameters: params,
-   	        onSuccess: function (rslt) {
-   	          // on vide la liste
-   	          //t.listeFavoris.innerHTML=null;
-   	          if (rslt.ok){
-   	           var z=0;
-   	           var m="";
-   	           for (var i=0; i<rslt.results.length; i++){
-        		      p = rslt.results[i];
-   		      if (p.userId != 0){
-   		       for (var c=0; c<p.cities.length; c++){
-   		         if (Seed.player.name!=p.displayName) {
-   		          m += "<option value='" + p.cities[c].xCoord + ","+ p.cities[c].yCoord+"'>" + p.displayName + " - City " + (c+1) + " - " + p.cities[c].xCoord + "," + p.cities[c].yCoord+"</option>";
-   		         }
-   		       }  //fin for cities  	       
-   		      }   //fin if user 
-         	            } //fin for resultat
-         	    t.listeFavoris.innerHTML="<option value=''>Selection...</option>"+m;
-   	          }// fin
-   	        },
-   	        onFailure: function (rslt) {
-   	          t.listeFavoris.innerHTML="<option>Error getting info</option>";
-   	        },
-       	});
-             
-      } else {
-        // Si pas d'alliance !
-        t.listeFavoris.innerHTML="<option>Pas d'alliance !</option>";
-      }
-         
-  },
-   SaveCoordsOptions: function(x,y) {
-       Options.Xrenfort = x;
-       Options.Yrenfort = y;
-       saveOptions ();
-  },
-   
-   Refreshtroops : function (){
-	   if(!ById("RAAstatsource"))return;
-     var t = Tabs.Attaque;
-	   var cityID = 'city'+ t.sourceCity.id;
-	   for (r=1; r<nTroopType+1; r++)
-	   ById('RAAdestunit'+r).value = parseInt(Seed.units[cityID]['unt'+r]);
-	   setTimeout(t.Refreshtroops,1000);
-   },
-   
-   
-  clickRAACitySourceSelect : function (city){
-     var t = Tabs.Attaque;
-    
-     if (t.sourceCity!=city) {
-      t.sourceCity = city; 
-     }
-     var m="";
-     m="<table cellspacing=0 cellpadding=0 width=80%><tr><td colspan=2>Units Available</td></tr>";
-     var cityID = 'city'+ t.sourceCity.id;
-     for (r=1; r<nTroopType+1; r++){   
-       m += '<tr><td align=right><img title="'+unsafeWindow.unitcost['unt'+r][0] +'" alt="'+unsafeWindow.unitcost['unt'+r][0] + '" height=20 src=https://kabam1-a.akamaihd.net/silooneofcamelot//fb/e2/src/img/units/unit_'+r+'_30.jpg></td>\
-             <td align=left><input style="border:1px solid black;height:20px;font-size:11px;" id="RAAdestunit'+r+'" type=text size=10 readonly value="'+parseInt(Seed.units[cityID]['unt'+r])+'">&nbsp;\
-             <input type=button value="--->" id="RAApdestunit'+r+'"  style="border:1px solid black;height:16px;font-size:11px;"></td></tr>';
-     }
-     m += "</table>";
-     ById("RAAstatsource").innerHTML = m;
+    SelectFavoris: function () {
+        var t = Tabs.Attaque;
+        if (t.listeFavoris.value != '') {
+            var valeur = t.listeFavoris.value;
+            var x = valeur.substr(0, valeur.lastIndexOf(','));
+            var y = valeur.substr(valeur.lastIndexOf(',') + 1, valeur.length);
+            t.destinationCityx.value = x;
+            t.destinationCityy.value = y;
+        }
+        t.estimerRes();
+    },
+    chercherFavoris: function () {
+        var t = Tabs.Attaque;
+        var myA = getMyAlliance();
+        if (myA[0] != 0) {
+            var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+            params.perPage = 100;
+            params.allianceId = myA[0];
+            new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/getUserLeaderboard.php" + unsafeWindow.g_ajaxsuffix, {
+                method: "post",
+                parameters: params,
+                onSuccess: function (rslt) {
+                    // on vide la liste
+                    //t.listeFavoris.innerHTML=null;
+                    if (rslt.ok) {
+                        var z = 0;
+                        var m = "";
+                        for (var i = 0; i < rslt.results.length; i++) {
+                            p = rslt.results[i];
+                            if (p.userId != 0) {
+                                for (var c = 0; c < p.cities.length; c++) {
+                                    if (Seed.player.name != p.displayName) {
+                                        m += "<option value='" + p.cities[c].xCoord + "," + p.cities[c].yCoord + "'>" + p.displayName + " - City " + (c + 1) + " - " + p.cities[c].xCoord + "," + p.cities[c].yCoord + "</option>";
+                                    }
+                                } //fin for cities  	       
+                            } //fin if user 
+                        } //fin for resultat
+                        t.listeFavoris.innerHTML = "<option value=''>Selection...</option>" + m;
+                    } // fin
+                },
+                onFailure: function (rslt) {
+                    t.listeFavoris.innerHTML = "<option>Error getting info</option>";
+                },
+            });
+
+        } else {
+            // Si pas d'alliance !
+            t.listeFavoris.innerHTML = "<option>Pas d'alliance !</option>";
+        }
+
+    },
+    SaveCoordsOptions: function (x, y) {
+        Options.Xrenfort = x;
+        Options.Yrenfort = y;
+        saveOptions();
+    },
+
+    Refreshtroops: function () {
+        if (!ById("RAAstatsource")) return;
+        var t = Tabs.Attaque;
+        var cityID = 'city' + t.sourceCity.id;
+        for (var ui in uW.cm.UNIT_TYPES)
+            ById('RAAdestunit' + uW.cm.UNIT_TYPES[ui]).value = parseInt(Seed.units[cityID]['unt' + uW.cm.UNIT_TYPES[ui]]);
+        setTimeout(t.Refreshtroops, 1000);
+    },
+
+
+    clickRAACitySourceSelect: function (city) {
+        var t = Tabs.Attaque;
+
+        if (t.sourceCity != city) {
+            t.sourceCity = city;
+        }
+        var m = "";
+        m = "<table cellspacing=0 cellpadding=0 width=80%><tr><td colspan=2>Units Available</td></tr>";
+        var cityID = 'city' + t.sourceCity.id;
+        for (var ui in uW.cm.UNIT_TYPES) {
+            r = uW.cm.UNIT_TYPES[ui];
+            m += '<tr><td align=right><img title="' + unsafeWindow.unitcost['unt' + r][0] + '" alt="' + unsafeWindow.unitcost['unt' + r][0] + '" height=20 src=https://kabam1-a.akamaihd.net/silooneofcamelot//fb/e2/src/img/units/unit_' + r + '_30.jpg></td>\
+             <td align=left><input style="border:1px solid black;height:20px;font-size:11px;" id="RAAdestunit' + r + '" type=text size=10 readonly value="' + parseInt(Seed.units[cityID]['unt' + r]) + '">&nbsp;\
+             <input type=button value="--->" id="RAApdestunit' + r + '"  style="border:1px solid black;height:16px;font-size:11px;"></td></tr>';
+        }
+        m += "</table>";
+        ById("RAAstatsource").innerHTML = m;
         var knt = new Array();
-        for (k in Seed.knights['city' + t.sourceCity.id]){
-               		if (Seed.knights['city' + t.sourceCity.id][k]["knightStatus"] == 1 && Seed.leaders['city' + t.sourceCity.id]["resourcefulnessKnightId"] != Seed.knights['city' + t.sourceCity.id][k]["knightId"] && Seed.leaders['city' + t.sourceCity.id]["politicsKnightId"] != Seed.knights['city' + t.sourceCity.id][k]["knightId"] && Seed.leaders['city' + t.sourceCity.id]["combatKnightId"] != Seed.knights['city' + t.sourceCity.id][k]["knightId"] && Seed.leaders['city' + t.sourceCity.id]["intelligenceKnightId"] != Seed.knights['city' + t.sourceCity.id][k]["knightId"]){
-               			knt.push ({
-               				Name:   Seed.knights['city' + t.sourceCity.id][k]["knightName"],
-               				Combat:	Seed.knights['city' + t.sourceCity.id][k]["combat"],
-               				ID:	Seed.knights['city' + t.sourceCity.id][k]["knightId"],
-               			});
-               		}
-               }
-               knt = knt.sort(function sort(a,b) {a = parseInt(a['Combat']);b = parseInt(b['Combat']);return a == b ? 0 : (a > b ? -1 : 1);}); 
-               ById('RAApiKnight').options.length=0;
-               var o = document.createElement("option");
-     	       o.text = "--Select a Knight--"
-     	       o.value = 0;
-               ById("RAApiKnight").options.add(o);
-               for (k in knt){
-            			if (knt[k]["Name"] !=undefined){
-        	    			var o = document.createElement("option");
-        	    			o.text = (knt[k]["Name"] + ' (' + knt[k]["Combat"] +')')
-        	    			o.value = knt[k]["ID"];
-        	    			ById("RAApiKnight").options.add(o);
-            			}
-         }
-     
-      if (ById('RAApiKnight').options.length>0) {
-		  if(Options.marchautoknight)
-			ById('RAApiKnight').selectedIndex=1;
-      } 
-      
-      var itemlist=[55,57,931,932];
-      for(var i=0;i<itemlist.length;i++){
-        ById('BOitemSpan_'+itemlist[i]).innerHTML = unsafeWindow.ksoItems[itemlist[i]].count;
-      }
-     for (r=1; r<nTroopType+1; r++){
-       ById("RAApdestunit"+r).addEventListener ('click', function() {
-			 var nomcha=this.id.replace("RAApdest","RAAdest");
-			 var nomcha2=this.id.replace("RAApdestunit","RAAnbunit");
-			 ById(nomcha2).value=0; 
-			 var e=1;
-			 var f=unsafeWindow.unixtime();
-			 if(Seed.playerEffects.aurasExpire){if(Seed.playerEffects.aurasExpire>f){e=1.15}}
-			 if(Seed.playerEffects.auras2Expire){if(Seed.playerEffects.auras2Expire>f){e=1.3}}
+        for (k in Seed.knights['city' + t.sourceCity.id]) {
+            if (Seed.knights['city' + t.sourceCity.id][k]["knightStatus"] == 1 && Seed.leaders['city' + t.sourceCity.id]["resourcefulnessKnightId"] != Seed.knights['city' + t.sourceCity.id][k]["knightId"] && Seed.leaders['city' + t.sourceCity.id]["politicsKnightId"] != Seed.knights['city' + t.sourceCity.id][k]["knightId"] && Seed.leaders['city' + t.sourceCity.id]["combatKnightId"] != Seed.knights['city' + t.sourceCity.id][k]["knightId"] && Seed.leaders['city' + t.sourceCity.id]["intelligenceKnightId"] != Seed.knights['city' + t.sourceCity.id][k]["knightId"]) {
+                knt.push({
+                    Name: Seed.knights['city' + t.sourceCity.id][k]["knightName"],
+                    Combat: Seed.knights['city' + t.sourceCity.id][k]["combat"],
+                    ID: Seed.knights['city' + t.sourceCity.id][k]["knightId"],
+                });
+            }
+        }
+        knt = knt.sort(function sort(a, b) {
+            a = parseInt(a['Combat']);
+            b = parseInt(b['Combat']);
+            return a == b ? 0 : (a > b ? -1 : 1);
+        });
+        ById('RAApiKnight').options.length = 0;
+        var o = document.createElement("option");
+        o.text = "--Select a Knight--"
+        o.value = 0;
+        ById("RAApiKnight").options.add(o);
+        for (k in knt) {
+            if (knt[k]["Name"] != undefined) {
+                var o = document.createElement("option");
+                o.text = (knt[k]["Name"] + ' (' + knt[k]["Combat"] + ')')
+                o.value = knt[k]["ID"];
+                ById("RAApiKnight").options.add(o);
+            }
+        }
 
-			 var l_elem=ById("BOitem_931");
-			 if(l_elem&&l_elem.checked&&parseInt(Seed.items["i931"])>0)
-				e+=0.25;
-			 var l_elem=ById("BOitem_932");
-			 if(l_elem&&l_elem.checked&&parseInt(Seed.items["i932"])>0)
-				e+=0.5;
-				
-			var trmarchsizebuff = Math.floor(equippedthronestats(66));
-			 if (trmarchsizebuff>unsafeWindow.cm.thronestats.boosts.MarchSize.Max)trmarchsizebuff=unsafeWindow.cm.thronestats.boosts.MarchSize.Max;
-			 if(trmarchsizebuff > 0)
-//				e+=(trmarchsizebuff/100);
-				e *=(1+trmarchsizebuff/100);
-		if(unsafeWindow.seed.cityData.city[t.sourceCity.id].isPrestigeCity){
-			var b = unsafeWindow.seed.cityData.city[t.sourceCity.id].prestigeInfo.prestigeLevel;
-			var r = unsafeWindow.cm.WorldSettings.getSetting("ASCENSION_RALLYPOINT_BOOST"),
-                m = JSON.parse(r),
-                u = m.values[b - 1][1],
-                k = parseFloat(u);
-            e *= k
-            if(unsafeWindow.seed.cityData.city[t.sourceCity.id].prestigeInfo.blessings.indexOf(207) != -1)e *= 1.1;
-		}
+        if (ById('RAApiKnight').options.length > 0) {
+            if (Options.marchautoknight)
+                ById('RAApiKnight').selectedIndex = 1;
+        }
 
-			 var niveauPointRall=parseInt(getCityBuilding (t.sourceCity.id, 12).maxLevel); // 12=Point de ralliement
-			 var maxtroupe=Math.round(niveauPointRall*10000*e-0.001);
-			 if (niveauPointRall==11) maxtroupe=Math.round(150000*e-0.001);
-			 if (niveauPointRall==12) maxtroupe=Math.round(200000*e-0.001);
-			 var nbunitto=0;
-         for (r=1; r<nTroopType+1; r++) {
-			   nbunitto+=parseInt(ById("RAAnbunit"+r).value);
-			 }
-			 var libre = parseInt(maxtroupe - nbunitto);
-			 if (ById(nomcha).value>=libre) {
-			   ById(nomcha2).value = libre;
-			 }  else {
-			   ById(nomcha2).value= ById(nomcha).value;
-			 }
-       }, false);
-     }
-     if (t.sourceCity!=city) {
-           for (r=1; r<nTroopType+1; r++){
-            ById("RAAnbunit"+r).value="0";
-           }
-     } else {
-          
-          for (r=1; r<nTroopType+1; r++){
-              if (ById("RAAnbunit"+r).value=="") ById("RAAnbunit"+r).value="0";
-              if (ById("RAAdestunit"+r).value=="") ById("RAAdestunit"+r).value="0";
-                if (parseInt(ById("RAAnbunit"+r).value)>parseInt(ById("RAAdestunit"+r).value)) {
-                 ById("RAAnbunit"+r).value="0";
+        var itemlist = [55, 57, 931, 932];
+        for (var i = 0; i < itemlist.length; i++) {
+            ById('BOitemSpan_' + itemlist[i]).innerHTML = unsafeWindow.ksoItems[itemlist[i]].count;
+        }
+        for (var ui in uW.cm.UNIT_TYPES) {
+            r = uW.cm.UNIT_TYPES[ui];
+            ById("RAApdestunit" + r).addEventListener('click', function () {
+                var nomcha = this.id.replace("RAApdest", "RAAdest");
+                var nomcha2 = this.id.replace("RAApdestunit", "RAAnbunit");
+                ById(nomcha2).value = 0;
+                var e = 1;
+                var f = unsafeWindow.unixtime();
+                if (Seed.playerEffects.aurasExpire) {
+                    if (Seed.playerEffects.aurasExpire > f) {
+                        e = 1.15
+                    }
                 }
-           }
-     }
-     t.estimerRes();
-     var closestNum = t.getclosestcity();
-     //if(t.dcp1)
-		//t.dcp1.selectBut(closestNum);
-   },
- 
- 
+                if (Seed.playerEffects.auras2Expire) {
+                    if (Seed.playerEffects.auras2Expire > f) {
+                        e = 1.3
+                    }
+                }
+
+                var l_elem = ById("BOitem_931");
+                if (l_elem && l_elem.checked && parseInt(Seed.items["i931"]) > 0)
+                    e += 0.25;
+                var l_elem = ById("BOitem_932");
+                if (l_elem && l_elem.checked && parseInt(Seed.items["i932"]) > 0)
+                    e += 0.5;
+
+                var trmarchsizebuff = Math.floor(equippedthronestats(66));
+                if (trmarchsizebuff > unsafeWindow.cm.thronestats.boosts.MarchSize.Max) trmarchsizebuff = unsafeWindow.cm.thronestats.boosts.MarchSize.Max;
+                if (trmarchsizebuff > 0)
+                //				e+=(trmarchsizebuff/100);
+                    e *= (1 + trmarchsizebuff / 100);
+                if (unsafeWindow.seed.cityData.city[t.sourceCity.id].isPrestigeCity) {
+                    var b = unsafeWindow.seed.cityData.city[t.sourceCity.id].prestigeInfo.prestigeLevel;
+                    var r = unsafeWindow.cm.WorldSettings.getSetting("ASCENSION_RALLYPOINT_BOOST"),
+                        m = JSON.parse(r),
+                        u = m.values[b - 1][1],
+                        k = parseFloat(u);
+                    e *= k
+                    if (unsafeWindow.seed.cityData.city[t.sourceCity.id].prestigeInfo.blessings.indexOf(207) != -1) e *= 1.1;
+                }
+
+                var niveauPointRall = parseInt(getCityBuilding(t.sourceCity.id, 12).maxLevel); // 12=Point de ralliement
+                var maxtroupe = Math.round(niveauPointRall * 10000 * e - 0.001);
+                if (niveauPointRall == 11) maxtroupe = Math.round(150000 * e - 0.001);
+                if (niveauPointRall == 12) maxtroupe = Math.round(200000 * e - 0.001);
+                var nbunitto = 0;
+                for (var ui in uW.cm.UNIT_TYPES) {
+                    r = uW.cm.UNIT_TYPES[ui];
+                    nbunitto += parseInt(ById("RAAnbunit" + r).value);
+                }
+                var libre = parseInt(maxtroupe - nbunitto);
+                if (ById(nomcha).value >= libre) {
+                    ById(nomcha2).value = libre;
+                } else {
+                    ById(nomcha2).value = ById(nomcha).value;
+                }
+            }, false);
+        }
+        if (t.sourceCity != city) {
+            for (var ui in uW.cm.UNIT_TYPES) {
+                r = uW.cm.UNIT_TYPES[ui];
+                ById("RAAnbunit" + r).value = "0";
+            }
+        } else {
+
+            for (var ui in uW.cm.UNIT_TYPES) {
+                r = uW.cm.UNIT_TYPES[ui];
+                if (ById("RAAnbunit" + r).value == "") ById("RAAnbunit" + r).value = "0";
+                if (ById("RAAdestunit" + r).value == "") ById("RAAdestunit" + r).value = "0";
+                if (parseInt(ById("RAAnbunit" + r).value) > parseInt(ById("RAAdestunit" + r).value)) {
+                    ById("RAAnbunit" + r).value = "0";
+                }
+            }
+        }
+        t.estimerRes();
+        var closestNum = t.getclosestcity();
+        //if(t.dcp1)
+        //t.dcp1.selectBut(closestNum);
+    },
+
+
 }
 
 function equippedthronestats (stat_id){
@@ -12318,7 +12378,7 @@ Tabs.Defend = {
                 Options.DefendFav[a] = {};
                 var lisf = Options.DefendFav[a];
                 lisf[0] = ById("DBO_AT_Fav_Nom").value;
-                for (r = 1; r < nTroopType + 1; r++) lisf[r] = ById("DAAnbunit" + r).value;
+		for (var ui in uW.cm.UNIT_TYPES) lisf[uW.cm.UNIT_TYPES[ui]] = ById("DAAnbunit" + uW.cm.UNIT_TYPES[ui]).value;
                 ById("DBO_AT_Fav_Nom").value = "";
                 saveOptions();
                 metajourfavori();
@@ -12326,7 +12386,7 @@ Tabs.Defend = {
             ById("DBO_AT_Fav").addEventListener('change', function () {
                 numfav = ById("DBO_AT_Fav").value;
                 if (numfav == "") {
-                    for (r = 1; r < nTroopType + 1; r++) ById("DAAnbunit" + r).value = 0;
+		    for (var ui in uW.cm.UNIT_TYPES) ById("DAAnbunit" + uW.cm.UNIT_TYPES[ui]).value = 0;
                 } else {
                     var lisf = Options.DefendFav[numfav];
                     for (var m in lisf) {
@@ -12392,9 +12452,7 @@ Tabs.Defend = {
             ndate.setMinutes(horloge.substr(3, 2));
             ndate.setSeconds(0);
             var atunits = new Array();
-            for (r = 1; r < nTroopType + 1; r++) {
-                atunits.push(parseInt(ById("DAAnbunit" + r).value));
-            }
+	    for (var ui in uW.cm.UNIT_TYPES) atunits.push(parseInt(ById("DAAnbunit" + uW.cm.UNIT_TYPES[ui]).value));
             Options.DefendUnits = atunits;
             Options.DefendFromCity = t.sourceCity.id;
             Options.DefendKnight = ById("DAApiKnight").value;
@@ -12407,7 +12465,8 @@ Tabs.Defend = {
             var y2 = parseInt(t.destinationCityy.value);
             var dist = distance(x1, y1, x2, y2);
             var tempplusgrand = 0;
-            for (r = 1; r < nTroopType + 1; r++) {
+	    for (var ui in uW.cm.UNIT_TYPES) {
+		r = uW.cm.UNIT_TYPES[ui];
                 if (parseInt(ById("DAAnbunit" + r).value) > 0) {
                     var m = estETA(dist, r, t.sourceCity.id);
                     if (tempplusgrand < m.ETA) tempplusgrand = m.ETA;
@@ -12436,7 +12495,8 @@ Tabs.Defend = {
         var t = Tabs.Defend;
         var totalunit = 0;
         if (typemarche == 3 && ById("DAAnbunit3").value == 0) ById("DAAnbunit3").value = 1;
-        for (r = 1; r < nTroopType + 1; r++) {
+	for (var ui in uW.cm.UNIT_TYPES) {
+	    r = uW.cm.UNIT_TYPES[ui];
             if (typemarche == 3 && r != 3) {
                 ById("DAAnbunit" + r).value = 0;
             }
@@ -12459,11 +12519,13 @@ Tabs.Defend = {
 
         params.cid = t.sourceCity.id;
 
-        for (var i = 1; i < nTroopType + 1; i++) {
+	for (var ui in uW.cm.UNIT_TYPES) {
+	    i = uW.cm.UNIT_TYPES[ui];
             params["u" + i] = 0;
         }
         if (typemarche != 3) {
-            for (var i = 1; i < nTroopType + 1; i++) {
+	    for (var ui in uW.cm.UNIT_TYPES) {
+	    	i = uW.cm.UNIT_TYPES[ui];
                 if (ById("DAAnbunit" + i).value > 0) params["u" + i] = ById("DAAnbunit" + i).value;
             }
         } else {
@@ -12589,8 +12651,10 @@ Tabs.Defend = {
         if (!ById("DAAstatsource")) return;
         var t = Tabs.Defend;
         var cityID = 'city' + t.sourceCity.id;
-        for (r = 1; r < nTroopType + 1; r++)
+	for (var ui in uW.cm.UNIT_TYPES) {
+	    r = uW.cm.UNIT_TYPES[ui];
             ById('DAAdestunit' + r).value = parseInt(Seed.units[cityID]['unt' + r]) + parseInt(Seed.defunits[cityID]['unt' + r]);
+	}
         setTimeout(t.Refreshtroops, 1000);
     },
 
@@ -12604,7 +12668,8 @@ Tabs.Defend = {
         var m = "";
         m = "<table cellspacing=0 cellpadding=0 width=80%><tr><td colspan=2>Total Units Available</td><td colspan=2>Current Defending Units</td><td colspan=2><a href='javascript:void(0)' id=BO_DRSRV_Units title='Clear' >Units to Reserve</td><td></td><td><a href='javascript:void(0)' id=BO_DAZ_Units title='Clear' >Units Selected</a></td></tr>";
         var cityID = 'city' + t.sourceCity.id;
-        for (r = 1; r < nTroopType + 1; r++) {
+	for (var ui in uW.cm.UNIT_TYPES) {
+	    r = uW.cm.UNIT_TYPES[ui];
             m += '<tr><td align=right><img title="' + unsafeWindow.unitcost['unt' + r][0] + '" height=20 src=http://kabam1-a.akamaihd.net/kingdomsofcamelot/fb/e2/src/img/units/unit_' + r + '_30.jpg></td>\
              <td align=left><input style="border:1px solid black;height:16px;font-size:11px;" id="DAAdestunit' + r + '" type=text size=10 readonly value="' + (parseInt(Seed.units[cityID]['unt' + r]) + parseInt(Seed.defunits[cityID]['unt' + r])) + '">&nbsp;</td>\
              <td></td><td ><input style="border:1px solid black;height:16px;font-size:11px;" id="DAAdefunit' + r + '" type=text size=10 readonly value="' + parseInt(Seed.defunits[cityID]['unt' + r]) + '">&nbsp;\
@@ -12618,7 +12683,8 @@ Tabs.Defend = {
         ById("DAAstatsource").innerHTML = m;
 
 
-        for (r = 1; r < nTroopType + 1; r++) {
+	for (var ui in uW.cm.UNIT_TYPES) {
+	    r = uW.cm.UNIT_TYPES[ui];
             ById("DAApdestunit" + r).addEventListener('click', function () {
                 var nomcha = this.id.replace("DAApdest", "DAAdest");
                 var nomcha2 = this.id.replace("DAApdestunit", "DAAnbunit");
@@ -12636,11 +12702,11 @@ Tabs.Defend = {
         }
 
         ById("BO_DAZ_Units").addEventListener('click', function () {
-            for (r = 1; r < nTroopType + 1; r++) ById("DAAnbunit" + r).value = 0;
+	    for (var ui in uW.cm.UNIT_TYPES) ById("DAAnbunit" + uW.cm.UNIT_TYPES[ui]).value = 0;
         }, false);
 
         ById("BO_DRSRV_Units").addEventListener('click', function () {
-            for (r = 1; r < nTroopType + 1; r++) ById("DAArsrvunit" + r).value = 0;
+	    for (var ui in uW.cm.UNIT_TYPES) ById("DAArsrvunit" + uW.cm.UNIT_TYPES[ui]).value = 0;
         }, false);
 
     },
@@ -12807,7 +12873,8 @@ Tabs.Marches = {
 				if (Seed.queue_atkinc[k]["resource3"] > 0) z += '<TD>'+GameIcons.stoneImgTiny + addCommas(Seed.queue_atkinc[k]["resource3"]) +'</td>';
 				if (Seed.queue_atkinc[k]["resource4"] > 0) z += '<TD>'+GameIcons.oreImgTiny + addCommas(Seed.queue_atkinc[k]["resource4"]) +'</td>';
         		    
-				for(i=1; i<nTroopType+1; i++){
+     				for (var ui in uW.cm.UNIT_TYPES) {
+      	      				i = uW.cm.UNIT_TYPES[ui];
 					if(Seed.queue_atkinc[k]["unit"+i+"Count"] > 0 && marchdir == "going") z += '<TD>'+ uW.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkinc[k]["unit"+i+"Count"]) +'</td>';
 					if(Seed.queue_atkinc[k]["unit"+i+"Return"] > 0 && marchdir == "returning") z += '<TD>'+ uW.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkinc[k]["unit"+i+"Return"]) +'</td>';
 				}
@@ -12817,7 +12884,8 @@ Tabs.Marches = {
 					if (Seed.queue_atkinc[k]["unts"]["u3"] > 0) z += '<TD>'+uW.unitcost.unt3[0]+': '+ addCommas(Seed.queue_atkinc[k]["unts"]["u3"]) +'</td>';
 				if (marchType == 4){
 				    if (Object.keys(Seed.queue_atkinc[k]["unts"]).length > 0)
-					for(ui=1; ui<nTroopType+1; ui++){
+     					for (var i in uW.cm.UNIT_TYPES) {
+      	      					ui = uW.cm.UNIT_TYPES[i];
 						if (Seed.queue_atkinc[k]["unts"]["u"+ui] > 0) z += '<TD>'+ uW.unitcost['unt'+ui][0] +': '+ addCommas(Seed.queue_atkinc[k]["unts"]["u"+ui]) +'</td>';
 					}
 				}
@@ -12979,7 +13047,8 @@ Tabs.Marches = {
                         tmpMsg += '<td>' + cityTo + '</td>';
                     if (knight != null)
                         tmpMsg += '<td>' + uW.g_js_strings.commonstr.knight+': '+ knight + '</td>';
-                    for(i=1; i<nTroopType+1; i++){
+     		    for (var ui in uW.cm.UNIT_TYPES) {
+      	      		i = uW.cm.UNIT_TYPES[ui];
                         if(Seed.queue_atkp[cityID][k]["unit"+i+"Count"] > 0 && type == "going")
                             tmpMsg += '<td>'+ uW.unitcost['unt'+i][0] +': '+ addCommas(Seed.queue_atkp[cityID][k]["unit"+i+"Count"]) +'</td>';
                         if(Seed.queue_atkp[cityID][k]["unit"+i+"Return"] > 0 && type == "returning")
@@ -13138,7 +13207,8 @@ return;
             s.knight = parseInt (march.knightCombat);
             s.marchId = k.substr(1);
             s.troops = [];
-            for (i=1; i<nTroopType+1; i++){
+     	    for (var ui in uW.cm.UNIT_TYPES) {
+      	      i = uW.cm.UNIT_TYPES[ui];
               if (Options.encRemaining)
                 s.troops[i] = parseInt (march['unit'+ i +'Return']);
               else
@@ -13161,8 +13231,10 @@ return;
       s += '</tr>';
 
       tot = [];
-      for (i=0; i<nTroopType+1; i++)
+      for (var ui in uW.cm.UNIT_TYPES) {
+      	i = uW.cm.UNIT_TYPES[ui];
         tot[i] = 0;
+      }
       for (c in Cities.cities){
         dest = Cities.cities[c].id;
         if (enc[dest]){
@@ -13181,7 +13253,8 @@ return;
                 knight = ' ('+ march.knight +')';
 // TODO: Only allow 'send home' if troops are here now  (marchStatus = ?)              
               s += '<TR align=right><TD align=left>'+ player + knight +' <A><SPAN onclick="r8x6Home('+ march.marchId +')">X</span></a></td>'
-              for (i=1; i<nTroopType+1; i++){
+     	      for (var ui in uW.cm.UNIT_TYPES) {
+      	        i = uW.cm.UNIT_TYPES[ui];
                 s += '<TD>'+ march.troops[i]  +'</td>';
                 tot[i] += march.troops[i];
               }
@@ -13192,8 +13265,10 @@ return;
         }
       }
       s += '<TR><TD colspan=17><BR><BR></td></tr><TR align=right><TD class="tot" align=left><B>TOTALS:</b></td>';
-      for (i=1; i<nTroopType+1; i++)
+      for (var ui in uW.cm.UNIT_TYPES) {
+      	i = uW.cm.UNIT_TYPES[ui];
         s+= '<TD class="tot">'+ tot[i] +'</td>';
+      }
       s += '</tr></table>';
     }
 
@@ -13278,8 +13353,10 @@ logit ('ajaxSendHome: '+ marchId);
         onSuccess: function (rslt) {
           if (rslt.ok){
             var upkeep = 0;
-            for (var i=1; i<nTroopType+1; i++)
+     	    for (var ui in uW.cm.UNIT_TYPES) {
+      	      i = uW.cm.UNIT_TYPES[ui];
               upkeep += parseInt(march["unit" + i + "Return"]) * parseInt(uW.unitupkeeps[i])
+	    }
             uW.seed.resources["city"+ march.toCityId].rec1[3] -= upkeep;
             if (parseInt(march.fromPlayerId) == parseInt(uW.tvuid)) {
 //logit ('FROM ME!'); 
@@ -13305,7 +13382,8 @@ logit ('ajaxSendHome: '+ marchId);
 
 /*****
 
-      for (var b = 1; b < nTroopType+1; b++) {
+      for (var ui in uW.cm.UNIT_TYPES) {
+      	b = uW.cm.UNIT_TYPES[ui];
         g += parseInt(e["unit" + b + "Return"]) * parseInt(unitupkeeps[b])
       }
 
@@ -14688,7 +14766,8 @@ function getMarchInfo (){
   ret.marchUnits = [];
   ret.returnUnits = [];
   ret.resources = [];
-  for (i=0; i<nTroopType+1; i++){
+  for (var ui in uW.cm.UNIT_TYPES) {
+    i = uW.cm.UNIT_TYPES[ui];
     ret.marchUnits[i] = 0;
     ret.returnUnits[i] = 0;
   }
@@ -14703,7 +14782,8 @@ function getMarchInfo (){
     for (k in Seed.queue_atkp[cityID]){   // each march
       march = Seed.queue_atkp[cityID][k];
       if (typeof (march) == 'object'){
-        for (ii=0; ii<nTroopType+1; ii++){
+  	for (var ui in uW.cm.UNIT_TYPES) {
+   	  ii = uW.cm.UNIT_TYPES[ui];
           ret.marchUnits[ii] += parseInt (march['unit'+ ii +'Count']);
           ret.returnUnits[ii] += parseInt (march['unit'+ ii +'Return']);
         }
@@ -14723,7 +14803,8 @@ function getTrainInfo (){
   var ret = {};
 
   ret.trainUnts = [];
-  for (i=0; i<nTroopType+1; i++){
+  for (var ui in uW.cm.UNIT_TYPES) {
+    i = uW.cm.UNIT_TYPES[ui];
     ret.trainUnts[i] = 0;
   }
   
