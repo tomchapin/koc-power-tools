@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140227a
+// @version        20140227b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -18,7 +18,7 @@ if(window.self.location != window.top.location){
 //Please change it to your Userscript project name.
 var SourceName = "KOC Power Tools (SVN)";
 
-var Version = '20140227a';
+var Version = '20140227b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -16596,17 +16596,21 @@ var cdtd = {
 	init : function (){
 		var t = cdtd;
 		t.views = new CalterUwFunc("citysel_click",[[/cm\.PrestigeCityView\.render\(\)/im,'cm.PrestigeCityView.render();cdtdhook();']]);
-		unsafeWindow.cdtdhook = t.drawdefendstatus;
+		unsafeWindow.cdtdhook = t.citychange;
 		if(Options.EnhCBtns) {
 			t.views.setEnable(true);
 			unsafeWindow.update_citylist2 = unsafeWindow.update_citylist;
 			unsafeWindow.update_citylist = function (e) {
 				unsafeWindow.update_citylist2(e);
-				unsafeWindow.cdtdhook();
+				cdtd.drawdefendstatus();
 			};
 			if(Options.ColrCityBtns) t.replace();
 			t.drawdefendstatus();
 		};
+	},
+	citychange : function () {
+		cdtd.drawdefendstatus();
+		Tabs.Options.checkAscension(); // ascension expiry tied into enhanced city buttons
 	},
 	drawdefendstatus : function () {
 		var t = cdtd;
@@ -16639,7 +16643,6 @@ var cdtd = {
 			   };
 			}
 		}
-		Tabs.Options.checkAscension(); // ascension expiry tied into enhanced city buttons
 	},
   
   	setdefendstatus : function (city) {
