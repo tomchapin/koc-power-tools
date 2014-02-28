@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140227b
+// @version        20140227c
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -18,7 +18,7 @@ if(window.self.location != window.top.location){
 //Please change it to your Userscript project name.
 var SourceName = "KOC Power Tools (SVN)";
 
-var Version = '20140227b';
+var Version = '20140227c';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -1015,19 +1015,12 @@ var TRAetherCostFix = {
 
       t.aethercostFix = new CalterUwFunc ('cm.ThronePanelController.calcCost',[
 	  [/if\(k\(/im,'if(cm.ThronePanelController.isLastLevel('],
-	  [/D\.stones\.use\s*=\s*D\.stones\.total/im,'D.stones.use = B'],
+	  [/D\.stones\.use\s*=\s*D\.stones\.total/im,'D.stones.use = A'],
 	  [/if\(D\.stones\.use\s*==/im,'if(D.stones.use >='],
-	  [/D\.gems\.use\s*=\s*b\(D\.stones\.total\s*-\s*A\)/im,'var q = + (cm.WorldSettings.getSetting("TR_AETHERSTONE_CONVERSION_COST")), z; D.gems.use = Math.ceil((D.stones.total - A)/q)'],
-	  [/D\.gems\.use\s*=\s*b\(y\[C]\.Stones\)/im,'var q = + (cm.WorldSettings.getSetting("TR_AETHERSTONE_CONVERSION_COST")), z; D.gems.use = Math.ceil((y[C].Stones)/q)'],
+	  [/D\.gems\.use\s*=\s*b\(D\.stones\.total\s*-\s*A\)/im,'var x = + (cm.WorldSettings.getSetting("TR_AETHERSTONE_CONVERSION_COST")), y; D.gems.use = Math.ceil((D.stones.total - A)/x)'],
+	  [/D\.gems\.use\s*=\s*b\(y\[C]\.Stones\)/im,'var x = + (cm.WorldSettings.getSetting("TR_AETHERSTONE_CONVERSION_COST")), y; D.gems.use = Math.ceil((y[C].Stones)/x)'],
       [/if\s*\(k\(/im,'if(cm.ThronePanelController.isLastLevel('], //fix for cometbird
-	  [/if\s*\(D\.stones\.use\s*==/im,'if(D.stones.use >='], //fix for cometbird
-	  [/if\(l\(/im,'if(cm.ThronePanelController.isLastLevel('], //fix for camelotmain-1319
-	  [/E\.stones\.use\s*=\s*E\.stones\.total/im,'E.stones.use = B'],
-	  [/if\(E\.stones\.use\s*==/im,'if(E.stones.use >='],
-	  [/E\.gems\.use\s*=\s*c\(E\.stones\.total\s*-\s*B\)/im,'var y = + (cm.WorldSettings.getSetting("TR_AETHERSTONE_CONVERSION_COST")), z; E.gems.use = Math.ceil((E.stones.total - B)/y)'],
-	  [/E\.gems\.use\s*=\s*c\(z\[D]\.Stones\)/im,'var y = + (cm.WorldSettings.getSetting("TR_AETHERSTONE_CONVERSION_COST")), z; E.gems.use = Math.ceil((z[D].Stones)/y)'],
-      [/if\s*\(l\(/im,'if(cm.ThronePanelController.isLastLevel('], //fix for cometbird
-	  [/if\s*\(E\.stones\.use\s*==/im,'if(E.stones.use >=']]);  //fix for cometbird
+	  [/if\s*\(D\.stones\.use\s*==/im,'if(D.stones.use >=']]); //fix for cometbird
 
       t.aethercostFix.setEnable(Options.fixTRAetherCost);
   },
