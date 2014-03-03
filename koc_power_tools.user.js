@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140227c
+// @version        20140303a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -18,7 +18,7 @@ if(window.self.location != window.top.location){
 //Please change it to your Userscript project name.
 var SourceName = "KOC Power Tools (SVN)";
 
-var Version = '20140227c';
+var Version = '20140303a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -183,7 +183,7 @@ var Options = {
   marchRaidState: {0:false,1:false,2:false,3:false,4:false,5:false,6:false,7:false},
   MoveFurniture       : true,
   fixMapDblClick : false,
-  WarnAscension : true,
+  WarnAscension : false,
   WarnAscensionInterval : 1,
 };
 
