@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140309a
+// @version        20140310a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -18,7 +18,7 @@ if(window.self.location != window.top.location){
 //Please change it to your Userscript project name.
 var SourceName = "KOC Power Tools (SVN)";
 
-var Version = '20140309a';
+var Version = '20140310a';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -1855,6 +1855,24 @@ var Rpt = {
 			return m.join('');
 		}
 					
+		function MonitorLinkUID (n,cl){
+			var m = [];
+			if (uW.btLoaded) {
+				if (cl)
+					m.push ('<a class="'+cl+'" onclick="btMonitorExternalCallUID (\'');
+				else	
+					m.push ('<a onclick="btMonitorExternalCallUID (\'');
+				m.push (n);
+				m.push ('\'); return false">');
+				m.push (n);
+				m.push ('</a>');  
+			}
+			else {			
+				m.push (n);
+			}	
+			return m.join('');
+		}
+		
         function buildHeader () {
             var h='<div id=reportHeader style="width:100%;">';
             h+='<div id=reportHeaderLeft style="float:left;width:30%;text-align:left;">';
@@ -1907,6 +1925,7 @@ var Rpt = {
             if (rslt['winner']==1)
                 m+='<FONT color="#CC0000"><B> Winner</B></FONT>';
             m+='<br>';
+			if (rpt.side1PlayerId && (rpt.side1PlayerId != 0)) m+='UID:'+MonitorLinkUID(rpt.side1PlayerId)+'<br>';
             if (rpt.marchName == 'Attack' || rpt.marchName == 'Defend')
                 m+='Knight Combat Skill: ' + rslt['s1KCombatLv'] + '<br>';
             if (rslt['fght']["s1"]) {
@@ -1930,6 +1949,7 @@ var Rpt = {
             if (rslt['winner']==0)
                 m+='<FONT color="#CC0000"><B> Winner</B></FONT>';
             m+='<br>';
+			if (rpt.side0PlayerId && (rpt.side0PlayerId != 0)) m+='UID:'+MonitorLinkUID(rpt.side0PlayerId)+'<br>';
             if (rpt.marchName == 'Attack' || rpt.marchName == 'Defend')
                 m+='Knight Combat Skill: ' + rslt['s0KCombatLv'] + '<br>';
             if (rslt['s0spell'] && (rslt['s0spell'] != "0")) {
