@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140310a
+// @version        20140310b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -18,7 +18,7 @@ if(window.self.location != window.top.location){
 //Please change it to your Userscript project name.
 var SourceName = "KOC Power Tools (SVN)";
 
-var Version = '20140310a';
+var Version = '20140310b';
 
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
@@ -10665,8 +10665,8 @@ Tabs.Attaque = {
 	var c = uW.cm.ChampionModalController.getCastleViewData();
 	var d = uW.cm.ChampionManager.getCityChampion(t.sourceCity.id);
 	if((c != null) && (d != null)) {
-	    champname = c.champions[d].name;
-	    champstatus = c.champions[d].status;
+	    var champname = c.champions[d].name;
+	    var champstatus = c.champions[d].status;
 	    if (champstatus=="Defending"){
 		var o = document.createElement("option");
 		o.text = champname;
