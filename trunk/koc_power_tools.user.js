@@ -307,10 +307,10 @@ function ptStartup (){
   ';
   
   var trstyles = 'div#throneMainContainer div#tableContainer{width:80px;height:213px;top:400px;left:450px;}\
-				div#throneMainContainer div#trophyContainer{width:71px;height:86px;top:41px;left:381px;z-index:97;}\
-				div#throneMainContainer div#statueContainer{width:124px;height:296px;top:274px;left:150px;z-index:99;}\
+				div#throneMainContainer div#trophyContainer{width:71px;height:86px;top:41px;left:381px;}\
+				div#throneMainContainer div#statueContainer{width:124px;height:296px;top:274px;left:150px;z-index:97;}\
 				div#throneMainContainer div#advisorContainer{width:141px;height:240px;bottom:0pt;right:0pt;}\
-				div#throneMainContainer div#heroContainer{width:85px;height:136px;top:173px;left:450px;z-index:99;}';
+				div#throneMainContainer div#heroContainer{width:85px;height:136px;top:173px;left:450px;}';
   
   var styles = '\
     .ptdivHeader       {transparent;height: 16px;border-bottom:0px solid #000000;font-weight:bold;font-size:11px;opacity:0.75;margin-left:0px;margin-right:0px;margin-top:1px;margin-bottom:0px;padding-top:4px;padding-right:10px;vertical-align:text-top;align:left}\
