@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140323a
+// @version        20140323b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -15,7 +15,7 @@ if (window.self.location != window.top.location) {
 //This value is used for statistics (https://nicodebelder.eu/kocReportView/Stats.html).
 //Please change it to your Userscript project name.
 var SourceName = "KOC Power Tools (SVN)";
-var Version = '20140314a';
+var Version = '20140323b';
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
 var DEBUG_TRACE = false;
@@ -11295,7 +11295,7 @@ Tabs.OverView = {
 				}
 				//tch14 = shrinking powder..
 				var SthPrtResearch = parseInt(Seed.tech.tch14)
-				var TRStHsBoost = equippedthronestats(89);
+				var TRStHsBoost = Math.min(equippedthronestats(89), 1250);
 				var totalSthPrt = []
 				var researchToApply = ((SthPrtResearch / 10) + 1)
 				var TRBoostToApply = ((TRStHsBoost / 100) + 1)
