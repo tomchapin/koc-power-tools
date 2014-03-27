@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140326a
+// @version        20140326b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -15,7 +15,7 @@ if (window.self.location != window.top.location) {
 //This value is used for statistics (https://nicodebelder.eu/kocReportView/Stats.html).
 //Please change it to your Userscript project name.
 var SourceName = "KOC Power Tools (SVN)";
-var Version = '20140326a';
+var Version = '20140326b';
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
 var DEBUG_TRACE = false;
@@ -15960,6 +15960,8 @@ Tabs.Tower = {
 						m += '<option value="' + i + '">' + t.Providers[i].provider + '</option>';
 			}
 			m += '</select></td></tr></table></td></tr></table></td></tr></table>';
+        		m += '<TABLE><TR><TD><BR><B>Extra Features:</b></td></tr>\
+        		<TR><TD> Use Dove of Peace <INPUT id=verifyDove type=submit value="Press to Use Dove" \> (Opens a confirmation window)</td></tr></table>';
 			t.cont.innerHTML = m;
 			document.getElementById('ptalerttext').addEventListener('change', function (e) {
 				Options.celltext.enable = e.target.checked;
@@ -15976,6 +15978,7 @@ Tabs.Tower = {
 				Options.alertmtroops = parseInt(e.target.value);
 			}, false);
 			t.togOpt('togEnhanceAR', 'EnhanceAR', AllianceReportsCheck.enable);
+			document.getElementById('verifyDove').addEventListener ('click', t.verifyDove, false);
 		} catch (e) {
 			new CdialogCancelContinue('<PRE>' + inspect(e, 3, 1) + '</pre>', null, null, true);
 			t.cont.innerHTML = '<PRE>' + e.name + ' : ' + e.message + '</pre>';
@@ -16041,6 +16044,39 @@ Tabs.Tower = {
 			}
 		}
 	},
+
+	useDove : function (){
+	    var t = Tabs.Tower;
+	    t.doveStatus = ById ('verifyDiv');
+	    var params = uW.Object.clone(uW.g_ajaxparams);
+	    new MyAjaxRequest(uW.g_ajaxpath + "ajax/doveOut.php" + uW.g_ajaxsuffix, {
+		method: "post",
+		parameters: params,
+		onSuccess: function (rslt) {
+		    if (rslt.ok) {
+     	 		t.doveStatus.innerHTML = "<center><font size='3px'><b>Dove Success!</b></font></center>";
+		    } else {
+     	 		t.doveStatus.innerHTML = "<center><font size='3px'><b>Dove Fail!</b></font></center>";
+		    }
+		},
+		onFailure: function () {
+		}
+    	    });
+  	},
+
+	verifyDove : function() {
+	    var t = Tabs.Tower;
+	    var popDove = null;
+	    popDove = new CPopup('ptVerifyDove', 0, -100, 500, 50, true, function() {clearTimeout (1000);});
+	    popDove.centerMe (mainPop.getMainDiv());
+	    var m = '<DIV style="max-height:50px; height:50px; overflow-y:auto"><TABLE align=center cellpadding=0 cellspacing=0 width=100% class="pbShowBarbs" id="pbBars">';       
+	    m += '<tr><TD align=center><b> ARE YOU SURE? </b> Click if yes, close if no <INPUT id=useDove type=submit value="YESSSS!!!!" \></td></tr>';
+	    m += '<tr><td align=center><div id=verifyDiv style="overflow-y:auto; max-height:20px; height: 20px;"></div></td></tr>';
+	    popDove.getMainDiv().innerHTML = '</table></div>' + m;
+	    popDove.show(true);
+	    document.getElementById('useDove').addEventListener ('click', t.useDove, false);
+	},
+
 }
 var AllianceReportsCheck = {
 	aRpt: {},
