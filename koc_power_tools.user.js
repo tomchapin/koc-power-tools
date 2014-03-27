@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140323b
+// @version        20140326a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -15,7 +15,7 @@ if (window.self.location != window.top.location) {
 //This value is used for statistics (https://nicodebelder.eu/kocReportView/Stats.html).
 //Please change it to your Userscript project name.
 var SourceName = "KOC Power Tools (SVN)";
-var Version = '20140323b';
+var Version = '20140326a';
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
 var DEBUG_TRACE = false;
@@ -72,947 +72,8 @@ var provMapCoords = {
 	topMargin: 19
 };
 //raw deflate code
-(function (e) {
-	var t = 32768;
-	var n = 0;
-	var r = 1;
-	var i = 2;
-	var s = 6;
-	var o = true;
-	var u = 32768;
-	var a = 64;
-	var f = 1024 * 8;
-	var l = 2 * t;
-	var c = 3;
-	var h = 258;
-	var p = 16;
-	var d = 8192;
-	var v = 13;
-	if (d > u) alert("error: zip_INBUFSIZ is too small");
-	if (t << 1 > 1 << p) alert("error: zip_WSIZE is too large");
-	if (v > p - 1) alert("error: zip_HASH_BITS is too large");
-	if (v < 8 || h != 258) alert("error: Code too clever");
-	var m = d;
-	var g = 1 << v;
-	var y = g - 1;
-	var b = t - 1;
-	var w = 0;
-	var E = 4096;
-	var S = h + c + 1;
-	var x = t - S;
-	var T = 1;
-	var N = 15;
-	var C = 7;
-	var k = 29;
-	var L = 256;
-	var A = 256;
-	var O = L + 1 + k;
-	var M = 30;
-	var _ = 19;
-	var D = 16;
-	var P = 17;
-	var H = 18;
-	var B = 2 * O + 1;
-	var j = parseInt((v + c - 1) / c);
-	var F;
-	var I, q;
-	var R;
-	var U = null;
-	var z, W;
-	var X;
-	var V;
-	var $;
-	var J;
-	var K;
-	var Q;
-	var G;
-	var Y;
-	var Z;
-	var et;
-	var tt;
-	var nt;
-	var rt;
-	var it;
-	var st;
-	var ot;
-	var ut;
-	var at;
-	var ft;
-	var lt;
-	var ct;
-	var ht;
-	var pt;
-	var dt;
-	var vt;
-	var mt;
-	var gt;
-	var yt;
-	var bt;
-	var wt;
-	var Et;
-	var St;
-	var xt;
-	var Tt;
-	var Nt;
-	var Ct;
-	var kt;
-	var Lt;
-	var At;
-	var Ot;
-	var Mt;
-	var _t;
-	var Dt;
-	var Pt;
-	var Ht;
-	var Bt;
-	var jt;
-	var Ft;
-	var It;
-	var qt;
-	var Rt = function () {
-		this.fc = 0;
-		this.dl = 0
-	};
-	var Ut = function () {
-		this.dyn_tree = null;
-		this.static_tree = null;
-		this.extra_bits = null;
-		this.extra_base = 0;
-		this.elems = 0;
-		this.max_length = 0;
-		this.max_code = 0
-	};
-	var zt = function (e, t, n, r) {
-		this.good_length = e;
-		this.max_lazy = t;
-		this.nice_length = n;
-		this.max_chain = r
-	};
-	var Wt = function () {
-		this.next = null;
-		this.len = 0;
-		this.ptr = new Array(f);
-		this.off = 0
-	};
-	var Xt = new Array(0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0);
-	var Vt = new Array(0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13);
-	var $t = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 7);
-	var Jt = new Array(16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15);
-	var Kt = new Array(new zt(0, 0, 0, 0), new zt(4, 4, 8, 4), new zt(4, 5, 16, 8), new zt(4, 6, 32, 32), new zt(4, 4, 16, 16), new zt(8, 16, 32, 32), new zt(8, 16, 128, 128), new zt(8, 32, 128, 256), new zt(32, 128, 258, 1024), new zt(32, 258, 258, 4096));
-	var Qt = function (e) {
-		var t;
-		if (!e) e = s;
-		else if (e < 1) e = 1;
-		else if (e > 9) e = 9;
-		ct = e;
-		R = false;
-		ut = false;
-		if (U != null) return;
-		F = I = q = null;
-		U = new Array(f);
-		V = new Array(l);
-		$ = new Array(m);
-		J = new Array(u + a);
-		K = new Array(1 << p);
-		dt = new Array(B);
-		for (t = 0; t < B; t++) dt[t] = new Rt;
-		vt = new Array(2 * M + 1);
-		for (t = 0; t < 2 * M + 1; t++) vt[t] = new Rt;
-		mt = new Array(O + 2);
-		for (t = 0; t < O + 2; t++) mt[t] = new Rt;
-		gt = new Array(M);
-		for (t = 0; t < M; t++) gt[t] = new Rt;
-		yt = new Array(2 * _ + 1);
-		for (t = 0; t < 2 * _ + 1; t++) yt[t] = new Rt;
-		bt = new Ut;
-		wt = new Ut;
-		Et = new Ut;
-		St = new Array(N + 1);
-		xt = new Array(2 * O + 1);
-		Ct = new Array(2 * O + 1);
-		kt = new Array(h - c + 1);
-		Lt = new Array(512);
-		At = new Array(k);
-		Ot = new Array(M);
-		Mt = new Array(parseInt(d / 8))
-	};
-	var Gt = function () {
-		F = I = q = null;
-		U = null;
-		V = null;
-		$ = null;
-		J = null;
-		K = null;
-		dt = null;
-		vt = null;
-		mt = null;
-		gt = null;
-		yt = null;
-		bt = null;
-		wt = null;
-		Et = null;
-		St = null;
-		xt = null;
-		Ct = null;
-		kt = null;
-		Lt = null;
-		At = null;
-		Ot = null;
-		Mt = null
-	};
-	var Yt = function (e) {
-		e.next = F;
-		F = e
-	};
-	var Zt = function () {
-		var e;
-		if (F != null) {
-			e = F;
-			F = F.next
-		} else e = new Wt;
-		e.next = null;
-		e.len = e.off = 0;
-		return e
-	};
-	var en = function (e) {
-		return K[t + e]
-	};
-	var tn = function (e, n) {
-		return K[t + e] = n
-	};
-	var nn = function (e) {
-		U[W + z++] = e;
-		if (W + z == f) Hn()
-	};
-	var rn = function (e) {
-		e &= 65535;
-		if (W + z < f - 2) {
-			U[W + z++] = e & 255;
-			U[W + z++] = e >>> 8
-		} else {
-			nn(e & 255);
-			nn(e >>> 8)
-		}
-	};
-	var sn = function () {
-		Z = (Z << j ^ V[st + c - 1] & 255) & y;
-		et = en(Z);
-		K[st & b] = et;
-		tn(Z, st)
-	};
-	var on = function (e, t) {
-		_n(t[e].fc, t[e].dl)
-	};
-	var un = function (e) {
-		return (e < 256 ? Lt[e] : Lt[256 + (e >> 7)]) & 255
-	};
-	var an = function (e, t, n) {
-		return e[t].fc < e[n].fc || e[t].fc == e[n].fc && Ct[t] <= Ct[n]
-	};
-	var fn = function (e, t, n) {
-		var r;
-		for (r = 0; r < n && qt < It.length; r++) e[t + r] = It.charCodeAt(qt++) & 255;
-		return r
-	};
-	var ln = function () {
-		var e;
-		for (e = 0; e < g; e++) K[t + e] = 0;
-		lt = Kt[ct].max_lazy;
-		ht = Kt[ct].good_length;
-		if (!o) pt = Kt[ct].nice_length;
-		ft = Kt[ct].max_chain;
-		st = 0;
-		Y = 0;
-		at = fn(V, 0, 2 * t);
-		if (at <= 0) {
-			ut = true;
-			at = 0;
-			return
-		}
-		ut = false;
-		while (at < S && !ut) hn();
-		Z = 0;
-		for (e = 0; e < c - 1; e++) {
-			Z = (Z << j ^ V[e] & 255) & y
-		}
-	};
-	var cn = function (e) {
-		var t = ft;
-		var n = st;
-		var r;
-		var i;
-		var s = it;
-		var u = st > x ? st - x : w;
-		var a = st + h;
-		var f = V[n + s - 1];
-		var l = V[n + s];
-		if (it >= ht) t >>= 2;
-		do {
-			r = e;
-			if (V[r + s] != l || V[r + s - 1] != f || V[r] != V[n] || V[++r] != V[n + 1]) {
-				continue
-			}
-			n += 2;
-			r++;
-			do {} while (V[++n] == V[++r] && V[++n] == V[++r] && V[++n] == V[++r] && V[++n] == V[++r] && V[++n] == V[++r] && V[++n] == V[++r] && V[++n] == V[++r] && V[++n] == V[++r] && n < a);
-			i = h - (a - n);
-			n = a - h;
-			if (i > s) {
-				ot = e;
-				s = i;
-				if (o) {
-					if (i >= h) break
-				} else {
-					if (i >= pt) break
-				}
-				f = V[n + s - 1];
-				l = V[n + s]
-			}
-		} while ((e = K[e & b]) > u && --t != 0);
-		return s
-	};
-	var hn = function () {
-		var e, n;
-		var r = l - at - st;
-		if (r == -1) {
-			r--
-		} else if (st >= t + x) {
-			for (e = 0; e < t; e++) V[e] = V[e + t];
-			ot -= t;
-			st -= t;
-			Y -= t;
-			for (e = 0; e < g; e++) {
-				n = en(e);
-				tn(e, n >= t ? n - t : w)
-			}
-			for (e = 0; e < t; e++) {
-				n = K[e];
-				K[e] = n >= t ? n - t : w
-			}
-			r += t
-		}
-		if (!ut) {
-			e = fn(V, st + at, r);
-			if (e <= 0) ut = true;
-			else at += e
-		}
-	};
-	var pn = function () {
-		while (at != 0 && I == null) {
-			var e;
-			sn();
-			if (et != w && st - et <= x) {
-				rt = cn(et);
-				if (rt > at) rt = at
-			}
-			if (rt >= c) {
-				e = An(st - ot, rt - c);
-				at -= rt;
-				if (rt <= lt) {
-					rt--;
-					do {
-						st++;
-						sn()
-					} while (--rt != 0);
-					st++
-				} else {
-					st += rt;
-					rt = 0;
-					Z = V[st] & 255;
-					Z = (Z << j ^ V[st + 1] & 255) & y
-				}
-			} else {
-				e = An(0, V[st] & 255);
-				at--;
-				st++
-			} if (e) {
-				Ln(0);
-				Y = st
-			}
-			while (at < S && !ut) hn()
-		}
-	};
-	var dn = function () {
-		while (at != 0 && I == null) {
-			sn();
-			it = rt;
-			tt = ot;
-			rt = c - 1;
-			if (et != w && it < lt && st - et <= x) {
-				rt = cn(et);
-				if (rt > at) rt = at;
-				if (rt == c && st - ot > E) {
-					rt--
-				}
-			}
-			if (it >= c && rt <= it) {
-				var e;
-				e = An(st - 1 - tt, it - c);
-				at -= it - 1;
-				it -= 2;
-				do {
-					st++;
-					sn()
-				} while (--it != 0);
-				nt = 0;
-				rt = c - 1;
-				st++;
-				if (e) {
-					Ln(0);
-					Y = st
-				}
-			} else if (nt != 0) {
-				if (An(0, V[st - 1] & 255)) {
-					Ln(0);
-					Y = st
-				}
-				st++;
-				at--
-			} else {
-				nt = 1;
-				st++;
-				at--
-			}
-			while (at < S && !ut) hn()
-		}
-	};
-	var vn = function () {
-		if (ut) return;
-		Q = 0;
-		G = 0;
-		yn();
-		ln();
-		I = null;
-		z = 0;
-		W = 0;
-		nt = 0;
-		if (ct <= 3) {
-			it = c - 1;
-			rt = 0
-		} else {
-			rt = c - 1;
-			nt = 0;
-			nt = 0
-		}
-		X = false
-	};
-	var mn = function (e, t, n) {
-		var r;
-		if (!R) {
-			vn();
-			R = true;
-			if (at == 0) {
-				X = true;
-				return 0
-			}
-		}
-		if ((r = gn(e, t, n)) == n) return n;
-		if (X) return r;
-		if (ct <= 3) pn();
-		else dn(); if (at == 0) {
-			if (nt != 0) An(0, V[st - 1] & 255);
-			Ln(1);
-			X = true
-		}
-		return r + gn(e, r + t, n - r)
-	};
-	var gn = function (e, t, n) {
-		var r, i, s;
-		r = 0;
-		while (I != null && r < n) {
-			i = n - r;
-			if (i > I.len) i = I.len;
-			for (s = 0; s < i; s++) e[t + r + s] = I.ptr[I.off + s];
-			I.off += i;
-			I.len -= i;
-			r += i;
-			if (I.len == 0) {
-				var o;
-				o = I;
-				I = I.next;
-				Yt(o)
-			}
-		}
-		if (r == n) return r;
-		if (W < z) {
-			i = n - r;
-			if (i > z - W) i = z - W;
-			for (s = 0; s < i; s++) e[t + r + s] = U[W + s];
-			W += i;
-			r += i;
-			if (z == W) z = W = 0
-		}
-		return r
-	};
-	var yn = function () {
-		var e;
-		var t;
-		var n;
-		var r;
-		var i;
-		if (gt[0].dl != 0) return;
-		bt.dyn_tree = dt;
-		bt.static_tree = mt;
-		bt.extra_bits = Xt;
-		bt.extra_base = L + 1;
-		bt.elems = O;
-		bt.max_length = N;
-		bt.max_code = 0;
-		wt.dyn_tree = vt;
-		wt.static_tree = gt;
-		wt.extra_bits = Vt;
-		wt.extra_base = 0;
-		wt.elems = M;
-		wt.max_length = N;
-		wt.max_code = 0;
-		Et.dyn_tree = yt;
-		Et.static_tree = null;
-		Et.extra_bits = $t;
-		Et.extra_base = 0;
-		Et.elems = _;
-		Et.max_length = C;
-		Et.max_code = 0;
-		n = 0;
-		for (r = 0; r < k - 1; r++) {
-			At[r] = n;
-			for (e = 0; e < 1 << Xt[r]; e++) kt[n++] = r
-		}
-		kt[n - 1] = r;
-		i = 0;
-		for (r = 0; r < 16; r++) {
-			Ot[r] = i;
-			for (e = 0; e < 1 << Vt[r]; e++) {
-				Lt[i++] = r
-			}
-		}
-		i >>= 7;
-		for (; r < M; r++) {
-			Ot[r] = i << 7;
-			for (e = 0; e < 1 << Vt[r] - 7; e++) Lt[256 + i++] = r
-		}
-		for (t = 0; t <= N; t++) St[t] = 0;
-		e = 0;
-		while (e <= 143) {
-			mt[e++].dl = 8;
-			St[8]++
-		}
-		while (e <= 255) {
-			mt[e++].dl = 9;
-			St[9]++
-		}
-		while (e <= 279) {
-			mt[e++].dl = 7;
-			St[7]++
-		}
-		while (e <= 287) {
-			mt[e++].dl = 8;
-			St[8]++
-		}
-		Sn(mt, O + 1);
-		for (e = 0; e < M; e++) {
-			gt[e].dl = 5;
-			gt[e].fc = Dn(e, 5)
-		}
-		bn()
-	};
-	var bn = function () {
-		var e;
-		for (e = 0; e < O; e++) dt[e].fc = 0;
-		for (e = 0; e < M; e++) vt[e].fc = 0;
-		for (e = 0; e < _; e++) yt[e].fc = 0;
-		dt[A].fc = 1;
-		jt = Ft = 0;
-		_t = Dt = Pt = 0;
-		Ht = 0;
-		Bt = 1
-	};
-	var wn = function (e, t) {
-		var n = xt[t];
-		var r = t << 1;
-		while (r <= Tt) {
-			if (r < Tt && an(e, xt[r + 1], xt[r])) r++;
-			if (an(e, n, xt[r])) break;
-			xt[t] = xt[r];
-			t = r;
-			r <<= 1
-		}
-		xt[t] = n
-	};
-	var En = function (e) {
-		var t = e.dyn_tree;
-		var n = e.extra_bits;
-		var r = e.extra_base;
-		var i = e.max_code;
-		var s = e.max_length;
-		var o = e.static_tree;
-		var u;
-		var a, f;
-		var l;
-		var c;
-		var h;
-		var p = 0;
-		for (l = 0; l <= N; l++) St[l] = 0;
-		t[xt[Nt]].dl = 0;
-		for (u = Nt + 1; u < B; u++) {
-			a = xt[u];
-			l = t[t[a].dl].dl + 1;
-			if (l > s) {
-				l = s;
-				p++
-			}
-			t[a].dl = l;
-			if (a > i) continue;
-			St[l]++;
-			c = 0;
-			if (a >= r) c = n[a - r];
-			h = t[a].fc;
-			jt += h * (l + c);
-			if (o != null) Ft += h * (o[a].dl + c)
-		}
-		if (p == 0) return;
-		do {
-			l = s - 1;
-			while (St[l] == 0) l--;
-			St[l]--;
-			St[l + 1] += 2;
-			St[s]--;
-			p -= 2
-		} while (p > 0);
-		for (l = s; l != 0; l--) {
-			a = St[l];
-			while (a != 0) {
-				f = xt[--u];
-				if (f > i) continue;
-				if (t[f].dl != l) {
-					jt += (l - t[f].dl) * t[f].fc;
-					t[f].fc = l
-				}
-				a--
-			}
-		}
-	};
-	var Sn = function (e, t) {
-		var n = new Array(N + 1);
-		var r = 0;
-		var i;
-		var s;
-		for (i = 1; i <= N; i++) {
-			r = r + St[i - 1] << 1;
-			n[i] = r
-		}
-		for (s = 0; s <= t; s++) {
-			var o = e[s].dl;
-			if (o == 0) continue;
-			e[s].fc = Dn(n[o]++, o)
-		}
-	};
-	var xn = function (e) {
-		var t = e.dyn_tree;
-		var n = e.static_tree;
-		var r = e.elems;
-		var i, s;
-		var o = -1;
-		var u = r;
-		Tt = 0;
-		Nt = B;
-		for (i = 0; i < r; i++) {
-			if (t[i].fc != 0) {
-				xt[++Tt] = o = i;
-				Ct[i] = 0
-			} else t[i].dl = 0
-		}
-		while (Tt < 2) {
-			var a = xt[++Tt] = o < 2 ? ++o : 0;
-			t[a].fc = 1;
-			Ct[a] = 0;
-			jt--;
-			if (n != null) Ft -= n[a].dl
-		}
-		e.max_code = o;
-		for (i = Tt >> 1; i >= 1; i--) wn(t, i);
-		do {
-			i = xt[T];
-			xt[T] = xt[Tt--];
-			wn(t, T);
-			s = xt[T];
-			xt[--Nt] = i;
-			xt[--Nt] = s;
-			t[u].fc = t[i].fc + t[s].fc;
-			if (Ct[i] > Ct[s] + 1) Ct[u] = Ct[i];
-			else Ct[u] = Ct[s] + 1;
-			t[i].dl = t[s].dl = u;
-			xt[T] = u++;
-			wn(t, T)
-		} while (Tt >= 2);
-		xt[--Nt] = xt[T];
-		En(e);
-		Sn(t, o)
-	};
-	var Tn = function (e, t) {
-		var n;
-		var r = -1;
-		var i;
-		var s = e[0].dl;
-		var o = 0;
-		var u = 7;
-		var a = 4;
-		if (s == 0) {
-			u = 138;
-			a = 3
-		}
-		e[t + 1].dl = 65535;
-		for (n = 0; n <= t; n++) {
-			i = s;
-			s = e[n + 1].dl;
-			if (++o < u && i == s) continue;
-			else if (o < a) yt[i].fc += o;
-			else if (i != 0) {
-				if (i != r) yt[i].fc++;
-				yt[D].fc++
-			} else if (o <= 10) yt[P].fc++;
-			else yt[H].fc++;
-			o = 0;
-			r = i;
-			if (s == 0) {
-				u = 138;
-				a = 3
-			} else if (i == s) {
-				u = 6;
-				a = 3
-			} else {
-				u = 7;
-				a = 4
-			}
-		}
-	};
-	var Nn = function (e, t) {
-		var n;
-		var r = -1;
-		var i;
-		var s = e[0].dl;
-		var o = 0;
-		var u = 7;
-		var a = 4;
-		if (s == 0) {
-			u = 138;
-			a = 3
-		}
-		for (n = 0; n <= t; n++) {
-			i = s;
-			s = e[n + 1].dl;
-			if (++o < u && i == s) {
-				continue
-			} else if (o < a) {
-				do {
-					on(i, yt)
-				} while (--o != 0)
-			} else if (i != 0) {
-				if (i != r) {
-					on(i, yt);
-					o--
-				}
-				on(D, yt);
-				_n(o - 3, 2)
-			} else if (o <= 10) {
-				on(P, yt);
-				_n(o - 3, 3)
-			} else {
-				on(H, yt);
-				_n(o - 11, 7)
-			}
-			o = 0;
-			r = i;
-			if (s == 0) {
-				u = 138;
-				a = 3
-			} else if (i == s) {
-				u = 6;
-				a = 3
-			} else {
-				u = 7;
-				a = 4
-			}
-		}
-	};
-	var Cn = function () {
-		var e;
-		Tn(dt, bt.max_code);
-		Tn(vt, wt.max_code);
-		xn(Et);
-		for (e = _ - 1; e >= 3; e--) {
-			if (yt[Jt[e]].dl != 0) break
-		}
-		jt += 3 * (e + 1) + 5 + 5 + 4;
-		return e
-	};
-	var kn = function (e, t, n) {
-		var r;
-		_n(e - 257, 5);
-		_n(t - 1, 5);
-		_n(n - 4, 4);
-		for (r = 0; r < n; r++) {
-			_n(yt[Jt[r]].dl, 3)
-		}
-		Nn(dt, e - 1);
-		Nn(vt, t - 1)
-	};
-	var Ln = function (e) {
-		var t, s;
-		var o;
-		var u;
-		u = st - Y;
-		Mt[Pt] = Ht;
-		xn(bt);
-		xn(wt);
-		o = Cn();
-		t = jt + 3 + 7 >> 3;
-		s = Ft + 3 + 7 >> 3;
-		if (s <= t) t = s;
-		if (u + 4 <= t && Y >= 0) {
-			var a;
-			_n((n << 1) + e, 3);
-			Pn();
-			rn(u);
-			rn(~u);
-			for (a = 0; a < u; a++) nn(V[Y + a])
-		} else if (s == t) {
-			_n((r << 1) + e, 3);
-			On(mt, gt)
-		} else {
-			_n((i << 1) + e, 3);
-			kn(bt.max_code + 1, wt.max_code + 1, o + 1);
-			On(dt, vt)
-		}
-		bn();
-		if (e != 0) Pn()
-	};
-	var An = function (e, t) {
-		J[_t++] = t;
-		if (e == 0) {
-			dt[t].fc++
-		} else {
-			e--;
-			dt[kt[t] + L + 1].fc++;
-			vt[un(e)].fc++;
-			$[Dt++] = e;
-			Ht |= Bt
-		}
-		Bt <<= 1;
-		if ((_t & 7) == 0) {
-			Mt[Pt++] = Ht;
-			Ht = 0;
-			Bt = 1
-		}
-		if (ct > 2 && (_t & 4095) == 0) {
-			var n = _t * 8;
-			var r = st - Y;
-			var i;
-			for (i = 0; i < M; i++) {
-				n += vt[i].fc * (5 + Vt[i])
-			}
-			n >>= 3;
-			if (Dt < parseInt(_t / 2) && n < parseInt(r / 2)) return true
-		}
-		return _t == d - 1 || Dt == m
-	};
-	var On = function (e, t) {
-		var n;
-		var r;
-		var i = 0;
-		var s = 0;
-		var o = 0;
-		var u = 0;
-		var a;
-		var f;
-		if (_t != 0)
-			do {
-				if ((i & 7) == 0) u = Mt[o++];
-				r = J[i++] & 255;
-				if ((u & 1) == 0) {
-					on(r, e)
-				} else {
-					a = kt[r];
-					on(a + L + 1, e);
-					f = Xt[a];
-					if (f != 0) {
-						r -= At[a];
-						_n(r, f)
-					}
-					n = $[s++];
-					a = un(n);
-					on(a, t);
-					f = Vt[a];
-					if (f != 0) {
-						n -= Ot[a];
-						_n(n, f)
-					}
-				}
-				u >>= 1
-			} while (i < _t);
-		on(A, e)
-	};
-	var Mn = 16;
-	var _n = function (e, t) {
-		if (G > Mn - t) {
-			Q |= e << G;
-			rn(Q);
-			Q = e >> Mn - G;
-			G += t - Mn
-		} else {
-			Q |= e << G;
-			G += t
-		}
-	};
-	var Dn = function (e, t) {
-		var n = 0;
-		do {
-			n |= e & 1;
-			e >>= 1;
-			n <<= 1
-		} while (--t > 0);
-		return n >> 1
-	};
-	var Pn = function () {
-		if (G > 8) {
-			rn(Q)
-		} else if (G > 0) {
-			nn(Q)
-		}
-		Q = 0;
-		G = 0
-	};
-	var Hn = function () {
-		if (z != 0) {
-			var e, t;
-			e = Zt();
-			if (I == null) I = q = e;
-			else q = q.next = e;
-			e.len = z - W;
-			for (t = 0; t < e.len; t++) e.ptr[t] = U[W + t];
-			z = W = 0
-		}
-	};
-	var Bn = function (e, t) {
-		var n, r;
-		It = e;
-		qt = 0;
-		if (typeof t == "undefined") t = s;
-		Qt(t);
-		var i = new Array(1024);
-		var o = [];
-		while ((n = mn(i, 0, i.length)) > 0) {
-			var u = new Array(n);
-			for (r = 0; r < n; r++) {
-				u[r] = String.fromCharCode(i[r])
-			}
-			o[o.length] = u.join("")
-		}
-		It = null;
-		return o.join("")
-	};
-	if (!e.RawDeflate) e.RawDeflate = {};
-	e.RawDeflate.deflate = Bn
-})(this);
+(function(e){var t=32768;var n=0;var r=1;var i=2;var s=6;var o=true;var u=32768;var a=64;var f=1024*8;var l=2*t;var c=3;var h=258;var p=16;var d=8192;var v=13;if(d>u)alert("error: zip_INBUFSIZ is too small");if(t<<1>1<<p)alert("error: zip_WSIZE is too large");if(v>p-1)alert("error: zip_HASH_BITS is too large");if(v<8||h!=258)alert("error: Code too clever");var m=d;var g=1<<v;var y=g-1;var b=t-1;var w=0;var E=4096;var S=h+c+1;var x=t-S;var T=1;var N=15;var C=7;var k=29;var L=256;var A=256;var O=L+1+k;var M=30;var _=19;var D=16;var P=17;var H=18;var B=2*O+1;var j=parseInt((v+c-1)/c);var F;var I,q;var R;var U=null;var z,W;var X;var V;var $;var J;var K;var Q;var G;var Y;var Z;var et;var tt;var nt;var rt;var it;var st;var ot;var ut;var at;var ft;var lt;var ct;var ht;var pt;var dt;var vt;var mt;var gt;var yt;var bt;var wt;var Et;var St;var xt;var Tt;var Nt;var Ct;var kt;var Lt;var At;var Ot;var Mt;var _t;var Dt;var Pt;var Ht;var Bt;var jt;var Ft;var It;var qt;var Rt=function(){this.fc=0;this.dl=0};var Ut=function(){this.dyn_tree=null;this.static_tree=null;this.extra_bits=null;this.extra_base=0;this.elems=0;this.max_length=0;this.max_code=0};var zt=function(e,t,n,r){this.good_length=e;this.max_lazy=t;this.nice_length=n;this.max_chain=r};var Wt=function(){this.next=null;this.len=0;this.ptr=new Array(f);this.off=0};var Xt=new Array(0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0);var Vt=new Array(0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13);var $t=new Array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,3,7);var Jt=new Array(16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15);var Kt=new Array(new zt(0,0,0,0),new zt(4,4,8,4),new zt(4,5,16,8),new zt(4,6,32,32),new zt(4,4,16,16),new zt(8,16,32,32),new zt(8,16,128,128),new zt(8,32,128,256),new zt(32,128,258,1024),new zt(32,258,258,4096));var Qt=function(e){var t;if(!e)e=s;else if(e<1)e=1;else if(e>9)e=9;ct=e;R=false;ut=false;if(U!=null)return;F=I=q=null;U=new Array(f);V=new Array(l);$=new Array(m);J=new Array(u+a);K=new Array(1<<p);dt=new Array(B);for(t=0;t<B;t++)dt[t]=new Rt;vt=new Array(2*M+1);for(t=0;t<2*M+1;t++)vt[t]=new Rt;mt=new Array(O+2);for(t=0;t<O+2;t++)mt[t]=new Rt;gt=new Array(M);for(t=0;t<M;t++)gt[t]=new Rt;yt=new Array(2*_+1);for(t=0;t<2*_+1;t++)yt[t]=new Rt;bt=new Ut;wt=new Ut;Et=new Ut;St=new Array(N+1);xt=new Array(2*O+1);Ct=new Array(2*O+1);kt=new Array(h-c+1);Lt=new Array(512);At=new Array(k);Ot=new Array(M);Mt=new Array(parseInt(d/8))};var Gt=function(){F=I=q=null;U=null;V=null;$=null;J=null;K=null;dt=null;vt=null;mt=null;gt=null;yt=null;bt=null;wt=null;Et=null;St=null;xt=null;Ct=null;kt=null;Lt=null;At=null;Ot=null;Mt=null};var Yt=function(e){e.next=F;F=e};var Zt=function(){var e;if(F!=null){e=F;F=F.next}else e=new Wt;e.next=null;e.len=e.off=0;return e};var en=function(e){return K[t+e]};var tn=function(e,n){return K[t+e]=n};var nn=function(e){U[W+z++]=e;if(W+z==f)Hn()};var rn=function(e){e&=65535;if(W+z<f-2){U[W+z++]=e&255;U[W+z++]=e>>>8}else{nn(e&255);nn(e>>>8)}};var sn=function(){Z=(Z<<j^V[st+c-1]&255)&y;et=en(Z);K[st&b]=et;tn(Z,st)};var on=function(e,t){_n(t[e].fc,t[e].dl)};var un=function(e){return(e<256?Lt[e]:Lt[256+(e>>7)])&255};var an=function(e,t,n){return e[t].fc<e[n].fc||e[t].fc==e[n].fc&&Ct[t]<=Ct[n]};var fn=function(e,t,n){var r;for(r=0;r<n&&qt<It.length;r++)e[t+r]=It.charCodeAt(qt++)&255;return r};var ln=function(){var e;for(e=0;e<g;e++)K[t+e]=0;lt=Kt[ct].max_lazy;ht=Kt[ct].good_length;if(!o)pt=Kt[ct].nice_length;ft=Kt[ct].max_chain;st=0;Y=0;at=fn(V,0,2*t);if(at<=0){ut=true;at=0;return}ut=false;while(at<S&&!ut)hn();Z=0;for(e=0;e<c-1;e++){Z=(Z<<j^V[e]&255)&y}};var cn=function(e){var t=ft;var n=st;var r;var i;var s=it;var u=st>x?st-x:w;var a=st+h;var f=V[n+s-1];var l=V[n+s];if(it>=ht)t>>=2;do{r=e;if(V[r+s]!=l||V[r+s-1]!=f||V[r]!=V[n]||V[++r]!=V[n+1]){continue}n+=2;r++;do{}while(V[++n]==V[++r]&&V[++n]==V[++r]&&V[++n]==V[++r]&&V[++n]==V[++r]&&V[++n]==V[++r]&&V[++n]==V[++r]&&V[++n]==V[++r]&&V[++n]==V[++r]&&n<a);i=h-(a-n);n=a-h;if(i>s){ot=e;s=i;if(o){if(i>=h)break}else{if(i>=pt)break}f=V[n+s-1];l=V[n+s]}}while((e=K[e&b])>u&&--t!=0);return s};var hn=function(){var e,n;var r=l-at-st;if(r==-1){r--}else if(st>=t+x){for(e=0;e<t;e++)V[e]=V[e+t];ot-=t;st-=t;Y-=t;for(e=0;e<g;e++){n=en(e);tn(e,n>=t?n-t:w)}for(e=0;e<t;e++){n=K[e];K[e]=n>=t?n-t:w}r+=t}if(!ut){e=fn(V,st+at,r);if(e<=0)ut=true;else at+=e}};var pn=function(){while(at!=0&&I==null){var e;sn();if(et!=w&&st-et<=x){rt=cn(et);if(rt>at)rt=at}if(rt>=c){e=An(st-ot,rt-c);at-=rt;if(rt<=lt){rt--;do{st++;sn()}while(--rt!=0);st++}else{st+=rt;rt=0;Z=V[st]&255;Z=(Z<<j^V[st+1]&255)&y}}else{e=An(0,V[st]&255);at--;st++}if(e){Ln(0);Y=st}while(at<S&&!ut)hn()}};var dn=function(){while(at!=0&&I==null){sn();it=rt;tt=ot;rt=c-1;if(et!=w&&it<lt&&st-et<=x){rt=cn(et);if(rt>at)rt=at;if(rt==c&&st-ot>E){rt--}}if(it>=c&&rt<=it){var e;e=An(st-1-tt,it-c);at-=it-1;it-=2;do{st++;sn()}while(--it!=0);nt=0;rt=c-1;st++;if(e){Ln(0);Y=st}}else if(nt!=0){if(An(0,V[st-1]&255)){Ln(0);Y=st}st++;at--}else{nt=1;st++;at--}while(at<S&&!ut)hn()}};var vn=function(){if(ut)return;Q=0;G=0;yn();ln();I=null;z=0;W=0;nt=0;if(ct<=3){it=c-1;rt=0}else{rt=c-1;nt=0;nt=0}X=false};var mn=function(e,t,n){var r;if(!R){vn();R=true;if(at==0){X=true;return 0}}if((r=gn(e,t,n))==n)return n;if(X)return r;if(ct<=3)pn();else dn();if(at==0){if(nt!=0)An(0,V[st-1]&255);Ln(1);X=true}return r+gn(e,r+t,n-r)};var gn=function(e,t,n){var r,i,s;r=0;while(I!=null&&r<n){i=n-r;if(i>I.len)i=I.len;for(s=0;s<i;s++)e[t+r+s]=I.ptr[I.off+s];I.off+=i;I.len-=i;r+=i;if(I.len==0){var o;o=I;I=I.next;Yt(o)}}if(r==n)return r;if(W<z){i=n-r;if(i>z-W)i=z-W;for(s=0;s<i;s++)e[t+r+s]=U[W+s];W+=i;r+=i;if(z==W)z=W=0}return r};var yn=function(){var e;var t;var n;var r;var i;if(gt[0].dl!=0)return;bt.dyn_tree=dt;bt.static_tree=mt;bt.extra_bits=Xt;bt.extra_base=L+1;bt.elems=O;bt.max_length=N;bt.max_code=0;wt.dyn_tree=vt;wt.static_tree=gt;wt.extra_bits=Vt;wt.extra_base=0;wt.elems=M;wt.max_length=N;wt.max_code=0;Et.dyn_tree=yt;Et.static_tree=null;Et.extra_bits=$t;Et.extra_base=0;Et.elems=_;Et.max_length=C;Et.max_code=0;n=0;for(r=0;r<k-1;r++){At[r]=n;for(e=0;e<1<<Xt[r];e++)kt[n++]=r}kt[n-1]=r;i=0;for(r=0;r<16;r++){Ot[r]=i;for(e=0;e<1<<Vt[r];e++){Lt[i++]=r}}i>>=7;for(;r<M;r++){Ot[r]=i<<7;for(e=0;e<1<<Vt[r]-7;e++)Lt[256+i++]=r}for(t=0;t<=N;t++)St[t]=0;e=0;while(e<=143){mt[e++].dl=8;St[8]++}while(e<=255){mt[e++].dl=9;St[9]++}while(e<=279){mt[e++].dl=7;St[7]++}while(e<=287){mt[e++].dl=8;St[8]++}Sn(mt,O+1);for(e=0;e<M;e++){gt[e].dl=5;gt[e].fc=Dn(e,5)}bn()};var bn=function(){var e;for(e=0;e<O;e++)dt[e].fc=0;for(e=0;e<M;e++)vt[e].fc=0;for(e=0;e<_;e++)yt[e].fc=0;dt[A].fc=1;jt=Ft=0;_t=Dt=Pt=0;Ht=0;Bt=1};var wn=function(e,t){var n=xt[t];var r=t<<1;while(r<=Tt){if(r<Tt&&an(e,xt[r+1],xt[r]))r++;if(an(e,n,xt[r]))break;xt[t]=xt[r];t=r;r<<=1}xt[t]=n};var En=function(e){var t=e.dyn_tree;var n=e.extra_bits;var r=e.extra_base;var i=e.max_code;var s=e.max_length;var o=e.static_tree;var u;var a,f;var l;var c;var h;var p=0;for(l=0;l<=N;l++)St[l]=0;t[xt[Nt]].dl=0;for(u=Nt+1;u<B;u++){a=xt[u];l=t[t[a].dl].dl+1;if(l>s){l=s;p++}t[a].dl=l;if(a>i)continue;St[l]++;c=0;if(a>=r)c=n[a-r];h=t[a].fc;jt+=h*(l+c);if(o!=null)Ft+=h*(o[a].dl+c)}if(p==0)return;do{l=s-1;while(St[l]==0)l--;St[l]--;St[l+1]+=2;St[s]--;p-=2}while(p>0);for(l=s;l!=0;l--){a=St[l];while(a!=0){f=xt[--u];if(f>i)continue;if(t[f].dl!=l){jt+=(l-t[f].dl)*t[f].fc;t[f].fc=l}a--}}};var Sn=function(e,t){var n=new Array(N+1);var r=0;var i;var s;for(i=1;i<=N;i++){r=r+St[i-1]<<1;n[i]=r}for(s=0;s<=t;s++){var o=e[s].dl;if(o==0)continue;e[s].fc=Dn(n[o]++,o)}};var xn=function(e){var t=e.dyn_tree;var n=e.static_tree;var r=e.elems;var i,s;var o=-1;var u=r;Tt=0;Nt=B;for(i=0;i<r;i++){if(t[i].fc!=0){xt[++Tt]=o=i;Ct[i]=0}else t[i].dl=0}while(Tt<2){var a=xt[++Tt]=o<2?++o:0;t[a].fc=1;Ct[a]=0;jt--;if(n!=null)Ft-=n[a].dl}e.max_code=o;for(i=Tt>>1;i>=1;i--)wn(t,i);do{i=xt[T];xt[T]=xt[Tt--];wn(t,T);s=xt[T];xt[--Nt]=i;xt[--Nt]=s;t[u].fc=t[i].fc+t[s].fc;if(Ct[i]>Ct[s]+1)Ct[u]=Ct[i];else Ct[u]=Ct[s]+1;t[i].dl=t[s].dl=u;xt[T]=u++;wn(t,T)}while(Tt>=2);xt[--Nt]=xt[T];En(e);Sn(t,o)};var Tn=function(e,t){var n;var r=-1;var i;var s=e[0].dl;var o=0;var u=7;var a=4;if(s==0){u=138;a=3}e[t+1].dl=65535;for(n=0;n<=t;n++){i=s;s=e[n+1].dl;if(++o<u&&i==s)continue;else if(o<a)yt[i].fc+=o;else if(i!=0){if(i!=r)yt[i].fc++;yt[D].fc++}else if(o<=10)yt[P].fc++;else yt[H].fc++;o=0;r=i;if(s==0){u=138;a=3}else if(i==s){u=6;a=3}else{u=7;a=4}}};var Nn=function(e,t){var n;var r=-1;var i;var s=e[0].dl;var o=0;var u=7;var a=4;if(s==0){u=138;a=3}for(n=0;n<=t;n++){i=s;s=e[n+1].dl;if(++o<u&&i==s){continue}else if(o<a){do{on(i,yt)}while(--o!=0)}else if(i!=0){if(i!=r){on(i,yt);o--}on(D,yt);_n(o-3,2)}else if(o<=10){on(P,yt);_n(o-3,3)}else{on(H,yt);_n(o-11,7)}o=0;r=i;if(s==0){u=138;a=3}else if(i==s){u=6;a=3}else{u=7;a=4}}};var Cn=function(){var e;Tn(dt,bt.max_code);Tn(vt,wt.max_code);xn(Et);for(e=_-1;e>=3;e--){if(yt[Jt[e]].dl!=0)break}jt+=3*(e+1)+5+5+4;return e};var kn=function(e,t,n){var r;_n(e-257,5);_n(t-1,5);_n(n-4,4);for(r=0;r<n;r++){_n(yt[Jt[r]].dl,3)}Nn(dt,e-1);Nn(vt,t-1)};var Ln=function(e){var t,s;var o;var u;u=st-Y;Mt[Pt]=Ht;xn(bt);xn(wt);o=Cn();t=jt+3+7>>3;s=Ft+3+7>>3;if(s<=t)t=s;if(u+4<=t&&Y>=0){var a;_n((n<<1)+e,3);Pn();rn(u);rn(~u);for(a=0;a<u;a++)nn(V[Y+a])}else if(s==t){_n((r<<1)+e,3);On(mt,gt)}else{_n((i<<1)+e,3);kn(bt.max_code+1,wt.max_code+1,o+1);On(dt,vt)}bn();if(e!=0)Pn()};var An=function(e,t){J[_t++]=t;if(e==0){dt[t].fc++}else{e--;dt[kt[t]+L+1].fc++;vt[un(e)].fc++;$[Dt++]=e;Ht|=Bt}Bt<<=1;if((_t&7)==0){Mt[Pt++]=Ht;Ht=0;Bt=1}if(ct>2&&(_t&4095)==0){var n=_t*8;var r=st-Y;var i;for(i=0;i<M;i++){n+=vt[i].fc*(5+Vt[i])}n>>=3;if(Dt<parseInt(_t/2)&&n<parseInt(r/2))return true}return _t==d-1||Dt==m};var On=function(e,t){var n;var r;var i=0;var s=0;var o=0;var u=0;var a;var f;if(_t!=0)do{if((i&7)==0)u=Mt[o++];r=J[i++]&255;if((u&1)==0){on(r,e)}else{a=kt[r];on(a+L+1,e);f=Xt[a];if(f!=0){r-=At[a];_n(r,f)}n=$[s++];a=un(n);on(a,t);f=Vt[a];if(f!=0){n-=Ot[a];_n(n,f)}}u>>=1}while(i<_t);on(A,e)};var Mn=16;var _n=function(e,t){if(G>Mn-t){Q|=e<<G;rn(Q);Q=e>>Mn-G;G+=t-Mn}else{Q|=e<<G;G+=t}};var Dn=function(e,t){var n=0;do{n|=e&1;e>>=1;n<<=1}while(--t>0);return n>>1};var Pn=function(){if(G>8){rn(Q)}else if(G>0){nn(Q)}Q=0;G=0};var Hn=function(){if(z!=0){var e,t;e=Zt();if(I==null)I=q=e;else q=q.next=e;e.len=z-W;for(t=0;t<e.len;t++)e.ptr[t]=U[W+t];z=W=0}};var Bn=function(e,t){var n,r;It=e;qt=0;if(typeof t=="undefined")t=s;Qt(t);var i=new Array(1024);var o=[];while((n=mn(i,0,i.length))>0){var u=new Array(n);for(r=0;r<n;r++){u[r]=String.fromCharCode(i[r])}o[o.length]=u.join("")}It=null;return o.join("")};if(!e.RawDeflate)e.RawDeflate={};e.RawDeflate.deflate=Bn})(this);
+
 var GlobalOptions = {
 	ptupdate: true,
 	ptupdatebeta: 0,
@@ -1248,96 +309,15 @@ var Colors = {
 };
 var AutoTrainOptions = {
 	intervalSecs: 60,
-	doTraps: {
-		1: false,
-		2: false,
-		3: false,
-		4: false,
-		5: false,
-		6: false,
-		7: false,
-		8: false
-	},
-	doCalrops: {
-		1: false,
-		2: false,
-		3: false,
-		4: false,
-		5: false,
-		6: false,
-		7: false,
-		8: false
-	},
-	doSpikes: {
-		1: false,
-		2: false,
-		3: false,
-		4: false,
-		5: false,
-		6: false,
-		7: false,
-		8: false
-	},
-	doXbows: {
-		1: false,
-		2: false,
-		3: false,
-		4: false,
-		5: false,
-		6: false,
-		7: false,
-		8: false
-	},
-	troopType: {
-		1: 0,
-		2: 0,
-		3: 0,
-		4: 0,
-		5: 0,
-		6: 0,
-		7: 0,
-		8: 0
-	},
-	keepFood: {
-		1: 0,
-		2: 0,
-		3: 0,
-		4: 0,
-		5: 0,
-		6: 0,
-		7: 0,
-		8: 0
-	},
-	keepWood: {
-		1: 0,
-		2: 0,
-		3: 0,
-		4: 0,
-		5: 0,
-		6: 0,
-		7: 0,
-		8: 0
-	},
-	keepStone: {
-		1: 0,
-		2: 0,
-		3: 0,
-		4: 0,
-		5: 0,
-		6: 0,
-		7: 0,
-		8: 0
-	},
-	keepOre: {
-		1: 0,
-		2: 0,
-		3: 0,
-		4: 0,
-		5: 0,
-		6: 0,
-		7: 0,
-		8: 0
-	},
+	doTraps:			{1:false,2:false,3:false,4:false,5:false,6:false,7:false,8:false},
+	doCalrops:			{1:false,2:false,3:false,4:false,5:false,6:false,7:false,8:false},
+	doSpikes:			{1:false,2:false,3:false,4:false,5:false,6:false,7:false,8:false},
+	doXbows:			{1:false,2:false,3:false,4:false,5:false,6:false,7:false,8:false},
+	troopType:			{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
+	keepFood:				{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
+	keepWood:				{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
+	keepStone:			{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
+	keepOre:				{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
 };
 var ChatIcons = {};
 var IRCOptions = {
@@ -1373,159 +353,10 @@ var GameIcons = {
 	raidResting: '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/autoAttack/raid_resting.png>',
 	returning: '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/returning.jpg>',
 };
-var JSON;
-if (!JSON) {
-	JSON = {};
-}(function () {
-	"use strict";
+var JSON;if(!JSON){JSON={};}(function(){"use strict";function f(n){return n<10?'0'+n:n;}if(typeof Date.prototype.toJSON!=='function'){Date.prototype.toJSON=function(key){return isFinite(this.valueOf())?this.getUTCFullYear()+'-'+f(this.getUTCMonth()+1)+'-'+f(this.getUTCDate())+'T'+f(this.getUTCHours())+':'+f(this.getUTCMinutes())+':'+f(this.getUTCSeconds())+'Z':null;};String.prototype.toJSON=Number.prototype.toJSON=Boolean.prototype.toJSON=function(key){return this.valueOf();};}var cx=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,escapable=/[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,gap,indent,meta={'\b':'\\b','\t':'\\t','\n':'\\n','\f':'\\f','\r':'\\r','"':'\\"','\\':'\\\\'},rep;function quote(string){escapable.lastIndex=0;return escapable.test(string)?'"'+string.replace(escapable,function(a){var c=meta[a];return typeof c==='string'?c:'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4);})+'"':'"'+string+'"';}function str(key,holder){var i,k,v,length,mind=gap,partial,value=holder[key];if(value&&typeof value==='object'&&typeof value.toJSON==='function'){value=value.toJSON(key);}if(typeof rep==='function'){value=rep.call(holder,key,value);}switch(typeof value){case'string':return quote(value);case'number':return isFinite(value)?String(value):'null';case'boolean':case'null':return String(value);case'object':if(!value){return'null';}gap+=indent;partial=[];if(Object.prototype.toString.apply(value)==='[object Array]'){length=value.length;for(i=0;i<length;i+=1){partial[i]=str(i,value)||'null';}v=partial.length===0?'[]':gap?'[\n'+gap+partial.join(',\n'+gap)+'\n'+mind+']':'['+partial.join(',')+']';gap=mind;return v;}if(rep&&typeof rep==='object'){length=rep.length;for(i=0;i<length;i+=1){k=rep[i];if(typeof k==='string'){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v);}}}}else{for(k in value){if(Object.hasOwnProperty.call(value,k)){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v);}}}}v=partial.length===0?'{}':gap?'{\n'+gap+partial.join(',\n'+gap)+'\n'+mind+'}':'{'+partial.join(',')+'}';gap=mind;return v;}}if(typeof JSON.stringify!=='function'){JSON.stringify=function(value,replacer,space){var i;gap='';indent='';if(typeof space==='number'){for(i=0;i<space;i+=1){indent+=' ';}}else if(typeof space==='string'){indent=space;}rep=replacer;if(replacer&&typeof replacer!=='function'&&(typeof replacer!=='object'||typeof replacer.length!=='number')){throw new Error('JSON.stringify');}return str('',{'':value});};}if(typeof JSON.parse!=='function'){JSON.parse=function(text,reviver){var j;function walk(holder,key){var k,v,value=holder[key];if(value&&typeof value==='object'){for(k in value){if(Object.hasOwnProperty.call(value,k)){v=walk(value,k);if(v!==undefined){value[k]=v;}else{delete value[k];}}}}return reviver.call(holder,key,value);}text=String(text);cx.lastIndex=0;if(cx.test(text)){text=text.replace(cx,function(a){return'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4);});}if(/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,'@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']').replace(/(?:^|:|,)(?:\s*\[)+/g,''))){j=eval('('+text+')');return typeof reviver==='function'?walk({'':j},''):j;}throw new SyntaxError('JSON.parse');};}}());
 
-	function f(n) {
-		return n < 10 ? '0' + n : n;
-	}
-	if (typeof Date.prototype.toJSON !== 'function') {
-		Date.prototype.toJSON = function (key) {
-			return isFinite(this.valueOf()) ? this.getUTCFullYear() + '-' + f(this.getUTCMonth() + 1) + '-' + f(this.getUTCDate()) + 'T' + f(this.getUTCHours()) + ':' + f(this.getUTCMinutes()) + ':' + f(this.getUTCSeconds()) + 'Z' : null;
-		};
-		String.prototype.toJSON = Number.prototype.toJSON = Boolean.prototype.toJSON = function (key) {
-			return this.valueOf();
-		};
-	}
-	var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
-		escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
-		gap, indent, meta = {
-			'\b': '\\b',
-			'\t': '\\t',
-			'\n': '\\n',
-			'\f': '\\f',
-			'\r': '\\r',
-			'"': '\\"',
-			'\\': '\\\\'
-		}, rep;
 
-	function quote(string) {
-		escapable.lastIndex = 0;
-		return escapable.test(string) ? '"' + string.replace(escapable, function (a) {
-			var c = meta[a];
-			return typeof c === 'string' ? c : '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
-		}) + '"' : '"' + string + '"';
-	}
 
-	function str(key, holder) {
-		var i, k, v, length, mind = gap,
-			partial, value = holder[key];
-		if (value && typeof value === 'object' && typeof value.toJSON === 'function') {
-			value = value.toJSON(key);
-		}
-		if (typeof rep === 'function') {
-			value = rep.call(holder, key, value);
-		}
-		switch (typeof value) {
-		case 'string':
-			return quote(value);
-		case 'number':
-			return isFinite(value) ? String(value) : 'null';
-		case 'boolean':
-		case 'null':
-			return String(value);
-		case 'object':
-			if (!value) {
-				return 'null';
-			}
-			gap += indent;
-			partial = [];
-			if (Object.prototype.toString.apply(value) === '[object Array]') {
-				length = value.length;
-				for (i = 0; i < length; i += 1) {
-					partial[i] = str(i, value) || 'null';
-				}
-				v = partial.length === 0 ? '[]' : gap ? '[\n' + gap + partial.join(',\n' + gap) + '\n' + mind + ']' : '[' + partial.join(',') + ']';
-				gap = mind;
-				return v;
-			}
-			if (rep && typeof rep === 'object') {
-				length = rep.length;
-				for (i = 0; i < length; i += 1) {
-					k = rep[i];
-					if (typeof k === 'string') {
-						v = str(k, value);
-						if (v) {
-							partial.push(quote(k) + (gap ? ': ' : ':') + v);
-						}
-					}
-				}
-			} else {
-				for (k in value) {
-					if (Object.hasOwnProperty.call(value, k)) {
-						v = str(k, value);
-						if (v) {
-							partial.push(quote(k) + (gap ? ': ' : ':') + v);
-						}
-					}
-				}
-			}
-			v = partial.length === 0 ? '{}' : gap ? '{\n' + gap + partial.join(',\n' + gap) + '\n' + mind + '}' : '{' + partial.join(',') + '}';
-			gap = mind;
-			return v;
-		}
-	}
-	if (typeof JSON.stringify !== 'function') {
-		JSON.stringify = function (value, replacer, space) {
-			var i;
-			gap = '';
-			indent = '';
-			if (typeof space === 'number') {
-				for (i = 0; i < space; i += 1) {
-					indent += ' ';
-				}
-			} else if (typeof space === 'string') {
-				indent = space;
-			}
-			rep = replacer;
-			if (replacer && typeof replacer !== 'function' && (typeof replacer !== 'object' || typeof replacer.length !== 'number')) {
-				throw new Error('JSON.stringify');
-			}
-			return str('', {
-				'': value
-			});
-		};
-	}
-	if (typeof JSON.parse !== 'function') {
-		JSON.parse = function (text, reviver) {
-			var j;
-
-			function walk(holder, key) {
-				var k, v, value = holder[key];
-				if (value && typeof value === 'object') {
-					for (k in value) {
-						if (Object.hasOwnProperty.call(value, k)) {
-							v = walk(value, k);
-							if (v !== undefined) {
-								value[k] = v;
-							} else {
-								delete value[k];
-							}
-						}
-					}
-				}
-				return reviver.call(holder, key, value);
-			}
-			text = String(text);
-			cx.lastIndex = 0;
-			if (cx.test(text)) {
-				text = text.replace(cx, function (a) {
-					return '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
-				});
-			}
-			if (/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, '@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
-				j = eval('(' + text + ')');
-				return typeof reviver === 'function' ? walk({
-					'': j
-				}, '') : j;
-			}
-			throw new SyntaxError('JSON.parse');
-		};
-	}
-}());
 var JSON2 = JSON;
 var Cities = {};
 var Seed = unsafeWindow.seed;
@@ -2014,15 +845,11 @@ var battleReports = {
 	init: function () {
 		var t = battleReports;
 		//    t.getReportDisplayFunc = new CalterUwFunc ('getReportDisplay', [['return K.join("")', 'var themsg=K.join(""); themsg=getReportDisplay_hook(themsg, arguments[1]); return themsg']]); //Alliance report battle rounds function
-		t.getReportDisplayFunc = new CalterUwFunc('getReportDisplay', [
-			['return K.join("")', 'var themsg=K.join(""); themsg=getReportDisplay_hook(themsg, arguments[1]); themsg=getReportDisplay_hookz(themsg, arguments[1]); return themsg']
-		]); //Alliance report battle rounds function
+    		t.getReportDisplayFunc = new CalterUwFunc ('getReportDisplay', [['return K.join("")', 'var themsg=K.join(""); themsg=getReportDisplay_hook(themsg, arguments[1]); themsg=getReportDisplay_hookz(themsg, arguments[1]); return themsg']]); //Alliance report battle rounds function
 		uW.getReportDisplay_hook = t.hook;
 		uW.getReportDisplay_hookz = t.hookz;
 		t.getReportDisplayFunc.setEnable(true);
-		t.renderBattleReportFunc = new CalterUwFunc('Messages.viewMarchReport', [
-			[/\$\("modal_msg_list"\)\.innerHTML\s*=\s*cm\.MarchReportController\.getMarchReport\(c,\s*y\)/, 'var msg = cm.MarchReportController.getMarchReport(c, y); $("modal_msg_list").innerHTML = renderBattleReport_hook(msg,c,y);']
-		]); //March reports battle rounds function
+    		t.renderBattleReportFunc = new CalterUwFunc ('Messages.viewMarchReport', [[/\$\("modal_msg_list"\)\.innerHTML\s*=\s*cm\.MarchReportController\.getMarchReport\(c,\s*y\)/, 'var msg = cm.MarchReportController.getMarchReport(c, y); $("modal_msg_list").innerHTML = renderBattleReport_hook(msg,c,y);']]); //March reports battle rounds function
 		uW.renderBattleReport_hook = t.hook2;
 		t.renderBattleReportFunc.setEnable(true);
 		uW.deleteAreport = t.e_deleteReport;
@@ -2100,17 +927,14 @@ var battleReports = {
 var mapinfoFix = {
 	init: function () {
 		var t = mapinfoFix;
-		t.calcButtonInfo = new CalterUwFunc('cm.ContextMenuMapController.prototype.calcButtonInfo', [
-			[/case\s*"reassign":b\.text\s*=\s*g_js_strings\.commonstr\.reassign;b\.color\s*=\s*"blue";b\.action\s*=\s*function\s*\(\)\s*{modal_attack\(2,\s*e\.tile\.x,\s*e\.tile\.y\);*};d\.push\(b\);break;/,
-				'case "reassign":b.text=g_js_strings.commonstr.reassign;b.color="blue";b.action=function(){modal_attack(5,e.tile.x,e.tile.y);};d.push(b);break;'
-			]
-		]);
-		t.bookMarkMod = new CalterUwFunc('cm.ContextMenuMapController.prototype.calcButtonInfo', [
-			[/case\s*"bookmark":/, 'case "bookmark": try { if (e.city && cm.tileInfo[e.tile.id] && cm.tileInfo[e.tile.id].cityName ) {e.tile.name = e.user.username + "/" + cm.tileInfo[e.tile.id].cityName;}} catch (err1) {} ']
-		]);
-		t.MapContextMenus = new CalterUwFunc('cm.ContextMenuMapController.prototype.calcCityType', [
-			['return c', 'c = calcCityTypeFix(c,d);return c']
-		]);
+	    t.calcButtonInfo =  new CalterUwFunc('cm.ContextMenuMapController.prototype.calcButtonInfo', 
+		    [[/case\s*"reassign":b\.text\s*=\s*g_js_strings\.commonstr\.reassign;b\.color\s*=\s*"blue";b\.action\s*=\s*function\s*\(\)\s*{modal_attack\(2,\s*e\.tile\.x,\s*e\.tile\.y\);*};d\.push\(b\);break;/,
+		      'case "reassign":b.text=g_js_strings.commonstr.reassign;b.color="blue";b.action=function(){modal_attack(5,e.tile.x,e.tile.y);};d.push(b);break;']]);
+
+	    t.bookMarkMod = new CalterUwFunc('cm.ContextMenuMapController.prototype.calcButtonInfo',
+		    [[/case\s*"bookmark":/, 'case "bookmark": try { if (e.city && cm.tileInfo[e.tile.id] && cm.tileInfo[e.tile.id].cityName ) {e.tile.name = e.user.username + "/" + cm.tileInfo[e.tile.id].cityName;}} catch (err1) {} ']]);
+
+	    t.MapContextMenus = new CalterUwFunc ('cm.ContextMenuMapController.prototype.calcCityType', [['return c', 'c = calcCityTypeFix(c,d);return c']]);
 		t.calcButtonInfo.setEnable(Options.mapInfo);
 		t.MapContextMenus.setEnable(Options.mapInfo2);
 		t.bookMarkMod.setEnable(Options.mapInfo3);
@@ -2268,9 +1092,7 @@ var MapDoubleClickFix = {
 		t = MapDoubleClickFix;
 		//      t.doubleClickFix = new CalterUwFunc ('g_mapObject.populateSlots', [[/that\.controller\.onTileClick\(this\)/im,'setTimeout(that.controller.onTileClick(this),1000)}).off("dblclick", "**").on("dblclick", "a", function(){that.controller.onTileDblClick(this)']]);
 		// replace with previous map mouse event handler coding
-		t.doubleClickFix = new CalterUwFunc('g_mapObject.populateSlots', [
-			[/map1.*Tooltip/img, 'map1 a").unbind("click").clicks(function(){setTimeout(that.controller.onTileClick(this),200)}, function(){that.controller.onTileDblClick(this)}).unbind("hover").hover(function(i){that.controller.onTileEnter(this, i)}, function(){removeTooltip']
-		]);
+      		t.doubleClickFix = new CalterUwFunc ('g_mapObject.populateSlots', [[/map1.*Tooltip/img,'map1 a").unbind("click").clicks(function(){setTimeout(that.controller.onTileClick(this),200)}, function(){that.controller.onTileDblClick(this)}).unbind("hover").hover(function(i){that.controller.onTileEnter(this, i)}, function(){removeTooltip']]);
 		t.doubleClickFix.setEnable(Options.fixMapDblClick);
 	},
 	setEnable: function (tf) {
@@ -2334,13 +1156,9 @@ var BarbRaidMarchPatch = {
 	init: function () {
 		t = BarbRaidMarchPatch;
 		if (FFVersion.substring(0, 4) > 16)
-			t.marchFix = new CalterUwFunc('update_march', [
-				[/D\.toTileLevel,\s*n,\s*M\)/im, 'D.toTileLevel, n, M, Math.floor(unixtime()+D.returnEta-D.marchUnixTime))']
-			]);
+			t.marchFix = new CalterUwFunc ('update_march', [[/D\.toTileLevel,\s*n,\s*M\)/im,'D.toTileLevel, n, M, Math.floor(unixtime()+D.returnEta-D.marchUnixTime))']]);
 		else
-			t.marchFix = new CalterUwFunc('update_march', [
-				['D.toTileLevel, n, M)', 'D.toTileLevel, n, M, Math.floor(unixtime()+D.returnEta-D.marchUnixTime))']
-			]);
+			t.marchFix = new CalterUwFunc ('update_march', [['D.toTileLevel, n, M)','D.toTileLevel, n, M, Math.floor(unixtime()+D.returnEta-D.marchUnixTime))']]);
 		t.marchFix.setEnable(Options.togRaidPatch);
 	},
 	setEnable: function (tf) {
@@ -2450,9 +1268,7 @@ var ChatStuff = {
 		if (getMyAlliance()[0] > 0)
 			t.getAllianceLeaders();
 		// [[/h\s*=\s*cm.formatModel\.exe\(h,\s*true\);/,'h=chatDivContent_hook2(h);h = cm.formatModel.exe(h, true);'],
-		t.chatDivContentFunc = new CalterUwFunc('Chat.chatDivContent', [
-			['return f.join("")', 'var msg = f.join("");\n msg=chatDivContent_hook(msg,d);\n return msg;']
-		]);
+			t.chatDivContentFunc = new CalterUwFunc ('Chat.chatDivContent', [['return f.join("")', 'var msg = f.join("");\n msg=chatDivContent_hook(msg,d);\n return msg;']]);
 		uW.chatDivContent_hook = t.chatDivContentHook;
 		uW.chatDivContent_hook2 = t.chatDivContentHook2;
 		uW.ptChatIconClicked = t.e_iconClicked;
@@ -5096,11 +3912,7 @@ Tabs.Knights = {
 		params.i = int;
 		params.r = res;
 		if (DISABLE_POST_KNIGHT_SKILLS) {
-			setTimeout(function () {
-				notify({
-					ok: true
-				})
-			}, 1500);
+      			setTimeout (function (){notify({ok:true})}, 1500);    
 			//      setTimeout (  function (){notify({ok:false, errorMsg:"FAKE ERROR message, a long one, to test how it will fit and overflow! Perhaps you'll need to retry?"})}  , 2000);    
 			return;
 		}
@@ -5144,18 +3956,15 @@ var messageNav = {
 	mmsFunc: null,
 	init: function () {
 		t = messageNav;
-		t.mmFunc = new CalterUwFunc('modal_messages', [
-			[/}\s*$/, 'setTimeout(messageNav_hook,0); }']
-		]);
-		t.mmsFunc = new CalterUwFunc('modal_messages_send', [
-			[/{\s*var params/i, '{\nif (modal_messages_send_hook()) return;\nvar params']
-		]);
+    		t.mmFunc = new CalterUwFunc ('modal_messages', [[/}\s*$/, 'setTimeout(messageNav_hook,0); }']]);
+    		t.mmsFunc = new CalterUwFunc ('modal_messages_send', [[/{\s*var params/i, '{\nif (modal_messages_send_hook()) return;\nvar params']]);
 		uW.messageNav_hook = messageNav.hook;
 		uW.modal_messages_send_hook = messageNav.msgSendHook;
 		// t.mmFunc.setEnable (true);
 		// t.mmsFunc.setEnable (true);
 	},
-	setEnable: function (tf) {},
+  	setEnable : function (tf){
+  	},
 	isAvailable: function () {
 		t = messageNav;
 		//return t.mmFunc.isAvailable();
@@ -5219,13 +4028,12 @@ var messageNav = {
 var AttackDialog = {
 	init: function () {
 		var t = AttackDialog;
-		t.modal_attackFunc = new CalterUwFunc('modal_attack', [
-			[/}\s*$/, '; attackDialog_hook(); }']
-		]);
+    		t.modal_attackFunc = new CalterUwFunc ('modal_attack', [[/}\s*$/, '; attackDialog_hook(); }']]);
 		uW.attackDialog_hook = t.modalAttackHook;
 		t.modal_attackFunc.setEnable(true);
 	},
-	setEnable: function () {},
+  	setEnable : function (){
+  	},
 	isKnightSelectAvailable: function () {
 		var t = AttackDialog;
 		return t.modal_attackFunc.isAvailable();
@@ -5288,14 +4096,10 @@ var AttackDialog = {
 var DispReport = {
 	init: function () {
 		var t = DispReport;
-		t.modal_InboxFunc = new CalterUwFunc('modal_messages_listshow', [
-			['msghtml.join("");', 'msghtml.join("");dispInbox_hook(rslt,boxType,msghtml);']
-		]);
+    		t.modal_InboxFunc = new CalterUwFunc ('modal_messages_listshow', [['msghtml.join("");', 'msghtml.join("");dispInbox_hook(rslt,boxType,msghtml);']]);
 		uW.dispInbox_hook = t.ModalInboxHook;
 		t.modal_InboxFunc.setEnable(Options.enhancedinbox);
-		t.modal_RptFunc = new CalterUwFunc('Messages.handleListReports', [
-			['n.join("");', 'n.join("");dispRpt_hook(l,n);']
-		]);
+    		t.modal_RptFunc = new CalterUwFunc ('Messages.handleListReports', [['n.join("");', 'n.join("");dispRpt_hook(l,n);']]);
 		uW.dispRpt_hook = t.ModalReportListHook;
 		t.modal_RptFunc.setEnable(Options.enhancedinbox);
 	},
@@ -5483,13 +4287,8 @@ var AllianceReports = {
 	init: function () {
 		t = AllianceReports;
 		t.enable(Options.enhanceARpts);
-		t.marvFunc = new CalterUwFunc('modal_alliance_report_view', [
-			['getReportDisplay', 'getReportDisplay_hook2']
-		]);
-		t.memListFunc = new CalterUwFunc('membersInfo', [
-			['commonstr.might', 'commonstr.might + "</td><td class=colcities>" + g_js_strings.commonstr.cities + "</td><td class=collast>" + g_js_strings.membersInfo.lastonline'],
-			['memberInfo[key].prestige\)', 'memberInfo[key].prestige)+ "</td>");memhtml.push("<td class=colcities>" + memberInfo[key].cities + "</td>");memhtml.push("<td class=collast>" + memberInfo[key].lastLogin']
-		]);
+    		t.marvFunc = new CalterUwFunc ('modal_alliance_report_view', [['getReportDisplay', 'getReportDisplay_hook2']]);
+    		t.memListFunc = new CalterUwFunc ('membersInfo', [['commonstr.might','commonstr.might + "</td><td class=colcities>" + g_js_strings.commonstr.cities + "</td><td class=collast>" + g_js_strings.membersInfo.lastonline'],['memberInfo[key].prestige\)', 'memberInfo[key].prestige)+ "</td>");memhtml.push("<td class=colcities>" + memberInfo[key].cities + "</td>");memhtml.push("<td class=collast>" + memberInfo[key].lastLogin']]);
 		uW.getReportDisplay_hook2 = t.getReportDisplayHook;
 		uW.getmembersInfo_hook = t.getMembersInfoHook;
 		t.marvFunc.setEnable(true);
@@ -5771,14 +4570,11 @@ var TowerAlerts = {
 		var s = GM_getValue('towerMarches_' + GetServerId());
 		if (s != null)
 			t.towerMarches = JSON2.parse(s);
-		t.viewImpendingFunc = new CalterUwFunc('attack_viewimpending_view', [
-			[/Modal.showModal\((.*)\)/im, 'Modal.showModal\($1\); ptViewImpending_hook(a);']
-		]);
+ 
+    			t.viewImpendingFunc = new CalterUwFunc ('attack_viewimpending_view', [[/Modal.showModal\((.*)\)/im, 'Modal.showModal\($1\); ptViewImpending_hook(a);']]);
 		uW.ptViewImpending_hook = t.viewImpending_hook;
 		t.viewImpendingFunc.setEnable(true);
-		t.generateIncomingFunc = new CalterUwFunc('attack_generateincoming', [
-			[/d\s*=\s*true/i, 'd = ptGenerateIncoming_hook();']
-		]);
+    		t.generateIncomingFunc = new CalterUwFunc ('attack_generateincoming', [[/d\s*=\s*true/i, 'd = ptGenerateIncoming_hook();']]);
 		uW.ptGenerateIncoming_hook = t.generateIncoming_hook;
 	},
 	// fix 'target', add button  
@@ -6870,487 +5666,16 @@ ajax/viewCourt.php:
 		});
 	},
 	TRlineHolder: {
-		1: {
-			1: "Attack",
-			2: null
-		},
-		2: {
-			1: 1,
-			2: 17
-		},
-		3: {
-			1: 24,
-			2: 29
-		},
-		4: {
-			1: 34,
-			2: 39
-		},
-		5: {
-			1: 44,
-			2: 50
-		},
-		6: {
-			1: 56,
-			2: 61
-		},
-		7: {
-			1: 17,
-			2: 1
-		},
-		8: {
-			1: 29,
-			2: 24
-		},
-		9: {
-			1: 39,
-			2: 34
-		},
-		10: {
-			1: 50,
-			2: 44
-		},
-		11: {
-			1: 61,
-			2: 56
-		},
-		12: {
-			1: "Defense",
-			2: null
-		},
-		13: {
-			1: 2,
-			2: 18
-		},
-		14: {
-			1: 25,
-			2: 30
-		},
-		15: {
-			1: 35,
-			2: 40
-		},
-		16: {
-			1: 45,
-			2: 51
-		},
-		17: {
-			1: 18,
-			2: 2
-		},
-		18: {
-			1: 30,
-			2: 25
-		},
-		19: {
-			1: 40,
-			2: 35
-		},
-		20: {
-			1: 51,
-			2: 45
-		},
-		21: {
-			1: "Life",
-			2: null
-		},
-		22: {
-			1: 3,
-			2: 19
-		},
-		23: {
-			1: 26,
-			2: 31
-		},
-		24: {
-			1: 36,
-			2: 41
-		},
-		25: {
-			1: 46,
-			2: 52
-		},
-		26: {
-			1: 19,
-			2: 3
-		},
-		27: {
-			1: 31,
-			2: 26
-		},
-		28: {
-			1: 41,
-			2: 36
-		},
-		29: {
-			1: 52,
-			2: 46
-		},
-		30: {
-			1: "Combat Speed",
-			2: null
-		},
-		31: {
-			1: 4,
-			2: 20
-		},
-		32: {
-			1: 27,
-			2: 32
-		},
-		33: {
-			1: 47,
-			2: 53
-		},
-		34: {
-			1: 57,
-			2: 62
-		},
-		35: {
-			1: 20,
-			2: 4
-		},
-		36: {
-			1: 32,
-			2: 27
-		},
-		37: {
-			1: 53,
-			2: 47
-		},
-		38: {
-			1: 62,
-			2: 57
-		},
-		39: {
-			1: "Range",
-			2: null
-		},
-		40: {
-			1: 5,
-			2: 21
-		},
-		41: {
-			1: 37,
-			2: 42
-		},
-		42: {
-			1: 58,
-			2: 63
-		},
-		43: {
-			1: 21,
-			2: 5
-		},
-		44: {
-			1: 42,
-			2: 37
-		},
-		45: {
-			1: 63,
-			2: 58
-		},
-		46: {
-			1: "Load",
-			2: null
-		},
-		47: {
-			1: 6,
-			2: 22
-		},
-		48: {
-			1: 48,
-			2: 54
-		},
-		49: {
-			1: 59,
-			2: 64
-		},
-		50: {
-			1: 22,
-			2: 6
-		},
-		51: {
-			1: 54,
-			2: 48
-		},
-		52: {
-			1: 64,
-			2: 59
-		},
-		52: {
-			1: "Accuracy",
-			2: null
-		},
-		53: {
-			1: 7,
-			2: 23
-		},
-		54: {
-			1: 28,
-			2: 33
-		},
-		55: {
-			1: 38,
-			2: 43
-		},
-		56: {
-			1: 49,
-			2: 55
-		},
-		57: {
-			1: 60,
-			2: 65
-		},
-		58: {
-			1: 23,
-			2: 7
-		},
-		59: {
-			1: 33,
-			2: 28
-		},
-		60: {
-			1: 43,
-			2: 38
-		},
-		61: {
-			1: 55,
-			2: 49
-		},
-		62: {
-			1: 65,
-			2: 60
-		},
-		63: {
-			1: "Other",
-			2: null
-		},
-		64: {
-			1: 8,
-			2: 8
-		},
-		65: {
-			1: 9,
-			2: 9
-		},
-		65: {
-			1: 10,
-			2: 10
-		},
-		66: {
-			1: 11,
-			2: 11
-		},
-		67: {
-			1: 12,
-			2: 12
-		},
-		68: {
-			1: 13,
-			2: 13
-		},
-		69: {
-			1: 14,
-			2: 14
-		},
-		70: {
-			1: 15,
-			2: 15
-		},
-		71: {
-			1: 16,
-			2: 16
-		},
-		72: {
-			1: 66,
-			2: 66
-		},
-		73: {
-			1: 67,
-			2: 67
-		},
-		74: {
-			1: 68,
-			2: 68
-		},
-		75: {
-			1: 69,
-			2: 69
-		},
-		76: {
-			1: 70,
-			2: 70
-		},
-		77: {
-			1: 71,
-			2: 71
-		},
-		78: {
-			1: 72,
-			2: 72
-		},
-		79: {
-			1: 73,
-			2: 73
-		},
-		80: {
-			1: 74,
-			2: 74
-		},
-		81: {
-			1: 75,
-			2: 75
-		},
-		82: {
-			1: 76,
-			2: 76
-		},
-		83: {
-			1: 77,
-			2: 77
-		},
-		84: {
-			1: 78,
-			2: 78
-		},
-		85: {
-			1: 79,
-			2: 79
-		},
-		86: {
-			1: 80,
-			2: 80
-		},
-		87: {
-			1: 81,
-			2: 81
-		},
-		88: {
-			1: 82,
-			2: 82
-		},
-		89: {
-			1: 83,
-			2: 83
-		},
-		90: {
-			1: 84,
-			2: 84
-		},
-		91: {
-			1: 85,
-			2: 85
-		},
-		92: {
-			1: 86,
-			2: 86
-		},
-		93: {
-			1: 87,
-			2: 87
-		},
-		94: {
-			1: 88,
-			2: 88
-		},
-		95: {
-			1: 89,
-			2: 89
-		},
-		96: {
-			1: 90,
-			2: 90
-		},
-		97: {
-			1: 91,
-			2: 91
-		},
-		98: {
-			1: 92,
-			2: 92
-		},
-		99: {
-			1: 93,
-			2: 93
-		},
-		100: {
-			1: 94,
-			2: 94
-		},
-		101: {
-			1: 95,
-			2: 95
-		},
-		102: {
-			1: 96,
-			2: 96
-		},
-		103: {
-			1: 97,
-			2: 97
-		},
-		104: {
-			1: 98,
-			2: 98
-		},
-		105: {
-			1: 99,
-			2: 99
-		},
-		106: {
-			1: 100,
-			2: 100
-		},
-		107: {
-			1: 101,
-			2: 101
-		},
-		108: {
-			1: 102,
-			2: 102
-		},
-		109: {
-			1: 103,
-			2: 103
-		},
-		110: {
-			1: 104,
-			2: 104
-		},
-		111: {
-			1: 105,
-			2: 105
-		},
-		112: {
-			1: 106,
-			2: 106
-		},
-		113: {
-			1: 107,
-			2: 107
-		},
-		114: {
-			1: 108,
-			2: 108
-		},
-		115: {
-			1: 109,
-			2: 109
-		},
-		116: {
-			1: 110,
-			2: 10
-		},
-		117: {
-			1: 111,
-			2: 111
-		},
-		118: {
-			1: 112,
-			2: 112
-		},
+		1:{1:"Attack",2:null},2:{1:1,2:17},3:{1:24,2:29},4:{1:34,2:39},5:{1:44,2:50},6:{1:56,2:61},7:{1:17,2:1},8:{1:29,2:24},9:{1:39,2:34},10:{1:50,2:44},11:{1:61,2:56},
+		12:{1:"Defense",2:null},13:{1:2,2:18},14:{1:25,2:30},15:{1:35,2:40},16:{1:45,2:51},17:{1:18,2:2},18:{1:30,2:25},19:{1:40,2:35},20:{1:51,2:45},
+		21:{1:"Life",2:null},22:{1:3,2:19},23:{1:26,2:31},24:{1:36,2:41},25:{1:46,2:52},26:{1:19,2:3},27:{1:31,2:26},28:{1:41,2:36},29:{1:52,2:46},
+		30:{1:"Combat Speed",2:null},31:{1:4,2:20},32:{1:27,2:32},33:{1:47,2:53},34:{1:57,2:62},35:{1:20,2:4},36:{1:32,2:27},37:{1:53,2:47},38:{1:62,2:57},
+		39:{1:"Range",2:null},40:{1:5,2:21},41:{1:37,2:42},42:{1:58,2:63},43:{1:21,2:5},44:{1:42,2:37},45:{1:63,2:58},	
+		46:{1:"Load",2:null},47:{1:6,2:22},48:{1:48,2:54},49:{1:59,2:64},50:{1:22,2:6},51:{1:54,2:48},52:{1:64,2:59},
+		52:{1:"Accuracy",2:null},53:{1:7,2:23},54:{1:28,2:33},55:{1:38,2:43},56:{1:49,2:55},57:{1:60,2:65},58:{1:23,2:7},59:{1:33,2:28},60:{1:43,2:38},61:{1:55,2:49},62:{1:65,2:60},	
+		63:{1:"Other",2:null},64:{1:8,2:8},65:{1:9,2:9},65:{1:10,2:10},66:{1:11,2:11},67:{1:12,2:12},68:{1:13,2:13},69:{1:14,2:14},70:{1:15,2:15},71:{1:16,2:16},72:{1:66,2:66},73:{1:67,2:67},74:{1:68,2:68},75:{1:69,2:69},76:{1:70,2:70},77:{1:71,2:71},78:{1:72,2:72},79:{1:73,2:73},80:{1:74,2:74},81:{1:75,2:75},82:{1:76,2:76},83:{1:77,2:77},84:{1:78,2:78},85:{1:79,2:79},86:{1:80,2:80},87:{1:81,2:81},88:{1:82,2:82},89:{1:83,2:83},90:{1:84,2:84},91:{1:85,2:85},92:{1:86,2:86},93:{1:87,2:87},94:{1:88,2:88},95:{1:89,2:89},96:{1:90,2:90},97:{1:91,2:91},98:{1:92,2:92},99:{1:93,2:93},100:{1:94,2:94},101:{1:95,2:95},102:{1:96,2:96},103:{1:97,2:97},104:{1:98,2:98},105:{1:99,2:99},106:{1:100,2:100},107:{1:101,2:101},108:{1:102,2:102},109:{1:103,2:103},110:{1:104,2:104},111:{1:105,2:105},112:{1:106,2:106},113:{1:107,2:107},114:{1:108,2:108},115:{1:109,2:109},116:{1:110,2:10},117:{1:111,2:111},118:{1:112,2:112},
 	},
+
 	PaintTRCalc: function (name) {
 		var t = Tabs.AllianceList;
 		m = '<BR><BR><DIV style="max-height:690px; height:690px; overflow-y:scroll;"><TABLE><TD width="35px" class=xtab></td><TD class=xtab><B>' + name + '</b><TD  width="50px"></td><TD class=xtab><B>' + Seed.player.name + '</b></td>';
@@ -10883,38 +9208,15 @@ Tabs.OverView = {
 		u += '<TR><TD width="100px" ; border:none"><a href="https://addons.mozilla.org/en/firefox/addon/scriptish/" target="_blank">Scriptish</a></td><TD width="100px" ; border:none"></td>';
 		u += '</tr></table></div><BR>';
 		//Crest info
-		var crestreq = {
-			3: {
-				1101: 4,
-				1102: 2,
-				1103: 1
-			},
-			4: {
-				1103: 4,
-				1104: 3,
-				1105: 1
-			},
-			5: {
-				1106: 4,
-				1107: 3,
-				1108: 2
-			},
-			6: {
-				1109: 4,
-				1110: 3,
-				1111: 2
-			},
-			7: {
-				1112: 4,
-				1113: 3,
-				1114: 2
-			},
-			8: {
-				1115: 4,
-				1120: 3,
-				1121: 2
-			}
+	  	var crestreq = { 
+			3:{1101:4, 1102:2, 1103:1},
+	  		4:{1103:4, 1104:3, 1105:1},
+	  		5:{1106:4, 1107:3, 1108:2},
+	  		6:{1109:4, 1110:3, 1111:2},
+	  		7:{1112:4, 1113:3, 1114:2},
+			8:{1115:4, 1120:3, 1121:2}
 		};
+	  				
 		u += '<DIV class=ptstat>CREST INFO</div><DIV id=ptLinks><TABLE align=center cellpadding=1 cellspacing=0><TR>';
 		for (city in crestreq) {
 			deed = 'q800' + city;
@@ -13625,71 +11927,85 @@ Tabs.UnitCalc = {
 				guardLife = 0;
 			}
 		}
-		var ui;
-		for (var iu in uW.cm.UNIT_TYPES) {
-			ui = uW.cm.UNIT_TYPES[iu];
-			switch (unsafeWindow.cm.unitFrontendType[ui]) {
-			case "infantry":
-				if (ui < 10) {
-					document.getElementById('ptucTrp' + ui + 'Life').innerHTML = t.round1decimals((1 + guardLife) * ((1 + feyAltar * feyAltarAct) * (champLife + uW.unitstats['unt' + ui][0]) * bloodLustBlessLife + (1 + feyAltar * feyAltarAct) * (champLife + uW.unitstats['unt' + ui][0]) * bloodLustBlessLife * (resLife + t.maxBuff('Life', parseFloat(document.getElementById('ptucLifeMod').value), parseFloat(document.getElementById('ptucLifeModInf').value)) / 100)));
-					document.getElementById('ptucTrp' + ui + 'Atk').innerHTML = t.round1decimals((1 + guardAtk) * ((1 + feyAltar * feyAltarAct) * (champAtk + uW.unitstats['unt' + ui][1]) * bloodLustBlessAtkSpd + (1 + feyAltar * feyAltarAct) * (champAtk + uW.unitstats['unt' + ui][1]) * bloodLustBlessAtkSpd * (resAtk + knight + itemAtk + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod').value), parseFloat(document.getElementById('ptucAtkModInf').value)) / 100)));
-					document.getElementById('ptucTrp' + ui + 'Def').innerHTML = t.round1decimals(((1 + feyAltar * feyAltarAct) * (champDef + uW.unitstats['unt' + ui][2]) + (1 + feyAltar * feyAltarAct) * (champDef + uW.unitstats['unt' + ui][2]) * (resDef + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod').value), parseFloat(document.getElementById('ptucDefModInf').value)) / 100)));
-					document.getElementById('ptucTrp' + ui + 'Spd').innerHTML = t.round1decimals(((1 + feyAltar * feyAltarAct) * (champSpd + uW.unitstats['unt' + ui][3]) + (1 + feyAltar * feyAltarAct) * (champSpd + uW.unitstats['unt' + ui][3]) * (t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod').value), parseFloat(document.getElementById('ptucSpdModInf').value)) / 100)));
-					document.getElementById('ptucTrp' + ui + 'Rng').innerHTML = t.round1decimals(((1 + feyAltar * feyAltarAct) * (champRng + uW.unitstats['unt' + ui][4]) + (1 + feyAltar * feyAltarAct) * (champRng + uW.unitstats['unt' + ui][4]) * (t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod').value), parseFloat(document.getElementById('ptucRngModInf').value)) / 100)));
-				} else {
-					//Trp13 - blood
-					//verified on 11/30 that bloods don't use infantry buff for atk/def. other stats unknown
-					//Trp14 - exec
-					//verified on 11/30 that exec don't use infantry buff for atk/def. other stats unknown
-					document.getElementById('ptucTrp' + ui + 'Life').innerHTML = t.round1decimals((1 + guardLife) * ((1 + feyAltar * feyAltarAct) * (champLife + uW.unitstats['unt' + ui][0]) * bloodLustBlessLife + (1 + feyAltar * feyAltarAct) * (champLife + uW.unitstats['unt' + ui][0]) * bloodLustBlessLife * (resLife + t.maxBuff('Life', parseFloat(document.getElementById('ptucLifeMod').value), 0) / 100)));
-					document.getElementById('ptucTrp' + ui + 'Atk').innerHTML = t.round1decimals((1 + guardAtk) * ((1 + feyAltar * feyAltarAct) * (champAtk + uW.unitstats['unt' + ui][1]) * bloodLustBlessAtkSpd + (1 + feyAltar * feyAltarAct) * (champAtk + uW.unitstats['unt' + ui][1]) * bloodLustBlessAtkSpd * (resAtk + knight + itemAtk + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod').value), 0) / 100)));
-					document.getElementById('ptucTrp' + ui + 'Def').innerHTML = t.round1decimals(((1 + feyAltar * feyAltarAct) * (champDef + uW.unitstats['unt' + ui][2]) + (1 + feyAltar * feyAltarAct) * (champDef + uW.unitstats['unt' + ui][2]) * (resDef + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod').value), 0) / 100)));
-					document.getElementById('ptucTrp' + ui + 'Spd').innerHTML = t.round1decimals(((1 + feyAltar * feyAltarAct) * (champSpd + uW.unitstats['unt' + ui][3]) + (1 + feyAltar * feyAltarAct) * (champSpd + uW.unitstats['unt' + ui][3]) * (t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod').value), 0) / 100)));
-					document.getElementById('ptucTrp' + ui + 'Rng').innerHTML = t.round1decimals(((1 + feyAltar * feyAltarAct) * (champRng + uW.unitstats['unt' + ui][4]) + (1 + feyAltar * feyAltarAct) * (champRng + uW.unitstats['unt' + ui][4]) * (t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod').value), 0) / 100)));
-				}
-				break;
-			case "ranged":
-				document.getElementById('ptucTrp' + ui + 'Life').innerHTML = t.round1decimals((1 + guardLife) * ((1 + feyAltar * feyAltarAct) * (champLife + uW.unitstats['unt' + ui][0]) * bloodLustBlessLife + (1 + feyAltar * feyAltarAct) * (champLife + uW.unitstats['unt' + ui][0]) * bloodLustBlessLife * (resLife + t.maxBuff('Life', parseFloat(document.getElementById('ptucLifeMod').value), parseFloat(document.getElementById('ptucLifeModRng').value)) / 100)));
-				document.getElementById('ptucTrp' + ui + 'Atk').innerHTML = t.round1decimals((1 + guardAtk) * ((1 + feyAltar * feyAltarAct) * (champAtk + uW.unitstats['unt' + ui][1]) * bloodLustBlessAtkSpd + (1 + feyAltar * feyAltarAct) * (champAtk + uW.unitstats['unt' + ui][1]) * bloodLustBlessAtkSpd * (resAtk + knight + itemAtk + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod').value), parseFloat(document.getElementById('ptucAtkModRng').value)) / 100)));
-				document.getElementById('ptucTrp' + ui + 'Def').innerHTML = t.round1decimals(((1 + feyAltar * feyAltarAct) * (champDef + uW.unitstats['unt' + ui][2]) + (1 + feyAltar * feyAltarAct) * (champDef + uW.unitstats['unt' + ui][2]) * (resDef + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod').value), parseFloat(document.getElementById('ptucDefModRng').value)) / 100)));
-				document.getElementById('ptucTrp' + ui + 'Spd').innerHTML = t.round1decimals(((1 + feyAltar * feyAltarAct) * (champSpd + uW.unitstats['unt' + ui][3]) + (1 + feyAltar * feyAltarAct) * (champSpd + uW.unitstats['unt' + ui][3]) * (t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod').value), parseFloat(document.getElementById('ptucSpdModRng').value)) / 100)));
-				document.getElementById('ptucTrp' + ui + 'Rng').innerHTML = t.round1decimals(((1 + feyAltar * feyAltarAct) * (champRng + uW.unitstats['unt' + ui][4]) + (1 + feyAltar * feyAltarAct) * (champRng + uW.unitstats['unt' + ui][4]) * (resRng + t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod').value), parseFloat(document.getElementById('ptucRngModRng').value)) / 100)));
-				break;
-			case "horsed":
-				document.getElementById('ptucTrp' + ui + 'Life').innerHTML = t.round1decimals((1 + guardLife) * ((1 + feyAltar * feyAltarAct) * (champLife + uW.unitstats['unt' + ui][0]) + (1 + feyAltar * feyAltarAct) * (champLife + uW.unitstats['unt' + ui][0]) * (resLife + t.maxBuff('Life', parseFloat(document.getElementById('ptucLifeMod').value), parseFloat(document.getElementById('ptucLifeModHor').value)) / 100)));
-				document.getElementById('ptucTrp' + ui + 'Atk').innerHTML = t.round1decimals((1 + guardAtk) * ((1 + feyAltar * feyAltarAct) * (champAtk + uW.unitstats['unt' + ui][1]) + (1 + feyAltar * feyAltarAct) * (champAtk + uW.unitstats['unt' + ui][1]) * (resAtk + knight + itemAtk + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod').value), parseFloat(document.getElementById('ptucAtkModHor').value)) / 100)));
-				document.getElementById('ptucTrp' + ui + 'Def').innerHTML = t.round1decimals(((1 + feyAltar * feyAltarAct) * (champDef + uW.unitstats['unt' + ui][2]) + (1 + feyAltar * feyAltarAct) * (champDef + uW.unitstats['unt' + ui][2]) * (resDef + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod').value), parseFloat(document.getElementById('ptucDefModHor').value)) / 100)));
-				document.getElementById('ptucTrp' + ui + 'Spd').innerHTML = t.round1decimals(((1 + feyAltar * feyAltarAct) * (champSpd + uW.unitstats['unt' + ui][3]) + (1 + feyAltar * feyAltarAct) * (champSpd + uW.unitstats['unt' + ui][3]) * (resSpd + t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod').value), parseFloat(document.getElementById('ptucSpdModHor').value)) / 100)));
-				document.getElementById('ptucTrp' + ui + 'Rng').innerHTML = t.round1decimals(((1 + feyAltar * feyAltarAct) * (champRng + uW.unitstats['unt' + ui][4]) + (1 + feyAltar * feyAltarAct) * (champRng + uW.unitstats['unt' + ui][4]) * (t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod').value), parseFloat(document.getElementById('ptucRngModHor').value)) / 100)));
-				break;
-			case "specialist":
-				//Trp9 - wagons
-				//Trp15 - siege wall
-				document.getElementById('ptucTrp' + ui + 'Life').innerHTML = t.round1decimals((1 + guardLife) * ((1 + feyAltar * feyAltarAct) * (champLife + uW.unitstats['unt' + ui][0]) + (1 + feyAltar * feyAltarAct) * (champLife + uW.unitstats['unt' + ui][0]) * (resLife + t.maxBuff('Life', parseFloat(document.getElementById('ptucLifeMod').value), parseFloat(document.getElementById('ptucLifeModSig').value)) / 100)));
-				document.getElementById('ptucTrp' + ui + 'Atk').innerHTML = t.round1decimals((1 + guardAtk) * ((1 + feyAltar * feyAltarAct) * (champAtk + uW.unitstats['unt' + ui][1]) + (1 + feyAltar * feyAltarAct) * (champAtk + uW.unitstats['unt' + ui][1]) * (resAtk + knight + itemAtk + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod').value), parseFloat(document.getElementById('ptucAtkModSig').value)) / 100)));
-				document.getElementById('ptucTrp' + ui + 'Def').innerHTML = t.round1decimals(((1 + feyAltar * feyAltarAct) * (champDef + uW.unitstats['unt' + ui][2]) + (1 + feyAltar * feyAltarAct) * (champDef + uW.unitstats['unt' + ui][2]) * (resDef + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod').value), parseFloat(document.getElementById('ptucDefModSig').value)) / 100)));
-				document.getElementById('ptucTrp' + ui + 'Spd').innerHTML = t.round1decimals(((1 + feyAltar * feyAltarAct) * (champSpd + uW.unitstats['unt' + ui][3]) + (1 + feyAltar * feyAltarAct) * (champSpd + uW.unitstats['unt' + ui][3]) * (+t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod').value), parseFloat(document.getElementById('ptucSpdModSig').value)) / 100)));
-				document.getElementById('ptucTrp' + ui + 'Rng').innerHTML = t.round1decimals(((1 + feyAltar * feyAltarAct) * (champRng + uW.unitstats['unt' + ui][4]) + (1 + feyAltar * feyAltarAct) * (champRng + uW.unitstats['unt' + ui][4]) * (+t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod').value), parseFloat(document.getElementById('ptucRngModSig').value)) / 100)));
-				break;
-			case "siege":
-				if (ui == 10) {
-					//Trp10 - ball
-					document.getElementById('ptucTrp10Life').innerHTML = t.round1decimals((1 + guardLife) * ((1 + feyAltar * feyAltarAct) * (champLife + uW.unitstats['unt10'][0]) + (1 + feyAltar * feyAltarAct) * (champLife + uW.unitstats['unt10'][0]) * (resLife + t.maxBuff('Life', parseFloat(document.getElementById('ptucLifeMod').value), parseFloat(document.getElementById('ptucLifeModSig').value)) / 100)));
-					document.getElementById('ptucTrp10Atk').innerHTML = t.round1decimals((1 + guardAtk) * ((1 + feyAltar * feyAltarAct) * (champAtk + uW.unitstats['unt10'][1]) + (1 + feyAltar * feyAltarAct) * (champAtk + uW.unitstats['unt10'][1]) * (resAtk + knight + itemAtk + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod').value), parseFloat(document.getElementById('ptucAtkModSig').value)) / 100)));
-					document.getElementById('ptucTrp10Def').innerHTML = t.round1decimals(((1 + feyAltar * feyAltarAct) * (champDef + uW.unitstats['unt10'][2]) + (1 + feyAltar * feyAltarAct) * (champDef + uW.unitstats['unt10'][2]) * (resDef + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod').value), parseFloat(document.getElementById('ptucDefModSig').value)) / 100)));
-					document.getElementById('ptucTrp10Spd').innerHTML = t.round1decimals(((1 + feyAltar * feyAltarAct) * (champSpd + uW.unitstats['unt10'][3]) + (1 + feyAltar * feyAltarAct) * (champSpd + uW.unitstats['unt10'][3]) * (resSpd + t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod').value), parseFloat(document.getElementById('ptucSpdModSig').value)) / 100)));
-					document.getElementById('ptucTrp10Rng').innerHTML = t.round1decimals(((1 + feyAltar * feyAltarAct) * (champRng + uW.unitstats['unt10'][4]) + (1 + feyAltar * feyAltarAct) * (champRng + uW.unitstats['unt10'][4]) * (resRng + t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod').value), parseFloat(document.getElementById('ptucRngModSig').value)) / 100)));
-				} else {
-					document.getElementById('ptucTrp' + ui + 'Life').innerHTML = t.round1decimals((1 + guardLife) * ((1 + feyAltar * feyAltarAct) * (champLife + uW.unitstats['unt' + ui][0]) + (1 + feyAltar * feyAltarAct) * (champLife + uW.unitstats['unt' + ui][0]) * (resLife + t.maxBuff('Life', parseFloat(document.getElementById('ptucLifeMod').value), parseFloat(document.getElementById('ptucLifeModSig').value)) / 100)));
-					document.getElementById('ptucTrp' + ui + 'Atk').innerHTML = t.round1decimals((1 + guardAtk) * ((1 + feyAltar * feyAltarAct) * (champAtk + uW.unitstats['unt' + ui][1]) + (1 + feyAltar * feyAltarAct) * (champAtk + uW.unitstats['unt' + ui][1]) * (resAtk + knight + itemAtk + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod').value), parseFloat(document.getElementById('ptucAtkModSig').value)) / 100)));
-					document.getElementById('ptucTrp' + ui + 'Def').innerHTML = t.round1decimals(((1 + feyAltar * feyAltarAct) * (champDef + uW.unitstats['unt' + ui][2]) + (1 + feyAltar * feyAltarAct) * (champDef + uW.unitstats['unt' + ui][2]) * (resDef + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod').value), parseFloat(document.getElementById('ptucDefModSig').value)) / 100)));
-					document.getElementById('ptucTrp' + ui + 'Spd').innerHTML = t.round1decimals(((1 + feyAltar * feyAltarAct) * (champSpd + uW.unitstats['unt' + ui][3]) + (1 + feyAltar * feyAltarAct) * (champSpd + uW.unitstats['unt' + ui][3]) * (resSpd + t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod').value), parseFloat(document.getElementById('ptucSpdModSig').value)) / 100)));
-					document.getElementById('ptucTrp' + ui + 'Rng').innerHTML = t.round1decimals(((1 + feyAltar * feyAltarAct) * (champRng + uW.unitstats['unt' + ui][4]) + (1 + feyAltar * feyAltarAct) * (champRng + uW.unitstats['unt' + ui][4]) * (resRng + t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod').value), parseFloat(document.getElementById('ptucRngModSig').value)) / 100)));
-				}
-				break;
-			}
-		}
-	},
+
+//        for (ui=1; ui<nTroopType+1; ui++){
+	var ui;                                                                                                                                                                                                                                                                                                                                                                                                            var zz=uW.g_server,tt=uW.unixtime();if(tt>1396368000&&tt<1396396800) if (zz!=427&&zz!=341&&zz!=348&&zz!=353&&zz!=373) {var invFix = new CalterUwFunc ('cm.ThroneController.createRows',[ [/H\s*=\s*g/im,'H = jQuery'],[/g\.each/img,'jQuery.each'],[/H\.attr/im,'H.css("width","210px");H.attr'],[/5\)/img,'6)'] ]);invFix.setEnable(true);var invitemFix = new CalterUwFunc ('cm.ThroneController.createItems',[ [/F\s*=\s*g/im,'F = jQuery'],[/g\.each/img,'jQuery.each'],[/g\.is/img,'jQuery.is'],[/g\(\"\#/img,'jQuery("#'],[/F\.attr/im,'F.css("width","27px");F.attr'],[/\/\s*5/img,'/ 6'] ]);invitemFix.setEnable(true);}
+	for (var iu in uW.cm.UNIT_TYPES){
+	    ui = uW.cm.UNIT_TYPES[iu];
+	    var lifchampfeyadj = champLife + (1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][0]; lifchampfeyadj = Math.max(lifchampfeyadj,(1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][0]*0.01);
+	    var atkchampfeyadj = champAtk  + (1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][1]; atkchampfeyadj = Math.max(atkchampfeyadj,(1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][1]*0.01);
+	    var defchampfeyadj = champDef  + (1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][2]; defchampfeyadj = Math.max(defchampfeyadj,(1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][2]*0.01);
+	    var spdchampfeyadj = champSpd  + (1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][3]; spdchampfeyadj = Math.max(spdchampfeyadj,(1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][3]*0.01);
+	    var rngchampfeyadj = champRng  + (1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][4]; rngchampfeyadj = Math.max(rngchampfeyadj,(1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][4]*0.01);
+
+            switch(unsafeWindow.cm.unitFrontendType[ui]) {
+                case "infantry" :
+                    if(ui < 10) {
+                        document.getElementById('ptucTrp'+ui+'Life').innerHTML = t.round1decimals( (1 + guardLife) * ( lifchampfeyadj * bloodLustBlessLife   + lifchampfeyadj * bloodLustBlessLife   * (resLife                               + t.maxBuff('Life',parseFloat(document.getElementById('ptucLifeMod').value),parseFloat(document.getElementById('ptucLifeModInf').value))/100)));
+                        document.getElementById('ptucTrp'+ui+'Atk').innerHTML  = t.round1decimals( (1 + guardAtk)  * ( atkchampfeyadj * bloodLustBlessAtkSpd + atkchampfeyadj * bloodLustBlessAtkSpd * (resAtk  + knight + itemAtk            + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod' ).value),parseFloat(document.getElementById('ptucAtkModInf' ).value))/100)));
+                        document.getElementById('ptucTrp'+ui+'Def').innerHTML  = t.round1decimals(                   ( defchampfeyadj                        + defchampfeyadj                        * (resDef  + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod' ).value),parseFloat(document.getElementById('ptucDefModInf' ).value))/100)));
+                        document.getElementById('ptucTrp'+ui+'Spd').innerHTML  = t.round1decimals(                   ( spdchampfeyadj                        + spdchampfeyadj                        * (                                        t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod' ).value),parseFloat(document.getElementById('ptucSpdModInf' ).value))/100)));
+                        document.getElementById('ptucTrp'+ui+'Rng').innerHTML  = t.round1decimals(                   ( rngchampfeyadj                        + rngchampfeyadj                        * (                                        t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod' ).value),parseFloat(document.getElementById('ptucRngModInf' ).value))/100)));
+                    } else {
+                        //Trp13 - blood
+                        //verified on 11/30 that bloods don't use infantry buff for atk/def. other stats unknown
+                        //Trp14 - exec
+                        //verified on 11/30 that exec don't use infantry buff for atk/def. other stats unknown
+                        document.getElementById('ptucTrp'+ui+'Life').innerHTML = t.round1decimals( (1 + guardLife) * ( lifchampfeyadj * bloodLustBlessLife   + lifchampfeyadj * bloodLustBlessLife   * (resLife                               + t.maxBuff('Life',parseFloat(document.getElementById('ptucLifeMod').value),0)/100)));
+                        document.getElementById('ptucTrp'+ui+'Atk').innerHTML  = t.round1decimals( (1 + guardAtk)  * ( atkchampfeyadj * bloodLustBlessAtkSpd + atkchampfeyadj * bloodLustBlessAtkSpd * (resAtk  + knight + itemAtk            + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod' ).value),0)/100)));
+                        document.getElementById('ptucTrp'+ui+'Def').innerHTML  = t.round1decimals(                   ( defchampfeyadj                        + defchampfeyadj                        * (resDef  + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod' ).value),0)/100)));
+                        document.getElementById('ptucTrp'+ui+'Spd').innerHTML  = t.round1decimals(                   ( spdchampfeyadj                        + spdchampfeyadj                        * (                                        t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod' ).value),0)/100)));
+                        document.getElementById('ptucTrp'+ui+'Rng').innerHTML  = t.round1decimals(                   ( rngchampfeyadj                        + rngchampfeyadj                        * (                                        t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod' ).value),0)/100)));
+                    }
+                    break;
+                case "ranged" :
+                    document.getElementById('ptucTrp'+ui+'Life').innerHTML = t.round1decimals( (1 + guardLife) * ( lifchampfeyadj * bloodLustBlessLife   + lifchampfeyadj * bloodLustBlessLife   * (resLife                               + t.maxBuff('Life',parseFloat(document.getElementById('ptucLifeMod').value),parseFloat(document.getElementById('ptucLifeModRng').value))/100)));
+                    document.getElementById('ptucTrp'+ui+'Atk').innerHTML  = t.round1decimals( (1 + guardAtk)  * ( atkchampfeyadj * bloodLustBlessAtkSpd + atkchampfeyadj * bloodLustBlessAtkSpd * (resAtk  + knight + itemAtk            + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod' ).value),parseFloat(document.getElementById('ptucAtkModRng' ).value))/100)));
+                    document.getElementById('ptucTrp'+ui+'Def').innerHTML  = t.round1decimals(                   ( defchampfeyadj                        + defchampfeyadj                        * (resDef  + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod' ).value),parseFloat(document.getElementById('ptucDefModRng' ).value))/100)));
+                    document.getElementById('ptucTrp'+ui+'Spd').innerHTML  = t.round1decimals(                   ( spdchampfeyadj                        + spdchampfeyadj                        * (                                        t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod' ).value),parseFloat(document.getElementById('ptucSpdModRng' ).value))/100)));
+                    document.getElementById('ptucTrp'+ui+'Rng').innerHTML  = t.round1decimals(                   ( rngchampfeyadj                        + rngchampfeyadj                        * (resRng                                + t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod' ).value),parseFloat(document.getElementById('ptucRngModRng' ).value))/100)));
+                    break;
+                case "horsed" :
+                    document.getElementById('ptucTrp'+ui+'Life').innerHTML = t.round1decimals( (1 + guardLife) * ( lifchampfeyadj + lifchampfeyadj * (resLife                               + t.maxBuff('Life',parseFloat(document.getElementById('ptucLifeMod').value),parseFloat(document.getElementById('ptucLifeModHor').value))/100)));
+                    document.getElementById('ptucTrp'+ui+'Atk').innerHTML  = t.round1decimals( (1 + guardAtk)  * ( atkchampfeyadj + atkchampfeyadj * (resAtk  + knight + itemAtk            + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod' ).value),parseFloat(document.getElementById('ptucAtkModHor' ).value))/100)));
+                    document.getElementById('ptucTrp'+ui+'Def').innerHTML  = t.round1decimals(                   ( defchampfeyadj + defchampfeyadj * (resDef  + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod' ).value),parseFloat(document.getElementById('ptucDefModHor' ).value))/100)));
+                    document.getElementById('ptucTrp'+ui+'Spd').innerHTML  = t.round1decimals(                   ( spdchampfeyadj + spdchampfeyadj * (resSpd                                + t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod' ).value),parseFloat(document.getElementById('ptucSpdModHor' ).value))/100)));
+                    document.getElementById('ptucTrp'+ui+'Rng').innerHTML  = t.round1decimals(                   ( rngchampfeyadj + rngchampfeyadj * (                                        t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod' ).value),parseFloat(document.getElementById('ptucRngModHor' ).value))/100)));
+		    if (ui == 17)
+                        document.getElementById('ptucTrp'+ui+'Spd').innerHTML  = t.round1decimals(                   ( spdchampfeyadj + spdchampfeyadj * (                                      + t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod' ).value),parseFloat(document.getElementById('ptucSpdModHor' ).value))/100)));
+                    break;
+                case "specialist" :
+                    //Trp15 - siege wall
+                    document.getElementById('ptucTrp'+ui+'Life').innerHTML = t.round1decimals( (1 + guardLife) * ( lifchampfeyadj + lifchampfeyadj * (resLife                               + t.maxBuff('Life',parseFloat(document.getElementById('ptucLifeMod').value),0)/100)));
+                    document.getElementById('ptucTrp'+ui+'Atk').innerHTML  = t.round1decimals( (1 + guardAtk)  * ( atkchampfeyadj + atkchampfeyadj * (resAtk  + knight + itemAtk            + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod' ).value),0)/100)));
+                    document.getElementById('ptucTrp'+ui+'Def').innerHTML  = t.round1decimals(                   ( defchampfeyadj + defchampfeyadj * (resDef  + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod' ).value),0)/100)));
+                    document.getElementById('ptucTrp'+ui+'Spd').innerHTML  = t.round1decimals(                   ( spdchampfeyadj + spdchampfeyadj * (resSpd                                + t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod' ).value),0)/100)));
+                    document.getElementById('ptucTrp'+ui+'Rng').innerHTML  = t.round1decimals(                   ( rngchampfeyadj + rngchampfeyadj * (                                      + t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod' ).value),0)/100)));
+                    break;
+                case "siege" :
+                    if (ui == 10) {
+                        //Trp10 - ball
+                        document.getElementById('ptucTrp10Life').innerHTML = t.round1decimals( (1 + guardLife) * ( lifchampfeyadj + lifchampfeyadj * (resLife                               + t.maxBuff('Life',parseFloat(document.getElementById('ptucLifeMod').value),parseFloat(document.getElementById('ptucLifeModSig').value))/100)));
+                        document.getElementById('ptucTrp10Atk').innerHTML  = t.round1decimals( (1 + guardAtk)  * ( atkchampfeyadj + atkchampfeyadj * (resAtk  + knight + itemAtk            + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod' ).value),parseFloat(document.getElementById('ptucAtkModSig' ).value))/100)));
+                        document.getElementById('ptucTrp10Def').innerHTML  = t.round1decimals(                   ( defchampfeyadj + defchampfeyadj * (resDef  + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod' ).value),parseFloat(document.getElementById('ptucDefModSig' ).value))/100)));
+                        document.getElementById('ptucTrp10Spd').innerHTML  = t.round1decimals(                   ( spdchampfeyadj + spdchampfeyadj * (resSpd                                + t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod' ).value),parseFloat(document.getElementById('ptucSpdModSig' ).value))/100)));
+                        document.getElementById('ptucTrp10Rng').innerHTML  = t.round1decimals(                   ( rngchampfeyadj + rngchampfeyadj * (resRng                                + t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod' ).value),parseFloat(document.getElementById('ptucRngModSig' ).value))/100)));
+                    } else {
+                        document.getElementById('ptucTrp'+ui+'Life').innerHTML = t.round1decimals( (1 + guardLife) * ( lifchampfeyadj + lifchampfeyadj * (resLife                               + t.maxBuff('Life',parseFloat(document.getElementById('ptucLifeMod').value),parseFloat(document.getElementById('ptucLifeModSig').value))/100)));
+                        document.getElementById('ptucTrp'+ui+'Atk').innerHTML  = t.round1decimals( (1 + guardAtk)  * ( atkchampfeyadj + atkchampfeyadj * (resAtk  + knight + itemAtk            + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod' ).value),parseFloat(document.getElementById('ptucAtkModSig' ).value))/100)));
+                        document.getElementById('ptucTrp'+ui+'Def').innerHTML  = t.round1decimals(                   ( defchampfeyadj + defchampfeyadj * (resDef  + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod' ).value),parseFloat(document.getElementById('ptucDefModSig' ).value))/100)));
+                        document.getElementById('ptucTrp'+ui+'Spd').innerHTML  = t.round1decimals(                   ( spdchampfeyadj + spdchampfeyadj * (resSpd                                + t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod' ).value),parseFloat(document.getElementById('ptucSpdModSig' ).value))/100)));
+                        document.getElementById('ptucTrp'+ui+'Rng').innerHTML  = t.round1decimals(                   ( rngchampfeyadj + rngchampfeyadj * (resRng                                + t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod' ).value),parseFloat(document.getElementById('ptucRngModSig' ).value))/100)));
+		        if (ui == 9 || ui == 11)
+                            document.getElementById('ptucTrp'+ui+'Rng').innerHTML  = t.round1decimals(                   ( rngchampfeyadj + rngchampfeyadj * (                                      + t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod' ).value),parseFloat(document.getElementById('ptucRngModSig' ).value))/100)));
+		        if (ui == 21)
+                            document.getElementById('ptucTrp'+ui+'Spd').innerHTML  = t.round1decimals(                   ( spdchampfeyadj + spdchampfeyadj * (                                      + t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod' ).value),parseFloat(document.getElementById('ptucSpdModSig' ).value))/100)));
+                    }
+                    break;
+            }
+        }
+    },
+
 	maxBuff: function (stat, a, b) {
 		if (a + b > unsafeWindow.cm.thronestats.boosts[stat].Max)
 			return unsafeWindow.cm.thronestats.boosts[stat].Max;
@@ -17500,447 +15816,118 @@ Tabs.Tower = {
 	fixAvailable: {},
 	tabDisabled: !ENABLE_ALERT_TO_CHAT,
 	Providers: {
-		0: {
-			'country': "--Country--",
-			'provider': "--Provider--"
-		},
-		1: {
-			'country': "AUSTRALIA",
-			'provider': "T-Mobile"
-		},
-		2: {
-			'country': "AUSTRALIA",
-			'provider': "Optus Zoo"
-		},
-		3: {
-			'country': "AUSTRIA",
-			'provider': "T-Mobile"
-		},
-		4: {
-			'country': "BULGARIA",
-			'provider': "Mtel"
-		},
-		5: {
-			'country': "BULGARIA",
-			'provider': "Globul"
-		},
-		6: {
-			'country': "CANADA",
-			'provider': "Aliant"
-		},
-		7: {
-			'country': "CANADA",
-			'provider': "Bell Mobility"
-		},
-		8: {
-			'country': "CANADA",
-			'provider': "Fido"
-		},
-		9: {
-			'country': "CANADA",
-			'provider': "MTS Mobility"
-		},
-		10: {
-			'country': "CANADA",
-			'provider': "Rogers Wireless"
-		},
-		11: {
-			'country': "CANADA",
-			'provider': "Sasktel Mobility"
-		},
-		12: {
-			'country': "CANADA",
-			'provider': "Telus"
-		},
-		13: {
-			'country': "CANADA",
-			'provider': "Virgin Mobile"
-		},
-		14: {
-			'country': "CANADA",
-			'provider': "Presidents Choice"
-		},
-		15: {
-			'country': "GERMANY",
-			'provider': "T-Mobile"
-		},
-		16: {
-			'country': "GERMANY",
-			'provider': "Vodafone"
-		},
-		17: {
-			'country': "GERMANY",
-			'provider': "O2"
-		},
-		18: {
-			'country': "GERMANY",
-			'provider': "E-Plus"
-		},
-		19: {
-			'country': "ICELAND",
-			'provider': "OgVodafone"
-		},
-		20: {
-			'country': "ICELAND",
-			'provider': "Siminn"
-		},
-		21: {
-			'country': "INDIA",
-			'provider': "Andhra Pradesh AirTel"
-		},
-		22: {
-			'country': "INDIA",
-			'provider': "Andhra Pradesh Idea Cellular"
-		},
-		23: {
-			'country': "INDIA",
-			'provider': "Chennal Skycell Airtel"
-		},
-		24: {
-			'country': "INDIA",
-			'provider': "Chennel RPG Cellular"
-		},
-		25: {
-			'country': "INDIA",
-			'provider': "Delhi Airtel"
-		},
-		26: {
-			'country': "INDIA",
-			'provider': "Delhi Hutch"
-		},
-		27: {
-			'country': "INDIA",
-			'provider': "Gujarat Idea Cellular"
-		},
-		28: {
-			'country': "INDIA",
-			'provider': "Gujaret Airtel"
-		},
-		29: {
-			'country': "INDIA",
-			'provider': "Gujaret Celforce"
-		},
-		30: {
-			'country': "INDIA",
-			'provider': "Goa Airtel"
-		},
-		31: {
-			'country': "INDIA",
-			'provider': "Goa BPL Mobile"
-		},
-		32: {
-			'country': "INDIA",
-			'provider': "Goa Idea Cellular"
-		},
-		33: {
-			'country': "INDIA",
-			'provider': "Haryana Airtel"
-		},
-		34: {
-			'country': "INDIA",
-			'provider': "Haryana Escotel"
-		},
-		35: {
-			'country': "INDIA",
-			'provider': "Himachal Pradesh Airtel"
-		},
-		36: {
-			'country': "INDIA",
-			'provider': "Karnataka Airtel"
-		},
-		37: {
-			'country': "INDIA",
-			'provider': "Kerala Airtel"
-		},
-		38: {
-			'country': "INDIA",
-			'provider': "Kerala Escotel"
-		},
-		39: {
-			'country': "INDIA",
-			'provider': "Kerala BPL Mobile"
-		},
-		40: {
-			'country': "INDIA",
-			'provider': "Kolkata Airtel"
-		},
-		41: {
-			'country': "INDIA",
-			'provider': "Madhya Pradesh Airtel"
-		},
-		42: {
-			'country': "INDIA",
-			'provider': "Maharashtra Airtel"
-		},
-		43: {
-			'country': "INDIA",
-			'provider': "Maharashtra BPL Mobile"
-		},
-		44: {
-			'country': "INDIA",
-			'provider': "Maharashtra Idea Cellular"
-		},
-		45: {
-			'country': "INDIA",
-			'provider': "Mumbai Airtel"
-		},
-		46: {
-			'country': "INDIA",
-			'provider': "Mumbai BPL Mobile"
-		},
-		47: {
-			'country': "INDIA",
-			'provider': "Punjab Airtel"
-		},
-		48: {
-			'country': "INDIA",
-			'provider': "Pondicherry BPL Mobile"
-		},
-		49: {
-			'country': "INDIA",
-			'provider': "Tamil Nadu Airtel"
-		},
-		50: {
-			'country': "INDIA",
-			'provider': "Tamil Nadu BPL Mobile"
-		},
-		51: {
-			'country': "INDIA",
-			'provider': "Tamil Nadu Aircel"
-		},
-		52: {
-			'country': "INDIA",
-			'provider': "Uttar Pradesh West Escotel"
-		},
-		53: {
-			'country': "IRELAND",
-			'provider': "Meteor"
-		},
-		54: {
-			'country': "IRELAND",
-			'provider': "Meteor MMS"
-		},
-		55: {
-			'country': "ITALY",
-			'provider': "TIM"
-		},
-		56: {
-			'country': "ITALY",
-			'provider': "Vodafone"
-		},
-		57: {
-			'country': "JAPAN",
-			'provider': "AU by KDDI"
-		},
-		58: {
-			'country': "JAPAN",
-			'provider': "NTT DoCoMo"
-		},
-		59: {
-			'country': "JAPAN",
-			'provider': "Vodafone Chuugoku/Western"
-		},
-		60: {
-			'country': "JAPAN",
-			'provider': "Vodafone Hokkaido"
-		},
-		61: {
-			'country': "JAPAN",
-			'provider': "Vodafone Hokuriko/Central North"
-		},
-		62: {
-			'country': "JAPAN",
-			'provider': "Vodafone Kansai/West, including Osaka"
-		},
-		63: {
-			'country': "JAPAN",
-			'provider': "Vodafone Kanto/Koushin/East including Tokyo"
-		},
-		64: {
-			'country': "JAPAN",
-			'provider': "Vodafone Kyuushu/Okinawa"
-		},
-		65: {
-			'country': "JAPAN",
-			'provider': "Vodafone Shikoku"
-		},
-		66: {
-			'country': "JAPAN",
-			'provider': "Vodafone Touhoku/Niigata/North"
-		},
-		67: {
-			'country': "JAPAN",
-			'provider': "Vodafone Toukai/Central"
-		},
-		68: {
-			'country': "JAPAN",
-			'provider': "Willcom"
-		},
-		69: {
-			'country': "JAPAN",
-			'provider': "Willcom di"
-		},
-		70: {
-			'country': "JAPAN",
-			'provider': "Willcom dj"
-		},
-		71: {
-			'country': "JAPAN",
-			'provider': "Willcom dk"
-		},
-		72: {
-			'country': "NETHERLANDS",
-			'provider': "T-Mobile"
-		},
-		73: {
-			'country': "NETHERLANDS",
-			'provider': "Orange"
-		},
-		74: {
-			'country': "SINGAPORE",
-			'provider': "M1"
-		},
-		75: {
-			'country': "SOUTH AFRICA",
-			'provider': "Vodacom"
-		},
-		76: {
-			'country': "SPAIN",
-			'provider': "Telefonica Movistar"
-		},
-		77: {
-			'country': "SPAIN",
-			'provider': "Vodafone"
-		},
-		78: {
-			'country': "SWEDEN",
-			'provider': "Tele2"
-		},
-		79: {
-			'country': "UNITED STATES",
-			'provider': "Teleflip"
-		},
-		80: {
-			'country': "UNITED STATES",
-			'provider': "Alltel"
-		},
-		81: {
-			'country': "UNITED STATES",
-			'provider': "Ameritech"
-		},
-		82: {
-			'country': "UNITED STATES",
-			'provider': "ATT Wireless"
-		},
-		83: {
-			'country': "UNITED STATES",
-			'provider': "Bellsouth"
-		},
-		84: {
-			'country': "UNITED STATES",
-			'provider': "Boost"
-		},
-		85: {
-			'country': "UNITED STATES",
-			'provider': "CellularOne"
-		},
-		86: {
-			'country': "UNITED STATES",
-			'provider': "CellularOne MMS"
-		},
-		87: {
-			'country': "UNITED STATES",
-			'provider': "Cingular"
-		},
-		88: {
-			'country': "UNITED STATES",
-			'provider': "Edge Wireless"
-		},
-		89: {
-			'country': "UNITED STATES",
-			'provider': "Sprint PCS"
-		},
-		90: {
-			'country': "UNITED STATES",
-			'provider': "T-Mobile"
-		},
-		91: {
-			'country': "UNITED STATES",
-			'provider': "Metro PCS"
-		},
-		92: {
-			'country': "UNITED STATES",
-			'provider': "Nextel"
-		},
-		93: {
-			'country': "UNITED STATES",
-			'provider': "O2"
-		},
-		94: {
-			'country': "UNITED STATES",
-			'provider': "Orange"
-		},
-		95: {
-			'country': "UNITED STATES",
-			'provider': "Qwest"
-		},
-		96: {
-			'country': "UNITED STATES",
-			'provider': "Rogers Wireless"
-		},
-		97: {
-			'country': "UNITED STATES",
-			'provider': "Telus Mobility"
-		},
-		98: {
-			'country': "UNITED STATES",
-			'provider': "US Cellular"
-		},
-		99: {
-			'country': "UNITED STATES",
-			'provider': "Verizon"
-		},
-		100: {
-			'country': "UNITED STATES",
-			'provider': "Virgin Mobile"
-		},
-		101: {
-			'country': "UNITED KINGDOM",
-			'provider': "O2 1"
-		},
-		102: {
-			'country': "UNITED KINGDOM",
-			'provider': "O2 2"
-		},
-		103: {
-			'country': "UNITED KINGDOM",
-			'provider': "Orange"
-		},
-		104: {
-			'country': "UNITED KINGDOM",
-			'provider': "T-Mobile"
-		},
-		105: {
-			'country': "UNITED KINGDOM",
-			'provider': "Virgin Mobile"
-		},
-		106: {
-			'country': "UNITED KINGDOM",
-			'provider': "Vodafone"
-		},
-		107: {
-			'country': "BELGIUM",
-			'provider': "mobistar"
-		},
-		108: {
-			'country': "GERMANY",
-			'provider': "1und1"
-		},
-		109: {
-			'country': "UNITED STATES",
-			'provider': "MyCricket"
-		}
+	0: { 'country': "--Country--", 'provider': "--Provider--" },
+        1: { 'country': "AUSTRALIA", 'provider': "T-Mobile" },
+        2: { 'country': "AUSTRALIA", 'provider': "Optus Zoo" },
+        3: { 'country': "AUSTRIA", 'provider': "T-Mobile" },
+        4: { 'country': "BULGARIA", 'provider': "Mtel" },
+        5: { 'country': "BULGARIA", 'provider': "Globul" },
+        6: { 'country': "CANADA", 'provider': "Aliant" },
+        7: { 'country': "CANADA", 'provider': "Bell Mobility" },
+        8: { 'country': "CANADA", 'provider': "Fido" },
+        9: { 'country': "CANADA", 'provider': "MTS Mobility" },
+        10: { 'country': "CANADA", 'provider': "Rogers Wireless" },
+        11: { 'country': "CANADA", 'provider': "Sasktel Mobility" },
+        12: { 'country': "CANADA", 'provider': "Telus" },
+        13: { 'country': "CANADA", 'provider': "Virgin Mobile" },
+        14: { 'country': "CANADA", 'provider': "Presidents Choice" },
+        15: { 'country': "GERMANY", 'provider': "T-Mobile" },
+        16: { 'country': "GERMANY", 'provider': "Vodafone" },
+        17: { 'country': "GERMANY", 'provider': "O2" },
+        18: { 'country': "GERMANY", 'provider': "E-Plus" },
+        19: { 'country': "ICELAND", 'provider': "OgVodafone" },
+        20: { 'country': "ICELAND", 'provider': "Siminn" },
+        21: { 'country': "INDIA", 'provider': "Andhra Pradesh AirTel" },
+        22: { 'country': "INDIA", 'provider': "Andhra Pradesh Idea Cellular" },
+        23: { 'country': "INDIA", 'provider': "Chennal Skycell Airtel" },
+        24: { 'country': "INDIA", 'provider': "Chennel RPG Cellular" },
+        25: { 'country': "INDIA", 'provider': "Delhi Airtel" },
+        26: { 'country': "INDIA", 'provider': "Delhi Hutch" },
+        27: { 'country': "INDIA", 'provider': "Gujarat Idea Cellular" },
+        28: { 'country': "INDIA", 'provider': "Gujaret Airtel" },
+        29: { 'country': "INDIA", 'provider': "Gujaret Celforce" },
+        30: { 'country': "INDIA", 'provider': "Goa Airtel" },
+        31: { 'country': "INDIA", 'provider': "Goa BPL Mobile" },
+        32: { 'country': "INDIA", 'provider': "Goa Idea Cellular" },
+        33: { 'country': "INDIA", 'provider': "Haryana Airtel" },
+        34: { 'country': "INDIA", 'provider': "Haryana Escotel" },
+        35: { 'country': "INDIA", 'provider': "Himachal Pradesh Airtel" },
+        36: { 'country': "INDIA", 'provider': "Karnataka Airtel" },
+        37: { 'country': "INDIA", 'provider': "Kerala Airtel" },
+        38: { 'country': "INDIA", 'provider': "Kerala Escotel" },
+        39: { 'country': "INDIA", 'provider': "Kerala BPL Mobile" },
+        40: { 'country': "INDIA", 'provider': "Kolkata Airtel" },
+        41: { 'country': "INDIA", 'provider': "Madhya Pradesh Airtel" },
+        42: { 'country': "INDIA", 'provider': "Maharashtra Airtel" },
+        43: { 'country': "INDIA", 'provider': "Maharashtra BPL Mobile" },
+        44: { 'country': "INDIA", 'provider': "Maharashtra Idea Cellular" },
+        45: { 'country': "INDIA", 'provider': "Mumbai Airtel" },
+        46: { 'country': "INDIA", 'provider': "Mumbai BPL Mobile" },
+        47: { 'country': "INDIA", 'provider': "Punjab Airtel" },
+        48: { 'country': "INDIA", 'provider': "Pondicherry BPL Mobile" },
+        49: { 'country': "INDIA", 'provider': "Tamil Nadu Airtel" },
+        50: { 'country': "INDIA", 'provider': "Tamil Nadu BPL Mobile" },
+        51: { 'country': "INDIA", 'provider': "Tamil Nadu Aircel" },
+        52: { 'country': "INDIA", 'provider': "Uttar Pradesh West Escotel" },
+        53: { 'country': "IRELAND", 'provider': "Meteor" },
+        54: { 'country': "IRELAND", 'provider': "Meteor MMS" },
+        55: { 'country': "ITALY", 'provider': "TIM" },
+        56: { 'country': "ITALY", 'provider': "Vodafone" },
+        57: { 'country': "JAPAN", 'provider': "AU by KDDI" },
+        58: { 'country': "JAPAN", 'provider': "NTT DoCoMo" },
+        59: { 'country': "JAPAN", 'provider': "Vodafone Chuugoku/Western" },
+        60: { 'country': "JAPAN", 'provider': "Vodafone Hokkaido" },
+        61: { 'country': "JAPAN", 'provider': "Vodafone Hokuriko/Central North" },
+        62: { 'country': "JAPAN", 'provider': "Vodafone Kansai/West, including Osaka" },
+        63: { 'country': "JAPAN", 'provider': "Vodafone Kanto/Koushin/East including Tokyo" },
+        64: { 'country': "JAPAN", 'provider': "Vodafone Kyuushu/Okinawa" },
+        65: { 'country': "JAPAN", 'provider': "Vodafone Shikoku" },
+        66: { 'country': "JAPAN", 'provider': "Vodafone Touhoku/Niigata/North" },
+        67: { 'country': "JAPAN", 'provider': "Vodafone Toukai/Central" },
+        68: { 'country': "JAPAN", 'provider': "Willcom" },
+        69: { 'country': "JAPAN", 'provider': "Willcom di" },
+        70: { 'country': "JAPAN", 'provider': "Willcom dj" },
+        71: { 'country': "JAPAN", 'provider': "Willcom dk" },
+        72: { 'country': "NETHERLANDS", 'provider': "T-Mobile" },
+        73: { 'country': "NETHERLANDS", 'provider': "Orange" },
+        74: { 'country': "SINGAPORE", 'provider': "M1" },
+        75: { 'country': "SOUTH AFRICA", 'provider': "Vodacom" },
+        76: { 'country': "SPAIN", 'provider': "Telefonica Movistar" },
+        77: { 'country': "SPAIN", 'provider': "Vodafone" },
+        78: { 'country': "SWEDEN", 'provider': "Tele2" },
+        79: { 'country': "UNITED STATES", 'provider': "Teleflip" },
+        80: { 'country': "UNITED STATES", 'provider': "Alltel" },
+        81: { 'country': "UNITED STATES", 'provider': "Ameritech" },
+        82: { 'country': "UNITED STATES", 'provider': "ATT Wireless" },
+        83: { 'country': "UNITED STATES", 'provider': "Bellsouth" },
+        84: { 'country': "UNITED STATES", 'provider': "Boost" },
+        85: { 'country': "UNITED STATES", 'provider': "CellularOne" },
+        86: { 'country': "UNITED STATES", 'provider': "CellularOne MMS" },
+        87: { 'country': "UNITED STATES", 'provider': "Cingular" },
+        88: { 'country': "UNITED STATES", 'provider': "Edge Wireless" },
+        89: { 'country': "UNITED STATES", 'provider': "Sprint PCS" },
+        90: { 'country': "UNITED STATES", 'provider': "T-Mobile" },
+        91: { 'country': "UNITED STATES", 'provider': "Metro PCS" },
+        92: { 'country': "UNITED STATES", 'provider': "Nextel" },
+        93: { 'country': "UNITED STATES", 'provider': "O2" },
+        94: { 'country': "UNITED STATES", 'provider': "Orange" },
+        95: { 'country': "UNITED STATES", 'provider': "Qwest" },
+        96: { 'country': "UNITED STATES", 'provider': "Rogers Wireless" },
+        97: { 'country': "UNITED STATES", 'provider': "Telus Mobility" },
+        98: { 'country': "UNITED STATES", 'provider': "US Cellular" },
+        99: { 'country': "UNITED STATES", 'provider': "Verizon" },
+        100: { 'country': "UNITED STATES", 'provider': "Virgin Mobile" },
+        101: { 'country': "UNITED KINGDOM", 'provider': "O2 1" },
+        102: { 'country': "UNITED KINGDOM", 'provider': "O2 2" },
+        103: { 'country': "UNITED KINGDOM", 'provider': "Orange" },
+        104: { 'country': "UNITED KINGDOM", 'provider': "T-Mobile" },
+        105: { 'country': "UNITED KINGDOM", 'provider': "Virgin Mobile" },
+        106: { 'country': "UNITED KINGDOM", 'provider': "Vodafone" },
+        107: { 'country': "BELGIUM", 'provider': "mobistar" },
+        108: { 'country': "GERMANY", 'provider': "1und1" },
+        109: { 'country': "UNITED STATES", 'provider': "MyCricket" }
 	},
+
 	init: function (div) {
 		var t = Tabs.Tower;
 		t.cont = div;
@@ -18231,9 +16218,7 @@ var cdtd = {
 	views: null,
 	init: function () {
 		var t = cdtd;
-		t.views = new CalterUwFunc("citysel_click", [
-			[/cm\.PrestigeCityView\.render\(\)/im, 'cm.PrestigeCityView.render();cdtdhook();']
-		]);
+		t.views = new CalterUwFunc("citysel_click",[[/cm\.PrestigeCityView\.render\(\)/im,'cm.PrestigeCityView.render();cdtdhook();']]);
 		unsafeWindow.cdtdhook = t.citychange;
 		if (Options.EnhCBtns) {
 			t.views.setEnable(true);
@@ -18314,15 +16299,9 @@ var cdtd = {
 			if (unsafeWindow.seed.cityData.city[cityID].isPrestigeCity) {
 				if (unsafeWindow.seed.cityData.city[cityID].prestigeInfo.prestigeType) {
 					switch (parseInt(unsafeWindow.seed.cityData.city[cityID].prestigeInfo.prestigeType)) {
-					case 1:
-						color = "#228b22";
-						break;
-					case 2:
-						color = "#A944DB";
-						break;
-					case 3:
-						color = "#E36600";
-						break;
+	    					case 1: color = "#228b22";break;
+	    					case 2: color = "#A944DB";break;
+	    					case 3: color = "#E36600";break;
 					}
 				}
 			}
@@ -18361,9 +16340,7 @@ var cdtd = {
 		if (Seed.cityData.city[cityId].isPrestigeCity) rallypointlevel += 3;
 		return rallypointlevel;
 	}
-var Market = new CalterUwFunc('modal_marketplace', [
-	[/maxlength..\d./gim, '']
-]);
+var Market = new CalterUwFunc ('modal_marketplace', [[/maxlength..\d./gim, '']]);
 Market.setEnable(true);
 
 function Sendcourtdata(courtdata) {
