@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140326b
+// @version        20140327a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -15,7 +15,7 @@ if (window.self.location != window.top.location) {
 //This value is used for statistics (https://nicodebelder.eu/kocReportView/Stats.html).
 //Please change it to your Userscript project name.
 var SourceName = "KOC Power Tools (SVN)";
-var Version = '20140326b';
+var Version = '20140327a';
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
 var DEBUG_TRACE = false;
@@ -31,7 +31,6 @@ var TEST_WIDE_CITIES = 7;
 var ENABLE_ALERT_TO_CHAT = true;
 var History = [];
 var throttle = 10;
-var TimeOffset = parseInt(new Date().getTimezoneOffset() * (-1)) + 480 - getDST(); // difference between local time and PST/PDT in mins. All KoC TimeStamps appear to be in PST or PDT...
 var FFVersion = getFirefoxVersion();
 if (typeof SOUND_FILES == 'undefined') var SOUND_FILES = new Object();
 if (typeof SOUND_FILES.whisper == 'undefined') {
@@ -548,6 +547,7 @@ function ptStartup() {
 	if (Options.fixTower2)
 		TowerAlerts.enableFixFalseReports(true);
 	AddMainTabLink('TOOLS', eventHideShow, mouseMainTab);
+
 	//  var ss_onload = unsafeWindow.seed.ss;
 	//  multiBrowserOverride();
 	//TestSomething.init ();  
@@ -1110,7 +1110,8 @@ var ChatTimeFix = {
 		t = ChatTimeFix;
 		uW.ptConvertTime = function (timestr) {
 			time = timestr.split(/:/);
-			var min = (parseInt(time[0]) * 60) + parseInt(time[1]) + TimeOffset;
+			var AddMins = (new Date().getTimezoneOffset())+480-parseInt(getDST(new Date())/60); // convert from local pacific time
+			var min = (parseInt(time[0]) * 60) + parseInt(time[1]) + AddMins;
 			if (min >= 1440) {
 				min = min - 1440;
 			}
@@ -5098,11 +5099,11 @@ ajax/viewCourt.php:
 			} else {
 				prestigelvl = " (" + p.cities[c].prestigeLevel + ")";
 			}
-			ExpTime = t.convertTime(new Date(p.cities[c].prestigeBuffExpire.replace(" ", "T")), TimeOffset);
+			ExpTime = t.convertTime(new Date(p.cities[c].prestigeBuffExpire.replace(" ", "T")));
 			if ((ExpTime + (3600 * 24) < unixTime()) || isNaN(ExpTime)) {
 				prestigeexp = "";
 			} else {
-				prestigeexp = t.getDuration(p.cities[c].prestigeBuffExpire, TimeOffset);
+				prestigeexp = t.getDuration(p.cities[c].prestigeBuffExpire);
 			}
 			t.dat.push([p.displayName, parseInt(p.might), p.officerType, parseInt(p.numCities), parseInt(p.cities[c].tileLevel),
 				parseInt(p.cities[c].xCoord), parseInt(p.cities[c].yCoord), p.cities[c].cityName, 0, status, 0, p.userId, prestige, p.userId, prestigelvl, prestigeexp, p.cities[c].prestigeBuffExpire, prestige + prestigelvl
@@ -5339,11 +5340,11 @@ ajax/viewCourt.php:
 					} else {
 						prestigelvl = " (" + p.cities[c].prestigeLevel + ")";
 					}
-					ExpTime = t.convertTime(new Date(p.cities[c].prestigeBuffExpire.replace(" ", "T")), TimeOffset);
+					ExpTime = t.convertTime(new Date(p.cities[c].prestigeBuffExpire.replace(" ", "T")));
 					if ((ExpTime + (3600 * 24) < unixTime()) || isNaN(ExpTime)) {
 						prestigeexp = "";
 					} else {
-						prestigeexp = t.getDuration(p.cities[c].prestigeBuffExpire, TimeOffset);
+						prestigeexp = t.getDuration(p.cities[c].prestigeBuffExpire);
 					}
 					t.dat.push([p.displayName, parseInt(p.might), p.officerType, parseInt(p.numCities), parseInt(p.cities[c].tileLevel),
 						parseInt(p.cities[c].xCoord), parseInt(p.cities[c].yCoord), p.cities[c].cityName, 0, rslt.data[p.userId] ? 1 : 0, '--', p.userId, prestige, p.userId, prestigelvl, prestigeexp, p.cities[c].prestigeBuffExpire, prestige + prestigelvl
@@ -5356,13 +5357,14 @@ ajax/viewCourt.php:
 		t.setEta();
 		t.displayMembers(t.memberListRslt.allianceName, numPlayers);
 	},
-	convertTime: function (datestr, AddMins) {
-		// KoC timestamps are PST, which is 420 minutes (7 hours) behind UTC...?
-		return parseInt(datestr.getTime() / 1000) + (AddMins * 60) + uW.g_timeoff;
+	convertTime: function (datestr) {
+		// KOC Timestamps are in Local Pacific Time, so need to convert to unixtime and add 8 hours for PST
+		// Then adjust for Daylight Savings Time on both sides...
+		return parseInt(datestr.getTime()/1000)-(datestr.getTimezoneOffset()*60)+(480*60)-getDST(datestr);
 	},
-	getDuration: function (datestr, AddMins) {
+	getDuration: function (datestr) {
 		var t = Tabs.AllianceList;
-		var Interval = t.convertTime(new Date(datestr.replace(" ", "T")), AddMins) - uW.g_timeoff - unixTime();
+		var Interval = t.convertTime(new Date(datestr.replace(" ", "T"))) - unixTime();
 		if (Interval >= 0) {
 			return uW.timestr(Interval);
 		} else
@@ -5772,10 +5774,8 @@ ajax/viewCourt.php:
 		var t = Tabs.AllianceList;
 		var count = -1;
 		var city = "";
-		openslots = document.getElementById('openSlots').value;
-		slots = CheckCityMarches(t.ScoutInfo.id);
-		rallypointlevel = getRallypoint(t.ScoutInfo.id);
-		slotsend = rallypointlevel - slots - openslots;
+		document.getElementById('ptscoutprogress').className = "";
+		document.getElementById('ptscoutprogress').innerHTML = "";
 		for (var k = 0; k < t.dat.length; k++) {
 			if (t.dat[k][5] != undefined && t.dat[k][6] != undefined) {
 				var x = t.dat[k][5];
@@ -5783,7 +5783,7 @@ ajax/viewCourt.php:
 				count++;
 				city = t.dat[k][5].toString() + t.dat[k][6].toString();
 				var box = 'ScoutCheckbox_' + city;
-				if (document.getElementById(box).checked && (count < slotsend)) setTimeout(t.doScout, 5000 * count, x, y, box);
+				if (document.getElementById(box).checked) setTimeout(t.doScout,5000*count, x,y,box);
 			}
 		}
 	},
@@ -5795,6 +5795,7 @@ ajax/viewCourt.php:
 		slotsend = rallypointlevel - slots - openslots;
 		if (slotsend <= 0) {
 			setTimeout(t.doScout, 30000, x, y, box); // try again in 30 secs..
+			document.getElementById('ptscoutprogress').innerHTML = "Waiting for free rally point slots...";
 			return;
 		}
 		var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
@@ -5839,6 +5840,7 @@ ajax/viewCourt.php:
 						unsafeWindow.update_seed(rslt.updateSeed)
 					};
 					document.getElementById(box).checked = false;
+					document.getElementById('ptscoutprogress').innerHTML = "Scouting ("+params.xcoord+","+params.ycoord+") ...";
 				}
 			},
 			onFailure: function () {},
@@ -5849,13 +5851,20 @@ ajax/viewCourt.php:
 		t.ScoutInfo = new Array;
 		t.ScoutInfo = city;
 		if (t.ScoutInfo != null) {
-			document.getElementById('PaintScout').innerHTML = 'Scout selected cities from: ' + t.ScoutInfo.name + ' with <INPUT id=numScouts type=text maxlength=7 size=7 value="1"><INPUT id=MaxScout type=submit value=Max> Scout(s); Rally point slots to keep open: <INPUT id=openSlots type=text maxlength=3 size=3 value="0"> <INPUT id=scoutAllSelected type=submit value=GO>';
+			var scoutexport = "";
+			if (uW.ShowScoutList) {
+				scoutexport = '&nbsp;<INPUT id=ptscoutexport type=submit value="Export to BOT">'
+			}	
+			document.getElementById('PaintScout').innerHTML = 'Scout selected cities from: ' + t.ScoutInfo.name + ' with <INPUT id=numScouts type=text maxlength=7 size=7 value="1"><INPUT id=MaxScout type=submit value=Max> Scout(s); Rally point slots to keep open: <INPUT id=openSlots type=text maxlength=3 size=3 value="0"> <INPUT id=scoutAllSelected type=submit value=GO>'+scoutexport+'</div><div align=center id=ptscoutprogress class=ptdivHide></div>';
 			document.getElementById('scoutAllSelected').addEventListener('click', function () {
 				t.doAddScout();
 			}, false);
 			document.getElementById('MaxScout').addEventListener('click', function () {
 				t.MaxScouts(city);
 			}, false);
+			if (uW.ShowScoutList) {
+				document.getElementById('ptscoutexport').addEventListener('click', function (){t.generateScoutList();},false);
+			}
 		}
 		var m = '';
 		if (city != null)
@@ -5870,6 +5879,17 @@ ajax/viewCourt.php:
 		t.setDistances(x, y);
 		t.setEta();
 		t.reDisp();
+	},
+	generateScoutList : function (){
+		var t = Tabs.AllianceList;
+		var bulkScout = [];
+		for (var k=0;k<t.dat.length;k++){	
+			if (t.dat[k][5] != undefined && t.dat[k][6] != undefined){
+				if (document.getElementById('ScoutCheckbox_'+t.dat[k][5].toString() + t.dat[k][6].toString()).checked) bulkScout.push({x:t.dat[k][5], y:t.dat[k][6], dist:t.dat[k][8].toFixed(2), chk:true}); 
+				else bulkScout.push({x:t.dat[k][5], y:t.dat[k][6], dist:t.dat[k][8].toFixed(2), chk:false}); 
+			}
+		}
+		uW.ShowScoutList (bulkScout, t.ScoutInfo);
 	},
 	eventGetMembers: function (aid) {
 		var t = Tabs.AllianceList;
@@ -13447,6 +13467,7 @@ function display_confirm(confirm_msg, ok_function, cancel_function) {
 }
 // The following code is released under public domain.
 var AutoUpdater_103659 = {
+
 	id: 103659,
 	days: 1,
 	name: "KOC Power Tools",
@@ -16403,21 +16424,19 @@ function Sendcourtdata(courtdata) {
 	})
 };
 
-function getDST() {
-	var local = new Date;
-	var utc = local.getTime() + (local.getTimezoneOffset() * 60000);
-	var today = new Date(utc + (3600000 * (-8))); // pacific time
+function getDST(today) {
 	var yr = today.getFullYear();
-	var dst_start = new Date("March 14, " + yr + " 02:00:00"); // 2nd Sunday in March can't occur after the 14th 
-	var dst_end = new Date("November 07, " + yr + " 02:00:00"); // 1st Sunday in November can't occur after the 7th
+	var dst_start = new Date("March 14, "+yr+" 02:00:00"); // 2nd Sunday in March can't occur after the 14th 
+	var dst_end = new Date("November 07, "+yr+" 02:00:00"); // 1st Sunday in November can't occur after the 7th
 	var day = dst_start.getDay(); // day of week of 14th
-	dst_start.setDate(14 - day); // Calculate 2nd Sunday in March of this year
+	dst_start.setDate(14-day); // Calculate 2nd Sunday in March of this year
 	day = dst_end.getDay(); // day of the week of 7th
-	dst_end.setDate(7 - day); // Calculate first Sunday in November of this year
+	dst_end.setDate(7-day); // Calculate first Sunday in November of this year
 	var dstadj = 0;
 	if (today >= dst_start && today < dst_end) { //does today fall inside of DST period?
-		dstadj = (-60);
+		dstadj = (3600); // 60 mins!
 	}
 	return dstadj;
 }
+
 ptStartup();
