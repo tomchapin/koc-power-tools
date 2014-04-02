@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140402a
+// @version        20140402b
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -15,7 +15,7 @@ if (window.self.location != window.top.location) {
 //This value is used for statistics (https://nicodebelder.eu/kocReportView/Stats.html).
 //Please change it to your Userscript project name.
 var SourceName = "KOC Power Tools (SVN)";
-var Version = '20140402a';
+var Version = '20140402b';
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
 var DEBUG_TRACE = false;
@@ -8479,9 +8479,9 @@ Tabs.OverView = {
 					var aethcapinc = 0;
 					aethcapinc += equippedthronestats(88);
 					var equippedItems = equippedthroneItems(equippedItems);
-//					var currSet = uW.cm.ThroneController.hasFactionBonus(equippedItems);
-//					if (currSet.hazBonus && currSet.faction === "fey")
-//						aethcapinc += uW.cm.ThroneController.effectBonus(95);
+					var currSet = uW.cm.ThroneController.hasFactionBonus(equippedItems);
+					if (currSet.hazBonus && currSet.faction === "fey")
+						aethcapinc += uW.cm.ThroneController.effectBonus(95);
 					var aethercap = Math.round(2000000 * (1 + Math.min(aethcapinc, unsafeWindow.cm.thronestats.boosts["ResourceCap"].Max) / 100));
 					z += (aethercap > parseInt(Seed.resources["city" + Seed.cities[b][0]]['rec' + a][0])) ? '<FONT COLOR= "669900">' : '<FONT COLOR="686868">';
 					z += addCommas(aethercap);
@@ -10591,7 +10591,8 @@ var equippedthroneItems = function (throneSet) {
 	var thronePreset = Seed.throne.activeSlot;
 	var equippedItems = {};
 	for (itm = 0; itm < Seed.throne.slotEquip[thronePreset].length; itm++) {
-		equippedItems[Seed.throne.slotEquip[thronePreset][itm]] = Seed.throne.inventory[Seed.throne.slotEquip[thronePreset][itm]];
+//		equippedItems[Seed.throne.slotEquip[thronePreset][itm]] = Seed.throne.inventory[Seed.throne.slotEquip[thronePreset][itm]];
+		equippedItems[Seed.throne.slotEquip[thronePreset][itm]] = unsafeWindow.kocThroneItems[Seed.throne.slotEquip[thronePreset][itm]];
 	}
 	return equippedItems;
 }
