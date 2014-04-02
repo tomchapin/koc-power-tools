@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140401a
+// @version        20140402a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -15,7 +15,7 @@ if (window.self.location != window.top.location) {
 //This value is used for statistics (https://nicodebelder.eu/kocReportView/Stats.html).
 //Please change it to your Userscript project name.
 var SourceName = "KOC Power Tools (SVN)";
-var Version = '20140401a';
+var Version = '20140402a';
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
 var DEBUG_TRACE = false;
@@ -1110,7 +1110,7 @@ var ChatTimeFix = {
 		t = ChatTimeFix;
 		uW.ptConvertTime = function (timestr) {
 			time = timestr.split(/:/);
-			var AddMins = (new Date().getTimezoneOffset())+480-parseInt(getDST(new Date())/60); // convert from local pacific time
+			var AddMins = 480-parseInt(getDST(new Date())/60)-(new Date().getTimezoneOffset()); // convert from local pacific time
 			var min = (parseInt(time[0]) * 60) + parseInt(time[1]) + AddMins;
 			if (min >= 1440) {
 				min = min - 1440;
@@ -15582,11 +15582,7 @@ function matTypeof(v) {
 
 function addCommasInt(n) {
 	nStr = Number(n, 10) + '';
-	var rgx = /(\d+)(\d{3})/;
-	while (rgx.test(nStr)) {
-		nStr = nStr.replace(rgx, '$1' + ',' + '$2');
-	}
-	return nStr;
+	return addCommasWhole(nStr);
 }
 
 function addCommas(nStr) {
