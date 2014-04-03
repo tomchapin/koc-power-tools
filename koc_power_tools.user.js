@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140402b
+// @version        20140403a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -15,7 +15,7 @@ if (window.self.location != window.top.location) {
 //This value is used for statistics (https://nicodebelder.eu/kocReportView/Stats.html).
 //Please change it to your Userscript project name.
 var SourceName = "KOC Power Tools (SVN)";
-var Version = '20140402b';
+var Version = '20140403a';
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
 var DEBUG_TRACE = false;
@@ -1404,6 +1404,7 @@ var ChatStuff = {
 		}
 		msg = msg.replace("class=\'content\'", "class='content " + element_class + "'");
 		msg = msg.replace(/(\bReport\sNo\:\s([0-9]+))/g, '<a onclick=\'ptChatReportClicked($2,0)\'>$1</a>');
+		msg = msg.replace(/(\bRpt\:([0-9]+))/g, '<a onclick=\'ptChatReportClicked($2,0)\'>$1</a>');
 		msg = msg.replace(/#([0-9]+)#/g, '<a onclick=\'ptChatReportClicked($1,0)\'>$1</a>');
 		msg = msg.replace(/(\byoutu([0-9a-z\.\?\/\=\-\_]+))/gi, '<a onclick=\"window.open\(\'http\:\/\/www\.$1\',\'_blank\'\)\">$1</a>');
 		msg = msg.replace(/(\W)(bot)(\W)/gi, '$1<a onclick=window.open("https://userscripts.org/scripts/show/101052")>$2</a>$3');
@@ -8375,8 +8376,7 @@ Tabs.OverView = {
 		main += '<TD><SPAN class=ptStatLight>Alliance:</span> ' + getMyAlliance()[1] + '</td>';
 		main += '<TD align=right><SPAN class=ptStatLight>Domain:</span> ' + uW.domainName + '</td></tr></table></div>';
 		main += '<TABLE class=ptTab align=left><TR>';
-		main += '<TD width=125px><SELECT id="ShowExtra"><option value="maximum">' + uW.g_js_strings.commonstr.maximum + '</options>';
-		main += '<option value="normal">' + uW.g_js_strings.commonstr.normal + '</options></select></td>';
+		main += '<TD><INPUT class=pbSubtab ID=ptmrchSubS type=submit value=' + uW.g_js_strings.commonstr.overview + '></td>';
 		main += '<TD><INPUT class=pbSubtab ID=ptmrchSubA type=submit value=' + uW.g_js_strings.commonstr.resources + '></td>';
 		main += '<TD><INPUT class=pbSubtab ID=ptmrchSubB type=submit value=' + uW.g_js_strings.commonstr.troops + '></td>';
 		main += '<TD><INPUT class=pbSubtab ID=ptmrchSubC type=submit value=' + uW.g_js_strings.modaltitles.buildings + '></td>';
@@ -8385,17 +8385,11 @@ Tabs.OverView = {
 		main += '<TD width = "100px" ; border:none"><a href="https://code.google.com/p/koc-power-tools/wiki/HowToOverview" target="_blank">HELP</a></td></tr>';
 		t.cont.innerHTML = main;
 		t.Overv = document.getElementById('ptOverOutput');
-		document.getElementById('ShowExtra').value = Options.OverViewShowExtra;
+		document.getElementById('ptmrchSubS').addEventListener('click', e_butSubtab, false);
 		document.getElementById('ptmrchSubA').addEventListener('click', e_butSubtab, false);
 		document.getElementById('ptmrchSubB').addEventListener('click', e_butSubtab, false);
 		document.getElementById('ptmrchSubC').addEventListener('click', e_butSubtab, false);
 		document.getElementById('ptmrchSubD').addEventListener('click', e_butSubtab, false);
-		document.getElementById('ShowExtra').addEventListener('change', function () {
-			Options.OverViewShowExtra = document.getElementById('ShowExtra').value;
-			saveOptions();
-			clearTimeout(t.displayTimer);
-			t.init(div);
-		}, false);
 		changeSubtab(document.getElementById('ptmrchSub' + Options.curOverTab));
 
 		function e_butSubtab(evt) {
@@ -8424,10 +8418,11 @@ Tabs.OverView = {
 	show: function () {
 		var t = Tabs.OverView;
 		clearTimeout(t.displayTimer);
-		if (t.curTabName == 'A')
-			if (Options.OverViewShowExtra == "maximum") t.showResources();
-			else t.paintOld();
-			else if (t.curTabName == 'B')
+		if (t.curTabName == 'S')
+			t.paintOverview();		
+		else if (t.curTabName == 'A')
+			t.showResources();
+		else if (t.curTabName == 'B')
 			t.showTroops();
 		else if (t.curTabName == 'C')
 			t.showBuilds();
@@ -9386,7 +9381,7 @@ Tabs.OverView = {
 			debugWin.doit()
 		}, false);
 	},
-	paintOld: function () {
+	paintOverview: function () {
 		var rownum = 0;
 		var t = Tabs.OverView;
 		clearTimeout(Tabs.OverView.displayTimer);
@@ -9745,30 +9740,30 @@ Tabs.OverView = {
 			new CdialogCancelContinue('<PRE>' + inspect(e, 3, 1) + '</pre>', null, null, true);
 			t.Overv.innerHTML = '<PRE>' + e.name + ' : ' + e.message + ' on ' + e.lineNumber + '</pre>';
 		}
-		t.displayTimer = setTimeout(t.paintOld, 5000);
+		t.displayTimer = setTimeout(t.paintOverview, 5000);
 
 		function e_clickEnableMarch() {
 			var t = Tabs.OverView;
 			Options.includeMarching = document.getElementById('idCheck').checked;
-			t.paintOld();
+			t.paintOverview();
 		}
 
 		function e_clickEnableTraining() {
 			var t = Tabs.OverView;
 			Options.includeTraining = document.getElementById('ptoverIncTrain').checked;
-			t.paintOld();
+			t.paintOverview();
 		}
 
 		function e_clickEnableTrainingExt() {
 			var t = Tabs.OverView;
 			Options.includeTrainingExt = document.getElementById('ptoverIncTrainExt').checked;
-			t.paintOld();
+			t.paintOverview();
 		}
 
 		function e_fontSize(evt) {
 			document.getElementById('ptOverOutput').style.fontSize = evt.target.value + 'px';
 			Options.overviewFontSize = evt.target.value;
-			t.paintOld();
+			t.paintOverview();
 		}
 
 		function e_allowWidthOverflow(evt) {
@@ -9779,7 +9774,7 @@ Tabs.OverView = {
 				t.Overv.style.overflowX = 'visible';
 			else
 				t.Overv.style.overflowX = 'auto';
-			t.paintOld();
+			t.paintOverview();
 		}
 
 		function postRes() {
@@ -14513,13 +14508,13 @@ function getMarchInfo() {
 			if (typeof (march) == 'object') {
 				for (var ui in uW.cm.UNIT_TYPES) {
 					ii = uW.cm.UNIT_TYPES[ui];
-					ret.marchUnits[ii] += parseInt(march['unit' + ii + 'Count']);
-					ret.returnUnits[ii] += parseInt(march['unit' + ii + 'Return']);
+					ret.marchUnits[ii] += parseIntNan(march['unit' + ii + 'Count']);
+					ret.returnUnits[ii] += parseIntNan(march['unit' + ii + 'Return']);
 				}
 				for (ii = 1; ii < 5; ii++) {
-					ret.resources[ii] += parseInt(march['resource' + ii]);
+					ret.resources[ii] += parseIntNan(march['resource' + ii]);
 				}
-				ret.resources[0] += parseInt(march['gold']);
+				ret.resources[0] += parseIntNan(march['gold']);
 			}
 			// TODO: fixup completed marches
 			// TODO: Assume transport is complete ?
