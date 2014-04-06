@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140404a
+// @version        20140405a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -15,7 +15,7 @@ if (window.self.location != window.top.location) {
 //This value is used for statistics (https://nicodebelder.eu/kocReportView/Stats.html).
 //Please change it to your Userscript project name.
 var SourceName = "KOC Power Tools (SVN)";
-var Version = '20140404a';
+var Version = '20140405a';
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
 var DEBUG_TRACE = false;
@@ -4721,32 +4721,32 @@ var TowerAlerts = {
 	},
 }
 
-	function parseIntNan(n) {
-		x = parseInt(n, 10);
-		if (isNaN(x))
-			return 0;
-		return x;
-	}
+function parseIntNan(n) {
+	x = parseInt(n, 10);
+	if (isNaN(x))
+		return 0;
+	return x;
+}
 
-	function parseIntZero(n) {
-		if (n == '')
-			return 0;
-		return parseInt(n, 10);
-	}
-	/*********************************** Players TAB ***********************************/
-	function officerId2String(oid) {
-		if (oid == null)
-			return '';
-		else if (oid == 3)
-			return uW.allianceOfficerTypeMapping[3];
-		else if (oid == 2)
-			return uW.allianceOfficerTypeMapping[2];
-		else if (oid == 1)
-			return uW.allianceOfficerTypeMapping[1];
-		else if (oid == 4)
-			return uW.allianceOfficerTypeMapping[4];
+function parseIntZero(n) {
+	if (n == '')
+		return 0;
+	return parseInt(n, 10);
+}
+/*********************************** Players TAB ***********************************/
+function officerId2String(oid) {
+	if (oid == null)
 		return '';
-	}
+	else if (oid == 3)
+		return uW.allianceOfficerTypeMapping[3];
+	else if (oid == 2)
+		return uW.allianceOfficerTypeMapping[2];
+	else if (oid == 1)
+		return uW.allianceOfficerTypeMapping[1];
+	else if (oid == 4)
+		return uW.allianceOfficerTypeMapping[4];
+	return '';
+}
 Tabs.AllianceList = {
 	tabOrder: 25,
 	tabLabel: uW.g_js_strings.commonstr.player,
@@ -4844,6 +4844,7 @@ ajax/viewCourt.php:
 		uW.PTalClickPrev = t.eventListPrev;
 		uW.PTalClickNext = t.eventListNext;
 		uW.PCplo = t.clickedPlayerGetLastLogin;
+		uW.PTInvite = t.clickedSendInvite;
 		uW.PTPlayClick = t.clickedPlayerInAll;
 		Lastlogin = 0;
 		t.show();
@@ -5008,7 +5009,7 @@ ajax/viewCourt.php:
 			m += '<TR ' + cl + 'valign=top><TD>' + u.genderAndName + '</td><TD><A target="_tab" href="https://kocscripters.com/player/server/' + GetServerId() + '/tvuid/' + u.userId + '/">' + u.userId + '</a></td><TD align=right>' + addCommas(u.might) + '</td>\
           <TD>' + (rslt.data[u.userId] ? "&nbsp;<SPAN class=boldDarkRed>" + uW.g_js_strings.commonstr.online + "</span>" : "") + '</td>\
           <TD align=center><A target="_tab" href="https://www.facebook.com/profile.php?id=' + u.fbuid + '">' + uW.g_js_strings.commonstr.profile + '</a></td>\
-          <TD><SPAN onclick="PTpd(this, ' + u.userId + ')"><A>' + uW.g_js_strings.modaltitles.memberdetails + '</a> &nbsp; <BR></span><SPAN onclick="PTpl2(this,' + u.userId + ',' + rslt.data[u.userId] + ')"><A>' + uW.g_js_strings.modaltitles.leaderboard + '</a><BR></span><SPAN onclick="PCplo(this, \'' + u.userId + '\')"><A>' + uW.g_js_strings.modal_messages_viewreports_view.lastlogin + '</a></span></td></tr>';
+          <TD><SPAN onclick="PTpd(this, ' + u.userId + ')"><A>' + uW.g_js_strings.modaltitles.memberdetails + '</a> &nbsp; <BR></span><SPAN onclick="PTpl2(this,' + u.userId + ',' + rslt.data[u.userId] + ')"><A>' + uW.g_js_strings.modaltitles.leaderboard + '</a><BR></span><SPAN onclick="PTInvite(this, \''+ u.userId +'\')"><A>'+uW.g_js_strings.membersInfo.invitealli+'</a><BR></span><SPAN onclick="PCplo(this, \'' + u.userId + '\')"><A>' + uW.g_js_strings.modal_messages_viewreports_view.lastlogin + '</a></span></td></tr>';
 		}
 		m += '</table></div>';
 		document.getElementById('allListOut').innerHTML = m;
@@ -5069,6 +5070,12 @@ ajax/viewCourt.php:
 		t.fetchPlayerLastLogin(uid, function (r) {
 			t.gotPlayerLastLogin(r, span)
 		});
+	},
+	clickedSendInvite : function (span, uid){
+		var t = Tabs.AllianceList;
+		span.onclick = '';
+		span.innerHTML = "Sending ...";
+		t.invitePlayer (uid, function (r) {t.gotInviteResult(r, span)});
 	},
 	gotPlayerLeaderboard2: function (rslt, span, uid, status) {
 		var t = Tabs.AllianceList;
@@ -6189,6 +6196,29 @@ ajax/getOnline.php:
 			m = '<span style="color:red">No login date found: ' + lastLogin + '</span>';
 		}
 		span.innerHTML = m + '';
+	},
+	invitePlayer : function (uid, notify){
+		var params = uW.Object.clone(uW.g_ajaxparams);
+		params.type = 'userId';
+		params.friendId = uid;
+		new MyAjaxRequest(uW.g_ajaxpath + "ajax/allianceSendInviteToFriends.php" + uW.g_ajaxsuffix, {
+			method: "post",
+			parameters: params,
+			onSuccess: function (rslt) {
+				notify (rslt);
+			},
+			onFailure: function (rslt) {
+				notify ({errorMsg:'AJAX error'});
+			},
+		});
+	},
+	gotInviteResult : function (rslt, span){
+		var t = Tabs.AllianceList;
+		if (rslt.ok)
+			m = '<span style="color:black">Invite Sent!</span>';
+		else 
+			m = '<span style="color:black">Send Invite Failed!</span>';
+		span.innerHTML = m + '<br>';	
 	},
 	ModelCity: {},
 	estETA: function (dist) { // Need Relief Station Levels to estimate transport, reinf, or reassign times. 
