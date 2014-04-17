@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140408a
+// @version        20140417a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -15,7 +15,7 @@ if (window.self.location != window.top.location) {
 //This value is used for statistics (https://nicodebelder.eu/kocReportView/Stats.html).
 //Please change it to your Userscript project name.
 var SourceName = "KOC Power Tools (SVN)";
-var Version = '20140408a';
+var Version = '20140417a';
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
 var DEBUG_TRACE = false;
@@ -1006,7 +1006,7 @@ var ApothTimeFix = {
 		t = ApothTimeFix;
 		t.apothFix = new CalterUwFunc('cm.RevivalModel.getRevivalStats', [
 			[/&&\s*h\.isDruid/im, '|| h.id === 23'],
-			[/try/im, 'var insert=getRevivalStats_hook(insert); var ff = insert.f; var equippedItems = insert.equippedItems; var dd = insert.d; g = dd[k]["Cost"] * j; try'],
+			[/try/im, 'var insert=getRevivalStats_hook(insert); var ff = insert.f; var equippedItems = insert.equippedItems; var dd = insert.d; g = (dd[k]?+(dd[k]["Cost"])||2000:2000) * j; try'],
 			[/g\s*=\s*e\(k\)\s*\*\s*j,/im, ' '],
 			[/hasFactionBonus\(\)/im, 'hasFactionBonus(equippedItems)'],
 			[/\[7]\s*\*\s*j/im, '[7] * parseInt(j)'],
@@ -14405,7 +14405,7 @@ function MyAjaxRequest(url, o, noRetry) {
 		wasSuccess(rslt);
 		return;
 	}
-		rslt.errorMsg = uW.printLocalError((rslt.error_code || null), (rslt.msg || null), (rslt.feedback || null));
+		rslt.errorMsg = unsafeWindow.printLocalError((rslt.error_code || null), (rslt.msg || null), (rslt.feedback || null));
 		/*if ( (x = rslt.errorMsg.indexOf ('<br><br>')) > 0)
       rslt.errorMsg = rslt.errorMsg.substr (0, x-1);*/
 		if (!noRetry && (rslt.error_code == 0 || rslt.error_code == 8 || rslt.error_code == 1 || rslt.error_code == 3)) {
