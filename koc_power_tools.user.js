@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140417a
+// @version        20140426a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -15,7 +15,7 @@ if (window.self.location != window.top.location) {
 //This value is used for statistics (https://nicodebelder.eu/kocReportView/Stats.html).
 //Please change it to your Userscript project name.
 var SourceName = "KOC Power Tools (SVN)";
-var Version = '20140417a';
+var Version = '20140426a';
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
 var DEBUG_TRACE = false;
@@ -71,8 +71,947 @@ var provMapCoords = {
 	topMargin: 19
 };
 //raw deflate code
-(function(e){var t=32768;var n=0;var r=1;var i=2;var s=6;var o=true;var u=32768;var a=64;var f=1024*8;var l=2*t;var c=3;var h=258;var p=16;var d=8192;var v=13;if(d>u)alert("error: zip_INBUFSIZ is too small");if(t<<1>1<<p)alert("error: zip_WSIZE is too large");if(v>p-1)alert("error: zip_HASH_BITS is too large");if(v<8||h!=258)alert("error: Code too clever");var m=d;var g=1<<v;var y=g-1;var b=t-1;var w=0;var E=4096;var S=h+c+1;var x=t-S;var T=1;var N=15;var C=7;var k=29;var L=256;var A=256;var O=L+1+k;var M=30;var _=19;var D=16;var P=17;var H=18;var B=2*O+1;var j=parseInt((v+c-1)/c);var F;var I,q;var R;var U=null;var z,W;var X;var V;var $;var J;var K;var Q;var G;var Y;var Z;var et;var tt;var nt;var rt;var it;var st;var ot;var ut;var at;var ft;var lt;var ct;var ht;var pt;var dt;var vt;var mt;var gt;var yt;var bt;var wt;var Et;var St;var xt;var Tt;var Nt;var Ct;var kt;var Lt;var At;var Ot;var Mt;var _t;var Dt;var Pt;var Ht;var Bt;var jt;var Ft;var It;var qt;var Rt=function(){this.fc=0;this.dl=0};var Ut=function(){this.dyn_tree=null;this.static_tree=null;this.extra_bits=null;this.extra_base=0;this.elems=0;this.max_length=0;this.max_code=0};var zt=function(e,t,n,r){this.good_length=e;this.max_lazy=t;this.nice_length=n;this.max_chain=r};var Wt=function(){this.next=null;this.len=0;this.ptr=new Array(f);this.off=0};var Xt=new Array(0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0);var Vt=new Array(0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13);var $t=new Array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,3,7);var Jt=new Array(16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15);var Kt=new Array(new zt(0,0,0,0),new zt(4,4,8,4),new zt(4,5,16,8),new zt(4,6,32,32),new zt(4,4,16,16),new zt(8,16,32,32),new zt(8,16,128,128),new zt(8,32,128,256),new zt(32,128,258,1024),new zt(32,258,258,4096));var Qt=function(e){var t;if(!e)e=s;else if(e<1)e=1;else if(e>9)e=9;ct=e;R=false;ut=false;if(U!=null)return;F=I=q=null;U=new Array(f);V=new Array(l);$=new Array(m);J=new Array(u+a);K=new Array(1<<p);dt=new Array(B);for(t=0;t<B;t++)dt[t]=new Rt;vt=new Array(2*M+1);for(t=0;t<2*M+1;t++)vt[t]=new Rt;mt=new Array(O+2);for(t=0;t<O+2;t++)mt[t]=new Rt;gt=new Array(M);for(t=0;t<M;t++)gt[t]=new Rt;yt=new Array(2*_+1);for(t=0;t<2*_+1;t++)yt[t]=new Rt;bt=new Ut;wt=new Ut;Et=new Ut;St=new Array(N+1);xt=new Array(2*O+1);Ct=new Array(2*O+1);kt=new Array(h-c+1);Lt=new Array(512);At=new Array(k);Ot=new Array(M);Mt=new Array(parseInt(d/8))};var Gt=function(){F=I=q=null;U=null;V=null;$=null;J=null;K=null;dt=null;vt=null;mt=null;gt=null;yt=null;bt=null;wt=null;Et=null;St=null;xt=null;Ct=null;kt=null;Lt=null;At=null;Ot=null;Mt=null};var Yt=function(e){e.next=F;F=e};var Zt=function(){var e;if(F!=null){e=F;F=F.next}else e=new Wt;e.next=null;e.len=e.off=0;return e};var en=function(e){return K[t+e]};var tn=function(e,n){return K[t+e]=n};var nn=function(e){U[W+z++]=e;if(W+z==f)Hn()};var rn=function(e){e&=65535;if(W+z<f-2){U[W+z++]=e&255;U[W+z++]=e>>>8}else{nn(e&255);nn(e>>>8)}};var sn=function(){Z=(Z<<j^V[st+c-1]&255)&y;et=en(Z);K[st&b]=et;tn(Z,st)};var on=function(e,t){_n(t[e].fc,t[e].dl)};var un=function(e){return(e<256?Lt[e]:Lt[256+(e>>7)])&255};var an=function(e,t,n){return e[t].fc<e[n].fc||e[t].fc==e[n].fc&&Ct[t]<=Ct[n]};var fn=function(e,t,n){var r;for(r=0;r<n&&qt<It.length;r++)e[t+r]=It.charCodeAt(qt++)&255;return r};var ln=function(){var e;for(e=0;e<g;e++)K[t+e]=0;lt=Kt[ct].max_lazy;ht=Kt[ct].good_length;if(!o)pt=Kt[ct].nice_length;ft=Kt[ct].max_chain;st=0;Y=0;at=fn(V,0,2*t);if(at<=0){ut=true;at=0;return}ut=false;while(at<S&&!ut)hn();Z=0;for(e=0;e<c-1;e++){Z=(Z<<j^V[e]&255)&y}};var cn=function(e){var t=ft;var n=st;var r;var i;var s=it;var u=st>x?st-x:w;var a=st+h;var f=V[n+s-1];var l=V[n+s];if(it>=ht)t>>=2;do{r=e;if(V[r+s]!=l||V[r+s-1]!=f||V[r]!=V[n]||V[++r]!=V[n+1]){continue}n+=2;r++;do{}while(V[++n]==V[++r]&&V[++n]==V[++r]&&V[++n]==V[++r]&&V[++n]==V[++r]&&V[++n]==V[++r]&&V[++n]==V[++r]&&V[++n]==V[++r]&&V[++n]==V[++r]&&n<a);i=h-(a-n);n=a-h;if(i>s){ot=e;s=i;if(o){if(i>=h)break}else{if(i>=pt)break}f=V[n+s-1];l=V[n+s]}}while((e=K[e&b])>u&&--t!=0);return s};var hn=function(){var e,n;var r=l-at-st;if(r==-1){r--}else if(st>=t+x){for(e=0;e<t;e++)V[e]=V[e+t];ot-=t;st-=t;Y-=t;for(e=0;e<g;e++){n=en(e);tn(e,n>=t?n-t:w)}for(e=0;e<t;e++){n=K[e];K[e]=n>=t?n-t:w}r+=t}if(!ut){e=fn(V,st+at,r);if(e<=0)ut=true;else at+=e}};var pn=function(){while(at!=0&&I==null){var e;sn();if(et!=w&&st-et<=x){rt=cn(et);if(rt>at)rt=at}if(rt>=c){e=An(st-ot,rt-c);at-=rt;if(rt<=lt){rt--;do{st++;sn()}while(--rt!=0);st++}else{st+=rt;rt=0;Z=V[st]&255;Z=(Z<<j^V[st+1]&255)&y}}else{e=An(0,V[st]&255);at--;st++}if(e){Ln(0);Y=st}while(at<S&&!ut)hn()}};var dn=function(){while(at!=0&&I==null){sn();it=rt;tt=ot;rt=c-1;if(et!=w&&it<lt&&st-et<=x){rt=cn(et);if(rt>at)rt=at;if(rt==c&&st-ot>E){rt--}}if(it>=c&&rt<=it){var e;e=An(st-1-tt,it-c);at-=it-1;it-=2;do{st++;sn()}while(--it!=0);nt=0;rt=c-1;st++;if(e){Ln(0);Y=st}}else if(nt!=0){if(An(0,V[st-1]&255)){Ln(0);Y=st}st++;at--}else{nt=1;st++;at--}while(at<S&&!ut)hn()}};var vn=function(){if(ut)return;Q=0;G=0;yn();ln();I=null;z=0;W=0;nt=0;if(ct<=3){it=c-1;rt=0}else{rt=c-1;nt=0;nt=0}X=false};var mn=function(e,t,n){var r;if(!R){vn();R=true;if(at==0){X=true;return 0}}if((r=gn(e,t,n))==n)return n;if(X)return r;if(ct<=3)pn();else dn();if(at==0){if(nt!=0)An(0,V[st-1]&255);Ln(1);X=true}return r+gn(e,r+t,n-r)};var gn=function(e,t,n){var r,i,s;r=0;while(I!=null&&r<n){i=n-r;if(i>I.len)i=I.len;for(s=0;s<i;s++)e[t+r+s]=I.ptr[I.off+s];I.off+=i;I.len-=i;r+=i;if(I.len==0){var o;o=I;I=I.next;Yt(o)}}if(r==n)return r;if(W<z){i=n-r;if(i>z-W)i=z-W;for(s=0;s<i;s++)e[t+r+s]=U[W+s];W+=i;r+=i;if(z==W)z=W=0}return r};var yn=function(){var e;var t;var n;var r;var i;if(gt[0].dl!=0)return;bt.dyn_tree=dt;bt.static_tree=mt;bt.extra_bits=Xt;bt.extra_base=L+1;bt.elems=O;bt.max_length=N;bt.max_code=0;wt.dyn_tree=vt;wt.static_tree=gt;wt.extra_bits=Vt;wt.extra_base=0;wt.elems=M;wt.max_length=N;wt.max_code=0;Et.dyn_tree=yt;Et.static_tree=null;Et.extra_bits=$t;Et.extra_base=0;Et.elems=_;Et.max_length=C;Et.max_code=0;n=0;for(r=0;r<k-1;r++){At[r]=n;for(e=0;e<1<<Xt[r];e++)kt[n++]=r}kt[n-1]=r;i=0;for(r=0;r<16;r++){Ot[r]=i;for(e=0;e<1<<Vt[r];e++){Lt[i++]=r}}i>>=7;for(;r<M;r++){Ot[r]=i<<7;for(e=0;e<1<<Vt[r]-7;e++)Lt[256+i++]=r}for(t=0;t<=N;t++)St[t]=0;e=0;while(e<=143){mt[e++].dl=8;St[8]++}while(e<=255){mt[e++].dl=9;St[9]++}while(e<=279){mt[e++].dl=7;St[7]++}while(e<=287){mt[e++].dl=8;St[8]++}Sn(mt,O+1);for(e=0;e<M;e++){gt[e].dl=5;gt[e].fc=Dn(e,5)}bn()};var bn=function(){var e;for(e=0;e<O;e++)dt[e].fc=0;for(e=0;e<M;e++)vt[e].fc=0;for(e=0;e<_;e++)yt[e].fc=0;dt[A].fc=1;jt=Ft=0;_t=Dt=Pt=0;Ht=0;Bt=1};var wn=function(e,t){var n=xt[t];var r=t<<1;while(r<=Tt){if(r<Tt&&an(e,xt[r+1],xt[r]))r++;if(an(e,n,xt[r]))break;xt[t]=xt[r];t=r;r<<=1}xt[t]=n};var En=function(e){var t=e.dyn_tree;var n=e.extra_bits;var r=e.extra_base;var i=e.max_code;var s=e.max_length;var o=e.static_tree;var u;var a,f;var l;var c;var h;var p=0;for(l=0;l<=N;l++)St[l]=0;t[xt[Nt]].dl=0;for(u=Nt+1;u<B;u++){a=xt[u];l=t[t[a].dl].dl+1;if(l>s){l=s;p++}t[a].dl=l;if(a>i)continue;St[l]++;c=0;if(a>=r)c=n[a-r];h=t[a].fc;jt+=h*(l+c);if(o!=null)Ft+=h*(o[a].dl+c)}if(p==0)return;do{l=s-1;while(St[l]==0)l--;St[l]--;St[l+1]+=2;St[s]--;p-=2}while(p>0);for(l=s;l!=0;l--){a=St[l];while(a!=0){f=xt[--u];if(f>i)continue;if(t[f].dl!=l){jt+=(l-t[f].dl)*t[f].fc;t[f].fc=l}a--}}};var Sn=function(e,t){var n=new Array(N+1);var r=0;var i;var s;for(i=1;i<=N;i++){r=r+St[i-1]<<1;n[i]=r}for(s=0;s<=t;s++){var o=e[s].dl;if(o==0)continue;e[s].fc=Dn(n[o]++,o)}};var xn=function(e){var t=e.dyn_tree;var n=e.static_tree;var r=e.elems;var i,s;var o=-1;var u=r;Tt=0;Nt=B;for(i=0;i<r;i++){if(t[i].fc!=0){xt[++Tt]=o=i;Ct[i]=0}else t[i].dl=0}while(Tt<2){var a=xt[++Tt]=o<2?++o:0;t[a].fc=1;Ct[a]=0;jt--;if(n!=null)Ft-=n[a].dl}e.max_code=o;for(i=Tt>>1;i>=1;i--)wn(t,i);do{i=xt[T];xt[T]=xt[Tt--];wn(t,T);s=xt[T];xt[--Nt]=i;xt[--Nt]=s;t[u].fc=t[i].fc+t[s].fc;if(Ct[i]>Ct[s]+1)Ct[u]=Ct[i];else Ct[u]=Ct[s]+1;t[i].dl=t[s].dl=u;xt[T]=u++;wn(t,T)}while(Tt>=2);xt[--Nt]=xt[T];En(e);Sn(t,o)};var Tn=function(e,t){var n;var r=-1;var i;var s=e[0].dl;var o=0;var u=7;var a=4;if(s==0){u=138;a=3}e[t+1].dl=65535;for(n=0;n<=t;n++){i=s;s=e[n+1].dl;if(++o<u&&i==s)continue;else if(o<a)yt[i].fc+=o;else if(i!=0){if(i!=r)yt[i].fc++;yt[D].fc++}else if(o<=10)yt[P].fc++;else yt[H].fc++;o=0;r=i;if(s==0){u=138;a=3}else if(i==s){u=6;a=3}else{u=7;a=4}}};var Nn=function(e,t){var n;var r=-1;var i;var s=e[0].dl;var o=0;var u=7;var a=4;if(s==0){u=138;a=3}for(n=0;n<=t;n++){i=s;s=e[n+1].dl;if(++o<u&&i==s){continue}else if(o<a){do{on(i,yt)}while(--o!=0)}else if(i!=0){if(i!=r){on(i,yt);o--}on(D,yt);_n(o-3,2)}else if(o<=10){on(P,yt);_n(o-3,3)}else{on(H,yt);_n(o-11,7)}o=0;r=i;if(s==0){u=138;a=3}else if(i==s){u=6;a=3}else{u=7;a=4}}};var Cn=function(){var e;Tn(dt,bt.max_code);Tn(vt,wt.max_code);xn(Et);for(e=_-1;e>=3;e--){if(yt[Jt[e]].dl!=0)break}jt+=3*(e+1)+5+5+4;return e};var kn=function(e,t,n){var r;_n(e-257,5);_n(t-1,5);_n(n-4,4);for(r=0;r<n;r++){_n(yt[Jt[r]].dl,3)}Nn(dt,e-1);Nn(vt,t-1)};var Ln=function(e){var t,s;var o;var u;u=st-Y;Mt[Pt]=Ht;xn(bt);xn(wt);o=Cn();t=jt+3+7>>3;s=Ft+3+7>>3;if(s<=t)t=s;if(u+4<=t&&Y>=0){var a;_n((n<<1)+e,3);Pn();rn(u);rn(~u);for(a=0;a<u;a++)nn(V[Y+a])}else if(s==t){_n((r<<1)+e,3);On(mt,gt)}else{_n((i<<1)+e,3);kn(bt.max_code+1,wt.max_code+1,o+1);On(dt,vt)}bn();if(e!=0)Pn()};var An=function(e,t){J[_t++]=t;if(e==0){dt[t].fc++}else{e--;dt[kt[t]+L+1].fc++;vt[un(e)].fc++;$[Dt++]=e;Ht|=Bt}Bt<<=1;if((_t&7)==0){Mt[Pt++]=Ht;Ht=0;Bt=1}if(ct>2&&(_t&4095)==0){var n=_t*8;var r=st-Y;var i;for(i=0;i<M;i++){n+=vt[i].fc*(5+Vt[i])}n>>=3;if(Dt<parseInt(_t/2)&&n<parseInt(r/2))return true}return _t==d-1||Dt==m};var On=function(e,t){var n;var r;var i=0;var s=0;var o=0;var u=0;var a;var f;if(_t!=0)do{if((i&7)==0)u=Mt[o++];r=J[i++]&255;if((u&1)==0){on(r,e)}else{a=kt[r];on(a+L+1,e);f=Xt[a];if(f!=0){r-=At[a];_n(r,f)}n=$[s++];a=un(n);on(a,t);f=Vt[a];if(f!=0){n-=Ot[a];_n(n,f)}}u>>=1}while(i<_t);on(A,e)};var Mn=16;var _n=function(e,t){if(G>Mn-t){Q|=e<<G;rn(Q);Q=e>>Mn-G;G+=t-Mn}else{Q|=e<<G;G+=t}};var Dn=function(e,t){var n=0;do{n|=e&1;e>>=1;n<<=1}while(--t>0);return n>>1};var Pn=function(){if(G>8){rn(Q)}else if(G>0){nn(Q)}Q=0;G=0};var Hn=function(){if(z!=0){var e,t;e=Zt();if(I==null)I=q=e;else q=q.next=e;e.len=z-W;for(t=0;t<e.len;t++)e.ptr[t]=U[W+t];z=W=0}};var Bn=function(e,t){var n,r;It=e;qt=0;if(typeof t=="undefined")t=s;Qt(t);var i=new Array(1024);var o=[];while((n=mn(i,0,i.length))>0){var u=new Array(n);for(r=0;r<n;r++){u[r]=String.fromCharCode(i[r])}o[o.length]=u.join("")}It=null;return o.join("")};if(!e.RawDeflate)e.RawDeflate={};e.RawDeflate.deflate=Bn})(this);
-
+(function (e) {
+	var t = 32768;
+	var n = 0;
+	var r = 1;
+	var i = 2;
+	var s = 6;
+	var o = true;
+	var u = 32768;
+	var a = 64;
+	var f = 1024 * 8;
+	var l = 2 * t;
+	var c = 3;
+	var h = 258;
+	var p = 16;
+	var d = 8192;
+	var v = 13;
+	if (d > u) alert("error: zip_INBUFSIZ is too small");
+	if (t << 1 > 1 << p) alert("error: zip_WSIZE is too large");
+	if (v > p - 1) alert("error: zip_HASH_BITS is too large");
+	if (v < 8 || h != 258) alert("error: Code too clever");
+	var m = d;
+	var g = 1 << v;
+	var y = g - 1;
+	var b = t - 1;
+	var w = 0;
+	var E = 4096;
+	var S = h + c + 1;
+	var x = t - S;
+	var T = 1;
+	var N = 15;
+	var C = 7;
+	var k = 29;
+	var L = 256;
+	var A = 256;
+	var O = L + 1 + k;
+	var M = 30;
+	var _ = 19;
+	var D = 16;
+	var P = 17;
+	var H = 18;
+	var B = 2 * O + 1;
+	var j = parseInt((v + c - 1) / c);
+	var F;
+	var I, q;
+	var R;
+	var U = null;
+	var z, W;
+	var X;
+	var V;
+	var $;
+	var J;
+	var K;
+	var Q;
+	var G;
+	var Y;
+	var Z;
+	var et;
+	var tt;
+	var nt;
+	var rt;
+	var it;
+	var st;
+	var ot;
+	var ut;
+	var at;
+	var ft;
+	var lt;
+	var ct;
+	var ht;
+	var pt;
+	var dt;
+	var vt;
+	var mt;
+	var gt;
+	var yt;
+	var bt;
+	var wt;
+	var Et;
+	var St;
+	var xt;
+	var Tt;
+	var Nt;
+	var Ct;
+	var kt;
+	var Lt;
+	var At;
+	var Ot;
+	var Mt;
+	var _t;
+	var Dt;
+	var Pt;
+	var Ht;
+	var Bt;
+	var jt;
+	var Ft;
+	var It;
+	var qt;
+	var Rt = function () {
+		this.fc = 0;
+		this.dl = 0
+	};
+	var Ut = function () {
+		this.dyn_tree = null;
+		this.static_tree = null;
+		this.extra_bits = null;
+		this.extra_base = 0;
+		this.elems = 0;
+		this.max_length = 0;
+		this.max_code = 0
+	};
+	var zt = function (e, t, n, r) {
+		this.good_length = e;
+		this.max_lazy = t;
+		this.nice_length = n;
+		this.max_chain = r
+	};
+	var Wt = function () {
+		this.next = null;
+		this.len = 0;
+		this.ptr = new Array(f);
+		this.off = 0
+	};
+	var Xt = new Array(0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0);
+	var Vt = new Array(0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13);
+	var $t = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 7);
+	var Jt = new Array(16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15);
+	var Kt = new Array(new zt(0, 0, 0, 0), new zt(4, 4, 8, 4), new zt(4, 5, 16, 8), new zt(4, 6, 32, 32), new zt(4, 4, 16, 16), new zt(8, 16, 32, 32), new zt(8, 16, 128, 128), new zt(8, 32, 128, 256), new zt(32, 128, 258, 1024), new zt(32, 258, 258, 4096));
+	var Qt = function (e) {
+		var t;
+		if (!e) e = s;
+		else if (e < 1) e = 1;
+		else if (e > 9) e = 9;
+		ct = e;
+		R = false;
+		ut = false;
+		if (U != null) return;
+		F = I = q = null;
+		U = new Array(f);
+		V = new Array(l);
+		$ = new Array(m);
+		J = new Array(u + a);
+		K = new Array(1 << p);
+		dt = new Array(B);
+		for (t = 0; t < B; t++) dt[t] = new Rt;
+		vt = new Array(2 * M + 1);
+		for (t = 0; t < 2 * M + 1; t++) vt[t] = new Rt;
+		mt = new Array(O + 2);
+		for (t = 0; t < O + 2; t++) mt[t] = new Rt;
+		gt = new Array(M);
+		for (t = 0; t < M; t++) gt[t] = new Rt;
+		yt = new Array(2 * _ + 1);
+		for (t = 0; t < 2 * _ + 1; t++) yt[t] = new Rt;
+		bt = new Ut;
+		wt = new Ut;
+		Et = new Ut;
+		St = new Array(N + 1);
+		xt = new Array(2 * O + 1);
+		Ct = new Array(2 * O + 1);
+		kt = new Array(h - c + 1);
+		Lt = new Array(512);
+		At = new Array(k);
+		Ot = new Array(M);
+		Mt = new Array(parseInt(d / 8))
+	};
+	var Gt = function () {
+		F = I = q = null;
+		U = null;
+		V = null;
+		$ = null;
+		J = null;
+		K = null;
+		dt = null;
+		vt = null;
+		mt = null;
+		gt = null;
+		yt = null;
+		bt = null;
+		wt = null;
+		Et = null;
+		St = null;
+		xt = null;
+		Ct = null;
+		kt = null;
+		Lt = null;
+		At = null;
+		Ot = null;
+		Mt = null
+	};
+	var Yt = function (e) {
+		e.next = F;
+		F = e
+	};
+	var Zt = function () {
+		var e;
+		if (F != null) {
+			e = F;
+			F = F.next
+		} else e = new Wt;
+		e.next = null;
+		e.len = e.off = 0;
+		return e
+	};
+	var en = function (e) {
+		return K[t + e]
+	};
+	var tn = function (e, n) {
+		return K[t + e] = n
+	};
+	var nn = function (e) {
+		U[W + z++] = e;
+		if (W + z == f) Hn()
+	};
+	var rn = function (e) {
+		e &= 65535;
+		if (W + z < f - 2) {
+			U[W + z++] = e & 255;
+			U[W + z++] = e >>> 8
+		} else {
+			nn(e & 255);
+			nn(e >>> 8)
+		}
+	};
+	var sn = function () {
+		Z = (Z << j ^ V[st + c - 1] & 255) & y;
+		et = en(Z);
+		K[st & b] = et;
+		tn(Z, st)
+	};
+	var on = function (e, t) {
+		_n(t[e].fc, t[e].dl)
+	};
+	var un = function (e) {
+		return (e < 256 ? Lt[e] : Lt[256 + (e >> 7)]) & 255
+	};
+	var an = function (e, t, n) {
+		return e[t].fc < e[n].fc || e[t].fc == e[n].fc && Ct[t] <= Ct[n]
+	};
+	var fn = function (e, t, n) {
+		var r;
+		for (r = 0; r < n && qt < It.length; r++) e[t + r] = It.charCodeAt(qt++) & 255;
+		return r
+	};
+	var ln = function () {
+		var e;
+		for (e = 0; e < g; e++) K[t + e] = 0;
+		lt = Kt[ct].max_lazy;
+		ht = Kt[ct].good_length;
+		if (!o) pt = Kt[ct].nice_length;
+		ft = Kt[ct].max_chain;
+		st = 0;
+		Y = 0;
+		at = fn(V, 0, 2 * t);
+		if (at <= 0) {
+			ut = true;
+			at = 0;
+			return
+		}
+		ut = false;
+		while (at < S && !ut) hn();
+		Z = 0;
+		for (e = 0; e < c - 1; e++) {
+			Z = (Z << j ^ V[e] & 255) & y
+		}
+	};
+	var cn = function (e) {
+		var t = ft;
+		var n = st;
+		var r;
+		var i;
+		var s = it;
+		var u = st > x ? st - x : w;
+		var a = st + h;
+		var f = V[n + s - 1];
+		var l = V[n + s];
+		if (it >= ht) t >>= 2;
+		do {
+			r = e;
+			if (V[r + s] != l || V[r + s - 1] != f || V[r] != V[n] || V[++r] != V[n + 1]) {
+				continue
+			}
+			n += 2;
+			r++;
+			do {} while (V[++n] == V[++r] && V[++n] == V[++r] && V[++n] == V[++r] && V[++n] == V[++r] && V[++n] == V[++r] && V[++n] == V[++r] && V[++n] == V[++r] && V[++n] == V[++r] && n < a);
+			i = h - (a - n);
+			n = a - h;
+			if (i > s) {
+				ot = e;
+				s = i;
+				if (o) {
+					if (i >= h) break
+				} else {
+					if (i >= pt) break
+				}
+				f = V[n + s - 1];
+				l = V[n + s]
+			}
+		} while ((e = K[e & b]) > u && --t != 0);
+		return s
+	};
+	var hn = function () {
+		var e, n;
+		var r = l - at - st;
+		if (r == -1) {
+			r--
+		} else if (st >= t + x) {
+			for (e = 0; e < t; e++) V[e] = V[e + t];
+			ot -= t;
+			st -= t;
+			Y -= t;
+			for (e = 0; e < g; e++) {
+				n = en(e);
+				tn(e, n >= t ? n - t : w)
+			}
+			for (e = 0; e < t; e++) {
+				n = K[e];
+				K[e] = n >= t ? n - t : w
+			}
+			r += t
+		}
+		if (!ut) {
+			e = fn(V, st + at, r);
+			if (e <= 0) ut = true;
+			else at += e
+		}
+	};
+	var pn = function () {
+		while (at != 0 && I == null) {
+			var e;
+			sn();
+			if (et != w && st - et <= x) {
+				rt = cn(et);
+				if (rt > at) rt = at
+			}
+			if (rt >= c) {
+				e = An(st - ot, rt - c);
+				at -= rt;
+				if (rt <= lt) {
+					rt--;
+					do {
+						st++;
+						sn()
+					} while (--rt != 0);
+					st++
+				} else {
+					st += rt;
+					rt = 0;
+					Z = V[st] & 255;
+					Z = (Z << j ^ V[st + 1] & 255) & y
+				}
+			} else {
+				e = An(0, V[st] & 255);
+				at--;
+				st++
+			} if (e) {
+				Ln(0);
+				Y = st
+			}
+			while (at < S && !ut) hn()
+		}
+	};
+	var dn = function () {
+		while (at != 0 && I == null) {
+			sn();
+			it = rt;
+			tt = ot;
+			rt = c - 1;
+			if (et != w && it < lt && st - et <= x) {
+				rt = cn(et);
+				if (rt > at) rt = at;
+				if (rt == c && st - ot > E) {
+					rt--
+				}
+			}
+			if (it >= c && rt <= it) {
+				var e;
+				e = An(st - 1 - tt, it - c);
+				at -= it - 1;
+				it -= 2;
+				do {
+					st++;
+					sn()
+				} while (--it != 0);
+				nt = 0;
+				rt = c - 1;
+				st++;
+				if (e) {
+					Ln(0);
+					Y = st
+				}
+			} else if (nt != 0) {
+				if (An(0, V[st - 1] & 255)) {
+					Ln(0);
+					Y = st
+				}
+				st++;
+				at--
+			} else {
+				nt = 1;
+				st++;
+				at--
+			}
+			while (at < S && !ut) hn()
+		}
+	};
+	var vn = function () {
+		if (ut) return;
+		Q = 0;
+		G = 0;
+		yn();
+		ln();
+		I = null;
+		z = 0;
+		W = 0;
+		nt = 0;
+		if (ct <= 3) {
+			it = c - 1;
+			rt = 0
+		} else {
+			rt = c - 1;
+			nt = 0;
+			nt = 0
+		}
+		X = false
+	};
+	var mn = function (e, t, n) {
+		var r;
+		if (!R) {
+			vn();
+			R = true;
+			if (at == 0) {
+				X = true;
+				return 0
+			}
+		}
+		if ((r = gn(e, t, n)) == n) return n;
+		if (X) return r;
+		if (ct <= 3) pn();
+		else dn(); if (at == 0) {
+			if (nt != 0) An(0, V[st - 1] & 255);
+			Ln(1);
+			X = true
+		}
+		return r + gn(e, r + t, n - r)
+	};
+	var gn = function (e, t, n) {
+		var r, i, s;
+		r = 0;
+		while (I != null && r < n) {
+			i = n - r;
+			if (i > I.len) i = I.len;
+			for (s = 0; s < i; s++) e[t + r + s] = I.ptr[I.off + s];
+			I.off += i;
+			I.len -= i;
+			r += i;
+			if (I.len == 0) {
+				var o;
+				o = I;
+				I = I.next;
+				Yt(o)
+			}
+		}
+		if (r == n) return r;
+		if (W < z) {
+			i = n - r;
+			if (i > z - W) i = z - W;
+			for (s = 0; s < i; s++) e[t + r + s] = U[W + s];
+			W += i;
+			r += i;
+			if (z == W) z = W = 0
+		}
+		return r
+	};
+	var yn = function () {
+		var e;
+		var t;
+		var n;
+		var r;
+		var i;
+		if (gt[0].dl != 0) return;
+		bt.dyn_tree = dt;
+		bt.static_tree = mt;
+		bt.extra_bits = Xt;
+		bt.extra_base = L + 1;
+		bt.elems = O;
+		bt.max_length = N;
+		bt.max_code = 0;
+		wt.dyn_tree = vt;
+		wt.static_tree = gt;
+		wt.extra_bits = Vt;
+		wt.extra_base = 0;
+		wt.elems = M;
+		wt.max_length = N;
+		wt.max_code = 0;
+		Et.dyn_tree = yt;
+		Et.static_tree = null;
+		Et.extra_bits = $t;
+		Et.extra_base = 0;
+		Et.elems = _;
+		Et.max_length = C;
+		Et.max_code = 0;
+		n = 0;
+		for (r = 0; r < k - 1; r++) {
+			At[r] = n;
+			for (e = 0; e < 1 << Xt[r]; e++) kt[n++] = r
+		}
+		kt[n - 1] = r;
+		i = 0;
+		for (r = 0; r < 16; r++) {
+			Ot[r] = i;
+			for (e = 0; e < 1 << Vt[r]; e++) {
+				Lt[i++] = r
+			}
+		}
+		i >>= 7;
+		for (; r < M; r++) {
+			Ot[r] = i << 7;
+			for (e = 0; e < 1 << Vt[r] - 7; e++) Lt[256 + i++] = r
+		}
+		for (t = 0; t <= N; t++) St[t] = 0;
+		e = 0;
+		while (e <= 143) {
+			mt[e++].dl = 8;
+			St[8]++
+		}
+		while (e <= 255) {
+			mt[e++].dl = 9;
+			St[9]++
+		}
+		while (e <= 279) {
+			mt[e++].dl = 7;
+			St[7]++
+		}
+		while (e <= 287) {
+			mt[e++].dl = 8;
+			St[8]++
+		}
+		Sn(mt, O + 1);
+		for (e = 0; e < M; e++) {
+			gt[e].dl = 5;
+			gt[e].fc = Dn(e, 5)
+		}
+		bn()
+	};
+	var bn = function () {
+		var e;
+		for (e = 0; e < O; e++) dt[e].fc = 0;
+		for (e = 0; e < M; e++) vt[e].fc = 0;
+		for (e = 0; e < _; e++) yt[e].fc = 0;
+		dt[A].fc = 1;
+		jt = Ft = 0;
+		_t = Dt = Pt = 0;
+		Ht = 0;
+		Bt = 1
+	};
+	var wn = function (e, t) {
+		var n = xt[t];
+		var r = t << 1;
+		while (r <= Tt) {
+			if (r < Tt && an(e, xt[r + 1], xt[r])) r++;
+			if (an(e, n, xt[r])) break;
+			xt[t] = xt[r];
+			t = r;
+			r <<= 1
+		}
+		xt[t] = n
+	};
+	var En = function (e) {
+		var t = e.dyn_tree;
+		var n = e.extra_bits;
+		var r = e.extra_base;
+		var i = e.max_code;
+		var s = e.max_length;
+		var o = e.static_tree;
+		var u;
+		var a, f;
+		var l;
+		var c;
+		var h;
+		var p = 0;
+		for (l = 0; l <= N; l++) St[l] = 0;
+		t[xt[Nt]].dl = 0;
+		for (u = Nt + 1; u < B; u++) {
+			a = xt[u];
+			l = t[t[a].dl].dl + 1;
+			if (l > s) {
+				l = s;
+				p++
+			}
+			t[a].dl = l;
+			if (a > i) continue;
+			St[l]++;
+			c = 0;
+			if (a >= r) c = n[a - r];
+			h = t[a].fc;
+			jt += h * (l + c);
+			if (o != null) Ft += h * (o[a].dl + c)
+		}
+		if (p == 0) return;
+		do {
+			l = s - 1;
+			while (St[l] == 0) l--;
+			St[l]--;
+			St[l + 1] += 2;
+			St[s]--;
+			p -= 2
+		} while (p > 0);
+		for (l = s; l != 0; l--) {
+			a = St[l];
+			while (a != 0) {
+				f = xt[--u];
+				if (f > i) continue;
+				if (t[f].dl != l) {
+					jt += (l - t[f].dl) * t[f].fc;
+					t[f].fc = l
+				}
+				a--
+			}
+		}
+	};
+	var Sn = function (e, t) {
+		var n = new Array(N + 1);
+		var r = 0;
+		var i;
+		var s;
+		for (i = 1; i <= N; i++) {
+			r = r + St[i - 1] << 1;
+			n[i] = r
+		}
+		for (s = 0; s <= t; s++) {
+			var o = e[s].dl;
+			if (o == 0) continue;
+			e[s].fc = Dn(n[o]++, o)
+		}
+	};
+	var xn = function (e) {
+		var t = e.dyn_tree;
+		var n = e.static_tree;
+		var r = e.elems;
+		var i, s;
+		var o = -1;
+		var u = r;
+		Tt = 0;
+		Nt = B;
+		for (i = 0; i < r; i++) {
+			if (t[i].fc != 0) {
+				xt[++Tt] = o = i;
+				Ct[i] = 0
+			} else t[i].dl = 0
+		}
+		while (Tt < 2) {
+			var a = xt[++Tt] = o < 2 ? ++o : 0;
+			t[a].fc = 1;
+			Ct[a] = 0;
+			jt--;
+			if (n != null) Ft -= n[a].dl
+		}
+		e.max_code = o;
+		for (i = Tt >> 1; i >= 1; i--) wn(t, i);
+		do {
+			i = xt[T];
+			xt[T] = xt[Tt--];
+			wn(t, T);
+			s = xt[T];
+			xt[--Nt] = i;
+			xt[--Nt] = s;
+			t[u].fc = t[i].fc + t[s].fc;
+			if (Ct[i] > Ct[s] + 1) Ct[u] = Ct[i];
+			else Ct[u] = Ct[s] + 1;
+			t[i].dl = t[s].dl = u;
+			xt[T] = u++;
+			wn(t, T)
+		} while (Tt >= 2);
+		xt[--Nt] = xt[T];
+		En(e);
+		Sn(t, o)
+	};
+	var Tn = function (e, t) {
+		var n;
+		var r = -1;
+		var i;
+		var s = e[0].dl;
+		var o = 0;
+		var u = 7;
+		var a = 4;
+		if (s == 0) {
+			u = 138;
+			a = 3
+		}
+		e[t + 1].dl = 65535;
+		for (n = 0; n <= t; n++) {
+			i = s;
+			s = e[n + 1].dl;
+			if (++o < u && i == s) continue;
+			else if (o < a) yt[i].fc += o;
+			else if (i != 0) {
+				if (i != r) yt[i].fc++;
+				yt[D].fc++
+			} else if (o <= 10) yt[P].fc++;
+			else yt[H].fc++;
+			o = 0;
+			r = i;
+			if (s == 0) {
+				u = 138;
+				a = 3
+			} else if (i == s) {
+				u = 6;
+				a = 3
+			} else {
+				u = 7;
+				a = 4
+			}
+		}
+	};
+	var Nn = function (e, t) {
+		var n;
+		var r = -1;
+		var i;
+		var s = e[0].dl;
+		var o = 0;
+		var u = 7;
+		var a = 4;
+		if (s == 0) {
+			u = 138;
+			a = 3
+		}
+		for (n = 0; n <= t; n++) {
+			i = s;
+			s = e[n + 1].dl;
+			if (++o < u && i == s) {
+				continue
+			} else if (o < a) {
+				do {
+					on(i, yt)
+				} while (--o != 0)
+			} else if (i != 0) {
+				if (i != r) {
+					on(i, yt);
+					o--
+				}
+				on(D, yt);
+				_n(o - 3, 2)
+			} else if (o <= 10) {
+				on(P, yt);
+				_n(o - 3, 3)
+			} else {
+				on(H, yt);
+				_n(o - 11, 7)
+			}
+			o = 0;
+			r = i;
+			if (s == 0) {
+				u = 138;
+				a = 3
+			} else if (i == s) {
+				u = 6;
+				a = 3
+			} else {
+				u = 7;
+				a = 4
+			}
+		}
+	};
+	var Cn = function () {
+		var e;
+		Tn(dt, bt.max_code);
+		Tn(vt, wt.max_code);
+		xn(Et);
+		for (e = _ - 1; e >= 3; e--) {
+			if (yt[Jt[e]].dl != 0) break
+		}
+		jt += 3 * (e + 1) + 5 + 5 + 4;
+		return e
+	};
+	var kn = function (e, t, n) {
+		var r;
+		_n(e - 257, 5);
+		_n(t - 1, 5);
+		_n(n - 4, 4);
+		for (r = 0; r < n; r++) {
+			_n(yt[Jt[r]].dl, 3)
+		}
+		Nn(dt, e - 1);
+		Nn(vt, t - 1)
+	};
+	var Ln = function (e) {
+		var t, s;
+		var o;
+		var u;
+		u = st - Y;
+		Mt[Pt] = Ht;
+		xn(bt);
+		xn(wt);
+		o = Cn();
+		t = jt + 3 + 7 >> 3;
+		s = Ft + 3 + 7 >> 3;
+		if (s <= t) t = s;
+		if (u + 4 <= t && Y >= 0) {
+			var a;
+			_n((n << 1) + e, 3);
+			Pn();
+			rn(u);
+			rn(~u);
+			for (a = 0; a < u; a++) nn(V[Y + a])
+		} else if (s == t) {
+			_n((r << 1) + e, 3);
+			On(mt, gt)
+		} else {
+			_n((i << 1) + e, 3);
+			kn(bt.max_code + 1, wt.max_code + 1, o + 1);
+			On(dt, vt)
+		}
+		bn();
+		if (e != 0) Pn()
+	};
+	var An = function (e, t) {
+		J[_t++] = t;
+		if (e == 0) {
+			dt[t].fc++
+		} else {
+			e--;
+			dt[kt[t] + L + 1].fc++;
+			vt[un(e)].fc++;
+			$[Dt++] = e;
+			Ht |= Bt
+		}
+		Bt <<= 1;
+		if ((_t & 7) == 0) {
+			Mt[Pt++] = Ht;
+			Ht = 0;
+			Bt = 1
+		}
+		if (ct > 2 && (_t & 4095) == 0) {
+			var n = _t * 8;
+			var r = st - Y;
+			var i;
+			for (i = 0; i < M; i++) {
+				n += vt[i].fc * (5 + Vt[i])
+			}
+			n >>= 3;
+			if (Dt < parseInt(_t / 2) && n < parseInt(r / 2)) return true
+		}
+		return _t == d - 1 || Dt == m
+	};
+	var On = function (e, t) {
+		var n;
+		var r;
+		var i = 0;
+		var s = 0;
+		var o = 0;
+		var u = 0;
+		var a;
+		var f;
+		if (_t != 0)
+			do {
+				if ((i & 7) == 0) u = Mt[o++];
+				r = J[i++] & 255;
+				if ((u & 1) == 0) {
+					on(r, e)
+				} else {
+					a = kt[r];
+					on(a + L + 1, e);
+					f = Xt[a];
+					if (f != 0) {
+						r -= At[a];
+						_n(r, f)
+					}
+					n = $[s++];
+					a = un(n);
+					on(a, t);
+					f = Vt[a];
+					if (f != 0) {
+						n -= Ot[a];
+						_n(n, f)
+					}
+				}
+				u >>= 1
+			} while (i < _t);
+		on(A, e)
+	};
+	var Mn = 16;
+	var _n = function (e, t) {
+		if (G > Mn - t) {
+			Q |= e << G;
+			rn(Q);
+			Q = e >> Mn - G;
+			G += t - Mn
+		} else {
+			Q |= e << G;
+			G += t
+		}
+	};
+	var Dn = function (e, t) {
+		var n = 0;
+		do {
+			n |= e & 1;
+			e >>= 1;
+			n <<= 1
+		} while (--t > 0);
+		return n >> 1
+	};
+	var Pn = function () {
+		if (G > 8) {
+			rn(Q)
+		} else if (G > 0) {
+			nn(Q)
+		}
+		Q = 0;
+		G = 0
+	};
+	var Hn = function () {
+		if (z != 0) {
+			var e, t;
+			e = Zt();
+			if (I == null) I = q = e;
+			else q = q.next = e;
+			e.len = z - W;
+			for (t = 0; t < e.len; t++) e.ptr[t] = U[W + t];
+			z = W = 0
+		}
+	};
+	var Bn = function (e, t) {
+		var n, r;
+		It = e;
+		qt = 0;
+		if (typeof t == "undefined") t = s;
+		Qt(t);
+		var i = new Array(1024);
+		var o = [];
+		while ((n = mn(i, 0, i.length)) > 0) {
+			var u = new Array(n);
+			for (r = 0; r < n; r++) {
+				u[r] = String.fromCharCode(i[r])
+			}
+			o[o.length] = u.join("")
+		}
+		It = null;
+		return o.join("")
+	};
+	if (!e.RawDeflate) e.RawDeflate = {};
+	e.RawDeflate.deflate = Bn
+})(this);
 var GlobalOptions = {
 	ptupdate: true,
 	ptupdatebeta: 0,
@@ -308,15 +1247,96 @@ var Colors = {
 };
 var AutoTrainOptions = {
 	intervalSecs: 60,
-	doTraps:			{1:false,2:false,3:false,4:false,5:false,6:false,7:false,8:false},
-	doCalrops:			{1:false,2:false,3:false,4:false,5:false,6:false,7:false,8:false},
-	doSpikes:			{1:false,2:false,3:false,4:false,5:false,6:false,7:false,8:false},
-	doXbows:			{1:false,2:false,3:false,4:false,5:false,6:false,7:false,8:false},
-	troopType:			{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
-	keepFood:				{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
-	keepWood:				{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
-	keepStone:			{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
-	keepOre:				{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
+	doTraps: {
+		1: false,
+		2: false,
+		3: false,
+		4: false,
+		5: false,
+		6: false,
+		7: false,
+		8: false
+	},
+	doCalrops: {
+		1: false,
+		2: false,
+		3: false,
+		4: false,
+		5: false,
+		6: false,
+		7: false,
+		8: false
+	},
+	doSpikes: {
+		1: false,
+		2: false,
+		3: false,
+		4: false,
+		5: false,
+		6: false,
+		7: false,
+		8: false
+	},
+	doXbows: {
+		1: false,
+		2: false,
+		3: false,
+		4: false,
+		5: false,
+		6: false,
+		7: false,
+		8: false
+	},
+	troopType: {
+		1: 0,
+		2: 0,
+		3: 0,
+		4: 0,
+		5: 0,
+		6: 0,
+		7: 0,
+		8: 0
+	},
+	keepFood: {
+		1: 0,
+		2: 0,
+		3: 0,
+		4: 0,
+		5: 0,
+		6: 0,
+		7: 0,
+		8: 0
+	},
+	keepWood: {
+		1: 0,
+		2: 0,
+		3: 0,
+		4: 0,
+		5: 0,
+		6: 0,
+		7: 0,
+		8: 0
+	},
+	keepStone: {
+		1: 0,
+		2: 0,
+		3: 0,
+		4: 0,
+		5: 0,
+		6: 0,
+		7: 0,
+		8: 0
+	},
+	keepOre: {
+		1: 0,
+		2: 0,
+		3: 0,
+		4: 0,
+		5: 0,
+		6: 0,
+		7: 0,
+		8: 0
+	},
 };
 var ChatIcons = {};
 var IRCOptions = {
@@ -352,10 +1372,160 @@ var GameIcons = {
 	raidResting: '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/autoAttack/raid_resting.png>',
 	returning: '<img src=https://kabam1-a.akamaihd.net/silooneofcamelot/fb/e2/src/img/returning.jpg>',
 };
-var JSON;if(!JSON){JSON={};}(function(){"use strict";function f(n){return n<10?'0'+n:n;}if(typeof Date.prototype.toJSON!=='function'){Date.prototype.toJSON=function(key){return isFinite(this.valueOf())?this.getUTCFullYear()+'-'+f(this.getUTCMonth()+1)+'-'+f(this.getUTCDate())+'T'+f(this.getUTCHours())+':'+f(this.getUTCMinutes())+':'+f(this.getUTCSeconds())+'Z':null;};String.prototype.toJSON=Number.prototype.toJSON=Boolean.prototype.toJSON=function(key){return this.valueOf();};}var cx=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,escapable=/[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,gap,indent,meta={'\b':'\\b','\t':'\\t','\n':'\\n','\f':'\\f','\r':'\\r','"':'\\"','\\':'\\\\'},rep;function quote(string){escapable.lastIndex=0;return escapable.test(string)?'"'+string.replace(escapable,function(a){var c=meta[a];return typeof c==='string'?c:'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4);})+'"':'"'+string+'"';}function str(key,holder){var i,k,v,length,mind=gap,partial,value=holder[key];if(value&&typeof value==='object'&&typeof value.toJSON==='function'){value=value.toJSON(key);}if(typeof rep==='function'){value=rep.call(holder,key,value);}switch(typeof value){case'string':return quote(value);case'number':return isFinite(value)?String(value):'null';case'boolean':case'null':return String(value);case'object':if(!value){return'null';}gap+=indent;partial=[];if(Object.prototype.toString.apply(value)==='[object Array]'){length=value.length;for(i=0;i<length;i+=1){partial[i]=str(i,value)||'null';}v=partial.length===0?'[]':gap?'[\n'+gap+partial.join(',\n'+gap)+'\n'+mind+']':'['+partial.join(',')+']';gap=mind;return v;}if(rep&&typeof rep==='object'){length=rep.length;for(i=0;i<length;i+=1){k=rep[i];if(typeof k==='string'){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v);}}}}else{for(k in value){if(Object.hasOwnProperty.call(value,k)){v=str(k,value);if(v){partial.push(quote(k)+(gap?': ':':')+v);}}}}v=partial.length===0?'{}':gap?'{\n'+gap+partial.join(',\n'+gap)+'\n'+mind+'}':'{'+partial.join(',')+'}';gap=mind;return v;}}if(typeof JSON.stringify!=='function'){JSON.stringify=function(value,replacer,space){var i;gap='';indent='';if(typeof space==='number'){for(i=0;i<space;i+=1){indent+=' ';}}else if(typeof space==='string'){indent=space;}rep=replacer;if(replacer&&typeof replacer!=='function'&&(typeof replacer!=='object'||typeof replacer.length!=='number')){throw new Error('JSON.stringify');}return str('',{'':value});};}if(typeof JSON.parse!=='function'){JSON.parse=function(text,reviver){var j;function walk(holder,key){var k,v,value=holder[key];if(value&&typeof value==='object'){for(k in value){if(Object.hasOwnProperty.call(value,k)){v=walk(value,k);if(v!==undefined){value[k]=v;}else{delete value[k];}}}}return reviver.call(holder,key,value);}text=String(text);cx.lastIndex=0;if(cx.test(text)){text=text.replace(cx,function(a){return'\\u'+('0000'+a.charCodeAt(0).toString(16)).slice(-4);});}if(/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,'@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,']').replace(/(?:^|:|,)(?:\s*\[)+/g,''))){j=eval('('+text+')');return typeof reviver==='function'?walk({'':j},''):j;}throw new SyntaxError('JSON.parse');};}}());
+var JSON;
+if (!JSON) {
+	JSON = {};
+}(function () {
+	"use strict";
 
+	function f(n) {
+		return n < 10 ? '0' + n : n;
+	}
+	if (typeof Date.prototype.toJSON !== 'function') {
+		Date.prototype.toJSON = function (key) {
+			return isFinite(this.valueOf()) ? this.getUTCFullYear() + '-' + f(this.getUTCMonth() + 1) + '-' + f(this.getUTCDate()) + 'T' + f(this.getUTCHours()) + ':' + f(this.getUTCMinutes()) + ':' + f(this.getUTCSeconds()) + 'Z' : null;
+		};
+		String.prototype.toJSON = Number.prototype.toJSON = Boolean.prototype.toJSON = function (key) {
+			return this.valueOf();
+		};
+	}
+	var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+		escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+		gap, indent, meta = {
+			'\b': '\\b',
+			'\t': '\\t',
+			'\n': '\\n',
+			'\f': '\\f',
+			'\r': '\\r',
+			'"': '\\"',
+			'\\': '\\\\'
+		},
+		rep;
 
+	function quote(string) {
+		escapable.lastIndex = 0;
+		return escapable.test(string) ? '"' + string.replace(escapable, function (a) {
+			var c = meta[a];
+			return typeof c === 'string' ? c : '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+		}) + '"' : '"' + string + '"';
+	}
 
+	function str(key, holder) {
+		var i, k, v, length, mind = gap,
+			partial, value = holder[key];
+		if (value && typeof value === 'object' && typeof value.toJSON === 'function') {
+			value = value.toJSON(key);
+		}
+		if (typeof rep === 'function') {
+			value = rep.call(holder, key, value);
+		}
+		switch (typeof value) {
+		case 'string':
+			return quote(value);
+		case 'number':
+			return isFinite(value) ? String(value) : 'null';
+		case 'boolean':
+		case 'null':
+			return String(value);
+		case 'object':
+			if (!value) {
+				return 'null';
+			}
+			gap += indent;
+			partial = [];
+			if (Object.prototype.toString.apply(value) === '[object Array]') {
+				length = value.length;
+				for (i = 0; i < length; i += 1) {
+					partial[i] = str(i, value) || 'null';
+				}
+				v = partial.length === 0 ? '[]' : gap ? '[\n' + gap + partial.join(',\n' + gap) + '\n' + mind + ']' : '[' + partial.join(',') + ']';
+				gap = mind;
+				return v;
+			}
+			if (rep && typeof rep === 'object') {
+				length = rep.length;
+				for (i = 0; i < length; i += 1) {
+					k = rep[i];
+					if (typeof k === 'string') {
+						v = str(k, value);
+						if (v) {
+							partial.push(quote(k) + (gap ? ': ' : ':') + v);
+						}
+					}
+				}
+			} else {
+				for (k in value) {
+					if (Object.hasOwnProperty.call(value, k)) {
+						v = str(k, value);
+						if (v) {
+							partial.push(quote(k) + (gap ? ': ' : ':') + v);
+						}
+					}
+				}
+			}
+			v = partial.length === 0 ? '{}' : gap ? '{\n' + gap + partial.join(',\n' + gap) + '\n' + mind + '}' : '{' + partial.join(',') + '}';
+			gap = mind;
+			return v;
+		}
+	}
+	if (typeof JSON.stringify !== 'function') {
+		JSON.stringify = function (value, replacer, space) {
+			var i;
+			gap = '';
+			indent = '';
+			if (typeof space === 'number') {
+				for (i = 0; i < space; i += 1) {
+					indent += ' ';
+				}
+			} else if (typeof space === 'string') {
+				indent = space;
+			}
+			rep = replacer;
+			if (replacer && typeof replacer !== 'function' && (typeof replacer !== 'object' || typeof replacer.length !== 'number')) {
+				throw new Error('JSON.stringify');
+			}
+			return str('', {
+				'': value
+			});
+		};
+	}
+	if (typeof JSON.parse !== 'function') {
+		JSON.parse = function (text, reviver) {
+			var j;
+
+			function walk(holder, key) {
+				var k, v, value = holder[key];
+				if (value && typeof value === 'object') {
+					for (k in value) {
+						if (Object.hasOwnProperty.call(value, k)) {
+							v = walk(value, k);
+							if (v !== undefined) {
+								value[k] = v;
+							} else {
+								delete value[k];
+							}
+						}
+					}
+				}
+				return reviver.call(holder, key, value);
+			}
+			text = String(text);
+			cx.lastIndex = 0;
+			if (cx.test(text)) {
+				text = text.replace(cx, function (a) {
+					return '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+				});
+			}
+			if (/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, '@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
+				j = eval('(' + text + ')');
+				return typeof reviver === 'function' ? walk({
+					'': j
+				}, '') : j;
+			}
+			throw new SyntaxError('JSON.parse');
+		};
+	}
+}());
 var JSON2 = JSON;
 var Cities = {};
 var Seed = unsafeWindow.seed;
@@ -547,7 +1717,6 @@ function ptStartup() {
 	if (Options.fixTower2)
 		TowerAlerts.enableFixFalseReports(true);
 	AddMainTabLink('TOOLS', eventHideShow, mouseMainTab);
-
 	//  var ss_onload = unsafeWindow.seed.ss;
 	//  multiBrowserOverride();
 	//TestSomething.init ();  
@@ -561,15 +1730,15 @@ function multiBrowserOverride() {
 	var old_usa = unsafeWindow.update_seed_ajax;
 	// create a new own
 	var usa = function (marchForceUpdateFlag, updateSeedDoneCallback, isCancelTraining) {
-		if (Options.allowMultiBroswer) {
-			// remove a variable
-			//delete unsafeWindow.seed.ss;
-			//	 unsafeWindow.seed.ss = ss_onload;
+			if (Options.allowMultiBroswer) {
+				// remove a variable
+				//delete unsafeWindow.seed.ss;
+				//	 unsafeWindow.seed.ss = ss_onload;
+			}
+			// call the original function
+			old_usa(marchForceUpdateFlag, updateSeedDoneCallback, isCancelTraining);
 		}
-		// call the original function
-		old_usa(marchForceUpdateFlag, updateSeedDoneCallback, isCancelTraining);
-	}
-	// install our override
+		// install our override
 	unsafeWindow.update_seed_ajax = usa;
 }
 
@@ -845,11 +2014,15 @@ var battleReports = {
 	init: function () {
 		var t = battleReports;
 		//    t.getReportDisplayFunc = new CalterUwFunc ('getReportDisplay', [['return K.join("")', 'var themsg=K.join(""); themsg=getReportDisplay_hook(themsg, arguments[1]); return themsg']]); //Alliance report battle rounds function
-    		t.getReportDisplayFunc = new CalterUwFunc ('getReportDisplay', [['return K.join("")', 'var themsg=K.join(""); themsg=getReportDisplay_hook(themsg, arguments[1]); themsg=getReportDisplay_hookz(themsg, arguments[1]); return themsg']]); //Alliance report battle rounds function
+		t.getReportDisplayFunc = new CalterUwFunc('getReportDisplay', [
+			['return K.join("")', 'var themsg=K.join(""); themsg=getReportDisplay_hook(themsg, arguments[1]); themsg=getReportDisplay_hookz(themsg, arguments[1]); return themsg']
+		]); //Alliance report battle rounds function
 		uW.getReportDisplay_hook = t.hook;
 		uW.getReportDisplay_hookz = t.hookz;
 		t.getReportDisplayFunc.setEnable(true);
-    		t.renderBattleReportFunc = new CalterUwFunc ('Messages.viewMarchReport', [[/\$\("modal_msg_list"\)\.innerHTML\s*=\s*cm\.MarchReportController\.getMarchReport\(c,\s*y\)/, 'var msg = cm.MarchReportController.getMarchReport(c, y); $("modal_msg_list").innerHTML = renderBattleReport_hook(msg,c,y);']]); //March reports battle rounds function
+		t.renderBattleReportFunc = new CalterUwFunc('Messages.viewMarchReport', [
+			[/\$\("modal_msg_list"\)\.innerHTML\s*=\s*cm\.MarchReportController\.getMarchReport\(c,\s*y\)/, 'var msg = cm.MarchReportController.getMarchReport(c, y); $("modal_msg_list").innerHTML = renderBattleReport_hook(msg,c,y);']
+		]); //March reports battle rounds function
 		uW.renderBattleReport_hook = t.hook2;
 		t.renderBattleReportFunc.setEnable(true);
 		uW.deleteAreport = t.e_deleteReport;
@@ -927,14 +2100,17 @@ var battleReports = {
 var mapinfoFix = {
 	init: function () {
 		var t = mapinfoFix;
-	    t.calcButtonInfo =  new CalterUwFunc('cm.ContextMenuMapController.prototype.calcButtonInfo', 
-		    [[/case\s*"reassign":b\.text\s*=\s*g_js_strings\.commonstr\.reassign;b\.color\s*=\s*"blue";b\.action\s*=\s*function\s*\(\)\s*{modal_attack\(2,\s*e\.tile\.x,\s*e\.tile\.y\);*};d\.push\(b\);break;/,
-		      'case "reassign":b.text=g_js_strings.commonstr.reassign;b.color="blue";b.action=function(){modal_attack(5,e.tile.x,e.tile.y);};d.push(b);break;']]);
-
-	    t.bookMarkMod = new CalterUwFunc('cm.ContextMenuMapController.prototype.calcButtonInfo',
-		    [[/case\s*"bookmark":/, 'case "bookmark": try { if (e.city && cm.tileInfo[e.tile.id] && cm.tileInfo[e.tile.id].cityName ) {e.tile.name = e.user.username + "/" + cm.tileInfo[e.tile.id].cityName;}} catch (err1) {} ']]);
-
-	    t.MapContextMenus = new CalterUwFunc ('cm.ContextMenuMapController.prototype.calcCityType', [['return c', 'c = calcCityTypeFix(c,d);return c']]);
+		t.calcButtonInfo = new CalterUwFunc('cm.ContextMenuMapController.prototype.calcButtonInfo', [
+			[/case\s*"reassign":b\.text\s*=\s*g_js_strings\.commonstr\.reassign;b\.color\s*=\s*"blue";b\.action\s*=\s*function\s*\(\)\s*{modal_attack\(2,\s*e\.tile\.x,\s*e\.tile\.y\);*};d\.push\(b\);break;/,
+				'case "reassign":b.text=g_js_strings.commonstr.reassign;b.color="blue";b.action=function(){modal_attack(5,e.tile.x,e.tile.y);};d.push(b);break;'
+			]
+		]);
+		t.bookMarkMod = new CalterUwFunc('cm.ContextMenuMapController.prototype.calcButtonInfo', [
+			[/case\s*"bookmark":/, 'case "bookmark": try { if (e.city && cm.tileInfo[e.tile.id] && cm.tileInfo[e.tile.id].cityName ) {e.tile.name = e.user.username + "/" + cm.tileInfo[e.tile.id].cityName;}} catch (err1) {} ']
+		]);
+		t.MapContextMenus = new CalterUwFunc('cm.ContextMenuMapController.prototype.calcCityType', [
+			['return c', 'c = calcCityTypeFix(c,d);return c']
+		]);
 		t.calcButtonInfo.setEnable(Options.mapInfo);
 		t.MapContextMenus.setEnable(Options.mapInfo2);
 		t.bookMarkMod.setEnable(Options.mapInfo3);
@@ -1092,7 +2268,9 @@ var MapDoubleClickFix = {
 		t = MapDoubleClickFix;
 		//      t.doubleClickFix = new CalterUwFunc ('g_mapObject.populateSlots', [[/that\.controller\.onTileClick\(this\)/im,'setTimeout(that.controller.onTileClick(this),1000)}).off("dblclick", "**").on("dblclick", "a", function(){that.controller.onTileDblClick(this)']]);
 		// replace with previous map mouse event handler coding
-      		t.doubleClickFix = new CalterUwFunc ('g_mapObject.populateSlots', [[/map1.*Tooltip/img,'map1 a").unbind("click").clicks(function(){setTimeout(that.controller.onTileClick(this),200)}, function(){that.controller.onTileDblClick(this)}).unbind("hover").hover(function(i){that.controller.onTileEnter(this, i)}, function(){removeTooltip']]);
+		t.doubleClickFix = new CalterUwFunc('g_mapObject.populateSlots', [
+			[/map1.*Tooltip/img, 'map1 a").unbind("click").clicks(function(){setTimeout(that.controller.onTileClick(this),200)}, function(){that.controller.onTileDblClick(this)}).unbind("hover").hover(function(i){that.controller.onTileEnter(this, i)}, function(){removeTooltip']
+		]);
 		t.doubleClickFix.setEnable(Options.fixMapDblClick);
 	},
 	setEnable: function (tf) {
@@ -1110,7 +2288,7 @@ var ChatTimeFix = {
 		t = ChatTimeFix;
 		uW.ptConvertTime = function (timestr) {
 			time = timestr.split(/:/);
-			var AddMins = 480-parseInt(getDST(new Date())/60)-(new Date().getTimezoneOffset()); // convert from local pacific time
+			var AddMins = 480 - parseInt(getDST(new Date()) / 60) - (new Date().getTimezoneOffset()); // convert from local pacific time
 			var min = (parseInt(time[0]) * 60) + parseInt(time[1]) + AddMins;
 			if (min >= 1440) {
 				min = min - 1440;
@@ -1157,9 +2335,13 @@ var BarbRaidMarchPatch = {
 	init: function () {
 		t = BarbRaidMarchPatch;
 		if (FFVersion.substring(0, 4) > 16)
-			t.marchFix = new CalterUwFunc ('update_march', [[/D\.toTileLevel,\s*n,\s*M\)/im,'D.toTileLevel, n, M, Math.floor(unixtime()+D.returnEta-D.marchUnixTime))']]);
+			t.marchFix = new CalterUwFunc('update_march', [
+				[/D\.toTileLevel,\s*n,\s*M\)/im, 'D.toTileLevel, n, M, Math.floor(unixtime()+D.returnEta-D.marchUnixTime))']
+			]);
 		else
-			t.marchFix = new CalterUwFunc ('update_march', [['D.toTileLevel, n, M)','D.toTileLevel, n, M, Math.floor(unixtime()+D.returnEta-D.marchUnixTime))']]);
+			t.marchFix = new CalterUwFunc('update_march', [
+				['D.toTileLevel, n, M)', 'D.toTileLevel, n, M, Math.floor(unixtime()+D.returnEta-D.marchUnixTime))']
+			]);
 		t.marchFix.setEnable(Options.togRaidPatch);
 	},
 	setEnable: function (tf) {
@@ -1269,7 +2451,9 @@ var ChatStuff = {
 		if (getMyAlliance()[0] > 0)
 			t.getAllianceLeaders();
 		// [[/h\s*=\s*cm.formatModel\.exe\(h,\s*true\);/,'h=chatDivContent_hook2(h);h = cm.formatModel.exe(h, true);'],
-			t.chatDivContentFunc = new CalterUwFunc ('Chat.chatDivContent', [['return f.join("")', 'var msg = f.join("");\n msg=chatDivContent_hook(msg,d);\n return msg;']]);
+		t.chatDivContentFunc = new CalterUwFunc('Chat.chatDivContent', [
+			['return f.join("")', 'var msg = f.join("");\n msg=chatDivContent_hook(msg,d);\n return msg;']
+		]);
 		uW.chatDivContent_hook = t.chatDivContentHook;
 		uW.chatDivContent_hook2 = t.chatDivContentHook2;
 		uW.ptChatIconClicked = t.e_iconClicked;
@@ -1484,7 +2668,7 @@ var AudioManager = {
 	alertdiv: null,
 	init: function () {
 		var t = AudioManager;
-		if ( !! document.createElement("audio").canPlayType) {
+		if (!!document.createElement("audio").canPlayType) {
 			t.player = new Audio();
 			t.type = 'html5';
 			t.player.addEventListener("ended", function () {
@@ -1883,6 +3067,7 @@ var Rpt = {
 			h += '</div>';
 			h += '<div id=reportHeaderRight style="float:right;width:30%;text-align:right;">';
 			h += 'Report No: ' + reportId;
+			h += '<input id=ptDeleteReport style="font-size:' + Options.overviewFontSize + 'px" type="submit" value="Delete">' //Delete button
 			h += '<br><input id=ptpostreportid onclick="Chat.sendChat(\'/a Report No: ' + reportId + '\')" style="font-size:' + Options.overviewFontSize + 'px" type="submit" value="Post To Chat"></div>';
 			h += '</div><div style="clear:both;"></div>';
 			return h;
@@ -2638,6 +3823,37 @@ var Rpt = {
 			return m;
 		}
 
+		function deleteThisRpt(testing) {
+			var side0 = '';
+			var side1 = '';
+			if (rpt.sideId == 1) side1 = rpt.marchReportId;
+			if (rpt.sideId == 0) side0 = rpt.marchReportId;
+			var params = uW.Object.clone(uW.g_ajaxparams);
+			params.s0rids = side0;
+			params.s1rids = side1;
+			params.cityrids = '';
+			new MyAjaxRequest(uW.g_ajaxpath + "ajax/deleteCheckedReports.php" + uW.g_ajaxsuffix, {
+				method: "post",
+				parameters: params,
+				onSuccess: function (rslt) {
+					if (rslt.ok) {
+						if (t.popReport.onClose) {
+							t.popReport.onClose();
+						}
+						t.popReport.destroy();
+						t.popReport = null;
+						unsafeWindow.Messages.listReports();
+					}
+				},
+				onFailure: function () {
+					if (notify) {
+						notify('AJAX ERROR');
+					}
+				},
+			});
+			//alert(rpt.toSource());
+		}
+
 		function handleunts() { // Troops sent to Reinforce or troops found on a Scout (also show destination for transports)
 			var m = '';
 			//header
@@ -2802,17 +4018,17 @@ var Rpt = {
 					arField[i] = 0;
 				for (var i = 0; i < blds.length; i++)
 					arField[blds[i]]++
-				for (var i = 11; i > 0; i--) {
-					if (arField[i] > 0) {
-						if (firstbld)
-							firstbld = false;
-						else
-							b += ', ';
-						if (arField[i] > 1)
-							b += arField[i] + ' x ';
-						b += ' ' + i;
+					for (var i = 11; i > 0; i--) {
+						if (arField[i] > 0) {
+							if (firstbld)
+								firstbld = false;
+							else
+								b += ', ';
+							if (arField[i] > 1)
+								b += arField[i] + ' x ';
+							b += ' ' + i;
+						}
 					}
-				}
 				b += '</TD></TR>';
 				return b;
 			}
@@ -2874,6 +4090,9 @@ var Rpt = {
 		}
 		m += '</DIV>';
 		t.popReport.getMainDiv().innerHTML = m;
+		document.getElementById('ptDeleteReport').addEventListener('click', function () {
+			deleteThisRpt(rslt, rpt);
+		}, false);
 		t.popReport.getTopDiv().innerHTML = '<DIV align=center><B>' + rpt.marchName + ' Report</B></DIV>';
 		if (document.getElementById('reportTroopStatsHdr')) {
 			document.getElementById('reportTroopStatsHdr').addEventListener('click', function () {
@@ -3914,7 +5133,11 @@ Tabs.Knights = {
 		params.i = int;
 		params.r = res;
 		if (DISABLE_POST_KNIGHT_SKILLS) {
-      			setTimeout (function (){notify({ok:true})}, 1500);    
+			setTimeout(function () {
+				notify({
+					ok: true
+				})
+			}, 1500);
 			//      setTimeout (  function (){notify({ok:false, errorMsg:"FAKE ERROR message, a long one, to test how it will fit and overflow! Perhaps you'll need to retry?"})}  , 2000);    
 			return;
 		}
@@ -3958,15 +5181,18 @@ var messageNav = {
 	mmsFunc: null,
 	init: function () {
 		t = messageNav;
-    		t.mmFunc = new CalterUwFunc ('modal_messages', [[/}\s*$/, 'setTimeout(messageNav_hook,0); }']]);
-    		t.mmsFunc = new CalterUwFunc ('modal_messages_send', [[/{\s*var params/i, '{\nif (modal_messages_send_hook()) return;\nvar params']]);
+		t.mmFunc = new CalterUwFunc('modal_messages', [
+			[/}\s*$/, 'setTimeout(messageNav_hook,0); }']
+		]);
+		t.mmsFunc = new CalterUwFunc('modal_messages_send', [
+			[/{\s*var params/i, '{\nif (modal_messages_send_hook()) return;\nvar params']
+		]);
 		uW.messageNav_hook = messageNav.hook;
 		uW.modal_messages_send_hook = messageNav.msgSendHook;
 		// t.mmFunc.setEnable (true);
 		// t.mmsFunc.setEnable (true);
 	},
-  	setEnable : function (tf){
-  	},
+	setEnable: function (tf) {},
 	isAvailable: function () {
 		t = messageNav;
 		//return t.mmFunc.isAvailable();
@@ -4030,12 +5256,13 @@ var messageNav = {
 var AttackDialog = {
 	init: function () {
 		var t = AttackDialog;
-    		t.modal_attackFunc = new CalterUwFunc ('modal_attack', [[/}\s*$/, '; attackDialog_hook(); }']]);
+		t.modal_attackFunc = new CalterUwFunc('modal_attack', [
+			[/}\s*$/, '; attackDialog_hook(); }']
+		]);
 		uW.attackDialog_hook = t.modalAttackHook;
 		t.modal_attackFunc.setEnable(true);
 	},
-  	setEnable : function (){
-  	},
+	setEnable: function () {},
 	isKnightSelectAvailable: function () {
 		var t = AttackDialog;
 		return t.modal_attackFunc.isAvailable();
@@ -4098,10 +5325,14 @@ var AttackDialog = {
 var DispReport = {
 	init: function () {
 		var t = DispReport;
-    		t.modal_InboxFunc = new CalterUwFunc ('modal_messages_listshow', [['msghtml.join("");', 'msghtml.join("");dispInbox_hook(rslt,boxType,msghtml);']]);
+		t.modal_InboxFunc = new CalterUwFunc('modal_messages_listshow', [
+			['msghtml.join("");', 'msghtml.join("");dispInbox_hook(rslt,boxType,msghtml);']
+		]);
 		uW.dispInbox_hook = t.ModalInboxHook;
 		t.modal_InboxFunc.setEnable(Options.enhancedinbox);
-    		t.modal_RptFunc = new CalterUwFunc ('Messages.handleListReports', [['n.join("");', 'n.join("");dispRpt_hook(l,n);']]);
+		t.modal_RptFunc = new CalterUwFunc('Messages.handleListReports', [
+			['n.join("");', 'n.join("");dispRpt_hook(l,n);']
+		]);
 		uW.dispRpt_hook = t.ModalReportListHook;
 		t.modal_RptFunc.setEnable(Options.enhancedinbox);
 	},
@@ -4250,194 +5481,199 @@ var DispReport = {
 	}
 }
 
-	function makeReportLink(rptid, side, tiletype, tilelv, defid, defnm, defgen, atknm, atkgen, marchtype, xcoord, ycoord, timestamp, unread, atkxcoord, atkycoord, side0AllianceName, side1AllianceName, link) {
-		var domain = GetServerId();
-		var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
-		var Sversion = "";
-		var tvuid = parseInt(unsafeWindow.tvuid);
-		params.rid = rptid;
-		if (tiletype != 999) params.side = side;
-		new AsyncAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/fetchReport.php" + unsafeWindow.g_ajaxsuffix, {
-			method: "post",
-			parameters: params,
-			onSuccess: function (transport) {
-				var rslt = eval("(" + transport.responseText + ")");
-				if (rslt.ok == false) {
-					alert(rslt.msg);
-					return;
-				}
-				if (!rslt.error) {
-					if (typeof GM_getMetadata !== "undefined") Sversion = JSON.stringify(GM_getMetadata("version", true));
-					if (typeof GM_info !== "undefined") Sversion = JSON.stringify(GM_info.script.version);
-					var url = '//apps.facebook.com/kocreportview/putData.php?Sname=' + JSON.stringify(SourceName) + '&Sversion=' + Sversion + '&domain=' + domain + '&reportUnixTime=' + timestamp + '&tvuid=' + tvuid + '&side0Player=' + defnm + '&side1Player=' + atknm + '&marchType=' + marchtype + '&tileType=' + tiletype + '&report=' + JSON.stringify(rslt);
-					window.open(url, '_blank');
-				} else alert('kabam is having issues with reports...');
-			},
-			onFailure: function () {
-				alert('kabam is having issues with reports...');
-			},
-		}, false);
-	}
+function makeReportLink(rptid, side, tiletype, tilelv, defid, defnm, defgen, atknm, atkgen, marchtype, xcoord, ycoord, timestamp, unread, atkxcoord, atkycoord, side0AllianceName, side1AllianceName, link) {
+	var domain = GetServerId();
+	var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+	var Sversion = "";
+	var tvuid = parseInt(unsafeWindow.tvuid);
+	params.rid = rptid;
+	if (tiletype != 999) params.side = side;
+	new AsyncAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/fetchReport.php" + unsafeWindow.g_ajaxsuffix, {
+		method: "post",
+		parameters: params,
+		onSuccess: function (transport) {
+			var rslt = eval("(" + transport.responseText + ")");
+			if (rslt.ok == false) {
+				alert(rslt.msg);
+				return;
+			}
+			if (!rslt.error) {
+				if (typeof GM_getMetadata !== "undefined") Sversion = JSON.stringify(GM_getMetadata("version", true));
+				if (typeof GM_info !== "undefined") Sversion = JSON.stringify(GM_info.script.version);
+				var url = '//apps.facebook.com/kocreportview/putData.php?Sname=' + JSON.stringify(SourceName) + '&Sversion=' + Sversion + '&domain=' + domain + '&reportUnixTime=' + timestamp + '&tvuid=' + tvuid + '&side0Player=' + defnm + '&side1Player=' + atknm + '&marchType=' + marchtype + '&tileType=' + tiletype + '&report=' + JSON.stringify(rslt);
+				window.open(url, '_blank');
+			} else alert('kabam is having issues with reports...');
+		},
+		onFailure: function () {
+			alert('kabam is having issues with reports...');
+		},
+	}, false);
+}
 
-	function makeReportPopup(rptid, side, tiletype, tilelv, defid, defnm, defgen, atknm, atkgen, marchtype, xcoord, ycoord, timestamp, unread, atkxcoord, atkycoord, side0AllianceName, side1AllianceName, link) {
-		Rpt.FindReport(rptid, 0);
-	}
+function makeReportPopup(rptid, side, tiletype, tilelv, defid, defnm, defgen, atknm, atkgen, marchtype, xcoord, ycoord, timestamp, unread, atkxcoord, atkycoord, side0AllianceName, side1AllianceName, link) {
+	Rpt.FindReport(rptid, 0);
+}
 var AllianceReports = {
-	checkPeriod: 300,
-	allianceNames: [],
-	saveArfunc: uW.allianceReports,
-	init: function () {
-		t = AllianceReports;
-		t.enable(Options.enhanceARpts);
-    		t.marvFunc = new CalterUwFunc ('modal_alliance_report_view', [['getReportDisplay', 'getReportDisplay_hook2']]);
-    		t.memListFunc = new CalterUwFunc ('membersInfo', [['commonstr.might','commonstr.might + "</td><td class=colcities>" + g_js_strings.commonstr.cities + "</td><td class=collast>" + g_js_strings.membersInfo.lastonline'],['memberInfo[key].prestige\)', 'memberInfo[key].prestige)+ "</td>");memhtml.push("<td class=colcities>" + memberInfo[key].cities + "</td>");memhtml.push("<td class=collast>" + memberInfo[key].lastLogin']]);
-		uW.getReportDisplay_hook2 = t.getReportDisplayHook;
-		uW.getmembersInfo_hook = t.getMembersInfoHook;
-		t.marvFunc.setEnable(true);
-		t.enable_viewmembers(Options.enhanceViewMembers);
-	},
-	getReportDisplayHook: function (a, b) {
-		var x = '';
-		try {
-			x = uW.getReportDisplay(a, b);
-		} catch (e) {
-			x = 'Error formatting report: ' + e;
-		}
-		return x;
-	},
-	enable_viewmembers: function (tf) {
-		t = AllianceReports;
-		t.memListFunc.setEnable(tf);
-	},
-	enable: function (tf) {
-		t = AllianceReports;
-		if (tf)
-			uW.allianceReports = t.myAllianceReports;
-		else
-			uW.allianceReports = t.saveArfunc;
-	},
-	myAllianceReports: function (pageNum) {
-		var params = uW.Object.clone(uW.g_ajaxparams);
-		if (pageNum)
-			params.pageNo = pageNum;
-		params.group = "a";
-		new MyAjaxRequest(uW.g_ajaxpath + "ajax/listReports.php" + uW.g_ajaxsuffix, {
-			method: "post",
-			parameters: params,
-			onSuccess: function (rslt) {
-				//logit (inspect (rslt, 1, 1));        
-				displayReports(rslt.arReports, rslt.arPlayerNames, rslt.arAllianceNames, rslt.arCityNames, rslt.totalPages);
-			},
-			onFailure: function (rslt) {},
-		}, false);
+		checkPeriod: 300,
+		allianceNames: [],
+		saveArfunc: uW.allianceReports,
+		init: function () {
+			t = AllianceReports;
+			t.enable(Options.enhanceARpts);
+			t.marvFunc = new CalterUwFunc('modal_alliance_report_view', [
+				['getReportDisplay', 'getReportDisplay_hook2']
+			]);
+			t.memListFunc = new CalterUwFunc('membersInfo', [
+				['commonstr.might', 'commonstr.might + "</td><td class=colcities>" + g_js_strings.commonstr.cities + "</td><td class=collast>" + g_js_strings.membersInfo.lastonline'],
+				['memberInfo[key].prestige\)', 'memberInfo[key].prestige)+ "</td>");memhtml.push("<td class=colcities>" + memberInfo[key].cities + "</td>");memhtml.push("<td class=collast>" + memberInfo[key].lastLogin']
+			]);
+			uW.getReportDisplay_hook2 = t.getReportDisplayHook;
+			uW.getmembersInfo_hook = t.getMembersInfoHook;
+			t.marvFunc.setEnable(true);
+			t.enable_viewmembers(Options.enhanceViewMembers);
+		},
+		getReportDisplayHook: function (a, b) {
+			var x = '';
+			try {
+				x = uW.getReportDisplay(a, b);
+			} catch (e) {
+				x = 'Error formatting report: ' + e;
+			}
+			return x;
+		},
+		enable_viewmembers: function (tf) {
+			t = AllianceReports;
+			t.memListFunc.setEnable(tf);
+		},
+		enable: function (tf) {
+			t = AllianceReports;
+			if (tf)
+				uW.allianceReports = t.myAllianceReports;
+			else
+				uW.allianceReports = t.saveArfunc;
+		},
+		myAllianceReports: function (pageNum) {
+			var params = uW.Object.clone(uW.g_ajaxparams);
+			if (pageNum)
+				params.pageNo = pageNum;
+			params.group = "a";
+			new MyAjaxRequest(uW.g_ajaxpath + "ajax/listReports.php" + uW.g_ajaxsuffix, {
+				method: "post",
+				parameters: params,
+				onSuccess: function (rslt) {
+					//logit (inspect (rslt, 1, 1));        
+					displayReports(rslt.arReports, rslt.arPlayerNames, rslt.arAllianceNames, rslt.arCityNames, rslt.totalPages);
+				},
+				onFailure: function (rslt) {},
+			}, false);
 
-		function displayReports(ar, playerNames, allianceNames, cityNames, totalPages) {
-			var msg = new Array();
-			var myAllianceId = getMyAlliance()[0];
-			msg.push("<STYLE>.msgviewtable tbody .myCol div {margin-left:5px; overflow:hidden; white-space:nowrap; color:#000}\
+			function displayReports(ar, playerNames, allianceNames, cityNames, totalPages) {
+				var msg = new Array();
+				var myAllianceId = getMyAlliance()[0];
+				msg.push("<STYLE>.msgviewtable tbody .myCol div {margin-left:5px; overflow:hidden; white-space:nowrap; color:#000}\
             .msgviewtable tbody .myHostile div {font-weight:600; color:#600}\
             .msgviewtable tbody .myGray div {color:#666}\
             .msgviewtable tbody .myRein div {color:#050}\
             .msgviewtable tbody .myWarn div {font-weight:600; color:#442200}\
             </style>");
-			msg.push("<div class='modal_msg_reports'>");
-			var rptkeys = uW.Object.keys(ar);
-			if (matTypeof(ar) != 'array') {
-				//logit ('displayReports: '+ Options.allowAlterAR);        
-				if (Options.allowAlterAR)
-					msg.push("<div id='modal_alliance_reports_tablediv' class='modal_msg_list'><table width=675 cellpadding='0' cellspacing='0' class='msgviewtable reportviewtable alliancetable'>");
-				else
-					msg.push("<div id='modal_alliance_reports_tabledivNKA' class='modal_msg_list'><table width=675 cellpadding='0' cellspacing='0' class='msgviewtable reportviewtable alliancetable'>");
-				msg.push("<thead><tr><td width=105>Date</td><td width=40>Type</td><td width=150>Attacker</td><td>Target</td><td>View</td></tr></thead><tbody>");
-				for (var i = 0; i < rptkeys.length; i++) {
-					var rpt = ar[rptkeys[i]];
-					var colClass = '"myCol"';
-					rpt.marchType = parseInt(rpt.marchType);
-					rpt.side0AllianceId = parseInt(rpt.side0AllianceId);
-					var targetDiplomacy = getDiplomacy(rpt.side0AllianceId);
-					if (rpt.marchType == 2) {
-						colClass = '"myCol myRein"';
-					} else if (rpt.side1AllianceId != myAllianceId) {
-						colClass = '"myCol myHostile"';
-					} else {
-						if (parseInt(rpt.side0TileType) < 50) { // if wild
-							if (parseInt(rpt.side0PlayerId) == 0)
-								colClass = '"myCol myGray"';
-							else
-								colClass = '"myCol myWarn"';
-						} else if (parseInt(rpt.side0PlayerId) == 0) { // barb
-							colClass = '"myCol myGray"';
+				msg.push("<div class='modal_msg_reports'>");
+				var rptkeys = uW.Object.keys(ar);
+				if (matTypeof(ar) != 'array') {
+					//logit ('displayReports: '+ Options.allowAlterAR);        
+					if (Options.allowAlterAR)
+						msg.push("<div id='modal_alliance_reports_tablediv' class='modal_msg_list'><table width=675 cellpadding='0' cellspacing='0' class='msgviewtable reportviewtable alliancetable'>");
+					else
+						msg.push("<div id='modal_alliance_reports_tabledivNKA' class='modal_msg_list'><table width=675 cellpadding='0' cellspacing='0' class='msgviewtable reportviewtable alliancetable'>");
+					msg.push("<thead><tr><td width=105>Date</td><td width=40>Type</td><td width=150>Attacker</td><td>Target</td><td>View</td></tr></thead><tbody>");
+					for (var i = 0; i < rptkeys.length; i++) {
+						var rpt = ar[rptkeys[i]];
+						var colClass = '"myCol"';
+						rpt.marchType = parseInt(rpt.marchType);
+						rpt.side0AllianceId = parseInt(rpt.side0AllianceId);
+						var targetDiplomacy = getDiplomacy(rpt.side0AllianceId);
+						if (rpt.marchType == 2) {
+							colClass = '"myCol myRein"';
+						} else if (rpt.side1AllianceId != myAllianceId) {
+							colClass = '"myCol myHostile"';
 						} else {
-							if (targetDiplomacy == 'friendly')
-								colClass = '"myCol myWarn"';
+							if (parseInt(rpt.side0TileType) < 50) { // if wild
+								if (parseInt(rpt.side0PlayerId) == 0)
+									colClass = '"myCol myGray"';
+								else
+									colClass = '"myCol myWarn"';
+							} else if (parseInt(rpt.side0PlayerId) == 0) { // barb
+								colClass = '"myCol myGray"';
+							} else {
+								if (targetDiplomacy == 'friendly')
+									colClass = '"myCol myWarn"';
+							}
 						}
-					}
-					//logit (inspect (ar, 3, 1));
-					msg.push('<tr valign=top');
-					if (i % 2 == 0)
-						msg.push(" class=stripe");
-					msg.push("><TD class=" + colClass + "><div>");
-					msg.push(uW.formatDateByUnixTime(rpt.reportUnixTime));
-					msg.push('<BR>Rpt&nbsp;');
-					msg.push("<a onclick='FindReport(" + rpt.reportId + ",0);return false;'>#" + rpt.reportId + "</a>");
-					msg.push("</div></td><TD class=" + colClass + "><div>");
-					if (rpt.marchType == 1)
-						msg.push(uW.g_js_strings.commonstr.transport);
-					else if (rpt.marchType == 3)
-						msg.push(uW.g_js_strings.commonstr.scout);
-					else if (rpt.marchType == 2)
-						msg.push('Reinf');
-					else
-						msg.push(uW.g_js_strings.commonstr.attack);
-					// attacker ...
-					msg.push("</div></td><TD class=" + colClass + "><div>");
-					if (parseInt(rpt.side1PlayerId) != 0)
-						msg.push(escape(playerNames["p" + rpt.side1PlayerId]))
-					else
-						msg.push('?Unknown?');
-					msg.push(' ');
-					msg.push(coordLink(rpt.side1XCoord, rpt.side1YCoord));
-					msg.push('<BR>');
-					if (rpt.side1AllianceId != myAllianceId) {
-						msg.push(allianceNames['a' + rpt.side1AllianceId]);
-						msg.push(' (');
-						msg.push(getDiplomacy(rpt.side1AllianceId));
-						msg.push(')');
-					} else {
+						//logit (inspect (ar, 3, 1));
+						msg.push('<tr valign=top');
+						if (i % 2 == 0)
+							msg.push(" class=stripe");
+						msg.push("><TD class=" + colClass + "><div>");
+						msg.push(uW.formatDateByUnixTime(rpt.reportUnixTime));
+						msg.push('<BR>Rpt&nbsp;');
+						msg.push("<a onclick='FindReport(" + rpt.reportId + ",0);return false;'>#" + rpt.reportId + "</a>");
+						msg.push("</div></td><TD class=" + colClass + "><div>");
+						if (rpt.marchType == 1)
+							msg.push(uW.g_js_strings.commonstr.transport);
+						else if (rpt.marchType == 3)
+							msg.push(uW.g_js_strings.commonstr.scout);
+						else if (rpt.marchType == 2)
+							msg.push('Reinf');
+						else
+							msg.push(uW.g_js_strings.commonstr.attack);
+						// attacker ...
+						msg.push("</div></td><TD class=" + colClass + "><div>");
+						if (parseInt(rpt.side1PlayerId) != 0)
+							msg.push(escape(playerNames["p" + rpt.side1PlayerId]))
+						else
+							msg.push('?Unknown?');
+						msg.push(' ');
+						msg.push(coordLink(rpt.side1XCoord, rpt.side1YCoord));
 						msg.push('<BR>');
-					}
-					msg.push('</div></td>');
-					// target ...
-					msg.push("<TD class=" + colClass + "><DIV>");
-					var type = parseInt(rpt.side0TileType);
-					if (type < 50) { // wild
-						msg.push(uW.g_mapObject.types[type].toString().capitalize());
-						msg.push(" Lvl " + rpt.side0TileLevel)
-						if (parseInt(rpt.side0PlayerId) != 0) { // IF OWNED, show owner ...
-							msg.push(' [');
-							msg.push(escape(playerNames["p" + rpt.side0PlayerId]));
-							msg.push('] ');
+						if (rpt.side1AllianceId != myAllianceId) {
+							msg.push(allianceNames['a' + rpt.side1AllianceId]);
+							msg.push(' (');
+							msg.push(getDiplomacy(rpt.side1AllianceId));
+							msg.push(')');
+						} else {
+							msg.push('<BR>');
 						}
-					} else {
-						if (parseInt(rpt.side0PlayerId) == 0) { //  barb
-							msg.push(uW.g_js_strings.commonstr.barbariancamp);
+						msg.push('</div></td>');
+						// target ...
+						msg.push("<TD class=" + colClass + "><DIV>");
+						var type = parseInt(rpt.side0TileType);
+						if (type < 50) { // wild
+							msg.push(uW.g_mapObject.types[type].toString().capitalize());
 							msg.push(" Lvl " + rpt.side0TileLevel)
-						} else { // city
-							msg.push(escape(playerNames["p" + rpt.side0PlayerId]));
-							msg.push(' - ');
-							msg.push(cityNames['c' + rpt.side0CityId]);
+							if (parseInt(rpt.side0PlayerId) != 0) { // IF OWNED, show owner ...
+								msg.push(' [');
+								msg.push(escape(playerNames["p" + rpt.side0PlayerId]));
+								msg.push('] ');
+							}
+						} else {
+							if (parseInt(rpt.side0PlayerId) == 0) { //  barb
+								msg.push(uW.g_js_strings.commonstr.barbariancamp);
+								msg.push(" Lvl " + rpt.side0TileLevel)
+							} else { // city
+								msg.push(escape(playerNames["p" + rpt.side0PlayerId]));
+								msg.push(' - ');
+								msg.push(cityNames['c' + rpt.side0CityId]);
+							}
 						}
-					}
-					msg.push(' ');
-					msg.push(coordLink(rpt.side0XCoord, rpt.side0YCoord));
-					if (rpt.side0AllianceId != 0 && rpt.side0AllianceId != myAllianceId) {
-						msg.push('<BR>');
-						msg.push(allianceNames['a' + rpt.side0AllianceId]);
-						msg.push(' (');
-						msg.push(targetDiplomacy);
-						msg.push(')');
-					}
-					/***
+						msg.push(' ');
+						msg.push(coordLink(rpt.side0XCoord, rpt.side0YCoord));
+						if (rpt.side0AllianceId != 0 && rpt.side0AllianceId != myAllianceId) {
+							msg.push('<BR>');
+							msg.push(allianceNames['a' + rpt.side0AllianceId]);
+							msg.push(' (');
+							msg.push(targetDiplomacy);
+							msg.push(')');
+						}
+						/***
         
 MY reports, reins works ...
 <div><a href="#" onclick="jQuery('#modal_msg_body').trigger('viewReinforcedReport', ['6076798','67674','Elroy','IV','13412958','Duke_Swan','6329','Erisvil',662,477]);return false;">View Report</a></div>
@@ -4449,81 +5685,81 @@ modal_alliance_report_view("6043602",1,51,9,13487684,"Fred8135i","M","Jetson","M
 modal_alliance_report_view(&quot;6043602&quot;,1,51,9,13487684,&quot;Fred8135i&quot;,&quot;M&quot;,&quot;Jetson&quot;,&quot;M&quot;,2,188,696,1299746211,0,23,518);return false;">View Report</a></div>            
 modal_alliance_report_view("6043602",1,51,9,13487684,"Fred8135i","M","Jetson","M",2,188,696,1299746211,0,23,518);return false;">View Report</a></div>            
 ***/
-					// 'view report' link ...
-					if (rpt.marchType != 2) {
-						if (Options.allowAlterAR)
-							msg.push("</div></td><TD class=" + colClass + "><div><a onclick=' modal_alliance_report_view(\""); // ONCLICK ???
-						else
-							msg.push("</div></td><TD class=" + colClass + "><div><a onclick=' $(\"modal_alliance_reports_tabledivNKA\").id=\"modal_alliance_reports_tablediv\"; modal_alliance_report_view(\""); // ONCLICK ???
-						msg.push(rpt.reportId);
-						msg.push('",');
-						if (parseInt(rpt.side1AllianceId) == parseInt(Seed.allianceDiplomacies.allianceId))
-							msg.push(1);
-						else
-							msg.push(0);
-						msg.push(",");
-						msg.push(rpt.side0TileType);
-						msg.push(",");
-						msg.push(rpt.side0TileLevel);
-						msg.push(",");
-						msg.push(rpt.side0PlayerId);
-						msg.push(',"');
-						if (parseInt(rpt.side0PlayerId) != 0)
-							msg.push(escape(playerNames["p" + rpt.side0PlayerId]));
-						else
-							msg.push(uW.g_js_strings.commonstr.enemy);
-						msg.push('","');
-						if (parseInt(rpt.side0PlayerId) != 0)
-							msg.push(escape(playerNames["g" + rpt.side0PlayerId]));
-						else
-							msg.push(0)
-						msg.push('","');
-						if (parseInt(rpt.side1PlayerId) > 0)
-							msg.push(escape(playerNames["p" + rpt.side1PlayerId]));
-						msg.push('","');
-						if (parseInt(rpt.side1PlayerId) != 0)
-							msg.push(escape(playerNames["g" + rpt.side1PlayerId]));
-						msg.push('",');
-						msg.push(rpt.marchType);
-						msg.push(",");
-						msg.push(rpt.side0XCoord);
-						msg.push(",");
-						msg.push(rpt.side0YCoord);
-						msg.push(",");
-						msg.push(rpt.reportUnixTime);
-						msg.push(",");
-						if (parseInt(rpt.reportStatus) == 2)
-							msg.push(1);
-						else
-							msg.push(0);
-						if (rpt.side1XCoord) {
+						// 'view report' link ...
+						if (rpt.marchType != 2) {
+							if (Options.allowAlterAR)
+								msg.push("</div></td><TD class=" + colClass + "><div><a onclick=' modal_alliance_report_view(\""); // ONCLICK ???
+							else
+								msg.push("</div></td><TD class=" + colClass + "><div><a onclick=' $(\"modal_alliance_reports_tabledivNKA\").id=\"modal_alliance_reports_tablediv\"; modal_alliance_report_view(\""); // ONCLICK ???
+							msg.push(rpt.reportId);
+							msg.push('",');
+							if (parseInt(rpt.side1AllianceId) == parseInt(Seed.allianceDiplomacies.allianceId))
+								msg.push(1);
+							else
+								msg.push(0);
 							msg.push(",");
-							msg.push(rpt.side1XCoord);
+							msg.push(rpt.side0TileType);
 							msg.push(",");
-							msg.push(rpt.side1YCoord)
+							msg.push(rpt.side0TileLevel);
+							msg.push(",");
+							msg.push(rpt.side0PlayerId);
+							msg.push(',"');
+							if (parseInt(rpt.side0PlayerId) != 0)
+								msg.push(escape(playerNames["p" + rpt.side0PlayerId]));
+							else
+								msg.push(uW.g_js_strings.commonstr.enemy);
+							msg.push('","');
+							if (parseInt(rpt.side0PlayerId) != 0)
+								msg.push(escape(playerNames["g" + rpt.side0PlayerId]));
+							else
+								msg.push(0)
+							msg.push('","');
+							if (parseInt(rpt.side1PlayerId) > 0)
+								msg.push(escape(playerNames["p" + rpt.side1PlayerId]));
+							msg.push('","');
+							if (parseInt(rpt.side1PlayerId) != 0)
+								msg.push(escape(playerNames["g" + rpt.side1PlayerId]));
+							msg.push('",');
+							msg.push(rpt.marchType);
+							msg.push(",");
+							msg.push(rpt.side0XCoord);
+							msg.push(",");
+							msg.push(rpt.side0YCoord);
+							msg.push(",");
+							msg.push(rpt.reportUnixTime);
+							msg.push(",");
+							if (parseInt(rpt.reportStatus) == 2)
+								msg.push(1);
+							else
+								msg.push(0);
+							if (rpt.side1XCoord) {
+								msg.push(",");
+								msg.push(rpt.side1XCoord);
+								msg.push(",");
+								msg.push(rpt.side1YCoord)
+							} else {
+								msg.push(",,");
+							}
+							msg.push(");return false;'>View</a></div></td></tr>");
 						} else {
-							msg.push(",,");
+							// reinforcement!!
+							msg.push("</div></td><TD class=" + colClass + "><div><a onclick='FindReport(\""); // ONCLICK ???
+							msg.push(rpt.reportId);
+							msg.push("\",0);return false;'>View</a></div></td></tr>");
 						}
-						msg.push(");return false;'>View</a></div></td></tr>");
-					} else {
-						// reinforcement!!
-						msg.push("</div></td><TD class=" + colClass + "><div><a onclick='FindReport(\""); // ONCLICK ???
-						msg.push(rpt.reportId);
-						msg.push("\",0);return false;'>View</a></div></td></tr>");
 					}
+					msg.push("</tbody></table></div>");
 				}
-				msg.push("</tbody></table></div>");
+				msg.push("</div><div id='modal_report_list_pagination'></div>");
+				document.getElementById('allianceContent').innerHTML = msg.join("");
+				if (pageNum) {
+					uW.ctrlPagination("modal_report_list_pagination", totalPages, "allianceReports", pageNum)
+				} else {
+					uW.ctrlPagination("modal_report_list_pagination", totalPages, "allianceReports")
+				}
 			}
-			msg.push("</div><div id='modal_report_list_pagination'></div>");
-			document.getElementById('allianceContent').innerHTML = msg.join("");
-			if (pageNum) {
-				uW.ctrlPagination("modal_report_list_pagination", totalPages, "allianceReports", pageNum)
-			} else {
-				uW.ctrlPagination("modal_report_list_pagination", totalPages, "allianceReports")
-			}
-		}
-	},
-} // end AllianceReports singleton
+		},
+	} // end AllianceReports singleton
 unsafeWindow.FindReport = Rpt.FindReport;
 /************************ Food Alerts *************************/
 /*
@@ -4572,11 +5808,14 @@ var TowerAlerts = {
 		var s = GM_getValue('towerMarches_' + GetServerId());
 		if (s != null)
 			t.towerMarches = JSON2.parse(s);
- 
-    			t.viewImpendingFunc = new CalterUwFunc ('attack_viewimpending_view', [[/Modal.showModal\((.*)\)/im, 'Modal.showModal\($1\); ptViewImpending_hook(a);']]);
+		t.viewImpendingFunc = new CalterUwFunc('attack_viewimpending_view', [
+			[/Modal.showModal\((.*)\)/im, 'Modal.showModal\($1\); ptViewImpending_hook(a);']
+		]);
 		uW.ptViewImpending_hook = t.viewImpending_hook;
 		t.viewImpendingFunc.setEnable(true);
-    		t.generateIncomingFunc = new CalterUwFunc ('attack_generateincoming', [[/d\s*=\s*true/i, 'd = ptGenerateIncoming_hook();']]);
+		t.generateIncomingFunc = new CalterUwFunc('attack_generateincoming', [
+			[/d\s*=\s*true/i, 'd = ptGenerateIncoming_hook();']
+		]);
 		uW.ptGenerateIncoming_hook = t.generateIncoming_hook;
 	},
 	// fix 'target', add button  
@@ -5361,7 +6600,7 @@ ajax/viewCourt.php:
 	convertTime: function (datestr) {
 		// KOC Timestamps are in Local Pacific Time, so need to convert to unixtime and add 8 hours for PST
 		// Then adjust for Daylight Savings Time on both sides...
-		return parseInt(datestr.getTime()/1000)-(datestr.getTimezoneOffset()*60)+(480*60)-getDST(datestr);
+		return parseInt(datestr.getTime() / 1000) - (datestr.getTimezoneOffset() * 60) + (480 * 60) - getDST(datestr);
 	},
 	getDuration: function (datestr) {
 		var t = Tabs.AllianceList;
@@ -5669,16 +6908,487 @@ ajax/viewCourt.php:
 		});
 	},
 	TRlineHolder: {
-		1:{1:"Attack",2:null},2:{1:1,2:17},3:{1:24,2:29},4:{1:34,2:39},5:{1:44,2:50},6:{1:56,2:61},7:{1:17,2:1},8:{1:29,2:24},9:{1:39,2:34},10:{1:50,2:44},11:{1:61,2:56},
-		12:{1:"Defense",2:null},13:{1:2,2:18},14:{1:25,2:30},15:{1:35,2:40},16:{1:45,2:51},17:{1:18,2:2},18:{1:30,2:25},19:{1:40,2:35},20:{1:51,2:45},
-		21:{1:"Life",2:null},22:{1:3,2:19},23:{1:26,2:31},24:{1:36,2:41},25:{1:46,2:52},26:{1:19,2:3},27:{1:31,2:26},28:{1:41,2:36},29:{1:52,2:46},
-		30:{1:"Combat Speed",2:null},31:{1:4,2:20},32:{1:27,2:32},33:{1:47,2:53},34:{1:57,2:62},35:{1:20,2:4},36:{1:32,2:27},37:{1:53,2:47},38:{1:62,2:57},
-		39:{1:"Range",2:null},40:{1:5,2:21},41:{1:37,2:42},42:{1:58,2:63},43:{1:21,2:5},44:{1:42,2:37},45:{1:63,2:58},	
-		46:{1:"Load",2:null},47:{1:6,2:22},48:{1:48,2:54},49:{1:59,2:64},50:{1:22,2:6},51:{1:54,2:48},52:{1:64,2:59},
-		52:{1:"Accuracy",2:null},53:{1:7,2:23},54:{1:28,2:33},55:{1:38,2:43},56:{1:49,2:55},57:{1:60,2:65},58:{1:23,2:7},59:{1:33,2:28},60:{1:43,2:38},61:{1:55,2:49},62:{1:65,2:60},	
-		63:{1:"Other",2:null},64:{1:8,2:8},65:{1:9,2:9},65:{1:10,2:10},66:{1:11,2:11},67:{1:12,2:12},68:{1:13,2:13},69:{1:14,2:14},70:{1:15,2:15},71:{1:16,2:16},72:{1:66,2:66},73:{1:67,2:67},74:{1:68,2:68},75:{1:69,2:69},76:{1:70,2:70},77:{1:71,2:71},78:{1:72,2:72},79:{1:73,2:73},80:{1:74,2:74},81:{1:75,2:75},82:{1:76,2:76},83:{1:77,2:77},84:{1:78,2:78},85:{1:79,2:79},86:{1:80,2:80},87:{1:81,2:81},88:{1:82,2:82},89:{1:83,2:83},90:{1:84,2:84},91:{1:85,2:85},92:{1:86,2:86},93:{1:87,2:87},94:{1:88,2:88},95:{1:89,2:89},96:{1:90,2:90},97:{1:91,2:91},98:{1:92,2:92},99:{1:93,2:93},100:{1:94,2:94},101:{1:95,2:95},102:{1:96,2:96},103:{1:97,2:97},104:{1:98,2:98},105:{1:99,2:99},106:{1:100,2:100},107:{1:101,2:101},108:{1:102,2:102},109:{1:103,2:103},110:{1:104,2:104},111:{1:105,2:105},112:{1:106,2:106},113:{1:107,2:107},114:{1:108,2:108},115:{1:109,2:109},116:{1:110,2:10},117:{1:111,2:111},118:{1:112,2:112},
+		1: {
+			1: "Attack",
+			2: null
+		},
+		2: {
+			1: 1,
+			2: 17
+		},
+		3: {
+			1: 24,
+			2: 29
+		},
+		4: {
+			1: 34,
+			2: 39
+		},
+		5: {
+			1: 44,
+			2: 50
+		},
+		6: {
+			1: 56,
+			2: 61
+		},
+		7: {
+			1: 17,
+			2: 1
+		},
+		8: {
+			1: 29,
+			2: 24
+		},
+		9: {
+			1: 39,
+			2: 34
+		},
+		10: {
+			1: 50,
+			2: 44
+		},
+		11: {
+			1: 61,
+			2: 56
+		},
+		12: {
+			1: "Defense",
+			2: null
+		},
+		13: {
+			1: 2,
+			2: 18
+		},
+		14: {
+			1: 25,
+			2: 30
+		},
+		15: {
+			1: 35,
+			2: 40
+		},
+		16: {
+			1: 45,
+			2: 51
+		},
+		17: {
+			1: 18,
+			2: 2
+		},
+		18: {
+			1: 30,
+			2: 25
+		},
+		19: {
+			1: 40,
+			2: 35
+		},
+		20: {
+			1: 51,
+			2: 45
+		},
+		21: {
+			1: "Life",
+			2: null
+		},
+		22: {
+			1: 3,
+			2: 19
+		},
+		23: {
+			1: 26,
+			2: 31
+		},
+		24: {
+			1: 36,
+			2: 41
+		},
+		25: {
+			1: 46,
+			2: 52
+		},
+		26: {
+			1: 19,
+			2: 3
+		},
+		27: {
+			1: 31,
+			2: 26
+		},
+		28: {
+			1: 41,
+			2: 36
+		},
+		29: {
+			1: 52,
+			2: 46
+		},
+		30: {
+			1: "Combat Speed",
+			2: null
+		},
+		31: {
+			1: 4,
+			2: 20
+		},
+		32: {
+			1: 27,
+			2: 32
+		},
+		33: {
+			1: 47,
+			2: 53
+		},
+		34: {
+			1: 57,
+			2: 62
+		},
+		35: {
+			1: 20,
+			2: 4
+		},
+		36: {
+			1: 32,
+			2: 27
+		},
+		37: {
+			1: 53,
+			2: 47
+		},
+		38: {
+			1: 62,
+			2: 57
+		},
+		39: {
+			1: "Range",
+			2: null
+		},
+		40: {
+			1: 5,
+			2: 21
+		},
+		41: {
+			1: 37,
+			2: 42
+		},
+		42: {
+			1: 58,
+			2: 63
+		},
+		43: {
+			1: 21,
+			2: 5
+		},
+		44: {
+			1: 42,
+			2: 37
+		},
+		45: {
+			1: 63,
+			2: 58
+		},
+		46: {
+			1: "Load",
+			2: null
+		},
+		47: {
+			1: 6,
+			2: 22
+		},
+		48: {
+			1: 48,
+			2: 54
+		},
+		49: {
+			1: 59,
+			2: 64
+		},
+		50: {
+			1: 22,
+			2: 6
+		},
+		51: {
+			1: 54,
+			2: 48
+		},
+		52: {
+			1: 64,
+			2: 59
+		},
+		52: {
+			1: "Accuracy",
+			2: null
+		},
+		53: {
+			1: 7,
+			2: 23
+		},
+		54: {
+			1: 28,
+			2: 33
+		},
+		55: {
+			1: 38,
+			2: 43
+		},
+		56: {
+			1: 49,
+			2: 55
+		},
+		57: {
+			1: 60,
+			2: 65
+		},
+		58: {
+			1: 23,
+			2: 7
+		},
+		59: {
+			1: 33,
+			2: 28
+		},
+		60: {
+			1: 43,
+			2: 38
+		},
+		61: {
+			1: 55,
+			2: 49
+		},
+		62: {
+			1: 65,
+			2: 60
+		},
+		63: {
+			1: "Other",
+			2: null
+		},
+		64: {
+			1: 8,
+			2: 8
+		},
+		65: {
+			1: 9,
+			2: 9
+		},
+		65: {
+			1: 10,
+			2: 10
+		},
+		66: {
+			1: 11,
+			2: 11
+		},
+		67: {
+			1: 12,
+			2: 12
+		},
+		68: {
+			1: 13,
+			2: 13
+		},
+		69: {
+			1: 14,
+			2: 14
+		},
+		70: {
+			1: 15,
+			2: 15
+		},
+		71: {
+			1: 16,
+			2: 16
+		},
+		72: {
+			1: 66,
+			2: 66
+		},
+		73: {
+			1: 67,
+			2: 67
+		},
+		74: {
+			1: 68,
+			2: 68
+		},
+		75: {
+			1: 69,
+			2: 69
+		},
+		76: {
+			1: 70,
+			2: 70
+		},
+		77: {
+			1: 71,
+			2: 71
+		},
+		78: {
+			1: 72,
+			2: 72
+		},
+		79: {
+			1: 73,
+			2: 73
+		},
+		80: {
+			1: 74,
+			2: 74
+		},
+		81: {
+			1: 75,
+			2: 75
+		},
+		82: {
+			1: 76,
+			2: 76
+		},
+		83: {
+			1: 77,
+			2: 77
+		},
+		84: {
+			1: 78,
+			2: 78
+		},
+		85: {
+			1: 79,
+			2: 79
+		},
+		86: {
+			1: 80,
+			2: 80
+		},
+		87: {
+			1: 81,
+			2: 81
+		},
+		88: {
+			1: 82,
+			2: 82
+		},
+		89: {
+			1: 83,
+			2: 83
+		},
+		90: {
+			1: 84,
+			2: 84
+		},
+		91: {
+			1: 85,
+			2: 85
+		},
+		92: {
+			1: 86,
+			2: 86
+		},
+		93: {
+			1: 87,
+			2: 87
+		},
+		94: {
+			1: 88,
+			2: 88
+		},
+		95: {
+			1: 89,
+			2: 89
+		},
+		96: {
+			1: 90,
+			2: 90
+		},
+		97: {
+			1: 91,
+			2: 91
+		},
+		98: {
+			1: 92,
+			2: 92
+		},
+		99: {
+			1: 93,
+			2: 93
+		},
+		100: {
+			1: 94,
+			2: 94
+		},
+		101: {
+			1: 95,
+			2: 95
+		},
+		102: {
+			1: 96,
+			2: 96
+		},
+		103: {
+			1: 97,
+			2: 97
+		},
+		104: {
+			1: 98,
+			2: 98
+		},
+		105: {
+			1: 99,
+			2: 99
+		},
+		106: {
+			1: 100,
+			2: 100
+		},
+		107: {
+			1: 101,
+			2: 101
+		},
+		108: {
+			1: 102,
+			2: 102
+		},
+		109: {
+			1: 103,
+			2: 103
+		},
+		110: {
+			1: 104,
+			2: 104
+		},
+		111: {
+			1: 105,
+			2: 105
+		},
+		112: {
+			1: 106,
+			2: 106
+		},
+		113: {
+			1: 107,
+			2: 107
+		},
+		114: {
+			1: 108,
+			2: 108
+		},
+		115: {
+			1: 109,
+			2: 109
+		},
+		116: {
+			1: 110,
+			2: 10
+		},
+		117: {
+			1: 111,
+			2: 111
+		},
+		118: {
+			1: 112,
+			2: 112
+		},
 	},
-
 	PaintTRCalc: function (name) {
 		var t = Tabs.AllianceList;
 		m = '<BR><BR><DIV style="max-height:690px; height:690px; overflow-y:scroll;"><TABLE><TD width="35px" class=xtab></td><TD class=xtab><B>' + name + '</b><TD  width="50px"></td><TD class=xtab><B>' + Seed.player.name + '</b></td>';
@@ -5784,7 +7494,7 @@ ajax/viewCourt.php:
 				count++;
 				city = t.dat[k][5].toString() + t.dat[k][6].toString();
 				var box = 'ScoutCheckbox_' + city;
-				if (document.getElementById(box).checked) setTimeout(t.doScout,5000*count, x,y,box);
+				if (document.getElementById(box).checked) setTimeout(t.doScout, 5000 * count, x, y, box);
 			}
 		}
 	},
@@ -5824,14 +7534,14 @@ ajax/viewCourt.php:
 					var rtimediff = parseInt(rslt.returnTS) - parseInt(rslt.initTS);
 					var ut = unsafeWindow.unixtime();
 					var unitsarr = {};
-					for (var ui in unsafeWindow.cm.UNIT_TYPES){
+					for (var ui in unsafeWindow.cm.UNIT_TYPES) {
 						i = unsafeWindow.cm.UNIT_TYPES[ui];
 						if (params["u" + i])
 							unitsarr[i] = params["u" + i];
 						else
 							unitsarr[i] = 0;
-					}		
-					var resources = [0,0,0,0,0,0];
+					}
+					var resources = [0, 0, 0, 0, 0, 0];
 					var currentcityid = params.cid;
 					unsafeWindow.attach_addoutgoingmarch(rslt.marchId, rslt.marchUnixTime, ut + timediff, params.xcoord, params.ycoord, unitsarr, params.type, params.kid, resources, rslt.tileId, rslt.tileType, rslt.tileLevel, currentcityid, true, ut + rtimediff);
 					unsafeWindow.update_seed(rslt.updateSeed)
@@ -5839,7 +7549,7 @@ ajax/viewCourt.php:
 						unsafeWindow.update_seed(rslt.updateSeed)
 					};
 					document.getElementById(box).checked = false;
-					document.getElementById('ptscoutprogress').innerHTML = "Scouting ("+params.xcoord+","+params.ycoord+") ...";
+					document.getElementById('ptscoutprogress').innerHTML = "Scouting (" + params.xcoord + "," + params.ycoord + ") ...";
 				}
 			},
 			onFailure: function () {},
@@ -5853,8 +7563,8 @@ ajax/viewCourt.php:
 			var scoutexport = "";
 			if (uW.ShowScoutList) {
 				scoutexport = '&nbsp;<INPUT id=ptscoutexport type=submit value="Export to BOT">'
-			}	
-			document.getElementById('PaintScout').innerHTML = 'Scout selected cities from: ' + t.ScoutInfo.name + ' with <INPUT id=numScouts type=text maxlength=7 size=7 value="1"><INPUT id=MaxScout type=submit value=Max> Scout(s); Rally point slots to keep open: <INPUT id=openSlots type=text maxlength=3 size=3 value="0"> <INPUT id=scoutAllSelected type=submit value=GO>'+scoutexport+'</div><div align=center id=ptscoutprogress class=ptdivHide></div>';
+			}
+			document.getElementById('PaintScout').innerHTML = 'Scout selected cities from: ' + t.ScoutInfo.name + ' with <INPUT id=numScouts type=text maxlength=7 size=7 value="1"><INPUT id=MaxScout type=submit value=Max> Scout(s); Rally point slots to keep open: <INPUT id=openSlots type=text maxlength=3 size=3 value="0"> <INPUT id=scoutAllSelected type=submit value=GO>' + scoutexport + '</div><div align=center id=ptscoutprogress class=ptdivHide></div>';
 			document.getElementById('scoutAllSelected').addEventListener('click', function () {
 				t.doAddScout();
 			}, false);
@@ -5862,7 +7572,9 @@ ajax/viewCourt.php:
 				t.MaxScouts(city);
 			}, false);
 			if (uW.ShowScoutList) {
-				document.getElementById('ptscoutexport').addEventListener('click', function (){t.generateScoutList();},false);
+				document.getElementById('ptscoutexport').addEventListener('click', function () {
+					t.generateScoutList();
+				}, false);
 			}
 		}
 		var m = '';
@@ -5879,16 +7591,26 @@ ajax/viewCourt.php:
 		t.setEta();
 		t.reDisp();
 	},
-	generateScoutList : function (){
+	generateScoutList: function () {
 		var t = Tabs.AllianceList;
 		var bulkScout = [];
-		for (var k=0;k<t.dat.length;k++){	
-			if (t.dat[k][5] != undefined && t.dat[k][6] != undefined){
-				if (document.getElementById('ScoutCheckbox_'+t.dat[k][5].toString() + t.dat[k][6].toString()).checked) bulkScout.push({x:t.dat[k][5], y:t.dat[k][6], dist:t.dat[k][8].toFixed(2), chk:true}); 
-				else bulkScout.push({x:t.dat[k][5], y:t.dat[k][6], dist:t.dat[k][8].toFixed(2), chk:false}); 
+		for (var k = 0; k < t.dat.length; k++) {
+			if (t.dat[k][5] != undefined && t.dat[k][6] != undefined) {
+				if (document.getElementById('ScoutCheckbox_' + t.dat[k][5].toString() + t.dat[k][6].toString()).checked) bulkScout.push({
+					x: t.dat[k][5],
+					y: t.dat[k][6],
+					dist: t.dat[k][8].toFixed(2),
+					chk: true
+				});
+				else bulkScout.push({
+					x: t.dat[k][5],
+					y: t.dat[k][6],
+					dist: t.dat[k][8].toFixed(2),
+					chk: false
+				});
 			}
 		}
-		uW.ShowScoutList (bulkScout, t.ScoutInfo);
+		uW.ShowScoutList(bulkScout, t.ScoutInfo);
 	},
 	eventGetMembers: function (aid) {
 		var t = Tabs.AllianceList;
@@ -7203,8 +8925,10 @@ Tabs.Train = {
 		var cityId = t.selectedCity.id;
 		var uw = unsafeWindow;
 		var c = +(uw.unitcost["unt" + d][7]) * f,
-			e, k = {}, h = uw.seed.buildings["city" + uw.currentcityid],
-			j = {}, l = uw.seed.knights["city" + uw.currentcityid],
+			e, k = {},
+			h = uw.seed.buildings["city" + uw.currentcityid],
+			j = {},
+			l = uw.seed.knights["city" + uw.currentcityid],
 			a, g = uw.seed.leaders["city" + uw.currentcityid];
 		k.barracks = 0;
 		k.workshop = 0;
@@ -8298,70 +10022,70 @@ var GMTclock = {
 	},
 }
 
-	function getResourceProduction(cityId) {
-		var ret = [0, 0, 0, 0, 0];
-		var now = unixTime();
-		var search = 'type==10 || type==11';
-		var wilds = [0, 0, 0, 0, 0];
-		var w = Seed.wilderness["city" + cityId];
-		for (var k in w) {
-			var type = parseInt(w[k].tileType);
-			if (type == 10 || type == 11)
-				wilds[1] += parseInt(w[k].tileLevel);
-			else
-				wilds[type / 10] += parseInt(w[k].tileLevel);
-		}
-		knight = 0;
-		var s = Seed.knights["city" + cityId];
+function getResourceProduction(cityId) {
+	var ret = [0, 0, 0, 0, 0];
+	var now = unixTime();
+	var search = 'type==10 || type==11';
+	var wilds = [0, 0, 0, 0, 0];
+	var w = Seed.wilderness["city" + cityId];
+	for (var k in w) {
+		var type = parseInt(w[k].tileType);
+		if (type == 10 || type == 11)
+			wilds[1] += parseInt(w[k].tileLevel);
+		else
+			wilds[type / 10] += parseInt(w[k].tileLevel);
+	}
+	knight = 0;
+	var s = Seed.knights["city" + cityId];
+	if (s) {
+		s = s["knt" + Seed.leaders["city" + cityId].resourcefulnessKnightId];
 		if (s) {
-			s = s["knt" + Seed.leaders["city" + cityId].resourcefulnessKnightId];
-			if (s) {
-				var knight = parseInt(s.resourcefulness);
-				if (s.resourcefulnessBoostExpireUnixtime > now)
-					knight *= 1.25;
-			}
+			var knight = parseInt(s.resourcefulness);
+			if (s.resourcefulnessBoostExpireUnixtime > now)
+				knight *= 1.25;
 		}
-		var workerFactor = 1;
-		var c = parseInt(Seed.citystats["city" + cityId]["pop"][0]); // Current  population
-		var w = parseInt(Seed.citystats["city" + cityId]["pop"][3]); // Labor force
-		if (w > c)
-			workerFactor = c / w;
-		for (var i = 1; i < 5; i++) {
-			var usage = Seed.resources["city" + cityId]["rec" + i];
-			var items = 0;
-			if (parseInt(Seed.playerEffects["r" + i + "BstExp"]) > now) {
-				items = 0.25;
-			}
-			var tech = Seed.tech["tch" + i];
-			ret[i] = parseInt((usage[2] * (1 + tech / 10 + knight / 100 + items + 0.05 * wilds[i]) * workerFactor + 100));
-		}
-		return ret;
 	}
+	var workerFactor = 1;
+	var c = parseInt(Seed.citystats["city" + cityId]["pop"][0]); // Current  population
+	var w = parseInt(Seed.citystats["city" + cityId]["pop"][3]); // Labor force
+	if (w > c)
+		workerFactor = c / w;
+	for (var i = 1; i < 5; i++) {
+		var usage = Seed.resources["city" + cityId]["rec" + i];
+		var items = 0;
+		if (parseInt(Seed.playerEffects["r" + i + "BstExp"]) > now) {
+			items = 0.25;
+		}
+		var tech = Seed.tech["tch" + i];
+		ret[i] = parseInt((usage[2] * (1 + tech / 10 + knight / 100 + items + 0.05 * wilds[i]) * workerFactor + 100));
+	}
+	return ret;
+}
 
-	function getWallInfo(cityId, objOut) {
-		objOut.wallSpaceUsed = 0;
-		objOut.fieldSpaceUsed = 0;
-		objOut.wallLevel = 0;
-		objOut.wallSpace = 0;
-		objOut.fieldSpace = 0;
-		var b = Seed.buildings["city" + cityId];
-		if (b.pos1 == null)
-			return;
-		objOut.wallLevel = parseInt(b.pos1[1]);
-		var spots = 0;
-		for (var i = 1; i < (objOut.wallLevel + 1); i++)
-			spots += (i * 1500);
-		objOut.wallSpace = spots;
-		objOut.fieldSpace = spots;
-		var fort = Seed.fortifications["city" + cityId];
-		for (k in fort) {
-			var id = parseInt(k.substr(4));
-			if (id < 60)
-				objOut.wallSpaceUsed += parseInt(uW.fortstats["unt" + id][5]) * parseInt(fort[k]);
-			else
-				objOut.fieldSpaceUsed += parseInt(uW.fortstats["unt" + id][5]) * parseInt(fort[k]);
-		}
+function getWallInfo(cityId, objOut) {
+	objOut.wallSpaceUsed = 0;
+	objOut.fieldSpaceUsed = 0;
+	objOut.wallLevel = 0;
+	objOut.wallSpace = 0;
+	objOut.fieldSpace = 0;
+	var b = Seed.buildings["city" + cityId];
+	if (b.pos1 == null)
+		return;
+	objOut.wallLevel = parseInt(b.pos1[1]);
+	var spots = 0;
+	for (var i = 1; i < (objOut.wallLevel + 1); i++)
+		spots += (i * 1500);
+	objOut.wallSpace = spots;
+	objOut.fieldSpace = spots;
+	var fort = Seed.fortifications["city" + cityId];
+	for (k in fort) {
+		var id = parseInt(k.substr(4));
+		if (id < 60)
+			objOut.wallSpaceUsed += parseInt(uW.fortstats["unt" + id][5]) * parseInt(fort[k]);
+		else
+			objOut.fieldSpaceUsed += parseInt(uW.fortstats["unt" + id][5]) * parseInt(fort[k]);
 	}
+}
 Tabs.OverView = {
 	tabOrder: 1,
 	tabLabel: uW.g_js_strings.commonstr.overview,
@@ -8425,7 +10149,7 @@ Tabs.OverView = {
 		var t = Tabs.OverView;
 		clearTimeout(t.displayTimer);
 		if (t.curTabName == 'S')
-			t.paintOverview();		
+			t.paintOverview();
 		else if (t.curTabName == 'A')
 			t.showResources();
 		else if (t.curTabName == 'B')
@@ -9221,15 +10945,38 @@ Tabs.OverView = {
 		u += '<TR><TD width="100px" ; border:none"><a href="https://addons.mozilla.org/en/firefox/addon/scriptish/" target="_blank">Scriptish</a></td><TD width="100px" ; border:none"></td>';
 		u += '</tr></table></div><BR>';
 		//Crest info
-	  	var crestreq = { 
-			3:{1101:4, 1102:2, 1103:1},
-	  		4:{1103:4, 1104:3, 1105:1},
-	  		5:{1106:4, 1107:3, 1108:2},
-	  		6:{1109:4, 1110:3, 1111:2},
-	  		7:{1112:4, 1113:3, 1114:2},
-			8:{1115:4, 1120:3, 1121:2}
+		var crestreq = {
+			3: {
+				1101: 4,
+				1102: 2,
+				1103: 1
+			},
+			4: {
+				1103: 4,
+				1104: 3,
+				1105: 1
+			},
+			5: {
+				1106: 4,
+				1107: 3,
+				1108: 2
+			},
+			6: {
+				1109: 4,
+				1110: 3,
+				1111: 2
+			},
+			7: {
+				1112: 4,
+				1113: 3,
+				1114: 2
+			},
+			8: {
+				1115: 4,
+				1120: 3,
+				1121: 2
+			}
 		};
-	  				
 		u += '<DIV class=ptstat>CREST INFO</div><DIV id=ptLinks><TABLE align=center cellpadding=1 cellspacing=0><TR>';
 		for (city in crestreq) {
 			deed = 'q800' + city;
@@ -10274,13 +12021,13 @@ Tabs.Attaque = {
 					var rtimediff = parseInt(rslt.returnTS) - parseInt(rslt.initTS);
 					var ut = unsafeWindow.unixtime();
 					var unitsarr = {};
-					for (var ui in unsafeWindow.cm.UNIT_TYPES){
+					for (var ui in unsafeWindow.cm.UNIT_TYPES) {
 						i = unsafeWindow.cm.UNIT_TYPES[ui];
 						if (params["u" + i])
 							unitsarr[i] = params["u" + i];
 						else
 							unitsarr[i] = 0;
-					}		
+					}
 					var resources = new Array();
 					resources[0] = params.gold;
 					for (i = 1; i <= 5; i++) {
@@ -10594,75 +12341,75 @@ var equippedthroneItems = function (throneSet) {
 	var thronePreset = Seed.throne.activeSlot;
 	var equippedItems = {};
 	for (itm = 0; itm < Seed.throne.slotEquip[thronePreset].length; itm++) {
-//		equippedItems[Seed.throne.slotEquip[thronePreset][itm]] = Seed.throne.inventory[Seed.throne.slotEquip[thronePreset][itm]];
+		//		equippedItems[Seed.throne.slotEquip[thronePreset][itm]] = Seed.throne.inventory[Seed.throne.slotEquip[thronePreset][itm]];
 		equippedItems[Seed.throne.slotEquip[thronePreset][itm]] = unsafeWindow.kocThroneItems[Seed.throne.slotEquip[thronePreset][itm]];
 	}
 	return equippedItems;
 }
 
-	function estETA(dist, unit, cityID) {
-		var ret = {
-			ETA: 0,
-			etaStr: 'N/D',
-			friendETA: 0,
-			friendEtaStr: 'N/D'
-		};
-		if (dist <= 0) return ret;
-		var troop_type = unit;
-		var horse = 0;
-		//	if(troop_type>6) horse=1;
-		if (troop_type > 6 && troop_type < 13) horse = 1;
-		var troop_speed = parseInt(unsafeWindow.unitstats["unt" + troop_type][3]) * (1 + 0.1 * parseInt(Seed.tech.tch11));
-		if (horse) {
-			troop_speed = troop_speed * (1 + 0.05 * parseInt(Seed.tech.tch12))
-		}
-		var Speed = troop_speed;
-		var gi = unsafeWindow.cm.guardianModalModel.getMarchBonus();
-		var multiplier = 1 + (gi * 0.01);
-		Speed = Speed * multiplier;
-		var gSpeed = 0;
-		var estSec;
-		if (Speed > 0) {
-			gSpeed = Speed / 6000;
-			estSec = Math.ceil(parseFloat(dist) / gSpeed);
-		}
-		var e = 1;
-		if (ById("BOitem_55")) {
-			var l_elem = ById("BOitem_55");
-			if (l_elem && l_elem.checked > 0) {
-				e = 0.75;
-			}
-		}
-		if (ById("BOitem_57")) {
-			var l_elem = ById("BOitem_57");
-			if (l_elem && l_elem.checked) {
-				e = 0.5;
-			}
-		}
-		ret.ETA = (parseInt((estSec * e + '')) + 30);
-		if (Seed.playerEffects.returnExpire > unsafeWindow.unixtime()) {
-			ret.ETA = parseInt(ret.ETA * 0.5);
-		}
-		ret.etaStr = timestr(ret.ETA, 1);
-		var building = getCityBuilding(cityID, 18);
-		if (building) {
-			fSpeed = Speed * (1 + parseInt(building.maxLevel) / 2);
-			gSpeed = fSpeed / 6000;
-			estSec = (dist / gSpeed).toFixed(0);
-			ret.friendETA = parseInt((estSec * e + '')) + 30;
-			ret.friendEtaStr = timestr((ret.friendETA + ''), 1);
-		}
-		var isPrestige = Seed.cityData.city[cityID].isPrestigeCity;
-		if (isPrestige) {
-			fSpeed = Speed * (1 + 5.5);
-			gSpeed = fSpeed / 6000;
-			estSec = (dist / gSpeed).toFixed(0);
-			ret.friendETA = parseInt((estSec * e + '')) + 30;
-			ret.friendEtaStr = timestr((ret.friendETA + ''), 1);
-		}
-		return ret;
+function estETA(dist, unit, cityID) {
+	var ret = {
+		ETA: 0,
+		etaStr: 'N/D',
+		friendETA: 0,
+		friendEtaStr: 'N/D'
+	};
+	if (dist <= 0) return ret;
+	var troop_type = unit;
+	var horse = 0;
+	//	if(troop_type>6) horse=1;
+	if (troop_type > 6 && troop_type < 13) horse = 1;
+	var troop_speed = parseInt(unsafeWindow.unitstats["unt" + troop_type][3]) * (1 + 0.1 * parseInt(Seed.tech.tch11));
+	if (horse) {
+		troop_speed = troop_speed * (1 + 0.05 * parseInt(Seed.tech.tch12))
 	}
-	/********************************* Messages Tab *************************************/
+	var Speed = troop_speed;
+	var gi = unsafeWindow.cm.guardianModalModel.getMarchBonus();
+	var multiplier = 1 + (gi * 0.01);
+	Speed = Speed * multiplier;
+	var gSpeed = 0;
+	var estSec;
+	if (Speed > 0) {
+		gSpeed = Speed / 6000;
+		estSec = Math.ceil(parseFloat(dist) / gSpeed);
+	}
+	var e = 1;
+	if (ById("BOitem_55")) {
+		var l_elem = ById("BOitem_55");
+		if (l_elem && l_elem.checked > 0) {
+			e = 0.75;
+		}
+	}
+	if (ById("BOitem_57")) {
+		var l_elem = ById("BOitem_57");
+		if (l_elem && l_elem.checked) {
+			e = 0.5;
+		}
+	}
+	ret.ETA = (parseInt((estSec * e + '')) + 30);
+	if (Seed.playerEffects.returnExpire > unsafeWindow.unixtime()) {
+		ret.ETA = parseInt(ret.ETA * 0.5);
+	}
+	ret.etaStr = timestr(ret.ETA, 1);
+	var building = getCityBuilding(cityID, 18);
+	if (building) {
+		fSpeed = Speed * (1 + parseInt(building.maxLevel) / 2);
+		gSpeed = fSpeed / 6000;
+		estSec = (dist / gSpeed).toFixed(0);
+		ret.friendETA = parseInt((estSec * e + '')) + 30;
+		ret.friendEtaStr = timestr((ret.friendETA + ''), 1);
+	}
+	var isPrestige = Seed.cityData.city[cityID].isPrestigeCity;
+	if (isPrestige) {
+		fSpeed = Speed * (1 + 5.5);
+		gSpeed = fSpeed / 6000;
+		estSec = (dist / gSpeed).toFixed(0);
+		ret.friendETA = parseInt((estSec * e + '')) + 30;
+		ret.friendEtaStr = timestr((ret.friendETA + ''), 1);
+	}
+	return ret;
+}
+/********************************* Messages Tab *************************************/
 Tabs.Rpt = {
 	tabOrder: 90,
 	tabLabel: 'Reports',
@@ -11943,85 +13690,87 @@ Tabs.UnitCalc = {
 				guardLife = 0;
 			}
 		}
-
-//        for (ui=1; ui<nTroopType+1; ui++){
+		//        for (ui=1; ui<nTroopType+1; ui++){
 		var ui;
-		for (var iu in uW.cm.UNIT_TYPES){
-		    ui = uW.cm.UNIT_TYPES[iu];
-		    var lifchampfeyadj = champLife + (1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][0]; lifchampfeyadj = Math.max(lifchampfeyadj,(1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][0]*0.01);
-		    var atkchampfeyadj = champAtk  + (1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][1]; atkchampfeyadj = Math.max(atkchampfeyadj,(1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][1]*0.01);
-		    var defchampfeyadj = champDef  + (1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][2]; defchampfeyadj = Math.max(defchampfeyadj,(1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][2]*0.01);
-		    var spdchampfeyadj = champSpd  + (1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][3]; spdchampfeyadj = Math.max(spdchampfeyadj,(1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][3]*0.01);
-		    var rngchampfeyadj = champRng  + (1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][4]; rngchampfeyadj = Math.max(rngchampfeyadj,(1 + feyAltar*feyAltarAct) * uW.unitstats['unt'+ui][4]*0.01);
-
-       		    switch(unsafeWindow.cm.unitFrontendType[ui]) {
-         	       case "infantry" :
-        	           if(ui < 10) {
-         	        	document.getElementById('ptucTrp'+ui+'Life').innerHTML = t.round1decimals( (1 + guardLife) *  lifchampfeyadj * bloodLustBlessLife   * (1 +  (resLife                               + t.maxBuff('Life',parseFloat(document.getElementById('ptucLifeMod').value),parseFloat(document.getElementById('ptucLifeModInf').value))/100)));
-         	         	document.getElementById('ptucTrp'+ui+'Atk').innerHTML  = t.round1decimals( (1 + guardAtk)  *  atkchampfeyadj * bloodLustBlessAtkSpd * (1 +  (resAtk  + knight + itemAtk            + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod' ).value),parseFloat(document.getElementById('ptucAtkModInf' ).value))/100)));
-         	         	document.getElementById('ptucTrp'+ui+'Def').innerHTML  = t.round1decimals(                    defchampfeyadj                        * (1 +  (resDef  + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod' ).value),parseFloat(document.getElementById('ptucDefModInf' ).value))/100)));
-         	       		document.getElementById('ptucTrp'+ui+'Spd').innerHTML  = t.round1decimals(                    spdchampfeyadj                        * (1 +  (                                        t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod' ).value),parseFloat(document.getElementById('ptucSpdModInf' ).value))/100)));
-         	        	document.getElementById('ptucTrp'+ui+'Rng').innerHTML  = t.round1decimals(                    rngchampfeyadj                        * (1 +  (                                        t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod' ).value),parseFloat(document.getElementById('ptucRngModInf' ).value))/100)));
-         	           } else {
-                        //Trp13 - blood
-                        //verified on 11/30 that bloods don't use infantry buff for atk/def. other stats unknown
-                        //Trp14 - exec
-                        //verified on 11/30 that exec don't use infantry buff for atk/def. other stats unknown
-          	      		document.getElementById('ptucTrp'+ui+'Life').innerHTML = t.round1decimals( (1 + guardLife) *  lifchampfeyadj * bloodLustBlessLife   * (1 +  (resLife                               + t.maxBuff('Life',parseFloat(document.getElementById('ptucLifeMod').value),0)/100)));
-          	       		document.getElementById('ptucTrp'+ui+'Atk').innerHTML  = t.round1decimals( (1 + guardAtk)  *  atkchampfeyadj * bloodLustBlessAtkSpd * (1 +  (resAtk  + knight + itemAtk            + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod' ).value),0)/100)));
-          	       		document.getElementById('ptucTrp'+ui+'Def').innerHTML  = t.round1decimals(                    defchampfeyadj                        * (1 +  (resDef  + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod' ).value),0)/100)));
-          	       		document.getElementById('ptucTrp'+ui+'Spd').innerHTML  = t.round1decimals(                    spdchampfeyadj                        * (1 +  (                                        t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod' ).value),0)/100)));
-          	       		document.getElementById('ptucTrp'+ui+'Rng').innerHTML  = t.round1decimals(                    rngchampfeyadj                        * (1 +  (                                        t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod' ).value),0)/100)));
-          		   }
-          	           break;
-          	       case "ranged" :
-          	           document.getElementById('ptucTrp'+ui+'Life').innerHTML = t.round1decimals( (1 + guardLife) *  lifchampfeyadj * bloodLustBlessLife   * (1 + (resLife                               + t.maxBuff('Life',parseFloat(document.getElementById('ptucLifeMod').value),parseFloat(document.getElementById('ptucLifeModRng').value))/100)));
-          	           document.getElementById('ptucTrp'+ui+'Atk').innerHTML  = t.round1decimals( (1 + guardAtk)  *  atkchampfeyadj * bloodLustBlessAtkSpd * (1 + (resAtk  + knight + itemAtk            + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod' ).value),parseFloat(document.getElementById('ptucAtkModRng' ).value))/100)));
-          	           document.getElementById('ptucTrp'+ui+'Def').innerHTML  = t.round1decimals(                    defchampfeyadj                        * (1 + (resDef  + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod' ).value),parseFloat(document.getElementById('ptucDefModRng' ).value))/100)));
-          	           document.getElementById('ptucTrp'+ui+'Spd').innerHTML  = t.round1decimals(                    spdchampfeyadj                        * (1 + (                                        t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod' ).value),parseFloat(document.getElementById('ptucSpdModRng' ).value))/100)));
-          	           document.getElementById('ptucTrp'+ui+'Rng').innerHTML  = t.round1decimals(                    rngchampfeyadj                        * (1 + (resRng                                + t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod' ).value),parseFloat(document.getElementById('ptucRngModRng' ).value))/100)));
-          	           break;
-          	       case "horsed" :
-          	           document.getElementById('ptucTrp'+ui+'Life').innerHTML = t.round1decimals( (1 + guardLife) *  lifchampfeyadj  * (1 + (resLife                               + t.maxBuff('Life',parseFloat(document.getElementById('ptucLifeMod').value),parseFloat(document.getElementById('ptucLifeModHor').value))/100)));
-          	           document.getElementById('ptucTrp'+ui+'Atk').innerHTML  = t.round1decimals( (1 + guardAtk)  *  atkchampfeyadj  * (1 + (resAtk  + knight + itemAtk            + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod' ).value),parseFloat(document.getElementById('ptucAtkModHor' ).value))/100)));
-         	           document.getElementById('ptucTrp'+ui+'Def').innerHTML  = t.round1decimals(                    defchampfeyadj  * (1 + (resDef  + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod' ).value),parseFloat(document.getElementById('ptucDefModHor' ).value))/100)));
-         	           document.getElementById('ptucTrp'+ui+'Spd').innerHTML  = t.round1decimals(                    spdchampfeyadj  * (1 + (resSpd                                + t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod' ).value),parseFloat(document.getElementById('ptucSpdModHor' ).value))/100)));
-         	           document.getElementById('ptucTrp'+ui+'Rng').innerHTML  = t.round1decimals(                    rngchampfeyadj  * (1 + (                                        t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod' ).value),parseFloat(document.getElementById('ptucRngModHor' ).value))/100)));
-			   if (ui == 17)
-         	      		document.getElementById('ptucTrp'+ui+'Spd').innerHTML  = t.round1decimals(                    spdchampfeyadj * (1 + (                                       t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod' ).value),parseFloat(document.getElementById('ptucSpdModHor' ).value))/100)));
-         	           break;
-         	       case "specialist" :
-                    //Trp15 - siege wall
-         	           document.getElementById('ptucTrp'+ui+'Life').innerHTML = t.round1decimals( (1 + guardLife) *  lifchampfeyadj * (1 + (resLife                               + t.maxBuff('Life',parseFloat(document.getElementById('ptucLifeMod').value),0)/100)));
-         	           document.getElementById('ptucTrp'+ui+'Atk').innerHTML  = t.round1decimals( (1 + guardAtk)  *  atkchampfeyadj * (1 + (resAtk  + knight + itemAtk            + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod' ).value),0)/100)));
-         	           document.getElementById('ptucTrp'+ui+'Def').innerHTML  = t.round1decimals(                    defchampfeyadj * (1 + (resDef  + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod' ).value),0)/100)));
-         	           document.getElementById('ptucTrp'+ui+'Spd').innerHTML  = t.round1decimals(                    spdchampfeyadj * (1 + (resSpd                                + t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod' ).value),0)/100)));
-        	           document.getElementById('ptucTrp'+ui+'Rng').innerHTML  = t.round1decimals(                    rngchampfeyadj * (1 + (                                       t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod' ).value),0)/100)));
-        	           break;
-        	       case "siege" :
-          	           if (ui == 10) {
-                        //Trp10 - ball
-          	       		document.getElementById('ptucTrp10Life').innerHTML = t.round1decimals( (1 + guardLife) *  lifchampfeyadj * (1 + (resLife                               + t.maxBuff('Life',parseFloat(document.getElementById('ptucLifeMod').value),parseFloat(document.getElementById('ptucLifeModSig').value))/100)));
-          	        	document.getElementById('ptucTrp10Atk').innerHTML  = t.round1decimals( (1 + guardAtk)  *  atkchampfeyadj * (1 + (resAtk  + knight + itemAtk            + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod' ).value),parseFloat(document.getElementById('ptucAtkModSig' ).value))/100)));
-          	        	document.getElementById('ptucTrp10Def').innerHTML  = t.round1decimals(                    defchampfeyadj * (1 + (resDef  + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod' ).value),parseFloat(document.getElementById('ptucDefModSig' ).value))/100)));
-          	        	document.getElementById('ptucTrp10Spd').innerHTML  = t.round1decimals(                    spdchampfeyadj * (1 + (resSpd                                + t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod' ).value),parseFloat(document.getElementById('ptucSpdModSig' ).value))/100)));
-          	        	document.getElementById('ptucTrp10Rng').innerHTML  = t.round1decimals(                    rngchampfeyadj * (1 + (resRng                                + t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod' ).value),parseFloat(document.getElementById('ptucRngModSig' ).value))/100)));
-          	           } else {
-          	    		document.getElementById('ptucTrp'+ui+'Life').innerHTML = t.round1decimals( (1 + guardLife) *  lifchampfeyadj * (1 + (resLife                               + t.maxBuff('Life',parseFloat(document.getElementById('ptucLifeMod').value),parseFloat(document.getElementById('ptucLifeModSig').value))/100)));
-           	    		document.getElementById('ptucTrp'+ui+'Atk').innerHTML  = t.round1decimals( (1 + guardAtk)  *  atkchampfeyadj * (1 + (resAtk  + knight + itemAtk            + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod' ).value),parseFloat(document.getElementById('ptucAtkModSig' ).value))/100)));
-           	     		document.getElementById('ptucTrp'+ui+'Def').innerHTML  = t.round1decimals(                    defchampfeyadj * (1 + (resDef  + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod' ).value),parseFloat(document.getElementById('ptucDefModSig' ).value))/100)));
-           	      		document.getElementById('ptucTrp'+ui+'Spd').innerHTML  = t.round1decimals(                    spdchampfeyadj * (1 + (resSpd                                + t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod' ).value),parseFloat(document.getElementById('ptucSpdModSig' ).value))/100)));
-           	      		document.getElementById('ptucTrp'+ui+'Rng').innerHTML  = t.round1decimals(                    rngchampfeyadj * (1 + (resRng                                + t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod' ).value),parseFloat(document.getElementById('ptucRngModSig' ).value))/100)));
-				if (ui == 9 || ui == 11)
-            	     		    document.getElementById('ptucTrp'+ui+'Rng').innerHTML  = t.round1decimals(                    rngchampfeyadj * (1 + (                                       t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod' ).value),parseFloat(document.getElementById('ptucRngModSig' ).value))/100)));
-				if (ui == 21)
-                	            document.getElementById('ptucTrp'+ui+'Spd').innerHTML  = t.round1decimals(                    spdchampfeyadj * (1 + (                                       t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod' ).value),parseFloat(document.getElementById('ptucSpdModSig' ).value))/100)));
-                    	   }
-            	           break;
-            	     }
-        	}
-    	},
-
+		for (var iu in uW.cm.UNIT_TYPES) {
+			ui = uW.cm.UNIT_TYPES[iu];
+			var lifchampfeyadj = champLife + (1 + feyAltar * feyAltarAct) * uW.unitstats['unt' + ui][0];
+			lifchampfeyadj = Math.max(lifchampfeyadj, (1 + feyAltar * feyAltarAct) * uW.unitstats['unt' + ui][0] * 0.01);
+			var atkchampfeyadj = champAtk + (1 + feyAltar * feyAltarAct) * uW.unitstats['unt' + ui][1];
+			atkchampfeyadj = Math.max(atkchampfeyadj, (1 + feyAltar * feyAltarAct) * uW.unitstats['unt' + ui][1] * 0.01);
+			var defchampfeyadj = champDef + (1 + feyAltar * feyAltarAct) * uW.unitstats['unt' + ui][2];
+			defchampfeyadj = Math.max(defchampfeyadj, (1 + feyAltar * feyAltarAct) * uW.unitstats['unt' + ui][2] * 0.01);
+			var spdchampfeyadj = champSpd + (1 + feyAltar * feyAltarAct) * uW.unitstats['unt' + ui][3];
+			spdchampfeyadj = Math.max(spdchampfeyadj, (1 + feyAltar * feyAltarAct) * uW.unitstats['unt' + ui][3] * 0.01);
+			var rngchampfeyadj = champRng + (1 + feyAltar * feyAltarAct) * uW.unitstats['unt' + ui][4];
+			rngchampfeyadj = Math.max(rngchampfeyadj, (1 + feyAltar * feyAltarAct) * uW.unitstats['unt' + ui][4] * 0.01);
+			switch (unsafeWindow.cm.unitFrontendType[ui]) {
+			case "infantry":
+				if (ui < 10) {
+					document.getElementById('ptucTrp' + ui + 'Life').innerHTML = t.round1decimals((1 + guardLife) * lifchampfeyadj * bloodLustBlessLife * (1 + (resLife + t.maxBuff('Life', parseFloat(document.getElementById('ptucLifeMod').value), parseFloat(document.getElementById('ptucLifeModInf').value)) / 100)));
+					document.getElementById('ptucTrp' + ui + 'Atk').innerHTML = t.round1decimals((1 + guardAtk) * atkchampfeyadj * bloodLustBlessAtkSpd * (1 + (resAtk + knight + itemAtk + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod').value), parseFloat(document.getElementById('ptucAtkModInf').value)) / 100)));
+					document.getElementById('ptucTrp' + ui + 'Def').innerHTML = t.round1decimals(defchampfeyadj * (1 + (resDef + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod').value), parseFloat(document.getElementById('ptucDefModInf').value)) / 100)));
+					document.getElementById('ptucTrp' + ui + 'Spd').innerHTML = t.round1decimals(spdchampfeyadj * (1 + (t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod').value), parseFloat(document.getElementById('ptucSpdModInf').value)) / 100)));
+					document.getElementById('ptucTrp' + ui + 'Rng').innerHTML = t.round1decimals(rngchampfeyadj * (1 + (t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod').value), parseFloat(document.getElementById('ptucRngModInf').value)) / 100)));
+				} else {
+					//Trp13 - blood
+					//verified on 11/30 that bloods don't use infantry buff for atk/def. other stats unknown
+					//Trp14 - exec
+					//verified on 11/30 that exec don't use infantry buff for atk/def. other stats unknown
+					document.getElementById('ptucTrp' + ui + 'Life').innerHTML = t.round1decimals((1 + guardLife) * lifchampfeyadj * bloodLustBlessLife * (1 + (resLife + t.maxBuff('Life', parseFloat(document.getElementById('ptucLifeMod').value), 0) / 100)));
+					document.getElementById('ptucTrp' + ui + 'Atk').innerHTML = t.round1decimals((1 + guardAtk) * atkchampfeyadj * bloodLustBlessAtkSpd * (1 + (resAtk + knight + itemAtk + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod').value), 0) / 100)));
+					document.getElementById('ptucTrp' + ui + 'Def').innerHTML = t.round1decimals(defchampfeyadj * (1 + (resDef + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod').value), 0) / 100)));
+					document.getElementById('ptucTrp' + ui + 'Spd').innerHTML = t.round1decimals(spdchampfeyadj * (1 + (t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod').value), 0) / 100)));
+					document.getElementById('ptucTrp' + ui + 'Rng').innerHTML = t.round1decimals(rngchampfeyadj * (1 + (t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod').value), 0) / 100)));
+				}
+				break;
+			case "ranged":
+				document.getElementById('ptucTrp' + ui + 'Life').innerHTML = t.round1decimals((1 + guardLife) * lifchampfeyadj * bloodLustBlessLife * (1 + (resLife + t.maxBuff('Life', parseFloat(document.getElementById('ptucLifeMod').value), parseFloat(document.getElementById('ptucLifeModRng').value)) / 100)));
+				document.getElementById('ptucTrp' + ui + 'Atk').innerHTML = t.round1decimals((1 + guardAtk) * atkchampfeyadj * bloodLustBlessAtkSpd * (1 + (resAtk + knight + itemAtk + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod').value), parseFloat(document.getElementById('ptucAtkModRng').value)) / 100)));
+				document.getElementById('ptucTrp' + ui + 'Def').innerHTML = t.round1decimals(defchampfeyadj * (1 + (resDef + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod').value), parseFloat(document.getElementById('ptucDefModRng').value)) / 100)));
+				document.getElementById('ptucTrp' + ui + 'Spd').innerHTML = t.round1decimals(spdchampfeyadj * (1 + (t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod').value), parseFloat(document.getElementById('ptucSpdModRng').value)) / 100)));
+				document.getElementById('ptucTrp' + ui + 'Rng').innerHTML = t.round1decimals(rngchampfeyadj * (1 + (resRng + t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod').value), parseFloat(document.getElementById('ptucRngModRng').value)) / 100)));
+				break;
+			case "horsed":
+				document.getElementById('ptucTrp' + ui + 'Life').innerHTML = t.round1decimals((1 + guardLife) * lifchampfeyadj * (1 + (resLife + t.maxBuff('Life', parseFloat(document.getElementById('ptucLifeMod').value), parseFloat(document.getElementById('ptucLifeModHor').value)) / 100)));
+				document.getElementById('ptucTrp' + ui + 'Atk').innerHTML = t.round1decimals((1 + guardAtk) * atkchampfeyadj * (1 + (resAtk + knight + itemAtk + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod').value), parseFloat(document.getElementById('ptucAtkModHor').value)) / 100)));
+				document.getElementById('ptucTrp' + ui + 'Def').innerHTML = t.round1decimals(defchampfeyadj * (1 + (resDef + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod').value), parseFloat(document.getElementById('ptucDefModHor').value)) / 100)));
+				document.getElementById('ptucTrp' + ui + 'Spd').innerHTML = t.round1decimals(spdchampfeyadj * (1 + (resSpd + t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod').value), parseFloat(document.getElementById('ptucSpdModHor').value)) / 100)));
+				document.getElementById('ptucTrp' + ui + 'Rng').innerHTML = t.round1decimals(rngchampfeyadj * (1 + (t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod').value), parseFloat(document.getElementById('ptucRngModHor').value)) / 100)));
+				if (ui == 17)
+					document.getElementById('ptucTrp' + ui + 'Spd').innerHTML = t.round1decimals(spdchampfeyadj * (1 + (t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod').value), parseFloat(document.getElementById('ptucSpdModHor').value)) / 100)));
+				break;
+			case "specialist":
+				//Trp15 - siege wall
+				document.getElementById('ptucTrp' + ui + 'Life').innerHTML = t.round1decimals((1 + guardLife) * lifchampfeyadj * (1 + (resLife + t.maxBuff('Life', parseFloat(document.getElementById('ptucLifeMod').value), 0) / 100)));
+				document.getElementById('ptucTrp' + ui + 'Atk').innerHTML = t.round1decimals((1 + guardAtk) * atkchampfeyadj * (1 + (resAtk + knight + itemAtk + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod').value), 0) / 100)));
+				document.getElementById('ptucTrp' + ui + 'Def').innerHTML = t.round1decimals(defchampfeyadj * (1 + (resDef + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod').value), 0) / 100)));
+				document.getElementById('ptucTrp' + ui + 'Spd').innerHTML = t.round1decimals(spdchampfeyadj * (1 + (resSpd + t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod').value), 0) / 100)));
+				document.getElementById('ptucTrp' + ui + 'Rng').innerHTML = t.round1decimals(rngchampfeyadj * (1 + (t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod').value), 0) / 100)));
+				break;
+			case "siege":
+				if (ui == 10) {
+					//Trp10 - ball
+					document.getElementById('ptucTrp10Life').innerHTML = t.round1decimals((1 + guardLife) * lifchampfeyadj * (1 + (resLife + t.maxBuff('Life', parseFloat(document.getElementById('ptucLifeMod').value), parseFloat(document.getElementById('ptucLifeModSig').value)) / 100)));
+					document.getElementById('ptucTrp10Atk').innerHTML = t.round1decimals((1 + guardAtk) * atkchampfeyadj * (1 + (resAtk + knight + itemAtk + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod').value), parseFloat(document.getElementById('ptucAtkModSig').value)) / 100)));
+					document.getElementById('ptucTrp10Def').innerHTML = t.round1decimals(defchampfeyadj * (1 + (resDef + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod').value), parseFloat(document.getElementById('ptucDefModSig').value)) / 100)));
+					document.getElementById('ptucTrp10Spd').innerHTML = t.round1decimals(spdchampfeyadj * (1 + (resSpd + t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod').value), parseFloat(document.getElementById('ptucSpdModSig').value)) / 100)));
+					document.getElementById('ptucTrp10Rng').innerHTML = t.round1decimals(rngchampfeyadj * (1 + (resRng + t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod').value), parseFloat(document.getElementById('ptucRngModSig').value)) / 100)));
+				} else {
+					document.getElementById('ptucTrp' + ui + 'Life').innerHTML = t.round1decimals((1 + guardLife) * lifchampfeyadj * (1 + (resLife + t.maxBuff('Life', parseFloat(document.getElementById('ptucLifeMod').value), parseFloat(document.getElementById('ptucLifeModSig').value)) / 100)));
+					document.getElementById('ptucTrp' + ui + 'Atk').innerHTML = t.round1decimals((1 + guardAtk) * atkchampfeyadj * (1 + (resAtk + knight + itemAtk + t.maxBuff('Attack', parseFloat(document.getElementById('ptucAtkMod').value), parseFloat(document.getElementById('ptucAtkModSig').value)) / 100)));
+					document.getElementById('ptucTrp' + ui + 'Def').innerHTML = t.round1decimals(defchampfeyadj * (1 + (resDef + knight + itemDef + orderDef + t.maxBuff('Defense', parseFloat(document.getElementById('ptucDefMod').value), parseFloat(document.getElementById('ptucDefModSig').value)) / 100)));
+					document.getElementById('ptucTrp' + ui + 'Spd').innerHTML = t.round1decimals(spdchampfeyadj * (1 + (resSpd + t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod').value), parseFloat(document.getElementById('ptucSpdModSig').value)) / 100)));
+					document.getElementById('ptucTrp' + ui + 'Rng').innerHTML = t.round1decimals(rngchampfeyadj * (1 + (resRng + t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod').value), parseFloat(document.getElementById('ptucRngModSig').value)) / 100)));
+					if (ui == 9 || ui == 11)
+						document.getElementById('ptucTrp' + ui + 'Rng').innerHTML = t.round1decimals(rngchampfeyadj * (1 + (t.maxBuff('Range', parseFloat(document.getElementById('ptucRngMod').value), parseFloat(document.getElementById('ptucRngModSig').value)) / 100)));
+					if (ui == 21)
+						document.getElementById('ptucTrp' + ui + 'Spd').innerHTML = t.round1decimals(spdchampfeyadj * (1 + (t.maxBuff('Speed', parseFloat(document.getElementById('ptucSpdMod').value), parseFloat(document.getElementById('ptucSpdModSig').value)) / 100)));
+				}
+				break;
+			}
+		}
+	},
 	maxBuff: function (stat, a, b) {
 		if (a + b > unsafeWindow.cm.thronestats.boosts[stat].Max)
 			return unsafeWindow.cm.thronestats.boosts[stat].Max;
@@ -13400,12 +15149,12 @@ var PageNavigator = {
 	},
 }
 
-	function addScript(scriptText) {
-		var scr = document.createElement('script');
-		scr.innerHTML = scriptText;
-		document.body.appendChild(scr);
-		//    setTimeout ( function (){document.body.removeChild(scr);}, 500);
-	}
+function addScript(scriptText) {
+	var scr = document.createElement('script');
+	scr.innerHTML = scriptText;
+	document.body.appendChild(scr);
+	//    setTimeout ( function (){document.body.removeChild(scr);}, 500);
+}
 addScript('uwuwuwFunc = function (text){ eval (text);  }');
 /************* Updater code *************/
 // Function for displaying a confirmation message modal popup similar to the default javascript confirm() function
@@ -13463,7 +15212,6 @@ function display_confirm(confirm_msg, ok_function, cancel_function) {
 }
 // The following code is released under public domain.
 var AutoUpdater_103659 = {
-
 	id: 103659,
 	days: 1,
 	name: "KOC Power Tools",
@@ -13778,17 +15526,17 @@ var LoadCapFix = {
 	},
 }
 
-	function distance(d, f, c, e) {
-		var a = 750;
-		var g = a / 2;
-		var b = Math.abs(c - d);
-		if (b > g)
-			b = a - b;
-		var h = Math.abs(e - f);
-		if (h > g)
-			h = a - h;
-		return Math.round(100 * Math.sqrt(b * b + h * h)) / 100;
-	};
+function distance(d, f, c, e) {
+	var a = 750;
+	var g = a / 2;
+	var b = Math.abs(c - d);
+	if (b > g)
+		b = a - b;
+	var h = Math.abs(e - f);
+	if (h > g)
+		h = a - h;
+	return Math.round(100 * Math.sqrt(b * b + h * h)) / 100;
+};
 var MapDistanceFix = {
 	popSlotsFunc: null,
 	init: function () {
@@ -13903,330 +15651,330 @@ var tabManager = {
 	},
 }
 
-	function setTabStyle(e, selected) {
-		if (selected) {
-			e.className = 'matTabSel';
-		} else {
-			e.className = 'matTabNotSel';
+function setTabStyle(e, selected) {
+	if (selected) {
+		e.className = 'matTabSel';
+	} else {
+		e.className = 'matTabNotSel';
+	}
+}
+
+function clickedTab(e) {
+	who = e.target.id.substring(2);
+	newObj = my[who];
+	currentObj = my[currentName];
+	if (currentName != who) {
+		setTabStyle(document.getElementById('aa' + currentName), false);
+		setTabStyle(document.getElementById('aa' + who), true);
+		if (currentObj) {
+			currentObj.hide();
+			currentObj.getContent().style.display = 'none';
 		}
+		currentName = who;
+		cont = newObj.getContent();
+		newObj.getContent().style.display = 'block';
 	}
+	newObj.show();
+}
 
-	function clickedTab(e) {
-		who = e.target.id.substring(2);
-		newObj = my[who];
-		currentObj = my[currentName];
-		if (currentName != who) {
-			setTabStyle(document.getElementById('aa' + currentName), false);
-			setTabStyle(document.getElementById('aa' + who), true);
-			if (currentObj) {
-				currentObj.hide();
-				currentObj.getContent().style.display = 'none';
-			}
-			currentName = who;
-			cont = newObj.getContent();
-			newObj.getContent().style.display = 'block';
-		}
-		newObj.show();
+function mouseMainTab(me) {
+	if (me.button == 2) {
+		var c = getClientCoords(document.getElementById('main_engagement_tabs'));
+		mainPop.setLocation({
+			x: c.x + 4,
+			y: c.y + c.height
+		});
 	}
+}
 
-	function mouseMainTab(me) {
-		if (me.button == 2) {
-			var c = getClientCoords(document.getElementById('main_engagement_tabs'));
-			mainPop.setLocation({
-				x: c.x + 4,
-				y: c.y + c.height
-			});
-		}
-	}
-
-	function eventHideShow() {
-		if (mainPop.toggleHide(mainPop)) {
-			tabManager.showTab();
-			Options.ptWinIsOpen = true;
-		} else {
-			tabManager.hideTab();
-			Options.ptWinIsOpen = false;
-		}
-		setTimeout(function () {
-			saveOptions();
-		}, 0);
-	}
-
-	function hideMe() {
-		if (!Options.ptWinIsOpen)
-			return;
-		mainPop.show(false);
-		tabManager.showTab();
-		Options.ptWinIsOpen = false;
-		saveOptions();
-	}
-
-	function showMe() {
-		mainPop.show(true);
+function eventHideShow() {
+	if (mainPop.toggleHide(mainPop)) {
 		tabManager.showTab();
 		Options.ptWinIsOpen = true;
+	} else {
+		tabManager.hideTab();
+		Options.ptWinIsOpen = false;
+	}
+	setTimeout(function () {
 		saveOptions();
-	}
+	}, 0);
+}
 
-	function addMyFunction(func) { // add function to run in our own scope
-		unsafeWindow[func.name] = func;
-	}
+function hideMe() {
+	if (!Options.ptWinIsOpen)
+		return;
+	mainPop.show(false);
+	tabManager.showTab();
+	Options.ptWinIsOpen = false;
+	saveOptions();
+}
 
-	function addUwFunction(func) { // add function to run in unsafeWindow's scope
-		scr = document.createElement('script');
-		scr.innerHTML = func.toString();
+function showMe() {
+	mainPop.show(true);
+	tabManager.showTab();
+	Options.ptWinIsOpen = true;
+	saveOptions();
+}
+
+function addMyFunction(func) { // add function to run in our own scope
+	unsafeWindow[func.name] = func;
+}
+
+function addUwFunction(func) { // add function to run in unsafeWindow's scope
+	scr = document.createElement('script');
+	scr.innerHTML = func.toString();
+	document.body.appendChild(scr);
+}
+
+function alterUwFunction(funcName, frArray) {
+	try {
+		funcText = unsafeWindow[funcName].toString();
+		rt = funcText.replace('function ' + funcName, 'function');
+		for (i = 0; i < frArray.length; i++) {
+			x = rt.replace(frArray[i][0], frArray[i][1]);
+			if (x == rt)
+				return false;
+			rt = x;
+		}
+		js = funcName + ' = ' + rt;
+		var scr = document.createElement('script');
+		scr.innerHTML = js;
 		document.body.appendChild(scr);
+		return true;
+	} catch (err) {
+		return false;
 	}
+}
 
-	function alterUwFunction(funcName, frArray) {
-		try {
-			funcText = unsafeWindow[funcName].toString();
-			rt = funcText.replace('function ' + funcName, 'function');
-			for (i = 0; i < frArray.length; i++) {
-				x = rt.replace(frArray[i][0], frArray[i][1]);
-				if (x == rt)
-					return false;
-				rt = x;
-			}
-			js = funcName + ' = ' + rt;
-			var scr = document.createElement('script');
-			scr.innerHTML = js;
-			document.body.appendChild(scr);
-			return true;
-		} catch (err) {
-			return false;
-		}
+function setCities() {
+	Cities.numCities = Seed.cities.length;
+	Cities.cities = [];
+	Cities.byID = {};
+	for (i = 0; i < Cities.numCities; i++) {
+		city = {};
+		city.idx = i;
+		city.id = parseInt(Seed.cities[i][0]);
+		city.name = Seed.cities[i][1];
+		city.x = parseInt(Seed.cities[i][2]);
+		city.y = parseInt(Seed.cities[i][3]);
+		city.tileId = parseInt(Seed.cities[i][5]);
+		city.provId = parseInt(Seed.cities[i][4]);
+		getTroopDefTrainEstimates('city' + city.id, city);
+		Cities.cities[i] = city;
+		Cities.byID[Seed.cities[i][0]] = city;
 	}
+}
 
-	function setCities() {
-		Cities.numCities = Seed.cities.length;
-		Cities.cities = [];
-		Cities.byID = {};
-		for (i = 0; i < Cities.numCities; i++) {
-			city = {};
-			city.idx = i;
-			city.id = parseInt(Seed.cities[i][0]);
-			city.name = Seed.cities[i][1];
-			city.x = parseInt(Seed.cities[i][2]);
-			city.y = parseInt(Seed.cities[i][3]);
-			city.tileId = parseInt(Seed.cities[i][5]);
-			city.provId = parseInt(Seed.cities[i][4]);
-			getTroopDefTrainEstimates('city' + city.id, city);
-			Cities.cities[i] = city;
-			Cities.byID[Seed.cities[i][0]] = city;
-		}
-	}
-
-	function getTroopDefTrainEstimates(cityID, city) {
-		var b = Seed.buildings[cityID];
-		city.numCottages = 0;
-		city.numBarracks = 0;
-		city.maxBarracks = 0;
-		city.totLevelsBarracks = 0;
-		city.blacksmithLevel = 0;
-		city.stableLevel = 0;
-		city.workshopLevel = 0;
-		city.wallLevel = 0;
-		for (var j = 1; j < 33; j++) {
-			if (b['pos' + j]) {
-				var bname = parseInt(b['pos' + j][0]);
-				var blvl = parseInt(b['pos' + j][1]);
-				switch (bname) {
-				case 13:
-					city.numBarracks++;
-					city.totLevelsBarracks += parseInt(blvl);
-					if (blvl > city.maxBarracks) city.maxBarracks = blvl;
-					break;
-				case 5:
-					city.numCottages++;
-					break;
-				case 15:
-					city.blacksmithLevel = blvl;
-					break;
-				case 16:
-					city.workshopLevel = blvl;
-					break;
-				case 17:
-					city.stableLevel = blvl;
-					break;
-				case 19:
-					city.wallLevel = blvl;
-					break;
-				}
+function getTroopDefTrainEstimates(cityID, city) {
+	var b = Seed.buildings[cityID];
+	city.numCottages = 0;
+	city.numBarracks = 0;
+	city.maxBarracks = 0;
+	city.totLevelsBarracks = 0;
+	city.blacksmithLevel = 0;
+	city.stableLevel = 0;
+	city.workshopLevel = 0;
+	city.wallLevel = 0;
+	for (var j = 1; j < 33; j++) {
+		if (b['pos' + j]) {
+			var bname = parseInt(b['pos' + j][0]);
+			var blvl = parseInt(b['pos' + j][1]);
+			switch (bname) {
+			case 13:
+				city.numBarracks++;
+				city.totLevelsBarracks += parseInt(blvl);
+				if (blvl > city.maxBarracks) city.maxBarracks = blvl;
+				break;
+			case 5:
+				city.numCottages++;
+				break;
+			case 15:
+				city.blacksmithLevel = blvl;
+				break;
+			case 16:
+				city.workshopLevel = blvl;
+				break;
+			case 17:
+				city.stableLevel = blvl;
+				break;
+			case 19:
+				city.wallLevel = blvl;
+				break;
 			}
 		}
-		var isPrestige = getCityPrestige(city.id);
-		if (isPrestige) {
-			city.blacksmithLevel = 12;
-			city.workshopLevel = 12;
-			city.stableLevel = 12;
-		}
-		var now = unixTime();
-		city.marshallCombatScore = 0;
-		var s = Seed.knights[cityID];
+	}
+	var isPrestige = getCityPrestige(city.id);
+	if (isPrestige) {
+		city.blacksmithLevel = 12;
+		city.workshopLevel = 12;
+		city.stableLevel = 12;
+	}
+	var now = unixTime();
+	city.marshallCombatScore = 0;
+	var s = Seed.knights[cityID];
+	if (s) {
+		s = s["knt" + Seed.leaders[cityID].combatKnightId];
 		if (s) {
-			s = s["knt" + Seed.leaders[cityID].combatKnightId];
-			if (s) {
-				city.marshallCombatScore = s.combat;
-				if (s.combatBoostExpireUnixtime > now)
-					city.marshallCombatScore *= 1.25;
-			}
+			city.marshallCombatScore = s.combat;
+			if (s.combatBoostExpireUnixtime > now)
+				city.marshallCombatScore *= 1.25;
 		}
-		city.foremanBasePoliticsScore = 0;
-		var s = Seed.knights[cityID];
-		if (s) {
-			s = s["knt" + Seed.leaders[cityID].politicsKnightId];
-			if (s) {
-				city.foremanBasePoliticsScore = s.politics;
-				if (s.politicsBoostExpireUnixtime > now)
-					city.foremanBasePoliticsScore *= 1.25;
-			}
-		}
-		city.loggingLevel = parseInt(Seed.tech["tch2"]);
-		city.geometryLevel = parseInt(Seed.tech["tch5"]);
-		city.eagleEyesLevel = parseInt(Seed.tech["tch6"]);
-		city.poisonedEdgeLevel = parseInt(Seed.tech["tch8"]);
-		city.metalAlloysLevel = parseInt(Seed.tech["tch9"]);
-		city.featherweightPowderLevel = parseInt(Seed.tech["tch10"]);
-		city.alloyHorseshoesLevel = parseInt(Seed.tech["tch12"]);
-		city.fletchingLevel = parseInt(Seed.tech["tch13"]);
-		city.giantsStrengthLevel = parseInt(Seed.tech["tch16"]);
-		var bm = city.numBarracks + 0.1 * (city.totLevelsBarracks - city.numBarracks);
-		var mf = city.marshallCombatScore / 200;
-		var gf = city.geometryLevel / 10;
-		var sf = city.stableLevel / 10;
-		var wf = city.workshopLevel / 10;
-		var isf = bm * (1 + mf + gf);
-		var csf = bm * (1 + mf + gf + sf);
-		var ssf = bm * (1 + mf + gf + sf + wf);
-		var pf = city.foremanBasePoliticsScore / 200;
-		var gsf = city.giantsStrengthLevel / 10;
-		var dsf = 1 + pf + gsf;
-		city.Troop1Time = ((city.maxBarracks > 0) ? (50 / isf) : 0);
-		city.Troop2Time = city.Troop1Time / 2;
-		city.Troop3Time = ((city.maxBarracks > 1 && city.eagleEyesLevel > 0) ? (100 / isf) : 0);
-		city.Troop4Time = ((city.maxBarracks > 1 && city.poisonedEdgeLevel > 0) ? (150 / isf) : 0);
-		city.Troop5Time = ((city.maxBarracks > 2 && city.blacksmithLevel > 0 && city.metalAlloysLevel > 0) ? (225 / isf) : 0);
-		city.Troop6Time = ((city.maxBarracks > 3 && city.fletchingLevel > 0) ? (350 / isf) : 0);
-		city.Troop7Time = ((city.maxBarracks > 4 && city.stableLevel > 0 && city.alloyHorseshoesLevel > 0) ? (500 / csf) : 0);
-		city.Troop8Time = ((city.maxBarracks > 6 && city.blacksmithLevel > 4 && city.stableLevel > 4 && city.alloyHorseshoesLevel > 4) ? (1500 / csf) : 0);
-		city.Troop9Time = ((city.maxBarracks > 5 && city.stableLevel > 0 && city.workshopLevel > 2 && city.featherweightPowderLevel > 0) ? (1000 / ssf) : 0);
-		city.Troop10Time = ((city.maxBarracks > 7 && city.stableLevel > 1 && city.workshopLevel > 4 && city.geometryLevel > 4 && city.fletchingLevel > 5) ? (3000 / ssf) : 0);
-		city.Troop11Time = ((city.maxBarracks > 8 && city.blacksmithLevel > 4 && city.stableLevel > 2 && city.workshopLevel > 6 && city.metalAlloysLevel > 7 && city.geometryLevel > 6) ? (4500 / ssf) : 0);
-		city.Troop12Time = ((city.maxBarracks > 9 && city.stableLevel > 1 && city.workshopLevel > 8 && city.geometryLevel > 9 && city.fletchingLevel > 9) ? (6000 / ssf) : 0);
-		city.Def53Time = ((city.wallLevel > 5 && city.blacksmithLevel > 5 && city.fletchingLevel > 4) ? (180 / dsf) : 0);
-		city.Def55Time = ((city.wallLevel > 7 && city.blacksmithLevel > 7 && city.fletchingLevel > 6 && city.geometryLevel > 6) ? (135 / dsf) : 0);
-		city.Def60Time = ((city.wallLevel > 3 && city.blacksmithLevel > 3 && city.poisonedEdgeLevel > 1) ? (90 / dsf) : 0);
-		city.Def61Time = ((city.wallLevel > 0 && city.metalAlloysLevel > 0) ? (30 / dsf) : 0);
-		city.Def62Time = ((city.wallLevel > 1 && city.blacksmithLevel > 1 && city.loggingLevel > 1) ? (60 / dsf) : 0);
 	}
+	city.foremanBasePoliticsScore = 0;
+	var s = Seed.knights[cityID];
+	if (s) {
+		s = s["knt" + Seed.leaders[cityID].politicsKnightId];
+		if (s) {
+			city.foremanBasePoliticsScore = s.politics;
+			if (s.politicsBoostExpireUnixtime > now)
+				city.foremanBasePoliticsScore *= 1.25;
+		}
+	}
+	city.loggingLevel = parseInt(Seed.tech["tch2"]);
+	city.geometryLevel = parseInt(Seed.tech["tch5"]);
+	city.eagleEyesLevel = parseInt(Seed.tech["tch6"]);
+	city.poisonedEdgeLevel = parseInt(Seed.tech["tch8"]);
+	city.metalAlloysLevel = parseInt(Seed.tech["tch9"]);
+	city.featherweightPowderLevel = parseInt(Seed.tech["tch10"]);
+	city.alloyHorseshoesLevel = parseInt(Seed.tech["tch12"]);
+	city.fletchingLevel = parseInt(Seed.tech["tch13"]);
+	city.giantsStrengthLevel = parseInt(Seed.tech["tch16"]);
+	var bm = city.numBarracks + 0.1 * (city.totLevelsBarracks - city.numBarracks);
+	var mf = city.marshallCombatScore / 200;
+	var gf = city.geometryLevel / 10;
+	var sf = city.stableLevel / 10;
+	var wf = city.workshopLevel / 10;
+	var isf = bm * (1 + mf + gf);
+	var csf = bm * (1 + mf + gf + sf);
+	var ssf = bm * (1 + mf + gf + sf + wf);
+	var pf = city.foremanBasePoliticsScore / 200;
+	var gsf = city.giantsStrengthLevel / 10;
+	var dsf = 1 + pf + gsf;
+	city.Troop1Time = ((city.maxBarracks > 0) ? (50 / isf) : 0);
+	city.Troop2Time = city.Troop1Time / 2;
+	city.Troop3Time = ((city.maxBarracks > 1 && city.eagleEyesLevel > 0) ? (100 / isf) : 0);
+	city.Troop4Time = ((city.maxBarracks > 1 && city.poisonedEdgeLevel > 0) ? (150 / isf) : 0);
+	city.Troop5Time = ((city.maxBarracks > 2 && city.blacksmithLevel > 0 && city.metalAlloysLevel > 0) ? (225 / isf) : 0);
+	city.Troop6Time = ((city.maxBarracks > 3 && city.fletchingLevel > 0) ? (350 / isf) : 0);
+	city.Troop7Time = ((city.maxBarracks > 4 && city.stableLevel > 0 && city.alloyHorseshoesLevel > 0) ? (500 / csf) : 0);
+	city.Troop8Time = ((city.maxBarracks > 6 && city.blacksmithLevel > 4 && city.stableLevel > 4 && city.alloyHorseshoesLevel > 4) ? (1500 / csf) : 0);
+	city.Troop9Time = ((city.maxBarracks > 5 && city.stableLevel > 0 && city.workshopLevel > 2 && city.featherweightPowderLevel > 0) ? (1000 / ssf) : 0);
+	city.Troop10Time = ((city.maxBarracks > 7 && city.stableLevel > 1 && city.workshopLevel > 4 && city.geometryLevel > 4 && city.fletchingLevel > 5) ? (3000 / ssf) : 0);
+	city.Troop11Time = ((city.maxBarracks > 8 && city.blacksmithLevel > 4 && city.stableLevel > 2 && city.workshopLevel > 6 && city.metalAlloysLevel > 7 && city.geometryLevel > 6) ? (4500 / ssf) : 0);
+	city.Troop12Time = ((city.maxBarracks > 9 && city.stableLevel > 1 && city.workshopLevel > 8 && city.geometryLevel > 9 && city.fletchingLevel > 9) ? (6000 / ssf) : 0);
+	city.Def53Time = ((city.wallLevel > 5 && city.blacksmithLevel > 5 && city.fletchingLevel > 4) ? (180 / dsf) : 0);
+	city.Def55Time = ((city.wallLevel > 7 && city.blacksmithLevel > 7 && city.fletchingLevel > 6 && city.geometryLevel > 6) ? (135 / dsf) : 0);
+	city.Def60Time = ((city.wallLevel > 3 && city.blacksmithLevel > 3 && city.poisonedEdgeLevel > 1) ? (90 / dsf) : 0);
+	city.Def61Time = ((city.wallLevel > 0 && city.metalAlloysLevel > 0) ? (30 / dsf) : 0);
+	city.Def62Time = ((city.wallLevel > 1 && city.blacksmithLevel > 1 && city.loggingLevel > 1) ? (60 / dsf) : 0);
+}
 
-	function officerId2String(oid) {
-		if (oid == null)
-			return '';
-		else if (oid == 3)
-			return uW.allianceOfficerTypeMapping[3];
-		else if (oid == 2)
-			return uW.allianceOfficerTypeMapping[2];
-		else if (oid == 1)
-			return uW.allianceOfficerTypeMapping[1];
-		else if (oid == 4)
-			return uW.allianceOfficerTypeMapping[4];
+function officerId2String(oid) {
+	if (oid == null)
 		return '';
+	else if (oid == 3)
+		return uW.allianceOfficerTypeMapping[3];
+	else if (oid == 2)
+		return uW.allianceOfficerTypeMapping[2];
+	else if (oid == 1)
+		return uW.allianceOfficerTypeMapping[1];
+	else if (oid == 4)
+		return uW.allianceOfficerTypeMapping[4];
+	return '';
+}
+// onClick (city{name, id, x, y}, x, y)   city may be null!
+function CdispCityPicker(id, span, dispName, notify, selbut) {
+	function CcityButHandler(t) {
+		var that = t;
+		this.clickedCityBut = clickedCityBut;
+
+		function clickedCityBut(e) {
+			if (that.selected != null)
+				that.selected.className = "ptcastleBut ptcastleButNon";
+			that.city = Cities.cities[e.target.id.substr(that.prefixLen)];
+			if (that.dispName)
+				document.getElementById(that.id + 'cname').innerHTML = that.city.name;
+			e.target.className = "ptcastleBut ptcastleButSel";
+			that.selected = e.target;
+			if (that.coordBoxX) {
+				that.coordBoxX.value = that.city.x;
+				that.coordBoxY.value = that.city.y;
+				that.coordBoxX.style.backgroundColor = '#ffffff';
+				that.coordBoxY.style.backgroundColor = '#ffffff';
+			}
+			if (that.notify != null)
+				that.notify(that.city, that.city.x, that.city.y);
+		}
 	}
-	// onClick (city{name, id, x, y}, x, y)   city may be null!
-	function CdispCityPicker(id, span, dispName, notify, selbut) {
-		function CcityButHandler(t) {
+
+	function selectBut(idx) {
+		document.getElementById(this.id + '_' + idx).click();
+	}
+
+	function bindToXYboxes(eX, eY) {
+		function CboxHandler(t) {
 			var that = t;
-			this.clickedCityBut = clickedCityBut;
+			this.eventChange = eventChange;
+			if (that.city) {
+				eX.value = that.city.x;
+				eY.value = that.city.y;
+			}
 
-			function clickedCityBut(e) {
-				if (that.selected != null)
-					that.selected.className = "ptcastleBut ptcastleButNon";
-				that.city = Cities.cities[e.target.id.substr(that.prefixLen)];
-				if (that.dispName)
-					document.getElementById(that.id + 'cname').innerHTML = that.city.name;
-				e.target.className = "ptcastleBut ptcastleButSel";
-				that.selected = e.target;
-				if (that.coordBoxX) {
-					that.coordBoxX.value = that.city.x;
-					that.coordBoxY.value = that.city.y;
-					that.coordBoxX.style.backgroundColor = '#ffffff';
-					that.coordBoxY.style.backgroundColor = '#ffffff';
+			function eventChange() {
+				var xValue = that.coordBoxX.value.trim();
+				var xI = /^\s*([0-9]+)[\s,]+([0-9]+)/.exec(xValue);
+				if (xI) {
+					that.coordBoxX.value = xI[1]
+					that.coordBoxY.value = xI[2]
 				}
+				var x = parseInt(that.coordBoxX.value, 10);
+				var y = parseInt(that.coordBoxY.value, 10);
+				if (isNaN(x) || x < 0 || x > 750) {
+					that.coordBoxX.style.backgroundColor = '#ff8888';
+					return;
+				}
+				if (isNaN(y) || y < 0 || y > 750) {
+					that.coordBoxY.style.backgroundColor = '#ff8888';
+					return;
+				}
+				that.coordBoxX.style.backgroundColor = '#ffffff';
+				that.coordBoxY.style.backgroundColor = '#ffffff';
 				if (that.notify != null)
-					that.notify(that.city, that.city.x, that.city.y);
+					that.notify(null, x, y);
 			}
 		}
-
-		function selectBut(idx) {
-			document.getElementById(this.id + '_' + idx).click();
-		}
-
-		function bindToXYboxes(eX, eY) {
-			function CboxHandler(t) {
-				var that = t;
-				this.eventChange = eventChange;
-				if (that.city) {
-					eX.value = that.city.x;
-					eY.value = that.city.y;
-				}
-
-				function eventChange() {
-					var xValue = that.coordBoxX.value.trim();
-					var xI = /^\s*([0-9]+)[\s,]+([0-9]+)/.exec(xValue);
-					if (xI) {
-						that.coordBoxX.value = xI[1]
-						that.coordBoxY.value = xI[2]
-					}
-					var x = parseInt(that.coordBoxX.value, 10);
-					var y = parseInt(that.coordBoxY.value, 10);
-					if (isNaN(x) || x < 0 || x > 750) {
-						that.coordBoxX.style.backgroundColor = '#ff8888';
-						return;
-					}
-					if (isNaN(y) || y < 0 || y > 750) {
-						that.coordBoxY.style.backgroundColor = '#ff8888';
-						return;
-					}
-					that.coordBoxX.style.backgroundColor = '#ffffff';
-					that.coordBoxY.style.backgroundColor = '#ffffff';
-					if (that.notify != null)
-						that.notify(null, x, y);
-				}
-			}
-			this.coordBoxX = eX;
-			this.coordBoxY = eY;
-			var bh = new CboxHandler(this);
-			eX.size = 2;
-			eX.maxLength = 10;
-			eY.size = 2;
-			eY.maxLength = 3;
-			eX.addEventListener('change', bh.eventChange, false);
-			eY.addEventListener('change', bh.eventChange, false);
-		}
-		this.selectBut = selectBut;
-		this.bindToXYboxes = bindToXYboxes;
-		this.coordBoxX = null;
-		this.coordBoxY = null;
-		this.id = id;
-		this.dispName = dispName;
-		this.prefixLen = id.length + 1;
-		this.notify = notify;
-		this.selected = null;
-		this.city = null;
-		var m = '';
-		for (var i = 0; i < Cities.cities.length; i++)
-			m += '<INPUT class="ptcastleBut ptcastleButNon" id="' + id + '_' + i + '" value="' + (i + 1) + '" type=submit \>';
-		if (dispName)
-			m += ' &nbsp; <SPAN style="display:inline-block; width:85px; font-weight:bold;" id=' + id + 'cname' + '></span>';
-		span.innerHTML = m;
-		var handler = new CcityButHandler(this);
-		for (var i = 0; i < Cities.cities.length; i++)
-			document.getElementById(id + '_' + i).addEventListener('click', handler.clickedCityBut, false);
-		if (selbut != null)
-			this.selectBut(selbut);
-	};
+		this.coordBoxX = eX;
+		this.coordBoxY = eY;
+		var bh = new CboxHandler(this);
+		eX.size = 2;
+		eX.maxLength = 10;
+		eY.size = 2;
+		eY.maxLength = 3;
+		eX.addEventListener('change', bh.eventChange, false);
+		eY.addEventListener('change', bh.eventChange, false);
+	}
+	this.selectBut = selectBut;
+	this.bindToXYboxes = bindToXYboxes;
+	this.coordBoxX = null;
+	this.coordBoxY = null;
+	this.id = id;
+	this.dispName = dispName;
+	this.prefixLen = id.length + 1;
+	this.notify = notify;
+	this.selected = null;
+	this.city = null;
+	var m = '';
+	for (var i = 0; i < Cities.cities.length; i++)
+		m += '<INPUT class="ptcastleBut ptcastleButNon" id="' + id + '_' + i + '" value="' + (i + 1) + '" type=submit \>';
+	if (dispName)
+		m += ' &nbsp; <SPAN style="display:inline-block; width:85px; font-weight:bold;" id=' + id + 'cname' + '></span>';
+	span.innerHTML = m;
+	var handler = new CcityButHandler(this);
+	for (var i = 0; i < Cities.cities.length; i++)
+		document.getElementById(id + '_' + i).addEventListener('click', handler.clickedCityBut, false);
+	if (selbut != null)
+		this.selectBut(selbut);
+};
 
 function CdialogCancelContinue(msg, canNotify, contNotify, centerElement) {
 	var pop = new CPopup('ptcancont', 0, 0, 400, 200, true, canNotify);
@@ -14261,7 +16009,7 @@ function dialogRetry(errMsg, errCode, url, retry, seconds, onRetry, onCancel) {
 		document.getElementById('paretryErrMsg').innerHTML = unsafeWindow.g_js_strings.errorcode['err_' + errCode];
 	else
 		document.getElementById('paretryErrMsg').innerHTML = errMsg;
-	document.getElementById('paretryCmd').innerHTML = url + ' (Retry '+(retry+1)+' of 5)';
+	document.getElementById('paretryCmd').innerHTML = url + ' (Retry ' + (retry + 1) + ' of 5)';
 	document.getElementById('paretrySeconds').innerHTML = seconds;
 	var rTimer = setTimeout(doRetry, seconds * 1000);
 	countdown();
@@ -14386,25 +16134,33 @@ function MyAjaxRequest(url, o, noRetry) {
 		var rslt;
 		try {
 			rslt = JSON2.parse(msg.responseText);
-		} catch(e) {
+		} catch (e) {
 			//alert(unescape(msg.responseText));
-			if (retry<5) {
-				rslt = {"ok":false,"error_code":9,"errorMsg":"Failed due to invalid json"}
+			if (retry < 5) {
+				rslt = {
+					"ok": false,
+					"error_code": 9,
+					"errorMsg": "Failed due to invalid json"
+				}
 			} else {
-				rslt = {"ok":true,"error_code":9,"data":[]};
+				rslt = {
+					"ok": true,
+					"error_code": 9,
+					"data": []
+				};
 			}
 		}
 		var x;
-		if (window.EmulateAjaxError){
-		rslt.ok = false;  
-		rslt.error_code=8;
-	}
-	if (rslt.ok){
-		if (rslt.updateSeed)
-			unsafeWindow.update_seed(rslt.updateSeed);
-		wasSuccess(rslt);
-		return;
-	}
+		if (window.EmulateAjaxError) {
+			rslt.ok = false;
+			rslt.error_code = 8;
+		}
+		if (rslt.ok) {
+			if (rslt.updateSeed)
+				unsafeWindow.update_seed(rslt.updateSeed);
+			wasSuccess(rslt);
+			return;
+		}
 		rslt.errorMsg = unsafeWindow.printLocalError((rslt.error_code || null), (rslt.msg || null), (rslt.feedback || null));
 		/*if ( (x = rslt.errorMsg.indexOf ('<br><br>')) > 0)
       rslt.errorMsg = rslt.errorMsg.substr (0, x-1);*/
@@ -14550,50 +16306,51 @@ function getTrainInfo() {
 	return ret;
 }
 var fortNamesShort = {
-	53: "Crossbows",
-	55: "Trebuchet",
-	60: "Trap",
-	61: "Caltrops",
-	62: "Spiked Barrier",
-}
-// returns {count, maxlevel}
-	function getCityBuilding(cityId, buildingId) {
-		var b = Seed.buildings['city' + cityId];
-		var ret = {
-			count: 0,
-			maxLevel: 0
-		};
-		for (var k in b) {
-			if (b[k] && b[k][0] == buildingId) {
-				++ret.count;
-				if (parseInt(b[k][1]) > ret.maxLevel)
-					ret.maxLevel = parseInt(b[k][1]);
-			}
+		53: "Crossbows",
+		55: "Trebuchet",
+		60: "Trap",
+		61: "Caltrops",
+		62: "Spiked Barrier",
+	}
+	// returns {count, maxlevel}
+
+function getCityBuilding(cityId, buildingId) {
+	var b = Seed.buildings['city' + cityId];
+	var ret = {
+		count: 0,
+		maxLevel: 0
+	};
+	for (var k in b) {
+		if (b[k] && b[k][0] == buildingId) {
+			++ret.count;
+			if (parseInt(b[k][1]) > ret.maxLevel)
+				ret.maxLevel = parseInt(b[k][1]);
 		}
-		return ret;
 	}
+	return ret;
+}
 
-	function getCityPrestige(cityId) {
-		return Seed.cityData.city[cityId].isPrestigeCity;
-	}
-	// example: https://www150.kingdomsofcamelot.com
-	function GetServerId() {
-		var m = /^[a-zA-Z]+([0-9]+)\./.exec(document.location.hostname);
-		if (m)
-			return m[1];
-		return '';
-	}
+function getCityPrestige(cityId) {
+	return Seed.cityData.city[cityId].isPrestigeCity;
+}
+// example: https://www150.kingdomsofcamelot.com
+function GetServerId() {
+	var m = /^[a-zA-Z]+([0-9]+)\./.exec(document.location.hostname);
+	if (m)
+		return m[1];
+	return '';
+}
 
-	function logit(msg) {
-		var serverID = GetServerId();
-		var now = new Date();
-		GM_log(serverID + ' @ ' + now.toTimeString().substring(0, 8) + '.' + now.getMilliseconds() + ': ' + msg);
-	}
+function logit(msg) {
+	var serverID = GetServerId();
+	var now = new Date();
+	GM_log(serverID + ' @ ' + now.toTimeString().substring(0, 8) + '.' + now.getMilliseconds() + ': ' + msg);
+}
 
-	function ById(id) {
-		return document.getElementById(id);
-	}
-	/************ DEBUG WIN *************/
+function ById(id) {
+	return document.getElementById(id);
+}
+/************ DEBUG WIN *************/
 var debugWin = {
 	popDebug: null,
 	dbDefaultNot: 'tech,tutorial,items,quests,wilderness,wildDef,buildings,knights,allianceDiplomacies,appFriends,players',
@@ -14724,110 +16481,110 @@ var debugWin = {
 	},
 }
 
-	function saveOptions() {
-		var serverID = GetServerId();
-		GM_setValue('Options_' + serverID, JSON2.stringify(Options));
-	}
+function saveOptions() {
+	var serverID = GetServerId();
+	GM_setValue('Options_' + serverID, JSON2.stringify(Options));
+}
 
-	function readOptions() {
-		var serverID = GetServerId();
-		s = GM_getValue('Options_' + serverID);
-		if (s != null) {
-			opts = JSON2.parse(s);
-			for (k in opts)
-				Options[k] = opts[k];
-		}
+function readOptions() {
+	var serverID = GetServerId();
+	s = GM_getValue('Options_' + serverID);
+	if (s != null) {
+		opts = JSON2.parse(s);
+		for (k in opts)
+			Options[k] = opts[k];
 	}
+}
 
-	function readGlobalOptions() {
-		GlobalOptions = JSON2.parse(GM_getValue('Options_??', '{}'));
-	}
+function readGlobalOptions() {
+	GlobalOptions = JSON2.parse(GM_getValue('Options_??', '{}'));
+}
 
-	function saveColors() {
-		var serverID = GetServerId();
-		GM_setValue('Colors_' + serverID, JSON2.stringify(Colors));
-	}
+function saveColors() {
+	var serverID = GetServerId();
+	GM_setValue('Colors_' + serverID, JSON2.stringify(Colors));
+}
 
-	function readColors() {
-		var serverID = GetServerId();
-		s = GM_getValue('Colors_' + serverID);
+function readColors() {
+	var serverID = GetServerId();
+	s = GM_getValue('Colors_' + serverID);
+	if (s != null) {
+		opts = JSON2.parse(s);
+		for (k in opts)
+			Colors[k] = opts[k];
+	} else {
+		s = GM_getValue('Colors');
 		if (s != null) {
 			opts = JSON2.parse(s);
 			for (k in opts)
 				Colors[k] = opts[k];
-		} else {
-			s = GM_getValue('Colors');
-			if (s != null) {
-				opts = JSON2.parse(s);
-				for (k in opts)
-					Colors[k] = opts[k];
+		}
+	}
+}
+
+function readAutoTrainOptions() {
+	var serverID = GetServerId();
+	s = GM_getValue('AutoTrainOptions_' + serverID);
+	if (s != null) {
+		opts = JSON2.parse(s);
+		for (k in opts) {
+			if (AutoTrainOptions[k] != undefined) {
+				if (matTypeof(opts[k]) == 'object') {
+					for (kk in opts[k])
+						if (AutoTrainOptions[k][kk] != undefined)
+							AutoTrainOptions[k][kk] = opts[k][kk];
+				} else
+					AutoTrainOptions[k] = opts[k];
 			}
 		}
 	}
+}
 
-	function readAutoTrainOptions() {
-		var serverID = GetServerId();
-		s = GM_getValue('AutoTrainOptions_' + serverID);
-		if (s != null) {
-			opts = JSON2.parse(s);
-			for (k in opts) {
-				if (AutoTrainOptions[k] != undefined) {
-					if (matTypeof(opts[k]) == 'object') {
-						for (kk in opts[k])
-							if (AutoTrainOptions[k][kk] != undefined)
-								AutoTrainOptions[k][kk] = opts[k][kk];
-					} else
-						AutoTrainOptions[k] = opts[k];
-				}
+function saveAutoTrainOptions() {
+	var serverID = GetServerId();
+	GM_setValue('AutoTrainOptions_' + serverID, JSON2.stringify(AutoTrainOptions));
+}
+
+function readIRCOptions() {
+	var serverID = GetServerId();
+	s = localStorage.getItem('IRCOptions_' + serverID);
+	if (s != null) {
+		opts = JSON2.parse(s);
+		for (k in opts) {
+			if (IRCOptions[k] != undefined) {
+				if (matTypeof(opts[k]) == 'object') {
+					for (kk in opts[k])
+						if (IRCOptions[k][kk] != undefined)
+							IRCOptions[k][kk] = opts[k][kk];
+				} else
+					IRCOptions[k] = opts[k];
 			}
 		}
 	}
+}
 
-	function saveAutoTrainOptions() {
-		var serverID = GetServerId();
-		GM_setValue('AutoTrainOptions_' + serverID, JSON2.stringify(AutoTrainOptions));
-	}
+function saveIRCOptions() {
+	var serverID = GetServerId();
+	localStorage.setItem('IRCOptions_' + serverID, JSON2.stringify(IRCOptions));
+}
 
-	function readIRCOptions() {
-		var serverID = GetServerId();
-		s = localStorage.getItem('IRCOptions_' + serverID);
-		if (s != null) {
-			opts = JSON2.parse(s);
-			for (k in opts) {
-				if (IRCOptions[k] != undefined) {
-					if (matTypeof(opts[k]) == 'object') {
-						for (kk in opts[k])
-							if (IRCOptions[k][kk] != undefined)
-								IRCOptions[k][kk] = opts[k][kk];
-					} else
-						IRCOptions[k] = opts[k];
-				}
-			}
+function readChatIconsOptions() {
+	var serverID = GetServerId();
+	s = GM_getValue('ChatIcons_' + serverID);
+	if (s != null) {
+		opts = JSON2.parse(s);
+		for (k in opts) {
+			ChatIcons[k] = opts[k];
 		}
 	}
+}
 
-	function saveIRCOptions() {
-		var serverID = GetServerId();
-		localStorage.setItem('IRCOptions_' + serverID, JSON2.stringify(IRCOptions));
-	}
-
-	function readChatIconsOptions() {
-		var serverID = GetServerId();
-		s = GM_getValue('ChatIcons_' + serverID);
-		if (s != null) {
-			opts = JSON2.parse(s);
-			for (k in opts) {
-				ChatIcons[k] = opts[k];
-			}
-		}
-	}
-
-	function saveChatIconsOptions() {
-		var serverID = GetServerId();
-		GM_setValue('ChatIcons_' + serverID, JSON2.stringify(ChatIcons));
-	}
-	/***
-	 ***/
+function saveChatIconsOptions() {
+	var serverID = GetServerId();
+	GM_setValue('ChatIcons_' + serverID, JSON2.stringify(ChatIcons));
+}
+/***
+ ***/
 var myServers = { // incomplete, untested
 	serverlist: null,
 	get: function (notify) {
@@ -15180,350 +16937,351 @@ function htmlTitleLine(msg) {
 	return '<TABLE width=100% cellspacing=0><TR><TD style="padding:0px" width=50%><HR></td><TD style="padding:0px">[ ' + msg + ' ]</td><TD style="padding:0px" width=50%><HR></td></tr></table>';
 }
 var WinManager = {
-	wins: {}, // prefix : CPopup obj
-	get: function (prefix) {
-		var t = WinManager;
-		return t.wins[prefix];
-	},
-	add: function (prefix, pop) {
-		var t = WinManager;
-		t.wins[prefix] = pop;
-		if (uW.cpopupWins == null)
-			uW.cpopupWins = {};
-		uW.cpopupWins[prefix] = pop;
-	},
-	delete: function (prefix) {
-		var t = WinManager;
-		delete t.wins[prefix];
-		delete uW.cpopupWins[prefix];
-	}
-}
-// creates a 'popup' div
-// prefix must be a unique (short) name for the popup window
-	function CPopup(prefix, x, y, width, height, enableDrag, onClose) {
-		var pop = WinManager.get(prefix);
-		if (pop) {
-			pop.show(false);
-			return pop;
+		wins: {}, // prefix : CPopup obj
+		get: function (prefix) {
+			var t = WinManager;
+			return t.wins[prefix];
+		},
+		add: function (prefix, pop) {
+			var t = WinManager;
+			t.wins[prefix] = pop;
+			if (uW.cpopupWins == null)
+				uW.cpopupWins = {};
+			uW.cpopupWins[prefix] = pop;
+		},
+		delete: function (prefix) {
+			var t = WinManager;
+			delete t.wins[prefix];
+			delete uW.cpopupWins[prefix];
 		}
-		this.BASE_ZINDEX = 111111;
-		// protos ...
-		this.show = show;
-		this.toggleHide = toggleHide;
-		this.getTopDiv = getTopDiv;
-		this.getMainDiv = getMainDiv;
-		this.getLayer = getLayer;
-		this.setLayer = setLayer;
-		this.setEnableDrag = setEnableDrag;
-		this.getLocation = getLocation;
-		this.setLocation = setLocation;
-		this.focusMe = focusMe;
-		this.unfocusMe = unfocusMe;
-		this.centerMe = centerMe;
-		this.destroy = destroy;
-		// object vars ...
-		this.div = document.createElement('div');
-		this.prefix = prefix;
-		this.onClose = onClose;
-		var t = this;
-		this.div.className = 'CPopup ' + prefix + '_CPopup';
-		this.div.id = prefix + '_outer';
-		this.div.style.background = "#fff";
-		this.div.style.zIndex = this.BASE_ZINDEX // KOC modal is 100210 ?
-		this.div.style.display = 'none';
-		this.div.style.width = width + 'px';
-		this.div.style.height = height + 'px';
-		this.div.style.position = "absolute";
-		this.div.style.top = y + 'px';
-		this.div.style.left = x + 'px';
-		if (CPopUpTopClass == null)
-			topClass = 'CPopupTop ' + prefix + '_CPopupTop';
-		else
-			topClass = CPopUpTopClass + ' ' + prefix + '_' + CPopUpTopClass;
-		var m = '<TABLE cellspacing=0 width=100% height=100%><TR id="' + prefix + '_bar" class="' + topClass + '"><TD width=99% valign=bottom><SPAN id="' + prefix + '_top"></span></td>\
+	}
+	// creates a 'popup' div
+	// prefix must be a unique (short) name for the popup window
+
+function CPopup(prefix, x, y, width, height, enableDrag, onClose) {
+	var pop = WinManager.get(prefix);
+	if (pop) {
+		pop.show(false);
+		return pop;
+	}
+	this.BASE_ZINDEX = 111111;
+	// protos ...
+	this.show = show;
+	this.toggleHide = toggleHide;
+	this.getTopDiv = getTopDiv;
+	this.getMainDiv = getMainDiv;
+	this.getLayer = getLayer;
+	this.setLayer = setLayer;
+	this.setEnableDrag = setEnableDrag;
+	this.getLocation = getLocation;
+	this.setLocation = setLocation;
+	this.focusMe = focusMe;
+	this.unfocusMe = unfocusMe;
+	this.centerMe = centerMe;
+	this.destroy = destroy;
+	// object vars ...
+	this.div = document.createElement('div');
+	this.prefix = prefix;
+	this.onClose = onClose;
+	var t = this;
+	this.div.className = 'CPopup ' + prefix + '_CPopup';
+	this.div.id = prefix + '_outer';
+	this.div.style.background = "#fff";
+	this.div.style.zIndex = this.BASE_ZINDEX // KOC modal is 100210 ?
+	this.div.style.display = 'none';
+	this.div.style.width = width + 'px';
+	this.div.style.height = height + 'px';
+	this.div.style.position = "absolute";
+	this.div.style.top = y + 'px';
+	this.div.style.left = x + 'px';
+	if (CPopUpTopClass == null)
+		topClass = 'CPopupTop ' + prefix + '_CPopupTop';
+	else
+		topClass = CPopUpTopClass + ' ' + prefix + '_' + CPopUpTopClass;
+	var m = '<TABLE cellspacing=0 width=100% height=100%><TR id="' + prefix + '_bar" class="' + topClass + '"><TD width=99% valign=bottom><SPAN id="' + prefix + '_top"></span></td>\
       <TD id=' + prefix + '_X align=right valign=middle onmouseover="this.style.cursor=\'pointer\'" style="color:#fff; background:#333; font-weight:bold; font-size:14px; padding:0px 5px; -moz-border-radius-topright: 20px;">x</td></tr>\
       <TR><TD height=100% valign=top class="CPopMain ' + prefix + '_CPopMain" colspan=2 id="' + prefix + '_main"></td></tr></table>';
-		document.body.appendChild(this.div);
-		this.div.innerHTML = m;
-		document.getElementById(prefix + '_X').addEventListener('click', e_XClose, false);
-		this.dragger = new CWinDrag(document.getElementById(prefix + '_bar'), this.div, enableDrag);
-		this.div.addEventListener('mousedown', e_divClicked, false);
-		WinManager.add(prefix, this);
+	document.body.appendChild(this.div);
+	this.div.innerHTML = m;
+	document.getElementById(prefix + '_X').addEventListener('click', e_XClose, false);
+	this.dragger = new CWinDrag(document.getElementById(prefix + '_bar'), this.div, enableDrag);
+	this.div.addEventListener('mousedown', e_divClicked, false);
+	WinManager.add(prefix, this);
 
-		function e_divClicked() {
+	function e_divClicked() {
+		t.focusMe();
+	}
+
+	function e_XClose() {
+		t.show(false);
+		if (t.onClose != null)
+			t.onClose();
+	}
+
+	function focusMe() {
+		t.setLayer(5);
+		for (k in uW.cpopupWins) {
+			if (k != t.prefix)
+				uW.cpopupWins[k].unfocusMe();
+		}
+	}
+
+	function unfocusMe() {
+		t.setLayer(-5);
+	}
+
+	function getLocation() {
+		return {
+			x: parseInt(this.div.style.left),
+			y: parseInt(this.div.style.top)
+		};
+	}
+
+	function setLocation(loc) {
+		t.div.style.left = loc.x + 'px';
+		t.div.style.top = loc.y + 'px';
+	}
+
+	function destroy() {
+		document.body.removeChild(t.div);
+		WinManager.delete(t.prefix);
+	}
+
+	function centerMe(parent) {
+		if (parent == null) {
+			var coords = getClientCoords(document.body);
+		} else
+			var coords = getClientCoords(parent);
+		var x = ((coords.width - parseInt(t.div.style.width)) / 2) + coords.x;
+		var y = ((coords.height - parseInt(t.div.style.height)) / 2) + coords.y;
+		if (x < 0)
+			x = 0;
+		if (y < 0)
+			y = 0;
+		t.div.style.left = x + 'px';
+		t.div.style.top = y + 'px';
+	}
+
+	function setEnableDrag(tf) {
+		t.dragger.setEnable(tf);
+	}
+
+	function setLayer(zi) {
+		t.div.style.zIndex = '' + (this.BASE_ZINDEX + zi);
+	}
+
+	function getLayer() {
+		return parseInt(t.div.style.zIndex) - this.BASE_ZINDEX;
+	}
+
+	function getTopDiv() {
+		return document.getElementById(this.prefix + '_top');
+	}
+
+	function getMainDiv() {
+		return document.getElementById(this.prefix + '_main');
+	}
+
+	function show(tf) {
+		if (tf) {
+			t.div.style.display = 'block';
 			t.focusMe();
+		} else {
+			t.div.style.display = 'none';
 		}
-
-		function e_XClose() {
-			t.show(false);
-			if (t.onClose != null)
-				t.onClose();
-		}
-
-		function focusMe() {
-			t.setLayer(5);
-			for (k in uW.cpopupWins) {
-				if (k != t.prefix)
-					uW.cpopupWins[k].unfocusMe();
-			}
-		}
-
-		function unfocusMe() {
-			t.setLayer(-5);
-		}
-
-		function getLocation() {
-			return {
-				x: parseInt(this.div.style.left),
-				y: parseInt(this.div.style.top)
-			};
-		}
-
-		function setLocation(loc) {
-			t.div.style.left = loc.x + 'px';
-			t.div.style.top = loc.y + 'px';
-		}
-
-		function destroy() {
-			document.body.removeChild(t.div);
-			WinManager.delete(t.prefix);
-		}
-
-		function centerMe(parent) {
-			if (parent == null) {
-				var coords = getClientCoords(document.body);
-			} else
-				var coords = getClientCoords(parent);
-			var x = ((coords.width - parseInt(t.div.style.width)) / 2) + coords.x;
-			var y = ((coords.height - parseInt(t.div.style.height)) / 2) + coords.y;
-			if (x < 0)
-				x = 0;
-			if (y < 0)
-				y = 0;
-			t.div.style.left = x + 'px';
-			t.div.style.top = y + 'px';
-		}
-
-		function setEnableDrag(tf) {
-			t.dragger.setEnable(tf);
-		}
-
-		function setLayer(zi) {
-			t.div.style.zIndex = '' + (this.BASE_ZINDEX + zi);
-		}
-
-		function getLayer() {
-			return parseInt(t.div.style.zIndex) - this.BASE_ZINDEX;
-		}
-
-		function getTopDiv() {
-			return document.getElementById(this.prefix + '_top');
-		}
-
-		function getMainDiv() {
-			return document.getElementById(this.prefix + '_main');
-		}
-
-		function show(tf) {
-			if (tf) {
-				t.div.style.display = 'block';
-				t.focusMe();
-			} else {
-				t.div.style.display = 'none';
-			}
-			return tf;
-		}
-
-		function toggleHide(t) {
-			if (t.div.style.display == 'block') {
-				return t.show(false);
-			} else {
-				return t.show(true);
-			}
-		}
+		return tf;
 	}
 
-	function CWinDrag(clickableElement, movingDiv, enabled) {
-		var t = this;
-		this.setEnable = setEnable;
-		this.setBoundRect = setBoundRect;
-		this.debug = debug;
-		this.dispEvent = dispEvent;
-		this.lastX = null;
-		this.lastY = null;
-		this.enabled = true;
-		this.moving = false;
-		this.theDiv = movingDiv;
-		this.body = document.body;
-		this.ce = clickableElement;
-		this.moveHandler = new CeventMove(this).handler;
-		this.outHandler = new CeventOut(this).handler;
-		this.upHandler = new CeventUp(this).handler;
-		this.downHandler = new CeventDown(this).handler;
-		this.clickableRect = null;
-		this.boundRect = null;
+	function toggleHide(t) {
+		if (t.div.style.display == 'block') {
+			return t.show(false);
+		} else {
+			return t.show(true);
+		}
+	}
+}
+
+function CWinDrag(clickableElement, movingDiv, enabled) {
+	var t = this;
+	this.setEnable = setEnable;
+	this.setBoundRect = setBoundRect;
+	this.debug = debug;
+	this.dispEvent = dispEvent;
+	this.lastX = null;
+	this.lastY = null;
+	this.enabled = true;
+	this.moving = false;
+	this.theDiv = movingDiv;
+	this.body = document.body;
+	this.ce = clickableElement;
+	this.moveHandler = new CeventMove(this).handler;
+	this.outHandler = new CeventOut(this).handler;
+	this.upHandler = new CeventUp(this).handler;
+	this.downHandler = new CeventDown(this).handler;
+	this.clickableRect = null;
+	this.boundRect = null;
+	this.bounds = null;
+	this.enabled = false;
+	if (enabled == null)
+		enabled = true;
+	this.setEnable(enabled);
+
+	function setBoundRect(b) { // this rect (client coords) will not go outside of current body
+		this.boundRect = boundRect;
 		this.bounds = null;
-		this.enabled = false;
-		if (enabled == null)
-			enabled = true;
-		this.setEnable(enabled);
+	}
 
-		function setBoundRect(b) { // this rect (client coords) will not go outside of current body
-			this.boundRect = boundRect;
-			this.bounds = null;
+	function setEnable(enable) {
+		if (enable == t.enabled)
+			return;
+		if (enable) {
+			clickableElement.addEventListener('mousedown', t.downHandler, false);
+			t.body.addEventListener('mouseup', t.upHandler, false);
+		} else {
+			clickableElement.removeEventListener('mousedown', t.downHandler, false);
+			t.body.removeEventListener('mouseup', t.upHandler, false);
 		}
+		t.enabled = enable;
+	}
 
-		function setEnable(enable) {
-			if (enable == t.enabled)
-				return;
-			if (enable) {
-				clickableElement.addEventListener('mousedown', t.downHandler, false);
-				t.body.addEventListener('mouseup', t.upHandler, false);
-			} else {
-				clickableElement.removeEventListener('mousedown', t.downHandler, false);
-				t.body.removeEventListener('mouseup', t.upHandler, false);
+	function CeventDown(that) {
+		this.handler = handler;
+		var t = that;
+
+		function handler(me) {
+			if (DEBUG_TRACE_DRAG) t.dispEvent('eventDOWN', me);
+			if (t.bounds == null) {
+				t.clickableRect = getClientCoords(clickableElement);
+				t.bodyRect = getClientCoords(document.body);
+				if (t.boundRect == null)
+					t.boundRect = t.clickableRect;
+				if (DEBUG_TRACE_DRAG) logit('Clickable rect: ' + inspect(t.clickableRect, 3, 1));
+				if (DEBUG_TRACE_DRAG) logit('Body rect: ' + inspect(t.bodyRect, 3, 1));
+				if (DEBUG_TRACE_DRAG) logit('Bound rect: ' + inspect(t.boundRect, 3, 1));
+				t.bounds = {
+					top: 10 - t.clickableRect.height,
+					bot: t.bodyRect.height - 25,
+					left: 40 - t.clickableRect.width,
+					right: t.bodyRect.width - 25
+				};
+				if (DEBUG_TRACE_DRAG) logit("BOUNDS: " + inspect(t.bounds, 8, 10));
 			}
-			t.enabled = enable;
-		}
-
-		function CeventDown(that) {
-			this.handler = handler;
-			var t = that;
-
-			function handler(me) {
-				if (DEBUG_TRACE_DRAG) t.dispEvent('eventDOWN', me);
-				if (t.bounds == null) {
-					t.clickableRect = getClientCoords(clickableElement);
-					t.bodyRect = getClientCoords(document.body);
-					if (t.boundRect == null)
-						t.boundRect = t.clickableRect;
-					if (DEBUG_TRACE_DRAG) logit('Clickable rect: ' + inspect(t.clickableRect, 3, 1));
-					if (DEBUG_TRACE_DRAG) logit('Body rect: ' + inspect(t.bodyRect, 3, 1));
-					if (DEBUG_TRACE_DRAG) logit('Bound rect: ' + inspect(t.boundRect, 3, 1));
-					t.bounds = {
-						top: 10 - t.clickableRect.height,
-						bot: t.bodyRect.height - 25,
-						left: 40 - t.clickableRect.width,
-						right: t.bodyRect.width - 25
-					};
-					if (DEBUG_TRACE_DRAG) logit("BOUNDS: " + inspect(t.bounds, 8, 10));
-				}
-				if (me.button == 0 && t.enabled) {
-					t.body.addEventListener('mousemove', t.moveHandler, true);
-					t.body.addEventListener('mouseout', t.outHandler, true);
-					t.lastX = me.clientX;
-					t.lastY = me.clientY;
-					t.moving = true;
-				}
+			if (me.button == 0 && t.enabled) {
+				t.body.addEventListener('mousemove', t.moveHandler, true);
+				t.body.addEventListener('mouseout', t.outHandler, true);
+				t.lastX = me.clientX;
+				t.lastY = me.clientY;
+				t.moving = true;
 			}
 		}
+	}
 
-		function CeventUp(that) {
-			this.handler = handler;
-			var t = that;
+	function CeventUp(that) {
+		this.handler = handler;
+		var t = that;
 
-			function handler(me) {
-				if (DEBUG_TRACE_DRAG) t.dispEvent('eventUP', me);
-				if (me.button == 0 && t.moving)
+		function handler(me) {
+			if (DEBUG_TRACE_DRAG) t.dispEvent('eventUP', me);
+			if (me.button == 0 && t.moving)
+				_doneMoving(t);
+		}
+	}
+
+	function _doneMoving(t) {
+		if (DEBUG_TRACE_DRAG) logit('doneMoving');
+		t.body.removeEventListener('mousemove', t.moveHandler, true);
+		t.body.removeEventListener('mouseout', t.outHandler, true);
+		t.moving = false;
+	}
+
+	function CeventOut(that) {
+		this.handler = handler;
+		var t = that;
+
+		function handler(me) {
+			//t.dispEvent ('eventOUT', me);
+			if (me.button == 0) {
+				t.moveHandler(me);
+			}
+		}
+	}
+
+	function CeventMove(that) {
+		this.handler = handler;
+		var t = that;
+
+		function handler(me) {
+			if (t.enabled && !t.wentOut) {
+				//t.dispEvent ('eventMOVE', me);
+				var newTop = parseInt(t.theDiv.style.top) + me.clientY - t.lastY;
+				var newLeft = parseInt(t.theDiv.style.left) + me.clientX - t.lastX;
+				if (newTop < t.bounds.top) { // if out-of-bounds...
+					newTop = t.bounds.top;
 					_doneMoving(t);
-			}
-		}
-
-		function _doneMoving(t) {
-			if (DEBUG_TRACE_DRAG) logit('doneMoving');
-			t.body.removeEventListener('mousemove', t.moveHandler, true);
-			t.body.removeEventListener('mouseout', t.outHandler, true);
-			t.moving = false;
-		}
-
-		function CeventOut(that) {
-			this.handler = handler;
-			var t = that;
-
-			function handler(me) {
-				//t.dispEvent ('eventOUT', me);
-				if (me.button == 0) {
-					t.moveHandler(me);
+				} else if (newLeft < t.bounds.left) {
+					newLeft = t.bounds.left;
+					_doneMoving(t);
+				} else if (newLeft > t.bounds.right) {
+					newLeft = t.bounds.right;
+					_doneMoving(t);
+				} else if (newTop > t.bounds.bot) {
+					newTop = t.bounds.bot;
+					_doneMoving(t);
 				}
+				t.theDiv.style.top = newTop + 'px';
+				t.theDiv.style.left = newLeft + 'px';
+				t.lastX = me.clientX;
+				t.lastY = me.clientY;
 			}
-		}
-
-		function CeventMove(that) {
-			this.handler = handler;
-			var t = that;
-
-			function handler(me) {
-				if (t.enabled && !t.wentOut) {
-					//t.dispEvent ('eventMOVE', me);
-					var newTop = parseInt(t.theDiv.style.top) + me.clientY - t.lastY;
-					var newLeft = parseInt(t.theDiv.style.left) + me.clientX - t.lastX;
-					if (newTop < t.bounds.top) { // if out-of-bounds...
-						newTop = t.bounds.top;
-						_doneMoving(t);
-					} else if (newLeft < t.bounds.left) {
-						newLeft = t.bounds.left;
-						_doneMoving(t);
-					} else if (newLeft > t.bounds.right) {
-						newLeft = t.bounds.right;
-						_doneMoving(t);
-					} else if (newTop > t.bounds.bot) {
-						newTop = t.bounds.bot;
-						_doneMoving(t);
-					}
-					t.theDiv.style.top = newTop + 'px';
-					t.theDiv.style.left = newLeft + 'px';
-					t.lastX = me.clientX;
-					t.lastY = me.clientY;
-				}
-			}
-		}
-
-		function debug(msg, e) {
-			logit("*************** " + msg + " ****************");
-			logit('clientWidth, Height: ' + e.clientWidth + ',' + e.clientHeight);
-			logit('offsetLeft, Top, Width, Height (parent): ' + e.offsetLeft + ',' + e.offsetTop + ',' + e.offsetWidth + ',' + e.offsetHeight + ' (' + e.offsetParent + ')');
-			logit('scrollLeft, Top, Width, Height: ' + e.scrollLeft + ',' + e.scrollTop + ',' + e.scrollWidth + ',' + e.scrollHeight);
-		}
-
-		function dispEvent(msg, me) {
-			logit(msg + ' Button:' + me.button + ' Screen:' + me.screenX + ',' + me.screenY + ' client:' + me.clientX + ',' + me.clientY + ' rTarget: ' + me.relatedTarget);
 		}
 	}
 
-	function inspect(obj, maxLevels, level, doFunctions) {
-		var str = '',
-			type, msg;
-		if (level == null) level = 0;
-		if (maxLevels == null) maxLevels = 1;
-		if (maxLevels < 1)
-			return 'Inspect Error: Levels number must be > 0';
-		if (obj == null)
-			return 'ERROR: Object is NULL\n';
-		var indent = '';
-		for (var i = 0; i < level; i++)
-			indent += '  ';
-		for (property in obj) {
-			try {
-				type = matTypeof(obj[property]);
-				if (doFunctions == true && (type == 'function')) {
-					str += indent + '(' + type + ') ' + property + "[FUNCTION]\n";
-				} else if (type != 'function') {
-					str += indent + '(' + type + ') ' + property + ((obj[property] == null) ? (': null') : ('')) + ' = ' + obj[property] + "\n";
-				}
-				if ((type == 'object' || type == 'array') && (obj[property] != null) && (level + 1 < maxLevels))
-					str += inspect(obj[property], maxLevels, level + 1, doFunctions); // recurse
-			} catch (err) {
-				// Is there some properties in obj we can't access? Print it red.
-				if (typeof (err) == 'string') msg = err;
-				else if (err.message) msg = err.message;
-				else if (err.description) msg = err.description;
-				else msg = 'Unknown';
-				str += '(Error) ' + property + ': ' + msg + "\n";
-			}
-		}
-		str += "\n";
-		return str;
+	function debug(msg, e) {
+		logit("*************** " + msg + " ****************");
+		logit('clientWidth, Height: ' + e.clientWidth + ',' + e.clientHeight);
+		logit('offsetLeft, Top, Width, Height (parent): ' + e.offsetLeft + ',' + e.offsetTop + ',' + e.offsetWidth + ',' + e.offsetHeight + ' (' + e.offsetParent + ')');
+		logit('scrollLeft, Top, Width, Height: ' + e.scrollLeft + ',' + e.scrollTop + ',' + e.scrollWidth + ',' + e.scrollHeight);
 	}
+
+	function dispEvent(msg, me) {
+		logit(msg + ' Button:' + me.button + ' Screen:' + me.screenX + ',' + me.screenY + ' client:' + me.clientX + ',' + me.clientY + ' rTarget: ' + me.relatedTarget);
+	}
+}
+
+function inspect(obj, maxLevels, level, doFunctions) {
+	var str = '',
+		type, msg;
+	if (level == null) level = 0;
+	if (maxLevels == null) maxLevels = 1;
+	if (maxLevels < 1)
+		return 'Inspect Error: Levels number must be > 0';
+	if (obj == null)
+		return 'ERROR: Object is NULL\n';
+	var indent = '';
+	for (var i = 0; i < level; i++)
+		indent += '  ';
+	for (property in obj) {
+		try {
+			type = matTypeof(obj[property]);
+			if (doFunctions == true && (type == 'function')) {
+				str += indent + '(' + type + ') ' + property + "[FUNCTION]\n";
+			} else if (type != 'function') {
+				str += indent + '(' + type + ') ' + property + ((obj[property] == null) ? (': null') : ('')) + ' = ' + obj[property] + "\n";
+			}
+			if ((type == 'object' || type == 'array') && (obj[property] != null) && (level + 1 < maxLevels))
+				str += inspect(obj[property], maxLevels, level + 1, doFunctions); // recurse
+		} catch (err) {
+			// Is there some properties in obj we can't access? Print it red.
+			if (typeof (err) == 'string') msg = err;
+			else if (err.message) msg = err.message;
+			else if (err.description) msg = err.description;
+			else msg = 'Unknown';
+			str += '(Error) ' + property + ': ' + msg + "\n";
+		}
+	}
+	str += "\n";
+	return str;
+}
 Array.prototype.compare = function (testArr) {
 	if (this.length != testArr.length) return false;
 	for (var i = 0; i < testArr.length; i++) {
@@ -15841,118 +17599,447 @@ Tabs.Tower = {
 	fixAvailable: {},
 	tabDisabled: !ENABLE_ALERT_TO_CHAT,
 	Providers: {
-	0: { 'country': "--Country--", 'provider': "--Provider--" },
-        1: { 'country': "AUSTRALIA", 'provider': "T-Mobile" },
-        2: { 'country': "AUSTRALIA", 'provider': "Optus Zoo" },
-        3: { 'country': "AUSTRIA", 'provider': "T-Mobile" },
-        4: { 'country': "BULGARIA", 'provider': "Mtel" },
-        5: { 'country': "BULGARIA", 'provider': "Globul" },
-        6: { 'country': "CANADA", 'provider': "Aliant" },
-        7: { 'country': "CANADA", 'provider': "Bell Mobility" },
-        8: { 'country': "CANADA", 'provider': "Fido" },
-        9: { 'country': "CANADA", 'provider': "MTS Mobility" },
-        10: { 'country': "CANADA", 'provider': "Rogers Wireless" },
-        11: { 'country': "CANADA", 'provider': "Sasktel Mobility" },
-        12: { 'country': "CANADA", 'provider': "Telus" },
-        13: { 'country': "CANADA", 'provider': "Virgin Mobile" },
-        14: { 'country': "CANADA", 'provider': "Presidents Choice" },
-        15: { 'country': "GERMANY", 'provider': "T-Mobile" },
-        16: { 'country': "GERMANY", 'provider': "Vodafone" },
-        17: { 'country': "GERMANY", 'provider': "O2" },
-        18: { 'country': "GERMANY", 'provider': "E-Plus" },
-        19: { 'country': "ICELAND", 'provider': "OgVodafone" },
-        20: { 'country': "ICELAND", 'provider': "Siminn" },
-        21: { 'country': "INDIA", 'provider': "Andhra Pradesh AirTel" },
-        22: { 'country': "INDIA", 'provider': "Andhra Pradesh Idea Cellular" },
-        23: { 'country': "INDIA", 'provider': "Chennal Skycell Airtel" },
-        24: { 'country': "INDIA", 'provider': "Chennel RPG Cellular" },
-        25: { 'country': "INDIA", 'provider': "Delhi Airtel" },
-        26: { 'country': "INDIA", 'provider': "Delhi Hutch" },
-        27: { 'country': "INDIA", 'provider': "Gujarat Idea Cellular" },
-        28: { 'country': "INDIA", 'provider': "Gujaret Airtel" },
-        29: { 'country': "INDIA", 'provider': "Gujaret Celforce" },
-        30: { 'country': "INDIA", 'provider': "Goa Airtel" },
-        31: { 'country': "INDIA", 'provider': "Goa BPL Mobile" },
-        32: { 'country': "INDIA", 'provider': "Goa Idea Cellular" },
-        33: { 'country': "INDIA", 'provider': "Haryana Airtel" },
-        34: { 'country': "INDIA", 'provider': "Haryana Escotel" },
-        35: { 'country': "INDIA", 'provider': "Himachal Pradesh Airtel" },
-        36: { 'country': "INDIA", 'provider': "Karnataka Airtel" },
-        37: { 'country': "INDIA", 'provider': "Kerala Airtel" },
-        38: { 'country': "INDIA", 'provider': "Kerala Escotel" },
-        39: { 'country': "INDIA", 'provider': "Kerala BPL Mobile" },
-        40: { 'country': "INDIA", 'provider': "Kolkata Airtel" },
-        41: { 'country': "INDIA", 'provider': "Madhya Pradesh Airtel" },
-        42: { 'country': "INDIA", 'provider': "Maharashtra Airtel" },
-        43: { 'country': "INDIA", 'provider': "Maharashtra BPL Mobile" },
-        44: { 'country': "INDIA", 'provider': "Maharashtra Idea Cellular" },
-        45: { 'country': "INDIA", 'provider': "Mumbai Airtel" },
-        46: { 'country': "INDIA", 'provider': "Mumbai BPL Mobile" },
-        47: { 'country': "INDIA", 'provider': "Punjab Airtel" },
-        48: { 'country': "INDIA", 'provider': "Pondicherry BPL Mobile" },
-        49: { 'country': "INDIA", 'provider': "Tamil Nadu Airtel" },
-        50: { 'country': "INDIA", 'provider': "Tamil Nadu BPL Mobile" },
-        51: { 'country': "INDIA", 'provider': "Tamil Nadu Aircel" },
-        52: { 'country': "INDIA", 'provider': "Uttar Pradesh West Escotel" },
-        53: { 'country': "IRELAND", 'provider': "Meteor" },
-        54: { 'country': "IRELAND", 'provider': "Meteor MMS" },
-        55: { 'country': "ITALY", 'provider': "TIM" },
-        56: { 'country': "ITALY", 'provider': "Vodafone" },
-        57: { 'country': "JAPAN", 'provider': "AU by KDDI" },
-        58: { 'country': "JAPAN", 'provider': "NTT DoCoMo" },
-        59: { 'country': "JAPAN", 'provider': "Vodafone Chuugoku/Western" },
-        60: { 'country': "JAPAN", 'provider': "Vodafone Hokkaido" },
-        61: { 'country': "JAPAN", 'provider': "Vodafone Hokuriko/Central North" },
-        62: { 'country': "JAPAN", 'provider': "Vodafone Kansai/West, including Osaka" },
-        63: { 'country': "JAPAN", 'provider': "Vodafone Kanto/Koushin/East including Tokyo" },
-        64: { 'country': "JAPAN", 'provider': "Vodafone Kyuushu/Okinawa" },
-        65: { 'country': "JAPAN", 'provider': "Vodafone Shikoku" },
-        66: { 'country': "JAPAN", 'provider': "Vodafone Touhoku/Niigata/North" },
-        67: { 'country': "JAPAN", 'provider': "Vodafone Toukai/Central" },
-        68: { 'country': "JAPAN", 'provider': "Willcom" },
-        69: { 'country': "JAPAN", 'provider': "Willcom di" },
-        70: { 'country': "JAPAN", 'provider': "Willcom dj" },
-        71: { 'country': "JAPAN", 'provider': "Willcom dk" },
-        72: { 'country': "NETHERLANDS", 'provider': "T-Mobile" },
-        73: { 'country': "NETHERLANDS", 'provider': "Orange" },
-        74: { 'country': "SINGAPORE", 'provider': "M1" },
-        75: { 'country': "SOUTH AFRICA", 'provider': "Vodacom" },
-        76: { 'country': "SPAIN", 'provider': "Telefonica Movistar" },
-        77: { 'country': "SPAIN", 'provider': "Vodafone" },
-        78: { 'country': "SWEDEN", 'provider': "Tele2" },
-        79: { 'country': "UNITED STATES", 'provider': "Teleflip" },
-        80: { 'country': "UNITED STATES", 'provider': "Alltel" },
-        81: { 'country': "UNITED STATES", 'provider': "Ameritech" },
-        82: { 'country': "UNITED STATES", 'provider': "ATT Wireless" },
-        83: { 'country': "UNITED STATES", 'provider': "Bellsouth" },
-        84: { 'country': "UNITED STATES", 'provider': "Boost" },
-        85: { 'country': "UNITED STATES", 'provider': "CellularOne" },
-        86: { 'country': "UNITED STATES", 'provider': "CellularOne MMS" },
-        87: { 'country': "UNITED STATES", 'provider': "Cingular" },
-        88: { 'country': "UNITED STATES", 'provider': "Edge Wireless" },
-        89: { 'country': "UNITED STATES", 'provider': "Sprint PCS" },
-        90: { 'country': "UNITED STATES", 'provider': "T-Mobile" },
-        91: { 'country': "UNITED STATES", 'provider': "Metro PCS" },
-        92: { 'country': "UNITED STATES", 'provider': "Nextel" },
-        93: { 'country': "UNITED STATES", 'provider': "O2" },
-        94: { 'country': "UNITED STATES", 'provider': "Orange" },
-        95: { 'country': "UNITED STATES", 'provider': "Qwest" },
-        96: { 'country': "UNITED STATES", 'provider': "Rogers Wireless" },
-        97: { 'country': "UNITED STATES", 'provider': "Telus Mobility" },
-        98: { 'country': "UNITED STATES", 'provider': "US Cellular" },
-        99: { 'country': "UNITED STATES", 'provider': "Verizon" },
-        100: { 'country': "UNITED STATES", 'provider': "Virgin Mobile" },
-        101: { 'country': "UNITED KINGDOM", 'provider': "O2 1" },
-        102: { 'country': "UNITED KINGDOM", 'provider': "O2 2" },
-        103: { 'country': "UNITED KINGDOM", 'provider': "Orange" },
-        104: { 'country': "UNITED KINGDOM", 'provider': "T-Mobile" },
-        105: { 'country': "UNITED KINGDOM", 'provider': "Virgin Mobile" },
-        106: { 'country': "UNITED KINGDOM", 'provider': "Vodafone" },
-        107: { 'country': "BELGIUM", 'provider': "mobistar" },
-        108: { 'country': "GERMANY", 'provider': "1und1" },
-        109: { 'country': "UNITED STATES", 'provider': "MyCricket" }
+		0: {
+			'country': "--Country--",
+			'provider': "--Provider--"
+		},
+		1: {
+			'country': "AUSTRALIA",
+			'provider': "T-Mobile"
+		},
+		2: {
+			'country': "AUSTRALIA",
+			'provider': "Optus Zoo"
+		},
+		3: {
+			'country': "AUSTRIA",
+			'provider': "T-Mobile"
+		},
+		4: {
+			'country': "BULGARIA",
+			'provider': "Mtel"
+		},
+		5: {
+			'country': "BULGARIA",
+			'provider': "Globul"
+		},
+		6: {
+			'country': "CANADA",
+			'provider': "Aliant"
+		},
+		7: {
+			'country': "CANADA",
+			'provider': "Bell Mobility"
+		},
+		8: {
+			'country': "CANADA",
+			'provider': "Fido"
+		},
+		9: {
+			'country': "CANADA",
+			'provider': "MTS Mobility"
+		},
+		10: {
+			'country': "CANADA",
+			'provider': "Rogers Wireless"
+		},
+		11: {
+			'country': "CANADA",
+			'provider': "Sasktel Mobility"
+		},
+		12: {
+			'country': "CANADA",
+			'provider': "Telus"
+		},
+		13: {
+			'country': "CANADA",
+			'provider': "Virgin Mobile"
+		},
+		14: {
+			'country': "CANADA",
+			'provider': "Presidents Choice"
+		},
+		15: {
+			'country': "GERMANY",
+			'provider': "T-Mobile"
+		},
+		16: {
+			'country': "GERMANY",
+			'provider': "Vodafone"
+		},
+		17: {
+			'country': "GERMANY",
+			'provider': "O2"
+		},
+		18: {
+			'country': "GERMANY",
+			'provider': "E-Plus"
+		},
+		19: {
+			'country': "ICELAND",
+			'provider': "OgVodafone"
+		},
+		20: {
+			'country': "ICELAND",
+			'provider': "Siminn"
+		},
+		21: {
+			'country': "INDIA",
+			'provider': "Andhra Pradesh AirTel"
+		},
+		22: {
+			'country': "INDIA",
+			'provider': "Andhra Pradesh Idea Cellular"
+		},
+		23: {
+			'country': "INDIA",
+			'provider': "Chennal Skycell Airtel"
+		},
+		24: {
+			'country': "INDIA",
+			'provider': "Chennel RPG Cellular"
+		},
+		25: {
+			'country': "INDIA",
+			'provider': "Delhi Airtel"
+		},
+		26: {
+			'country': "INDIA",
+			'provider': "Delhi Hutch"
+		},
+		27: {
+			'country': "INDIA",
+			'provider': "Gujarat Idea Cellular"
+		},
+		28: {
+			'country': "INDIA",
+			'provider': "Gujaret Airtel"
+		},
+		29: {
+			'country': "INDIA",
+			'provider': "Gujaret Celforce"
+		},
+		30: {
+			'country': "INDIA",
+			'provider': "Goa Airtel"
+		},
+		31: {
+			'country': "INDIA",
+			'provider': "Goa BPL Mobile"
+		},
+		32: {
+			'country': "INDIA",
+			'provider': "Goa Idea Cellular"
+		},
+		33: {
+			'country': "INDIA",
+			'provider': "Haryana Airtel"
+		},
+		34: {
+			'country': "INDIA",
+			'provider': "Haryana Escotel"
+		},
+		35: {
+			'country': "INDIA",
+			'provider': "Himachal Pradesh Airtel"
+		},
+		36: {
+			'country': "INDIA",
+			'provider': "Karnataka Airtel"
+		},
+		37: {
+			'country': "INDIA",
+			'provider': "Kerala Airtel"
+		},
+		38: {
+			'country': "INDIA",
+			'provider': "Kerala Escotel"
+		},
+		39: {
+			'country': "INDIA",
+			'provider': "Kerala BPL Mobile"
+		},
+		40: {
+			'country': "INDIA",
+			'provider': "Kolkata Airtel"
+		},
+		41: {
+			'country': "INDIA",
+			'provider': "Madhya Pradesh Airtel"
+		},
+		42: {
+			'country': "INDIA",
+			'provider': "Maharashtra Airtel"
+		},
+		43: {
+			'country': "INDIA",
+			'provider': "Maharashtra BPL Mobile"
+		},
+		44: {
+			'country': "INDIA",
+			'provider': "Maharashtra Idea Cellular"
+		},
+		45: {
+			'country': "INDIA",
+			'provider': "Mumbai Airtel"
+		},
+		46: {
+			'country': "INDIA",
+			'provider': "Mumbai BPL Mobile"
+		},
+		47: {
+			'country': "INDIA",
+			'provider': "Punjab Airtel"
+		},
+		48: {
+			'country': "INDIA",
+			'provider': "Pondicherry BPL Mobile"
+		},
+		49: {
+			'country': "INDIA",
+			'provider': "Tamil Nadu Airtel"
+		},
+		50: {
+			'country': "INDIA",
+			'provider': "Tamil Nadu BPL Mobile"
+		},
+		51: {
+			'country': "INDIA",
+			'provider': "Tamil Nadu Aircel"
+		},
+		52: {
+			'country': "INDIA",
+			'provider': "Uttar Pradesh West Escotel"
+		},
+		53: {
+			'country': "IRELAND",
+			'provider': "Meteor"
+		},
+		54: {
+			'country': "IRELAND",
+			'provider': "Meteor MMS"
+		},
+		55: {
+			'country': "ITALY",
+			'provider': "TIM"
+		},
+		56: {
+			'country': "ITALY",
+			'provider': "Vodafone"
+		},
+		57: {
+			'country': "JAPAN",
+			'provider': "AU by KDDI"
+		},
+		58: {
+			'country': "JAPAN",
+			'provider': "NTT DoCoMo"
+		},
+		59: {
+			'country': "JAPAN",
+			'provider': "Vodafone Chuugoku/Western"
+		},
+		60: {
+			'country': "JAPAN",
+			'provider': "Vodafone Hokkaido"
+		},
+		61: {
+			'country': "JAPAN",
+			'provider': "Vodafone Hokuriko/Central North"
+		},
+		62: {
+			'country': "JAPAN",
+			'provider': "Vodafone Kansai/West, including Osaka"
+		},
+		63: {
+			'country': "JAPAN",
+			'provider': "Vodafone Kanto/Koushin/East including Tokyo"
+		},
+		64: {
+			'country': "JAPAN",
+			'provider': "Vodafone Kyuushu/Okinawa"
+		},
+		65: {
+			'country': "JAPAN",
+			'provider': "Vodafone Shikoku"
+		},
+		66: {
+			'country': "JAPAN",
+			'provider': "Vodafone Touhoku/Niigata/North"
+		},
+		67: {
+			'country': "JAPAN",
+			'provider': "Vodafone Toukai/Central"
+		},
+		68: {
+			'country': "JAPAN",
+			'provider': "Willcom"
+		},
+		69: {
+			'country': "JAPAN",
+			'provider': "Willcom di"
+		},
+		70: {
+			'country': "JAPAN",
+			'provider': "Willcom dj"
+		},
+		71: {
+			'country': "JAPAN",
+			'provider': "Willcom dk"
+		},
+		72: {
+			'country': "NETHERLANDS",
+			'provider': "T-Mobile"
+		},
+		73: {
+			'country': "NETHERLANDS",
+			'provider': "Orange"
+		},
+		74: {
+			'country': "SINGAPORE",
+			'provider': "M1"
+		},
+		75: {
+			'country': "SOUTH AFRICA",
+			'provider': "Vodacom"
+		},
+		76: {
+			'country': "SPAIN",
+			'provider': "Telefonica Movistar"
+		},
+		77: {
+			'country': "SPAIN",
+			'provider': "Vodafone"
+		},
+		78: {
+			'country': "SWEDEN",
+			'provider': "Tele2"
+		},
+		79: {
+			'country': "UNITED STATES",
+			'provider': "Teleflip"
+		},
+		80: {
+			'country': "UNITED STATES",
+			'provider': "Alltel"
+		},
+		81: {
+			'country': "UNITED STATES",
+			'provider': "Ameritech"
+		},
+		82: {
+			'country': "UNITED STATES",
+			'provider': "ATT Wireless"
+		},
+		83: {
+			'country': "UNITED STATES",
+			'provider': "Bellsouth"
+		},
+		84: {
+			'country': "UNITED STATES",
+			'provider': "Boost"
+		},
+		85: {
+			'country': "UNITED STATES",
+			'provider': "CellularOne"
+		},
+		86: {
+			'country': "UNITED STATES",
+			'provider': "CellularOne MMS"
+		},
+		87: {
+			'country': "UNITED STATES",
+			'provider': "Cingular"
+		},
+		88: {
+			'country': "UNITED STATES",
+			'provider': "Edge Wireless"
+		},
+		89: {
+			'country': "UNITED STATES",
+			'provider': "Sprint PCS"
+		},
+		90: {
+			'country': "UNITED STATES",
+			'provider': "T-Mobile"
+		},
+		91: {
+			'country': "UNITED STATES",
+			'provider': "Metro PCS"
+		},
+		92: {
+			'country': "UNITED STATES",
+			'provider': "Nextel"
+		},
+		93: {
+			'country': "UNITED STATES",
+			'provider': "O2"
+		},
+		94: {
+			'country': "UNITED STATES",
+			'provider': "Orange"
+		},
+		95: {
+			'country': "UNITED STATES",
+			'provider': "Qwest"
+		},
+		96: {
+			'country': "UNITED STATES",
+			'provider': "Rogers Wireless"
+		},
+		97: {
+			'country': "UNITED STATES",
+			'provider': "Telus Mobility"
+		},
+		98: {
+			'country': "UNITED STATES",
+			'provider': "US Cellular"
+		},
+		99: {
+			'country': "UNITED STATES",
+			'provider': "Verizon"
+		},
+		100: {
+			'country': "UNITED STATES",
+			'provider': "Virgin Mobile"
+		},
+		101: {
+			'country': "UNITED KINGDOM",
+			'provider': "O2 1"
+		},
+		102: {
+			'country': "UNITED KINGDOM",
+			'provider': "O2 2"
+		},
+		103: {
+			'country': "UNITED KINGDOM",
+			'provider': "Orange"
+		},
+		104: {
+			'country': "UNITED KINGDOM",
+			'provider': "T-Mobile"
+		},
+		105: {
+			'country': "UNITED KINGDOM",
+			'provider': "Virgin Mobile"
+		},
+		106: {
+			'country': "UNITED KINGDOM",
+			'provider': "Vodafone"
+		},
+		107: {
+			'country': "BELGIUM",
+			'provider': "mobistar"
+		},
+		108: {
+			'country': "GERMANY",
+			'provider': "1und1"
+		},
+		109: {
+			'country': "UNITED STATES",
+			'provider': "MyCricket"
+		}
 	},
-
 	init: function (div) {
 		var t = Tabs.Tower;
 		t.cont = div;
@@ -15985,7 +18072,7 @@ Tabs.Tower = {
 						m += '<option value="' + i + '">' + t.Providers[i].provider + '</option>';
 			}
 			m += '</select></td></tr></table></td></tr></table></td></tr></table>';
-        		m += '<TABLE><TR><TD><BR><B>Extra Features:</b></td></tr>\
+			m += '<TABLE><TR><TD><BR><B>Extra Features:</b></td></tr>\
         		<TR><TD> Use Dove of Peace <INPUT id=verifyDove type=submit value="Press to Use Dove" \> (Opens a confirmation window)</td></tr></table>';
 			t.cont.innerHTML = m;
 			document.getElementById('ptalerttext').addEventListener('change', function (e) {
@@ -16003,7 +18090,7 @@ Tabs.Tower = {
 				Options.alertmtroops = parseInt(e.target.value);
 			}, false);
 			t.togOpt('togEnhanceAR', 'EnhanceAR', AllianceReportsCheck.enable);
-			document.getElementById('verifyDove').addEventListener ('click', t.verifyDove, false);
+			document.getElementById('verifyDove').addEventListener('click', t.verifyDove, false);
 		} catch (e) {
 			new CdialogCancelContinue('<PRE>' + inspect(e, 3, 1) + '</pre>', null, null, true);
 			t.cont.innerHTML = '<PRE>' + e.name + ' : ' + e.message + '</pre>';
@@ -16069,39 +18156,37 @@ Tabs.Tower = {
 			}
 		}
 	},
-
-	useDove : function (){
-	    var t = Tabs.Tower;
-	    t.doveStatus = ById ('verifyDiv');
-	    var params = uW.Object.clone(uW.g_ajaxparams);
-	    new MyAjaxRequest(uW.g_ajaxpath + "ajax/doveOut.php" + uW.g_ajaxsuffix, {
-		method: "post",
-		parameters: params,
-		onSuccess: function (rslt) {
-		    if (rslt.ok) {
-     	 		t.doveStatus.innerHTML = "<center><font size='3px'><b>Dove Success!</b></font></center>";
-		    } else {
-     	 		t.doveStatus.innerHTML = "<center><font size='3px'><b>Dove Fail!</b></font></center>";
-		    }
-		},
-		onFailure: function () {
-		}
-    	    });
-  	},
-
-	verifyDove : function() {
-	    var t = Tabs.Tower;
-	    var popDove = null;
-	    popDove = new CPopup('ptVerifyDove', 0, -100, 500, 50, true, function() {clearTimeout (1000);});
-	    popDove.centerMe (mainPop.getMainDiv());
-	    var m = '<DIV style="max-height:50px; height:50px; overflow-y:auto"><TABLE align=center cellpadding=0 cellspacing=0 width=100% class="pbShowBarbs" id="pbBars">';       
-	    m += '<tr><TD align=center><b> ARE YOU SURE? </b> Click if yes, close if no <INPUT id=useDove type=submit value="YESSSS!!!!" \></td></tr>';
-	    m += '<tr><td align=center><div id=verifyDiv style="overflow-y:auto; max-height:20px; height: 20px;"></div></td></tr>';
-	    popDove.getMainDiv().innerHTML = '</table></div>' + m;
-	    popDove.show(true);
-	    document.getElementById('useDove').addEventListener ('click', t.useDove, false);
+	useDove: function () {
+		var t = Tabs.Tower;
+		t.doveStatus = ById('verifyDiv');
+		var params = uW.Object.clone(uW.g_ajaxparams);
+		new MyAjaxRequest(uW.g_ajaxpath + "ajax/doveOut.php" + uW.g_ajaxsuffix, {
+			method: "post",
+			parameters: params,
+			onSuccess: function (rslt) {
+				if (rslt.ok) {
+					t.doveStatus.innerHTML = "<center><font size='3px'><b>Dove Success!</b></font></center>";
+				} else {
+					t.doveStatus.innerHTML = "<center><font size='3px'><b>Dove Fail!</b></font></center>";
+				}
+			},
+			onFailure: function () {}
+		});
 	},
-
+	verifyDove: function () {
+		var t = Tabs.Tower;
+		var popDove = null;
+		popDove = new CPopup('ptVerifyDove', 0, -100, 500, 50, true, function () {
+			clearTimeout(1000);
+		});
+		popDove.centerMe(mainPop.getMainDiv());
+		var m = '<DIV style="max-height:50px; height:50px; overflow-y:auto"><TABLE align=center cellpadding=0 cellspacing=0 width=100% class="pbShowBarbs" id="pbBars">';
+		m += '<tr><TD align=center><b> ARE YOU SURE? </b> Click if yes, close if no <INPUT id=useDove type=submit value="YESSSS!!!!" \></td></tr>';
+		m += '<tr><td align=center><div id=verifyDiv style="overflow-y:auto; max-height:20px; height: 20px;"></div></td></tr>';
+		popDove.getMainDiv().innerHTML = '</table></div>' + m;
+		popDove.show(true);
+		document.getElementById('useDove').addEventListener('click', t.useDove, false);
+	},
 }
 var AllianceReportsCheck = {
 	aRpt: {},
@@ -16252,34 +18337,36 @@ var AllianceReportsCheck = {
 	},
 }
 
-	function reloadKOC() {
-		var serverId = GetServerId();
-		if (serverId == '??') window.location.reload(true);
-		var goto = 'https://apps.facebook.com/kingdomsofcamelot/?s=' + serverId;
-		var t = '<FORM target="_top" action="' + goto + '" method=post><INPUT id=xxpbButReload type=submit value=RELOAD><INPUT type=hidden name=s value="' + serverId + '"</form>';
-		var e = document.createElement('div');
-		e.innerHTML = t;
-		document.body.appendChild(e);
-		setTimeout(function () {
-			document.getElementById('xxpbButReload').click();
-		}, 0);
-	}
+function reloadKOC() {
+	var serverId = GetServerId();
+	if (serverId == '??') window.location.reload(true);
+	var goto = 'https://apps.facebook.com/kingdomsofcamelot/?s=' + serverId;
+	var t = '<FORM target="_top" action="' + goto + '" method=post><INPUT id=xxpbButReload type=submit value=RELOAD><INPUT type=hidden name=s value="' + serverId + '"</form>';
+	var e = document.createElement('div');
+	e.innerHTML = t;
+	document.body.appendChild(e);
+	setTimeout(function () {
+		document.getElementById('xxpbButReload').click();
+	}, 0);
+}
 
-	function formatUnixTime(unixTimeString, format) {
-		var rtn = unsafeWindow.formatDateByUnixTime(unixTimeString);
-		/*if (format=='24hour') {
+function formatUnixTime(unixTimeString, format) {
+	var rtn = unsafeWindow.formatDateByUnixTime(unixTimeString);
+	/*if (format=='24hour') {
 		if (rtn.substr(14,2)=='AM')
 			rtn = rtn.substr(0,13);
 		else
 			rtn = rtn.substr(8,2)+' '+rtn.substr(0,8)+(parseInt(rtn.substr(8,2))+12)+rtn.substr(10,3);
 	} */
-		return rtn;
-	}
+	return rtn;
+}
 var cdtd = {
 	views: null,
 	init: function () {
 		var t = cdtd;
-		t.views = new CalterUwFunc("citysel_click",[[/cm\.PrestigeCityView\.render\(\)/im,'cm.PrestigeCityView.render();cdtdhook();']]);
+		t.views = new CalterUwFunc("citysel_click", [
+			[/cm\.PrestigeCityView\.render\(\)/im, 'cm.PrestigeCityView.render();cdtdhook();']
+		]);
 		unsafeWindow.cdtdhook = t.citychange;
 		if (Options.EnhCBtns) {
 			t.views.setEnable(true);
@@ -16360,9 +18447,15 @@ var cdtd = {
 			if (unsafeWindow.seed.cityData.city[cityID].isPrestigeCity) {
 				if (unsafeWindow.seed.cityData.city[cityID].prestigeInfo.prestigeType) {
 					switch (parseInt(unsafeWindow.seed.cityData.city[cityID].prestigeInfo.prestigeType)) {
-	    					case 1: color = "#228b22";break;
-	    					case 2: color = "#A944DB";break;
-	    					case 3: color = "#E36600";break;
+					case 1:
+						color = "#228b22";
+						break;
+					case 2:
+						color = "#A944DB";
+						break;
+					case 3:
+						color = "#E36600";
+						break;
 					}
 				}
 			}
@@ -16379,29 +18472,31 @@ var cdtd = {
 	},
 }
 
-	function CheckCityMarches(cityID) {
-		var Counter = 0;
-		if (Seed.queue_atkp['city' + cityID] != undefined) {
-			for (atkp in Seed.queue_atkp['city' + cityID])
-				if (Seed.queue_atkp['city' + cityID][atkp]["marchUnixTime"]) Counter++;
-		} else Counter = 0;
-		return Counter;
-	}
+function CheckCityMarches(cityID) {
+	var Counter = 0;
+	if (Seed.queue_atkp['city' + cityID] != undefined) {
+		for (atkp in Seed.queue_atkp['city' + cityID])
+			if (Seed.queue_atkp['city' + cityID][atkp]["marchUnixTime"]) Counter++;
+	} else Counter = 0;
+	return Counter;
+}
 
-	function getRallypoint(cityId) {
-		var rallypointlevel = 0;
-		for (var o in Seed.buildings["city" + cityId]) {
-			var buildingType = parseInt(Seed.buildings["city" + cityId][o][0]);
-			var buildingLevel = parseInt(Seed.buildings["city" + cityId][o][1]);
-			if (buildingType == 12) {
-				rallypointlevel = parseInt(buildingLevel);
-				if (rallypointlevel == 12) rallypointlevel = 11;
-			}
+function getRallypoint(cityId) {
+	var rallypointlevel = 0;
+	for (var o in Seed.buildings["city" + cityId]) {
+		var buildingType = parseInt(Seed.buildings["city" + cityId][o][0]);
+		var buildingLevel = parseInt(Seed.buildings["city" + cityId][o][1]);
+		if (buildingType == 12) {
+			rallypointlevel = parseInt(buildingLevel);
+			if (rallypointlevel == 12) rallypointlevel = 11;
 		}
-		if (Seed.cityData.city[cityId].isPrestigeCity) rallypointlevel += 3;
-		return rallypointlevel;
 	}
-var Market = new CalterUwFunc ('modal_marketplace', [[/maxlength..\d./gim, '']]);
+	if (Seed.cityData.city[cityId].isPrestigeCity) rallypointlevel += 3;
+	return rallypointlevel;
+}
+var Market = new CalterUwFunc('modal_marketplace', [
+	[/maxlength..\d./gim, '']
+]);
 Market.setEnable(true);
 
 function Sendcourtdata(courtdata) {
@@ -16430,17 +18525,16 @@ function Sendcourtdata(courtdata) {
 
 function getDST(today) {
 	var yr = today.getFullYear();
-	var dst_start = new Date("March 14, "+yr+" 02:00:00"); // 2nd Sunday in March can't occur after the 14th 
-	var dst_end = new Date("November 07, "+yr+" 02:00:00"); // 1st Sunday in November can't occur after the 7th
+	var dst_start = new Date("March 14, " + yr + " 02:00:00"); // 2nd Sunday in March can't occur after the 14th 
+	var dst_end = new Date("November 07, " + yr + " 02:00:00"); // 1st Sunday in November can't occur after the 7th
 	var day = dst_start.getDay(); // day of week of 14th
-	dst_start.setDate(14-day); // Calculate 2nd Sunday in March of this year
+	dst_start.setDate(14 - day); // Calculate 2nd Sunday in March of this year
 	day = dst_end.getDay(); // day of the week of 7th
-	dst_end.setDate(7-day); // Calculate first Sunday in November of this year
+	dst_end.setDate(7 - day); // Calculate first Sunday in November of this year
 	var dstadj = 0;
 	if (today >= dst_start && today < dst_end) { //does today fall inside of DST period?
 		dstadj = (3600); // 60 mins!
 	}
 	return dstadj;
 }
-
 ptStartup();
