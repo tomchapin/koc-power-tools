@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140502a
+// @version        20140610a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -15,7 +15,7 @@ if (window.self.location != window.top.location) {
 //This value is used for statistics (https://nicodebelder.eu/kocReportView/Stats.html).
 //Please change it to your Userscript project name.
 var SourceName = "KOC Power Tools (SVN)";
-var Version = '20140502a';
+var Version = '20140610a';
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
 var DEBUG_TRACE = false;
@@ -12173,21 +12173,25 @@ Tabs.Accuracy = {
 		var t = Tabs.Accuracy;
 		t.cont = div;
 		var main = '<DIV class=ptstat>ACCURACY MATRIX<TABLE align=center cellpadding=1 cellspacing=0></table></div>';
-		main += '<DIV style="height:450px; width:720px; overflow-x:scroll;"><TABLE class=ptTab align=left><TR>';
+		main += '<DIV style="height:500px; width:720px; overflow-x:scroll;"><TABLE class=ptTab align=left><TR>';
 		main += '<TD></td><TD>Target</td></tr>';
 		main += '<TR><TD></td>';
 		var z = uW.cm.WorldSettings.getSettingAsObject("UNIT_ACCURACY_MODIFIER");
 		var keyz = unsafeWindow.Object.keys(z);
 		var troopa, troopb;
 		var unitsarr = [];
-		for (j in unsafeWindow.unitcost)
+		for (j in unsafeWindow.unitcost) {
 			unitsarr.push(0);
-		for (iu = 1; iu < unitsarr.length + 2; iu++)
+		}	
+		
+		for (iu = 1; iu < unitsarr.length + 2; iu++) {
 			if (iu < 13) main += '<TD>' + uW.unitcost['unt' + iu][0] + '</td>';
 			else if (iu == 13) main += '<TD>WM Crossbow</td>';
-		else if (iu > 19) main += '<TD>' + uW.unitcost['unt' + (iu + 1)][0] + '</td>';
-		else main += '<TD>' + uW.unitcost['unt' + (iu - 1)][0] + '</td>';
+			else if (iu > 19) main += '<TD>' + uW.unitcost['unt' + (iu + 1)][0] + '</td>';
+			else main += '<TD>' + uW.unitcost['unt' + (iu - 1)][0] + '</td>';
+		}	
 		main += '</tr>';
+
 		for (iu = 1; iu < unitsarr.length + 2; iu++) {
 			if (iu < 13) main += '<TR><TD>' + uW.unitcost['unt' + iu][0] + '</td>';
 			else if (iu == 13) main += '<TR><TD>WM Crossbow</td>';
@@ -12196,7 +12200,10 @@ Tabs.Accuracy = {
 			troopa = keyz[iu - 1];
 			for (ju = 1; ju < unitsarr.length + 2; ju++) {
 				troopb = keyz[ju - 1];
-				main += '<TD>' + z[troopa][troopb] + '</td>';
+				if (!z[troopa] || !z[troopa][troopb])
+					main += '<TD>???</td>';
+				else
+					main += '<TD>' + z[troopa][troopb] + '</td>';
 			}
 			main += '</tr>';
 		}
