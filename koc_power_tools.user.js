@@ -13670,7 +13670,7 @@ var AutoUpdater_103659 = {
 	days: 1,
 	name: "KOC Power Tools",
 	version: Version,
-	beta: true,
+	beta: GlobalOptions.ptupdatebeta,
 	betaUrl: 'https://koc-power-tools.googlecode.com/svn/trunk/koc_power_tools.user.js',
 	time: new Date().getTime(),
 	call: function (response, secure) {
