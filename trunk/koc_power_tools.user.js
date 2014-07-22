@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20140718b
+// @version        20140722a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -24,7 +24,7 @@ if (window.self.location != window.top.location) {
 //This value is used for statistics (https://nicodebelder.eu/kocReportView/Stats.html).
 //Please change it to your Userscript project name.
 var SourceName = "KOC Power Tools (SVN)";
-var Version = '20140718b';
+var Version = '20140722a';
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
 var DEBUG_TRACE = false;
@@ -6737,7 +6737,7 @@ Tabs.Options = {
 			}, Options.whisperplay, 'id=ptwhisplay') + '</td></tr>';
 			m += '<TR><TD><INPUT id=ptEnableTowerAlert type=checkbox /></td><TD>Enable sound alert on tower alert in chat</td></tr>';
 			m += '<TR><TD><INPUT id=ptupdate type=checkbox ' + (GlobalOptions.ptupdate ? 'CHECKED ' : '') + '/></td><TD>Check updates on ' + htmlSelector({
-				0: 'Userscripts',
+				0: 'GreasyFork',
 				1: 'Google Code'
 			}, GlobalOptions.ptupdatebeta, 'id=ptupdatebeta') + ' (all domains) &nbsp; &nbsp; <INPUT id=ptupdatenow type=submit value="Update Now" /></td></tr>';
 			m += '<TR><TD><INPUT id=ptEnableMiniRefresh type=checkbox ' + (Options.miniRefresh ? 'CHECKED ' : '') + '/></td><TD> Refresh data/marches every ';
@@ -13676,7 +13676,7 @@ var AutoUpdater_103659 = {
 	call: function (response, secure) {
 		GM_xmlhttpRequest({
 			method: 'GET',
-			url: this.beta ? this.betaUrl : 'http' + (secure ? 's' : '') + '://koc-power-tools.googlecode.com/svn/trunk/koc_power_tools.user.js',
+			url: this.beta ? this.betaUrl : 'http' + (secure ? 's' : '') + '://greasyfork.org/scripts/893-koc-power-tools/code/KOC Power Tools.user.js',
 			onload: function (xpr) {
 				AutoUpdater_103659.compare(xpr, response);
 			},
@@ -13721,7 +13721,7 @@ var AutoUpdater_103659 = {
 				// Ok
 				function () {
 					try {
-						location.href = this.beta ? this.betaUrl : 'https://koc-power-tools.googlecode.com/svn/trunk/koc_power_tools.user.js';
+						location.href = this.beta ? this.betaUrl : 'https://greasyfork.org/scripts/893-koc-power-tools/code/KOC Power Tools.user.js';
 					} catch (e) {}
 				},
 				// Cancel
