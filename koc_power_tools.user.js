@@ -14,6 +14,7 @@
 // @grant       GM_xmlhttpRequest
 // @grant       GM_log
 // @grant       GM_registerMenuCommand
+// @license			http://creativecommons.org/licenses/by-nc-sa/3.0/
 // ==/UserScript==
 //Fixed weird bug with koc game
 if (window.self.location != window.top.location) {
