@@ -1,6 +1,6 @@
-#Koc Power Tools - KoC Scripters Edition
+#KoC Power Tools
 
-Designed for use in conjunction with Power BOT and Alliance info. Provides many useful automated functions!
+This script is designed for use in conjunction with KoC Power Bot (https://github.com/tomchapin/koc-power-bot) and provides many useful automated functions for the Kingdoms of Camelot Facebook game! 
 
 This script is based on the original Koc Power Tools from George Jetson, except that this version is maintained by the "KoC Scripters" team, which is the same team behind the KoC Power Bot script. We plan to add a number of new features and improvements to KoC Power Tools, so stay tuned!
 
@@ -8,10 +8,13 @@ This script is based on the original Koc Power Tools from George Jetson, except 
 
 This project is no longer hosted on Userscripts.org (which shut down), and is no longer actively maintained on Google Code (which will be shutting down soon). The project has officially moved to Github and will live here for the forseeable future, so please update your bookmarks accordingly.
 
-----
+##Download
 
-Other scripts of interest:
+*First, you will need to be using the latest FireFox web browser (http://www.getfirefox.com), and you will need to have the Greasemonkey FireFox Addon (https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) installed.
 
-KoC Power Bot - https://github.com/tomchapin/koc-power-bot
+You can download the latest release of the script here: https://github.com/tomchapin/koc-power-tools/raw/master/koc_power_tools.user.js
 
-KoC Attack Extra - https://github.com/tomchapin/kocattackextra
+##Additional Information
+
+We are looking for contributors. If you are interested just leave us a message :-)
+
