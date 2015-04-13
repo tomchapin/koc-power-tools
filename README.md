@@ -2,7 +2,7 @@
 
 This script is designed for use in conjunction with KoC Power Bot (https://github.com/tomchapin/koc-power-bot) and provides many useful automated functions for the Kingdoms of Camelot Facebook game! 
 
-This script is based on the original Koc Power Tools from George Jetson, except that this version is maintained by the "KoC Scripters" team, which is the same team behind the KoC Power Bot script. We plan to add a number of new features and improvements to KoC Power Tools, so stay tuned!
+This script is is maintained by the "KoC Scripters" team, which is the same team behind the KoC Power Bot script. We plan to add a number of new features and improvements to KoC Power Tools, so stay tuned!
 
 ##NEWS
 
