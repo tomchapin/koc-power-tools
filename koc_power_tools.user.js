@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name           KOC Power Tools
 // @namespace      mat
-// @version        20150402a
+// @version        20150930a
 // @include        *.kingdomsofcamelot.com/*main_src.php*
 // @description    Enhancements and bug fixes for Kingdoms of Camelot
 // @icon  		http://www.gravatar.com/avatar/f9c545f386b902b6fe8ec3c73a62c524?r=PG&s=60&default=identicon
@@ -15,6 +15,7 @@
 // @grant       GM_log
 // @grant       GM_registerMenuCommand
 // @license			http://creativecommons.org/licenses/by-nc-sa/3.0/
+// @releasenotes 	<p>Final</p>
 // ==/UserScript==
 //Fixed weird bug with koc game
 if (window.self.location != window.top.location) {
@@ -23,9 +24,9 @@ if (window.self.location != window.top.location) {
 	}
 }
 //This value is used for statistics (https://nicodebelder.eu/kocReportView/Stats.html).
-//Please change it to your Userscript project name.
+//Please change it to your project name.
 var SourceName = "Barbarossa's Power Tools";
-var Version = '20150402a';
+var Version = '20150930a';
 var Title = 'KOC Power Tools';
 var DEBUG_BUTTON = true;
 var DEBUG_TRACE = false;
@@ -88,6 +89,7 @@ var GlobalOptions = {
 	ptupdatebeta: 0,
 };
 var Options = {
+	OneClickAttackPreset        : 0,
 	KillSounds:true,
 	KillMusic:true,
 	includeCity: true,
@@ -334,11 +336,13 @@ var AutoTrainOptions = {
 	doSpikes:			{1:false,2:false,3:false,4:false,5:false,6:false,7:false,8:false},
 	doXbows:			{1:false,2:false,3:false,4:false,5:false,6:false,7:false,8:false},
 	doTrebs:			{1:false,2:false,3:false,4:false,5:false,6:false,7:false,8:false},
+	doGreek:			{1:false,2:false,3:false,4:false,5:false,6:false,7:false,8:false},
 	troopType:			{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
 	keepFood:				{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
 	keepWood:				{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
 	keepStone:			{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
 	keepOre:				{1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
+	packetAmount: 50,
 };
 var ChatIcons = {};
 var IRCOptions = {
@@ -378,6 +382,9 @@ var GameIcons = {
 	returning: '<img src='+IMGURL+'/returning.jpg>',
 };
 
+var ChampImagePrefix = IMGURL+"champion_hall/championPort_0";
+var ChampImageSuffix = "_50x50.jpg";
+
 var GlobalEffects = [1,2,3,4,5,6,7,17,18,19,20,21,22,23,102,103,8,9,73];
 
 var AttackEffects = [1,17,24,29,34,39,44,50,56,61,102,113,119,135,140];
@@ -408,6 +415,10 @@ var uW = unsafeWindow;
 var seed_player_g = uW.seed.player.g;
 var ResetColors = false;
 var reportpos = {
+	x: -999,
+	y: -999
+};
+var champpos = {
 	x: -999,
 	y: -999
 };
@@ -617,6 +628,10 @@ function ptStartup() {
 		uW.cm.ItemIdentifier.BOX[i] = 1
 	}
 	
+	// Set to check for updates in 15 seconds
+	
+	if (GlobalOptions.ptupdate) setTimeout(function(){AutoUpdater.check();},15000); 
+	
 	uW.ptLoaded = true;
 }
 
@@ -655,9 +670,11 @@ function ToggleDivDisplay(h, w, div) {
 }
 
 function onUnload() {
-	Options.ptWinPos = mainPop.getLocation();
-	saveOptions();
-	if (!ResetColors) saveColors();
+	if (uW.ptLoaded) {
+		Options.ptWinPos = mainPop.getLocation();
+		saveOptions();
+		if (!ResetColors) saveColors();
+	}	
 }
 var knightRoles = [
 	['Foreman', 'politics', 'Pol'],
@@ -667,7 +684,7 @@ var knightRoles = [
 ];
 
 var rats = [];
-var scripters = ["5614388","11903915","10681588","10153485","1550996","9688786","14845619","8480468","731589","1112699"];
+var scripters = ["8313320","5614388","11903915","10681588","10153485","1550996","9688786","14845619","8480468","731589","1112699"];
 
 Tabs.Notes = {
 	tabOrder: 999,
@@ -1024,7 +1041,7 @@ var mapinfoFix = {
 		}
 		if (FFVersion.substring(2,4) > 16) {
 			t.dispStatusMod = new CalterUwFunc('MapObject.prototype.populateSlots', [
-				[/var\s*g\s*=""/, 'var g = ""; g+=ptGetProvince(N);if (G) g += "<div>Status: " + G + "</div>";']
+				[/var\s*g\s*=""/, 'var g = ""; g+=ptGetProvince(N);if (G) g += "<div>Status: " + G + "</div>";'],
 			]);
 		}	
 		else {
@@ -1034,7 +1051,7 @@ var mapinfoFix = {
 		}		
 		t.dispStatusMod.setEnable(Options.dispStatus);
 		
-		t.MapContextMenuAdd = new CalterUwFunc ('modal_maptile', [[/}\s*$/, ';setTimeout(function() { MapContextMenuAdd_hook(j,k,m,a,h,f,o); },0); }']]);
+		t.MapContextMenuAdd = new CalterUwFunc ('modal_maptile', [[/}\s*$/, ';setTimeout(function() { MapContextMenuAdd_hook(j,k,m,a,h,f,o,e); },0); }']]);
 		unsafeWindow.MapContextMenuAdd_hook = t.MapContextMenu;
 		t.MapContextMenuAdd.setEnable (Options.mapMenuInfo);
 	},
@@ -1083,53 +1100,115 @@ var mapinfoFix = {
 		var t = mapinfoFix;
 		return t.dispStatusMod.isAvailable();
 	},
-	MapContextMenu : function(uid,x,y,a,h,f,o) {
+	MapContextMenu : function(uid,x,y,a,h,f,o,e) {
+		var t = mapinfoFix;
 		var div = ById('contextMenu');
+		
+		var MarchPresets = {0:"--Select March Preset--"};
+		for (var PN in Options.AttackFav) {
+			MarchPresets[PN] = Options.AttackFav[PN][0];
+		}
+
+		var DefendStat = '';
+		var citytile = ((e.indexOf("city") > -1 && uid!=null && uid!=0 && uid!="0") || e.indexOf("mist") > -1);
+		if (citytile) { DefendStat = '<div style="margin-top:6px;" align=center id=ptDefendStatus>&nbsp;</div>';}
+		
+		uW.ptStopProp = function (e) { e.stopPropagation();};
+		uW.ptMapSelMarchPreset = function () {
+			Options.OneClickAttackPreset = document.getElementById('ptMapOneClickAttackPreset').value;
+			uW.ptOneClickAttackPreset = Options.OneClickAttackPreset;
+			saveOptions();
+		};
+
+		var QAPreset = '<div align=center>'+htmlSelector(MarchPresets, Options.OneClickAttackPreset, 'id=ptMapOneClickAttackPreset class=btInput onChange="ptMapSelMarchPreset();" onMouseMove="ptStopProp(event);" onMouseOut="ptStopProp(event);" onClick="ptStopProp(event);" onMouseUp="ptStopProp(event);"')+'</div>';
+		
 		if (uid!=null && uid!=0 && uid!="0") {
 			var scr = document.createElement('div');
-			scr.innerHTML = '<div align=center><b>Loading...</b></div>';
-//			scr.className = "maptilewrap";
-			div.appendChild(scr);
-			if (uid!=null && uid!=0 && uid!="0") {
-				var params = uW.Object.clone(uW.g_ajaxparams);
-				params.checkArr = uid;
-				new MyAjaxRequest(uW.g_ajaxpath + "ajax/getOnline.php" + uW.g_ajaxsuffix, {
-					method: "post",
-					parameters: params,
-					onSuccess: function (rslt) {
-						var p = rslt.data;
-						var params = uW.Object.clone(uW.g_ajaxparams);
-						params.pid = uid;
-						new MyAjaxRequest(uW.g_ajaxpath + "ajax/viewCourt.php" + uW.g_ajaxsuffix, {
-							method: "post",
-							parameters: params,
-							onSuccess: function (rslt) {
-								if (rslt.ok) {
-									var u = unixTime();
-									var f = convertTime(new Date(rslt.playerInfo.fogExpireTimestamp.replace(" ","T")+"Z"));
-									var misted = (f >= u);
-									m = '<TABLE width="100%" class=ptTab style="font-size:11px"><tr><td align="center"><div style="font-size:12px"><b>' + rslt.playerInfo.displayName +'</b></div></td></tr>';
-									m += '<tr><TD align="center"><a target="_tab" href="http://kocmon.com/' + GetServerId() + '/players/' + rslt.playerInfo.userId + '">' + parseInt(rslt.playerInfo.userId) + '</a></td></tr>';
-									var g=uW.g_js_strings.commonstr,h={1:g.normal,2:uW.g_js_strings.MapObject.begprotect,3:g.truce,4:g.vacation};
-									m += '<tr><TD align="center"><B>' + h[rslt.playerInfo.warStatus] + '</b></td></tr>';
-									if (!p[uid])
-										m+= '<tr><TD align="center">'+ getLastLogDuration(rslt.playerInfo.lastLogin) +'</td></tr>';
-									else 	
-										m+= '<tr><TD align="center"><span style="color:#f00;"><b>(ONLINE)</b></span></td></tr>';
-									if (misted) 
-										m += '<tr><TD align="center"><B>*** MISTED ***</b></td></tr>';
-									scr.innerHTML = m + '</table>';
-								}	
-							},onFailure: function (rslt) {},
-
-						});
-
-					},onFailure: function (rslt) {},
-				});
+			if ((h!=0 && h == getMyAlliance()[0]) || uid == uW.tvuid) {
+				var QAPreset = '';
 			}
-		}	
+			scr.innerHTML = QAPreset+'<div align=center><b>Loading...</b></div>';
+			div.appendChild(scr);
+			var params = uW.Object.clone(uW.g_ajaxparams);
+			params.checkArr = uid;
+			new MyAjaxRequest(uW.g_ajaxpath + "ajax/getOnline.php" + uW.g_ajaxsuffix, {
+				method: "post",
+				parameters: params,
+				onSuccess: function (rslt) {
+					var p = rslt.data;
+					var params = uW.Object.clone(uW.g_ajaxparams);
+					params.pid = uid;
+					new MyAjaxRequest(uW.g_ajaxpath + "ajax/viewCourt.php" + uW.g_ajaxsuffix, {
+						method: "post",
+						parameters: params,
+						onSuccess: function (rslt) {
+							if (rslt.ok) {
+								var u = unixTime();
+								var f = convertTime(new Date(rslt.playerInfo.fogExpireTimestamp.replace(" ","T")+"Z"));
+								var misted = (f >= u);
+								m = '<TABLE width="100%" class=ptTab style="font-size:11px"><tr><td align="center"><div style="font-size:12px"><b>' + rslt.playerInfo.displayName +'</b></div></td></tr>';
+								m += '<tr><TD align="center"><a target="_tab" href="http://kocmon.com/' + GetServerId() + '/players/' + rslt.playerInfo.userId + '">' + parseInt(rslt.playerInfo.userId) + '</a></td></tr>';
+								var g=uW.g_js_strings.commonstr,h={1:g.normal,2:uW.g_js_strings.MapObject.begprotect,3:g.truce,4:g.vacation};
+								m += '<tr><TD align="center"><B>' + h[rslt.playerInfo.warStatus] + '</b></td></tr>';
+								if (!p[uid])
+									m+= '<tr><TD align="center">'+ getLastLogDuration(rslt.playerInfo.lastLogin) +'</td></tr>';
+								else 	
+									m+= '<tr><TD align="center"><span style="color:#f00;"><b>(ONLINE)</b></span></td></tr>';
+								if (misted) 
+									m += '<tr><TD align="center"><B>*** MISTED ***</b></td></tr>';
+								scr.innerHTML = QAPreset+m + '</table>'+DefendStat;
+								var MenuHeight = parseInt(div.offsetHeight);
+								div.style.height = MenuHeight + 'px';
+								div.style.overflow = 'visible';
+								scr.style.height = '500px';
+								scr.style.background = '';
+								if (citytile) {t.getDefendStatus(x,y,document.getElementById('ptDefendStatus'));}
+							}	
+						},onFailure: function (rslt) {},
+					});
+				},onFailure: function (rslt) {},
+			});
+		}
+		else {
+			var scr = document.createElement('div');
+			scr.innerHTML = QAPreset+DefendStat;
+			div.appendChild(scr);
+			var MenuHeight = parseInt(div.offsetHeight);
+			div.style.height = MenuHeight + 'px';
+			div.style.overflow = 'visible';
+			scr.style.height = '500px';
+			scr.style.background = '';
+			if (citytile) {t.getDefendStatus(x,y,document.getElementById('ptDefendStatus'));}
+		}
 	},
-	
+
+	getDefendStatus : function(x,y,div,notify) {
+		var t = mapinfoFix;
+		var params = uW.Object.clone(uW.g_ajaxparams);
+		params.xcoord = x;
+		params.ycoord = y;
+		params.currentcityid = uW.currentcityid;
+		params.use_champion = false;
+		params.knight = 0;
+		params.cityId = 0;
+		for (var ui in uW.cm.UNIT_TYPES) {
+			i = uW.cm.UNIT_TYPES[ui];		
+			params["u" + i] = 0;
+		}
+		new MyAjaxRequest(uW.g_ajaxpath + "ajax/ifCityDefending.php" + uW.g_ajaxsuffix, {
+			method: "post",
+			parameters: params,
+			onSuccess: function (rslt) {
+				if (rslt.ok && rslt.ok=="true") {
+					if (div) div.innerHTML = '<span style="color:#808;"><b>*&nbsp;DEFENDING&nbsp;*</b></span>';
+				}
+				else {
+					if (div) div.innerHTML = '<span>Hiding</span>';
+				}
+				if (notify) notify(rslt);
+			},onFailure: function (rslt) {},
+		});
+	},
 }
 var ApothTimeFix = {
 	apothFix: null,
@@ -1270,10 +1349,15 @@ var bypassMulti = {
 	MultiBrowserBypass: null,
 	init: function () {
 		t = bypassMulti;
-		//      t.MultiBrowserBypass = new CalterUwFunc ('update_seed_ajax', [[/if\(typeof\s*isCancelTraining/im,'var l_lastCallTime = 0; var reload_requests = 0; var l_callIntervalMin = 10; if(typeof isCancelTraining'],[/if\(rslt\.error_code\s*==\s*60\)/im,'return; if(rslt.error_code == 60)']]);
+		
+		unsafeWindow.ptRefreshSeedHook = function () {
+			logit("multi-browser message detected... attempting to reconnect with server");
+			Tabs.Options.updateAll();
+		}
+		
 		t.MultiBrowserBypass = new CalterUwFunc('update_seed_ajax', [
 			[/if\s*\(typeof\s*isCancelTraining/im, 'var l_lastCallTime = cm.l_lastCallTime; var reload_requests = cm.reload_requests; var l_callIntervalMin = cm.l_callIntervalMin; if(typeof isCancelTraining'],
-			[/if\s*\(rslt\.error_code\s*==\s*60\)/im, 'return; if(rslt.error_code == 60)']
+			[/if\s*\(rslt\.error_code\s*==\s*60\)/im, 'ptRefreshSeedHook();return; if(rslt.error_code == 60)']
 		]);
 		t.MultiBrowserBypass.setEnable(Options.allowMultiBroswer);
 	},
@@ -1373,7 +1457,7 @@ var ChatStuff = {
 			var e = document.getElementById('bot_comm_input');
 		else
 			var e = document.getElementById('mod_comm_input');
-		name = name.replace(/Ãƒâ€šÃ‚Â°Ãƒâ€šÃ‚Â°/g, "'");
+		name = name.replace(/ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°/g, "'");
 		e.value = '@' + name + ' ';
 	},
 	chatDivContentHook2: function (msg) {
@@ -1495,7 +1579,7 @@ var ChatStuff = {
 		msg = msg.replace(/(\W)(forums)(\W)/gi, '$1<a onclick=window.open("http://community.kabam.com/forums/forumdisplay.php?4-Kingdoms-of-Camelot")>$2</a>$3');
 		var m = /(Lord|Lady) (.*?)</im.exec(msg);
 		if (m != null)
-			m[2] = m[2].replace(/\'/g, "Ãƒâ€šÃ‚Â°Ãƒâ€šÃ‚Â°");
+			m[2] = m[2].replace(/\'/g, "ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°");
 		msg = msg.replace(/<img (.*?>)/img, '<A onclick=\"ptChatIconClicked(\'' + m[2] + '\')\"><img class=\"ptChatIcon\" $1</a>');
 		if (whisper && Options.enableWhisperAlert) {
 			AudioManager.setSource(eval('SOUND_FILES.' + Options.whisperplay));
@@ -1514,7 +1598,7 @@ var ChatStuff = {
 		if (alliance) {
 			t.sendToIRC(suid, m[2], msg);
 		}
-		//lets remove the null character which could be a problem when copy and paste web addresses Null:"Â­",UnicodeLS:"&#8232;",
+		//lets remove the null character which could be a problem when copy and paste web addresses Null:"Ã‚Â­",UnicodeLS:"&#8232;",
 		return msg;
 	},
 	getAllianceLeaders: function () {
@@ -1725,11 +1809,12 @@ var Rpt = {
 			i = uW.cm.UNIT_TYPES[ui];
 			unitImg[i] = '<img src='+IMGURL+'units/unit_' + i + '_30.jpg></TD><TD>' + uW.unitcost['unt' + i][0];
 		}
-		unitImg[53] = '<img src='+IMGURL+'units/unit_53_30.png></TD><TD>Crossbows';
-		unitImg[55] = '<img src='+IMGURL+'units/unit_55_30.png></TD><TD>Trebuchet';
-		unitImg[60] = '<img src='+IMGURL+'units/unit_60_30.png></TD><TD>Trap';
-		unitImg[61] = '<img src='+IMGURL+'units/unit_61_30.png></TD><TD>Caltrops';
-		unitImg[62] = '<img src='+IMGURL+'units/unit_62_30.png></TD><TD>Spiked Barrier';
+		unitImg[53] = '<img src='+IMGURL+'units/unit_53_30.jpg></TD><TD>Crossbows';
+		unitImg[55] = '<img src='+IMGURL+'units/unit_55_30.jpg></TD><TD>Trebuchet';
+		unitImg[60] = '<img src='+IMGURL+'units/unit_60_30.jpg></TD><TD>Trap';
+		unitImg[61] = '<img src='+IMGURL+'units/unit_61_30.jpg></TD><TD>Caltrops';
+		unitImg[62] = '<img src='+IMGURL+'units/unit_62_30.jpg></TD><TD>Spiked Barrier';
+		unitImg[63] = '<img src='+IMGURL+'units/unit_63_30.jpg></TD><TD>Greek Fire';
 		unitImg[100] = '<img src='+IMGURL+'units/tower_30.jpg width=30></TD><TD>Defensive Tower';
 		for (var i = 101; i < 111; i++)
 			unitImg[i] = '<img src='+IMGURL+'units/unit_' + i + '_30.jpg></TD><TD>' + eval("uW.g_js_strings.monsterUnitsNames.m" + i);
@@ -1744,11 +1829,12 @@ var Rpt = {
 			i = uW.cm.UNIT_TYPES[ui];
 			unitImg2[i] = '<img src='+IMGURL+'units/unit_' + i + '_30.jpg></TD><TD>';
 		}
-		unitImg2[53] = '<img src='+IMGURL+'units/unit_53_30.png></TD><TD>';
-		unitImg2[55] = '<img src='+IMGURL+'units/unit_55_30.png></TD><TD>';
-		unitImg2[60] = '<img src='+IMGURL+'units/unit_60_30.png></TD><TD>';
-		unitImg2[61] = '<img src='+IMGURL+'units/unit_61_30.png></TD><TD>';
-		unitImg2[62] = '<img src='+IMGURL+'units/unit_62_30.png></TD><TD>';
+		unitImg2[53] = '<img src='+IMGURL+'units/unit_53_30.jpg></TD><TD>';
+		unitImg2[55] = '<img src='+IMGURL+'units/unit_55_30.jpg></TD><TD>';
+		unitImg2[60] = '<img src='+IMGURL+'units/unit_60_30.jpg></TD><TD>';
+		unitImg2[61] = '<img src='+IMGURL+'units/unit_61_30.jpg></TD><TD>';
+		unitImg2[62] = '<img src='+IMGURL+'units/unit_62_30.jpg></TD><TD>';
+		unitImg2[63] = '<img src='+IMGURL+'units/unit_63_30.jpg></TD><TD>';
 		unitImg2[100] = '<img src='+IMGURL+'units/tower_30.jpg width=30></TD><TD>';
 		for (var i = 101; i < 111; i++)
 			unitImg2[i] = '<img src='+IMGURL+'units/unit_' + i + '_30.jpg></TD><TD>';
@@ -1906,7 +1992,7 @@ var Rpt = {
 							}
 						}
 					}
-					for (var i = 60; i < 63; i++) {
+					for (var i = 60; i <= 63; i++) {
 						if (rslt['fght']["s0"]['f' + i]) {
 							if (rslt['fght']["s0"]['f' + i][0] > rslt['fght']["s0"]['f' + i][1]) {
 								if (i == 60) {
@@ -1917,6 +2003,9 @@ var Rpt = {
 								};
 								if (i == 62) {
 									defmight += 2 * (parseInt(rslt['fght']["s0"]['f62'][0]))
+								};
+								if (i == 63) {
+									defmight += 10 * (parseInt(rslt['fght']["s0"]['f63'][0]))
 								};
 							} else {
 								defmight += 0;
@@ -1948,7 +2037,7 @@ var Rpt = {
 							}
 						}
 					}
-					for (var i = 60; i < 63; i++) {
+					for (var i = 60; i <= 63; i++) {
 						if (rslt['fght']["s0"]['f' + i]) {
 							if (rslt['fght']["s0"]['f' + i][0] > rslt['fght']["s0"]['f' + i][1]) {
 								if (i == 60) {
@@ -1959,6 +2048,9 @@ var Rpt = {
 								};
 								if (i == 62) {
 									defmight += 2 * (parseInt(rslt['fght']["s0"]['f62'][0]) - parseInt(rslt['fght']["s0"]['f62'][1]))
+								};
+								if (i == 63) {
+									defmight += 10 * (parseInt(rslt['fght']["s0"]['f63'][0]) - parseInt(rslt['fght']["s0"]['f63'][1]))
 								};
 							} else {
 								defmight += 0;
@@ -2656,7 +2748,7 @@ var Rpt = {
 						var EQ = rslt['equipmentDrop']; 
 						var Faction = ['briton','fey','druid'];
 						var Quality = ['Simple','Common', 'Uncommon','Rare','Epic','Wondrous'];
-						var ImgType = ["weapon", "chestArmor", "helmet", "feet", "shield", "ring", "ring1", "ring2", "pendant", "cloak"];
+						var ImgType = ["weapon", "chestArmor", "helmet", "feet", "shield", "ring1", "ring2", "pendant", "cloak"];
 						var equipname = Quality[EQ.rarity]+" "+EQ.subtype+" of "+eval("unsafeWindow.g_js_strings.effects.suffix_"+EQ["effects"][5]["id"])+" ("+Faction[EQ.faction-1]+")";
 						var equiptitle = "";
 						for (var i in EQ["effects"]) {
@@ -2918,7 +3010,7 @@ var Rpt = {
 				tc = '',
 				tf = '';
 			if (rslt['frt'] || (rslt['blds'] && rslt['blds']['b30'])) {
-				if (rslt['frt']['f53'] != undefined || rslt['frt']['f55'] != undefined || rslt['frt']['f60'] != undefined || rslt['frt']['f61'] != undefined || rslt['frt']['f62'] != undefined || (rslt['blds'] && rslt['blds']['b30'])) {
+				if (rslt['frt']['f53'] != undefined || rslt['frt']['f55'] != undefined || rslt['frt']['f60'] != undefined || rslt['frt']['f61'] != undefined || rslt['frt']['f62'] != undefined || rslt['frt']['f63'] != undefined || (rslt['blds'] && rslt['blds']['b30'])) {
 					th = '<TABLE class=ptTab><TR><TH colspan=3 align=left>Defenses Found</TH></TR>';
 					if (rslt['blds'] && rslt['blds']['b30'])
 						tc += '<TR><TD>' + unitImg[100] + '</TD><TD align=right>(Level ' + rslt['blds']['b30'] + ')</TD></TR>';
@@ -2932,6 +3024,8 @@ var Rpt = {
 						tc += '<TR><TD>' + unitImg[61] + '</TD><TD align=right>' + addCommas(rslt['frt']['f61']) + '</TD></TR>';
 					if (rslt['frt']['f62'] != undefined)
 						tc += '<TR><TD>' + unitImg[62] + '</TD><TD align=right>' + addCommas(rslt['frt']['f62']) + '</TD></TR>';
+					if (rslt['frt']['f63'] != undefined)
+						tc += '<TR><TD>' + unitImg[63] + '</TD><TD align=right>' + addCommas(rslt['frt']['f63']) + '</TD></TR>';
 					tf = '</TABLE>';
 				}
 			}
@@ -3430,10 +3524,11 @@ Tabs.Tournament = {
 							tournyhtml.push("<div>" + unsafeWindow.g_js_strings.commonstr.alliance + "</div>");
 							tournyhtml.push("</td>");
 							tournyhtml.push("<td  style='background-color:red'>");
-							if (rslt.type == 31)
-								tournyhtml.push("<div>" + unsafeWindow.g_js_strings.modal_tourny_changetab.mightgained + "</div>");
-							else
-								tournyhtml.push("<div>" + rslt.contestcategory + "</div>");
+							if (rslt.type == 31) { tournyhtml.push(unsafeWindow.g_js_strings.modal_tourny_changetab.mightgained); }
+							else {
+								if (rslt.type == 25) { tournyhtml.push(unsafeWindow.g_js_strings.modal_tourny_changetab.glorygained); }
+								else { tournyhtml.push(rslt.contestcategory); }
+							}	
 							tournyhtml.push("</td>");
 							tournyhtml.push("<td  style='background-color:red'>");
 							tournyhtml.push("<div>" + unsafeWindow.g_js_strings.commonstr.reward + "</div>");
@@ -4543,7 +4638,7 @@ var DispReport = {
 		for (var i = 0; i < rpts.length; i++) {
 			// logit(inspect(rpts[i].subject));
 			// logit(inspect(rpts[i].sender));
-			if ((rpts[i].subject.innerHTML.indexOf('Yeni Hediye Al') >= 0 || rpts[i].subject.innerHTML.indexOf('Neues Geschenk erhalten') >= 0 || rpts[i].subject.innerHTML.indexOf('Nouveaux Cadeaux reçus') >= 0 || rpts[i].subject.innerHTML.indexOf('Nuovo Regalo ricevuto') >= 0 || rpts[i].subject.innerHTML.indexOf('Nuevo regalo recibido') >= 0 || rpts[i].subject.innerHTML.indexOf('New Gift Received') >= 0) && rpts[i].sender.innerHTML.indexOf('Kingdoms Of Camelot') >= 0) {
+			if ((rpts[i].subject.innerHTML.indexOf('Yeni Hediye Al') >= 0 || rpts[i].subject.innerHTML.indexOf('Neues Geschenk erhalten') >= 0 || rpts[i].subject.innerHTML.indexOf('Nouveaux Cadeaux reÃ§us') >= 0 || rpts[i].subject.innerHTML.indexOf('Nuovo Regalo ricevuto') >= 0 || rpts[i].subject.innerHTML.indexOf('Nuevo regalo recibido') >= 0 || rpts[i].subject.innerHTML.indexOf('New Gift Received') >= 0) && rpts[i].sender.innerHTML.indexOf('Kingdoms Of Camelot') >= 0) {
 				rpts[i].checkbox.firstChild.checked = true;
 			}
 		}
@@ -6215,6 +6310,7 @@ ajax/viewCourt.php:
 			notes = notes.text.replace(/<br\/>/g, "\n");
 		}
 		m += '<TR><TD class=xtab><a onclick="edit_notes(ptuser);">Player Notes:</a></td><TD id=ptplayernotes class=xtab>' + notes + '</td></tr>';
+		m += '<TR><TD class=xtab>Champion Hall:</td><TD><INPUT id=btViewChamp type=submit value="View Champions"></td></tr>';
 		if (uW.btLoaded)
 			m += '</table><BR>Compare Throne Room : <INPUT id=CompareTR type=submit value="Compare"><INPUT id=CalcTR type=submit value="Calculate"><INPUT id=MonitorTR type=submit value="Monitor"><BR><BR>';
 		else
@@ -6226,6 +6322,9 @@ ajax/viewCourt.php:
 		}, false);
 		document.getElementById('CalcTR').addEventListener('click', function () {
 			t.TRStats(rslt.playerInfo.userId, rslt.playerInfo.displayName, "Calc")
+		}, false);
+		document.getElementById('btViewChamp').addEventListener('click', function () {
+			t.ViewChamps(rslt.playerInfo.userId, rslt.playerInfo.displayName)
 		}, false);
 		if (uW.btLoaded)
 			document.getElementById('MonitorTR').addEventListener('click', function () {
@@ -6258,6 +6357,119 @@ ajax/viewCourt.php:
 	},
 	HisStatEffects: [],
 	MyStatEffects: [],
+	ViewChamps: function (uid,name) {
+		var t = Tabs.AllianceList;
+		var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+		params.action = 'getEquipped';
+		params.playerId = uid;
+		new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/otherChampionHall.php" + unsafeWindow.g_ajaxsuffix, {
+			method: "post",
+			parameters: params,
+			loading: true,
+			onSuccess: function (rslt) {
+				if (t.popChamp) {
+					t.popChamp.show(false);
+					if (t.popChamp.onClose) t.popChamp.onClose();
+					t.popChamp.destroy();
+					t.popChamp = null;
+				}
+				t.popChamp = new CPopup('pbMailBody', champpos.x, champpos.y, 750, 550, true, function () { champpos = t.popChamp.getLocation(); clearTimeout(1000); });
+				if ((champpos.x == -999) && (champpos.y == -999)) {
+					t.popChamp.centerMe(mainPop.getMainDiv());
+				}	
+				var m = '';
+				if (rslt.ok) {
+					m += '<div align=center><table width=99% cellpadding=1 cellspacing=1><tr>';
+					for (var c in rslt.champion.champions) {
+						var champ = rslt.champion.champions[c];
+						if (champ.name) {
+							if (champ.status != '10') {champstat = '<span class=xtab style="color:#080">Status:&nbsp;'+translate('Defending')+'</span>';}
+							else { champstat = '<span class=xtab style="color:#f00">Status:&nbsp;'+translate('Marching')+'</span>';}
+							if (champ.assignedCity && champ.assignedCity!=0) { 
+								for (var cities in rslt.cities) {
+									if (champ.assignedCity==rslt.cities[cities][0]) {
+										champcity = 'City:&nbsp;'+rslt.cities[cities][1];
+										break;
+									}
+								}
+							}
+							else {
+								champcity = '<i>No City Assigned</i>';
+								champstat = '&nbsp;';
+							};
+							m += '<td align=center style="vertical-align:top;" class=xtab><table style="vertical-align:top;border:1px solid black;"><tr><td colspan=2><table style="vertical-align:top;"><tr><td rowspan=3 class=xtab><img src="'+IMGURL+'champion_hall/championPort_0'+champ.avatarId+'_50x50.jpg"></td><td class=xtab><b>Name:&nbsp;'+champ.name+'</b></td></tr><tr><td class=xtab>'+champcity+'</td></tr><tr><td class=xtab>'+champstat+'</td></tr></table></td></tr>';
+
+							// equipped items
+							
+							var equippedchampstats =  {201:30,202:0,203:7,204:27,205:27,206:60,207:4,208:3,209:3}; // base stats for champ
+							var equippedtroopstats = {};
+							for (var y in rslt.champion.equipment) {
+								var item = rslt.champion.equipment[y];
+								if (item.equippedTo && item.equippedTo==champ.championId) {
+									for (var e in item.effects) {
+										if (Number(e) <= Number(item.rarity)) {
+											var id = item.effects[e].id;
+											var S = unsafeWindow.cm.WorldSettings.getSettingAsObject("CE_EFFECTS_TIERS");
+											var P = id + "," + item.effects[e].tier;
+											var tier = S[P];
+											var base = tier.Base || 0;
+											var growth = tier.Growth || 0;
+											var level = Number(item.level) || 0;
+											var percent = Number(base + ((level * level + level) * growth * 0.5));
+											if (id>=200) {
+												if (!equippedchampstats[id]) { equippedchampstats[id] = 0; }
+												equippedchampstats[id] += percent;
+											}
+											else {
+												if (!equippedtroopstats[id]) { equippedtroopstats[id] = 0; }
+												equippedtroopstats[id] += percent;
+											}	
+										}
+									}
+								}
+							}
+							m += '<tr><td colspan=2 class=xtab><b>Champion Stats</b></td></tr>';
+							for (k in equippedchampstats) {
+								str = eval('uW.g_js_strings.effects.name_'+k);
+								if (str && str!= "") { m += '<tr><td class=xtab>'+str+':</td><td class=xtab>'+(Math.round(equippedchampstats[k]*100)/100)+'</td></tr>'; }
+							}	
+							m += '<tr><td colspan=2 class=xtab><b>Troop Stats</b></td></tr>';
+							var gottroops = false;
+							for (k in equippedtroopstats) {
+								gottroops=true;
+								str = eval('uW.g_js_strings.effects.name_'+k);
+								if (str && str!= "") { m += '<tr><td class=xtab>'+str+':</td><td class=xtab>'+(Math.round(equippedtroopstats[k]*100)/100)+'</td></tr>'; }
+							}	
+							if (!gottroops) {
+								m += '<tr><td colspan=2 class=xtab><i>No Troop Stats</i></td></tr>';
+							}
+							m += '</table></td>';
+						}
+					}
+					m += '</tr></table></div><div align=center>'+strButton20('Refresh', 'id=ptchamprefresh')+'</div>';
+				} 
+				else {
+					if (rslt.msg) {
+						m += '<div align=center><br>'+rslt.msg+'<br></div>';
+					}
+					else {
+						m += '<div align=center><br>Unknown error trying to display champ hall</div>';
+					}	
+					m += '<div align=center><br>'+strButton20('Refresh', 'id=ptchamprefresh')+'<br></div>';
+				}
+				t.popChamp.getMainDiv().innerHTML = m;
+				
+				document.getElementById('ptchamprefresh').addEventListener('click',function() {t.ViewChamps(uid,name);}, false);
+				
+				t.popChamp.getTopDiv().innerHTML = '<DIV align=center><B>'+name+'\'s Champion Hall</B></DIV>';
+				t.popChamp.show(true);
+			},
+			onFailure: function () {
+				return;
+			},
+		},true);
+	},
+	
 	TRStats: function (uid, name, what) {
 		var t = Tabs.AllianceList;
 		var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
@@ -7087,6 +7299,7 @@ Tabs.Info = {
 			u60: "1",
 			u61: "2",
 			u62: "3",
+			u63: "10",
 		};
 		var t = Tabs.Info;
 		var m = '<DIV style="max-height:735px; height:735px;"><DIV class=ptstat>PROVINCE MAP</div><DIV id=ptProvMap style="height:' + provMapCoords.imgHeight + 'px; width:' + provMapCoords.imgWidth + 'px; background-repeat:no-repeat; background-image:url(\'' + URL_PROVINCE_MAP + '\')"></div>';
@@ -7243,7 +7456,7 @@ Tabs.Options = {
 			m += '<TR><TD><INPUT id=ptEnableTowerAlert type=checkbox /></td><TD>Enable sound alert on tower alert in chat</td></tr>';
 			m += '<TR><TD><INPUT id=ptupdate type=checkbox ' + (GlobalOptions.ptupdate ? 'CHECKED ' : '') + '/></td><TD>Check updates on ' + htmlSelector({
 				0: 'GreasyFork',
-				1: 'Google Code'
+				1: 'SourceForge'
 			}, GlobalOptions.ptupdatebeta, 'id=ptupdatebeta') + ' (all domains) &nbsp; &nbsp; <INPUT id=ptupdatenow type=submit value="Update Now" /></td></tr>';
 			m += '<TR><TD><INPUT id=ptEnableMiniRefresh type=checkbox ' + (Options.miniRefresh ? 'CHECKED ' : '') + '/></td><TD> Refresh data/marches every ';
 			m += '<INPUT id=optMiniRefreshIntvl type=text size=3 value="' + Options.miniRefreshIntvl + '"> minutes</td></tr>';
@@ -7279,7 +7492,7 @@ Tabs.Options = {
 			m += '<TR><TD><INPUT id=togTRAetherCostFix type=checkbox /></td><TD>Fix display of aetherstones for throne room upgrade/enhance</td></tr>';
 			m += '<TR><TD><INPUT id=togMMBImageFix type=checkbox /></td><TD>Post correct image to facebook for Merlin Box</td></tr>';
 			m += '<TR><TD><INPUT id=togChatTimeFix type=checkbox /></td><TD>Always show local time on chat posts</td></tr>';
-			m += '<TR><TD><INPUT id=togAllowMulti type=checkbox /></td><TD>Disable Multi-Browser check v2 (experimental)</td></tr>';
+			m += '<TR><TD><INPUT id=togAllowMulti type=checkbox /></td><TD>Disable Multi-Browser Check <SPAN class=boldRed>(USE WITH CAUTION!)</span></td></tr>';
 			m += '<TR><TD><INPUT id=togRaidPatch type=checkbox /></td><TD>Fix stuck raid marches (experimental)</td></tr>';
 			m += '<TR><td><INPUT id=MoveFurnitureChk type=checkbox /></td><td>Rearrange throne room furniture for better visibility&nbsp;(needs refresh)</td></tr>';
 			m += '<TR><TD><INPUT id=togMapDblClickFix type=checkbox /></td><TD>Restore double click map tile</td></tr>';
@@ -7339,7 +7552,7 @@ Tabs.Options = {
 				saveOptions();
 			}, false);
 			document.getElementById('ptupdatenow').addEventListener('click', function () {
-				AutoUpdater_103659.call(true, true);
+				AutoUpdater.call(true, true);
 			}, false);
 			document.getElementById('optFoodHours').addEventListener('change', function () {
 				var x = document.getElementById('optFoodHours').value;
@@ -7565,10 +7778,14 @@ Tabs.Options = {
 	// This function grabs a fresh copy of the main_src and replaces the seed variable with the returned data.
 	// This refreshes the data without a full web page refresh.
 	updateAll: function () {
+		// if update_seed_ajax is running, wait for it to finish before going any further..
+		if (uW.g_update_seed_ajax_do) {
+			setTimeout(Tabs.Options.updateAll,1000);
+			return;
+		}
 		// stop update_seed_ajax while this is happening. This is a kabam indicator (but it does still fire on a cancel training.. who knows why they've done it like that)
 		uW.g_update_seed_ajax_do = true;
-		//potential fix for missing troop recalls:  true flag forces troop march update
-		//unsafeWindow.update_seed_ajax(true);
+
 		// update the timestamps
 		var ts = (new Date().getTime() / 1000) + uW.g_timeoff;
 		var cts = parseInt((ts - 25.1) * 1000);
@@ -7582,8 +7799,6 @@ Tabs.Options = {
 				method: "POST",
 				parameters: params,
 				onSuccess: function (rslt) {
-					// let update_seed_ajax run again in game
-					uW.g_update_seed_ajax_do = false;
 					var mainSrcHTMLCode = rslt.responseText;
 					var myregexp = /var seed=\{.*?\};/;
 					var match = myregexp.exec(mainSrcHTMLCode);
@@ -7598,7 +7813,7 @@ Tabs.Options = {
 									Seed[jj] = seed2[jj];
 								}
 						}
-						//                         delete Seed.ss;
+
 						for (var o = 0; o < Seed.cities.length; o++) {
 							var n = Seed.cities[o][0];
 							Seed.citystats["city" + n].pop[0] = parseInt(Seed.citystats["city" + n].pop[0]);
@@ -7632,10 +7847,12 @@ Tabs.Options = {
 						unsafeWindow.cm.ThroneView.renderInventory(unsafeWindow.kocThroneItems);
 						unsafeWindow.seed.player.g = seed_player_g;
 					}
+					// let update_seed_ajax run again in game
+					setTimeout( function () {uW.g_update_seed_ajax_do = false;},5000); // 5 second delay before we allow update_seed_ajax to run again :)
 				},
 				onFailure: function () {
 					// let update_seed_ajax run again in game
-					uW.g_update_seed_ajax_do = false;
+					setTimeout( function () {uW.g_update_seed_ajax_do = false;},5000); // 5 second delay before we allow update_seed_ajax to run again :)
 					logit("ERROR ********: ", inspect(rslt, 3, 1));
 					if (notify != null)
 						notify(rslt.errorMsg);
@@ -7722,7 +7939,7 @@ Tabs.Train = {
 		}
 	},
 	nextAuto: null,
-	defenseOptions: "<option value='53'>Crossbow</option><option value='55'>Trebuchet</option><option value='60'>Trap</option><option value='61'>Caltrop</option><option value='62'>Spiked Barrier</option>",
+	defenseOptions: "<option value='53'>Crossbow</option><option value='55'>Trebuchet</option><option value='60'>Trap</option><option value='61'>Caltrop</option><option value='62'>Spiked Barrier</option><option value='63'>Greek Fire</option>",
 	prevCityNo: 0,
 	init: function (div) {
 		var t = Tabs.Train;
@@ -7772,8 +7989,11 @@ Tabs.Train = {
         <option value='55'>" + uW.fortcost.frt55[0] + "</option>\
         <option value='60'>" + uW.fortcost.frt60[0] + "</option>\
         <option value='61'>" + uW.fortcost.frt61[0] + "</option>\
-        <option value='62'>" + uW.fortcost.frt62[0] + "</option>\
-      </select> &nbsp; (<span id=pttdSpMax></span>)</td>\
+        <option value='62'>" + uW.fortcost.frt62[0] + "</option>";
+		if (uW.fortcost.frt63) {
+			s+= "<option value='63'>" + uW.fortcost.frt63[0] + "</option>";
+		}	
+      s += "</select> &nbsp; (<span id=pttdSpMax></span>)</td>\
       <TR><TD align=right>" + uW.g_js_strings.modal_walls_train.numdefbuild + ": </td><TD><INPUT id='pttdInpPS' size=5 type='text' value='0'\></td>\
         <TD><INPUT id='pttdButMaxPS' type=submit value='" + uW.g_js_strings.commonstr.max + "'\> &nbsp; (" + uW.g_js_strings.commonstr.max + "\
          <span id=pttdSpMaxPS>0</span>)</td></tr>\
@@ -7788,12 +8008,13 @@ Tabs.Train = {
       <option value='26'>" + uW.itemlist.i26.name + " (" + (Seed.items.i26?Seed.items.i26:0) + ")</option>\
       </select></div>\
       <BR><INPUT id='pttdButDo' type=submit value='" + uW.g_js_strings.modal_openWalls.builddefenses + "'\></td></tr>\
-	 <TR><TD align=center colspan=3><b>AUTOBUILD</b><br>Will queue small amounts<br>until all available wall space used</TD></TR>\
+	 <TR><TD align=center colspan=3><b>AUTOBUILD</b><br>Will queue&nbsp;<INPUT id=ptDefPacket type=text size=6 maxlength=7 value='"+AutoTrainOptions.packetAmount+"'\>&nbsp;units<br>until all available wall/field space used</TD></TR>\
 	 <TR><TD align=center colspan=3><INPUT type=CHECKBOX id=chkDoTraps" + (AutoTrainOptions.doTraps[1] ? ' CHECKED ' : '') + ">Traps</TD></TR>\
    	 <TR><TD align=center colspan=3><INPUT type=CHECKBOX id=chkDoCaltrops" + (AutoTrainOptions.doCalrops[1] ? ' CHECKED ' : '') + ">Caltrops</TD></TR>\
 	 <TR><TD align=center colspan=3><INPUT type=CHECKBOX id=chkDoSpikes" + (AutoTrainOptions.doSpikes[1] ? ' CHECKED ' : '') + ">Spiked Barriers</TD></TR>\
    	 <TR><TD align=center colspan=3><INPUT type=CHECKBOX id=chkDoXbows" + (AutoTrainOptions.doXbows[1] ? ' CHECKED ' : '') + ">Crossbows</TD></TR>\
    	 <TR><TD align=center colspan=3><INPUT type=CHECKBOX id=chkDoTrebs" + (AutoTrainOptions.doTrebs[1] ? ' CHECKED ' : '') + ">Defensive Trebuchets</TD></TR>\
+   	 <TR><TD align=center colspan=3><INPUT type=CHECKBOX id=chkDoGreek" + (AutoTrainOptions.doGreek[1] ? ' CHECKED ' : '') + ">Greek Fire</TD></TR>\
       </table></td></tr></table></div></div>\
       <TABLE align=center width=425 class=ptTab><TR><TD><div id=ptTrainStatus style='overflow-y:auto; max-height:26px; height: 78px;'></div></td></tr></table>\
       <div style='height: 330px; background: #e8ffe8'>\
@@ -7859,6 +8080,14 @@ Tabs.Train = {
 		document.getElementById('chkDoSpikes').addEventListener('change', t.clickCheckDoSpikes, false);
 		document.getElementById('chkDoXbows').addEventListener('change', t.clickCheckDoXbows, false);
 		document.getElementById('chkDoTrebs').addEventListener('change', t.clickCheckDoTrebs, false);
+		document.getElementById('chkDoGreek').addEventListener('change', t.clickCheckDoGreek, false);
+		
+		document.getElementById('ptDefPacket').addEventListener ('change', function (e) {
+			if (isNaN(e.target.value)) { e.target.value = 50; }
+			AutoTrainOptions.packetAmount = e.target.value;
+			saveAutoTrainOptions();
+		}, false);
+		
 		document.getElementById('pttrgamble').addEventListener('change', t.changeTroopSelect, false);
 		document.getElementById('chkPop').addEventListener('change', t.clickCheckIdlePop, false);
 		t.changeTroopSelect();
@@ -8110,6 +8339,14 @@ Tabs.Train = {
 		t.displayCityStats();
 		t.changeDefSelect();
 	},
+	clickCheckDoGreek: function () {
+		var t = Tabs.Train;
+		var cityNo = Cities.byID[t.selectedCity.id].idx + 1;
+		AutoTrainOptions.doGreek[cityNo] = (document.getElementById('chkDoGreek').checked)
+		saveAutoTrainOptions();
+		t.displayCityStats();
+		t.changeDefSelect();
+	},
 	limitingFactor: null,
 	changeTroopSelect: function () {
 		var t = Tabs.Train;
@@ -8127,6 +8364,7 @@ Tabs.Train = {
 				actualuc[r] = uc[r];
 		}
 		if (id == 16) actualuc[5] = uc[11]["34001"];
+		if (id == 27) actualuc[5] = uc[11]["34003"];
 		var max = 9999999999;
 		if ((t.stats.food / actualuc[1]) < max) {
 			max = t.stats.food / actualuc[1];
@@ -8148,6 +8386,11 @@ Tabs.Train = {
 			if ((t.stats.yew / actualuc[5]) < max) {
 				max = t.stats.yew / actualuc[5];
 				t.limitingFactor = 'yew';
+			}
+		if (id == 27)
+			if ((t.stats.corrupter / actualuc[5]) < max) {
+				max = t.stats.corrupter / actualuc[5];
+				t.limitingFactor = 'corrupter';
 			}
 		if ((t.stats.idlePop / uc[6]) < max) {
 			max = t.stats.idlePop / uc[6];
@@ -8212,8 +8455,8 @@ Tabs.Train = {
 		}
 
 		if (t.limitingFactor) {
-			document.getElementById('ptttr_' + t.limitingFactor).className = 'boldRed';
-			document.getElementById('ptttr2_' + t.limitingFactor).className = 'boldRed';
+			if (document.getElementById('ptttr_' + t.limitingFactor)) document.getElementById('ptttr_' + t.limitingFactor).className = 'boldRed';
+			if (document.getElementById('ptttr2_' + t.limitingFactor)) document.getElementById('ptttr2_' + t.limitingFactor).className = 'boldRed';
 		}
 		t.updateTopTroops();
 		if (isPrestige && t.lastTroopSelect > 12 && t.lastTroopSelect < 16)
@@ -8280,6 +8523,7 @@ Tabs.Train = {
 		document.getElementById('chkDoSpikes').checked = AutoTrainOptions.doSpikes[Cities.byID[t.selectedCity.id].idx + 1];
 		document.getElementById('chkDoXbows').checked = AutoTrainOptions.doXbows[Cities.byID[t.selectedCity.id].idx + 1];
 		document.getElementById('chkDoTrebs').checked = AutoTrainOptions.doTrebs[Cities.byID[t.selectedCity.id].idx + 1];
+		document.getElementById('chkDoGreek').checked = AutoTrainOptions.doGreek[Cities.byID[t.selectedCity.id].idx + 1];
 	},
 	changeDefSelect: function () {
 		var t = Tabs.Train;
@@ -8302,8 +8546,16 @@ Tabs.Train = {
 			max = t.stats.stone / uc[3];
 		if ((t.stats.ore / uc[4]) < max)
 			max = t.stats.ore / uc[4];
-		if ((t.stats.idlePop / uc[6]) < max)
-			max = t.stats.idlePop / uc[6];
+
+		if (id == 63) {  // greek fire requires median oil
+			var unitMedian = uW.fortcost['frt'+id][11]["34002"];
+			var median = parseIntNan(Seed.items.i34002);
+			
+			if ((median / unitMedian) < max) {
+				max = parseInt(median / unitMedian);
+			}
+		}
+
 		t.stats.MaxDefTrain = parseIntNan(max);
 		if (t.stats.MaxDefTrain < 0)
 			t.stats.MaxDefTrain = 0;
@@ -8336,7 +8588,7 @@ Tabs.Train = {
 			}
 		}
 		var spaceEach = parseInt(uW.fortstats["unt" + id][5]);
-		if (id < 60)
+		if (id < 60 || id==63)
 			var spaceAvail = t.stats.wallSpace - t.stats.wallSpaceUsed - t.stats.wallSpaceQueued;
 		else
 			var spaceAvail = t.stats.fieldSpace - t.stats.fieldSpaceUsed - t.stats.fieldSpaceQueued;
@@ -8448,7 +8700,9 @@ Tabs.Train = {
 		t.stats.wood = parseInt(Seed.resources['city' + cityId].rec2[0] / 3600);
 		t.stats.stone = parseInt(Seed.resources['city' + cityId].rec3[0] / 3600);
 		t.stats.ore = parseInt(Seed.resources['city' + cityId].rec4[0] / 3600);
-		t.stats.yew = parseInt(Seed.items.i34001);
+		t.stats.yew = parseIntNan(Seed.items.i34001);
+		t.stats.corrupter = parseIntNan(Seed.items.i34003);
+		t.stats.median = parseIntNan(Seed.items.i34002);
 		t.stats.gold = Seed.citystats['city' + cityId].gold[0];
 		if (Options.maxIdlePop)
 			t.stats.idlePop = parseInt(Seed.citystats['city' + cityId].pop[0]);
@@ -8472,7 +8726,9 @@ Tabs.Train = {
 			if (i == 5) m += '<TD width=75px><SPAN id=ptttr_gold>' + uW.resourceinfo['rec0'] + '</span></td><TD width=60px><SPAN id=ptttr2_gold>' + addCommas(Seed.citystats['city' + cityId].gold[0]) + '</span></td>';
 			if (i == 6) m += '<TD width=75px><SPAN id=ptttr_pop>Available Population</td><TD width=60px><SPAN id=ptttr2_pop>' + addCommas(t.stats.idlePop) + '</td>';
 			if (i == 7) m += '<TD width=75px><SPAN id=ptttr_yew>Pristine Yew Branch</td><TD width=60px><SPAN id=ptttr2_yew>' + addCommas(t.stats.yew) + '</td>';
-			if (i > 7) m += '<TD width=75px></td><TD width=60px></td>';
+			if (i == 8) m += '<TD width=75px><SPAN id=ptttr_corrupter>Corrupter Seeds</td><TD width=60px><SPAN id=ptttr2_yew>' + addCommas(t.stats.corrupter) + '</td>';
+			if (i == 9) m += '<TD width=75px><SPAN id=ptttr_corrupter>Median Oil</td><TD width=60px><SPAN id=ptttr2_median>' + addCommas(t.stats.median) + '</td>';
+			if (i > 9) m += '<TD width=75px></td><TD width=60px></td>';
 			m += '</tr>';
 		}
 		m += '</table>';
@@ -8596,7 +8852,7 @@ Tabs.Train = {
 				t.stats.Dqueued = q.length;
 				first = true;
 				for (i = 0; i < q.length; i++) {
-					if (q[i][0] < 60)
+					if (q[i][0] < 60 || q[i][0]==63)
 						t.stats.wallSpaceQueued += parseInt(uW.fortstats["unt" + q[i][0]][5]) * parseInt(q[i][1]);
 					else
 						t.stats.fieldSpaceQueued += parseInt(uW.fortstats["unt" + q[i][0]][5]) * parseInt(q[i][1]);
@@ -8680,13 +8936,10 @@ Tabs.Train = {
 		params.frtTmp = frtTmp;
 		params.frtNeeded = frtNeeded;
 		params.frtid = frtid;
-		new AjaxRequest(uW.g_ajaxpath + "ajax/cancelFortifications.php" + uW.g_ajaxsuffix, {
+		new MyAjaxRequest(uW.g_ajaxpath + "ajax/cancelFortifications.php" + uW.g_ajaxsuffix, {
 			method: "post",
 			parameters: params,
-			onSuccess: function (message) {
-				if (rslt.updateSeed)
-					unsafeWindow.update_seed(rslt.updateSeed);
-				var rslt = eval("(" + message.responseText + ")");
+			onSuccess: function (rslt) {
 				if (rslt.ok) {
 					var k = 0;
 					for (var j = 0; j < Seed.queue_fort["city" + cityId].length; j++) {
@@ -8787,8 +9040,8 @@ Tabs.Train = {
 						numberToTrain = parseInt(availOre / 400);
 					if ((availableSpace / 4) < numberToTrain)
 						numberToTrain = parseInt(availableSpace / 4);
-					if (numberToTrain > 50)
-						numberToTrain = 50;
+					if (numberToTrain > AutoTrainOptions.packetAmount)
+						numberToTrain = AutoTrainOptions.packetAmount;
 					logit('Building ' + numberToTrain + ' Traps in city ' + Cities.byID[cityId].name);
 					try {
 						doDefTrain(cityId, 0, 60, numberToTrain);
@@ -8832,8 +9085,8 @@ Tabs.Train = {
 						numberToTrain = parseInt(availWood / 400);
 					if ((availableSpace) < numberToTrain)
 						numberToTrain = parseInt(availableSpace);
-					if (numberToTrain > 50)
-						numberToTrain = 50;
+					if (numberToTrain > AutoTrainOptions.packetAmount)
+						numberToTrain = AutoTrainOptions.packetAmount;
 					logit('Building ' + numberToTrain + ' Caltrops in city ' + Cities.byID[cityId].name);
 					try {
 						doDefTrain(cityId, 0, 61, numberToTrain);
@@ -8879,8 +9132,8 @@ Tabs.Train = {
 						numberToTrain = parseInt(availStone / 50);
 					if ((availableSpace / 3) < numberToTrain)
 						numberToTrain = parseInt(availableSpace / 3);
-					if (numberToTrain > 50)
-						numberToTrain = 50;
+					if (numberToTrain > AutoTrainOptions.packetAmount)
+						numberToTrain = AutoTrainOptions.packetAmount;
 					logit('Building ' + numberToTrain + ' Spikes in city ' + Cities.byID[cityId].name);
 					try {
 						doDefTrain(cityId, 0, 62, numberToTrain);
@@ -8928,8 +9181,8 @@ Tabs.Train = {
 						numberToTrain = parseInt(availOre / 500);
 					if ((availableSpace / 2) < numberToTrain)
 						numberToTrain = parseInt(availableSpace / 2);
-					if (numberToTrain > 50)
-						numberToTrain = 50;
+					if (numberToTrain > AutoTrainOptions.packetAmount)
+						numberToTrain = AutoTrainOptions.packetAmount;
 					logit('Building ' + numberToTrain + ' Crossbows in city ' + Cities.byID[cityId].name);
 					try {
 						doDefTrain(cityId, 0, 53, numberToTrain);
@@ -8977,8 +9230,8 @@ Tabs.Train = {
 						numberToTrain = parseInt(availOre / 1200);
 					if ((availableSpace / 4) < numberToTrain)
 						numberToTrain = parseInt(availableSpace / 4);
-					if (numberToTrain > 50)
-						numberToTrain = 50;
+					if (numberToTrain > AutoTrainOptions.packetAmount)
+						numberToTrain = AutoTrainOptions.packetAmount;
 					logit('Building ' + numberToTrain + ' Trebuchets in city ' + Cities.byID[cityId].name);
 					try {
 						doDefTrain(cityId, 0, 55, numberToTrain);
@@ -8989,6 +9242,63 @@ Tabs.Train = {
 			}
 		}
 	},
+	
+	doAutoGreek: function (cityNo) {
+		var t = Tabs.Train;
+		wall = {};
+		var cityId = Cities.cities[cityNo - 1].id
+		var cityID = 'city' + cityId;
+		getWallInfo(cityId, wall);
+		availableSpace = wall.wallSpace - wall.wallSpaceUsed - wall.wallSpaceQueued;
+		var MaxSlots = wall.wallLevel;
+		if (MaxSlots > 5) MaxSlots = 5;
+		if (availableSpace > 0 && wall.slotsBusy < MaxSlots) {
+			var food = parseInt(Seed.resources['city' + cityId].rec1[0] / 3600);
+			var wood = parseInt(Seed.resources['city' + cityId].rec2[0] / 3600);
+			var stone = parseInt(Seed.resources['city' + cityId].rec3[0] / 3600);
+			var ore = parseInt(Seed.resources['city' + cityId].rec4[0] / 3600);
+			availableSlots = MaxSlots - wall.slotsBusy;
+			var foodRes = AutoTrainOptions.keepFood[cityNo];
+			var woodRes = AutoTrainOptions.keepWood[cityNo];
+			var stoneRes = AutoTrainOptions.keepStone[cityNo];
+			var oreRes = AutoTrainOptions.keepOre[cityNo];
+			var availFood = food - foodRes;
+			var availWood = wood - woodRes;
+			var availStone = stone - stoneRes;
+			var availOre = ore - oreRes;
+			secsPerGreek = Cities.byID[cityId]['Def63Time'];
+			if (secsPerGreek > 0 && availableSpace >= 1 && availableSlots > 0) {
+				if (availFood > 1000 && availWood > 2500 & availStone > 1500 & availOre > 1500) {
+					var numberToTrain = 9999999999;
+					if ((availFood / 1000) < numberToTrain)
+						numberToTrain = parseInt(availFood / 1000);
+					if ((availWood / 2500) < numberToTrain)
+						numberToTrain = parseInt(availWood / 2500);
+					if ((availStone / 1500) < numberToTrain)
+						numberToTrain = parseInt(availStone / 1500);
+					if ((availOre / 1500) < numberToTrain)
+						numberToTrain = parseInt(availOre / 1500);
+						
+					var unitMedian = uW.fortcost['frt63'][11]["34002"]; // median oil
+					var median = parseIntNan(Seed.items.i34002);
+					if ((median / unitMedian) < numberToTrain) 
+						numberToTrain = parseInt(median / unitMedian);
+						
+					if ((availableSpace / 1) < numberToTrain)
+						numberToTrain = parseInt(availableSpace / 1);
+					if (numberToTrain > AutoTrainOptions.packetAmount)
+						numberToTrain = AutoTrainOptions.packetAmount;
+					logit('Building ' + numberToTrain + ' Greek Fire in city ' + Cities.byID[cityId].name);
+					try {
+						doDefTrain(cityId, 0, 63, numberToTrain);
+					} catch (err) {
+						logit(inspect(err, 8, 1));
+					}
+				}
+			}
+		}
+	},
+	
 	doAutoTrain: function (cityNo) {
 		var t = Tabs.Train;
 		clearTimeout(t.nextAuto);
@@ -9016,6 +9326,8 @@ Tabs.Train = {
 			t.doAutoCrossbows(cityNo);
 		if (AutoTrainOptions.doTrebs[cityNo])
 			t.doAutoTrebs(cityNo);
+		if (AutoTrainOptions.doGreek[cityNo])
+			t.doAutoGreek(cityNo);
 			
 		if (cityNo == Cities.numCities)
 			t.nextAuto = setTimeout(function () {
@@ -9125,7 +9437,7 @@ function getWallInfo(cityId, objOut) {
 	var fort = Seed.fortifications["city" + cityId];
 	for (k in fort) {
 		var id = parseInt(k.substr(4));
-		if (id < 60)
+		if (id < 60 || id==63)
 			objOut.wallSpaceUsed += parseInt(uW.fortstats["unt" + id][5]) * parseInt(fort[k]);
 		else
 			objOut.fieldSpaceUsed += parseInt(uW.fortstats["unt" + id][5]) * parseInt(fort[k]);
@@ -9134,7 +9446,7 @@ function getWallInfo(cityId, objOut) {
 	objOut.slotsBusy = q.length;
 	if (q!=null && q.length > 0 ){
 		for (i=0; i<q.length; i++){
-			if (q[i][0] < 60)
+			if (q[i][0] < 60 || q[i][0]==63)
 				objOut.wallSpaceQueued += parseInt(uW.fortstats["unt"+ q[i][0]][5]) * parseInt(q[i][1]);
 			else
 				objOut.fieldSpaceQueued += parseInt(uW.fortstats["unt"+ q[i][0]][5]) * parseInt(q[i][1]);
@@ -9673,7 +9985,7 @@ Tabs.OverView = {
 			for (var b = 1; b < (wall + 1); b++) {
 				WallSpace += (b * 3000)
 			};
-			max = WallSpace / 2 / 2 - parseInt(Seed.fortifications[city]["fort53"]) - parseInt(Seed.fortifications[city]["fort55"]);
+			max = WallSpace / 2 / 2 - (parseInt(Seed.fortifications[city]["fort53"])*2) - (parseInt(Seed.fortifications[city]["fort55"])*4) - (parseIntNan(Seed.fortifications[city]["fort63"]));
 			m += '<TD width=79 style="background:#FFFFFF">' + Seed.fortifications[city]["fort53"];
 			if (wall >= 6 && blacksmith >= 6 && fletching >= 5 && max > 0) m += '<br>Left: ' + max + '</td>';
 			else if (t.showReq) {
@@ -9695,7 +10007,7 @@ Tabs.OverView = {
 			for (var b = 1; b < (wall + 1); b++) {
 				WallSpace += (b * 3000)
 			};
-			max = WallSpace / 2 / 4 - parseInt(Seed.fortifications[city]["fort53"]) - parseInt(Seed.fortifications[city]["fort55"]);
+			max = WallSpace / 2 / 4 - (parseInt(Seed.fortifications[city]["fort53"])*2) - (parseInt(Seed.fortifications[city]["fort55"])*4) - (parseIntNan(Seed.fortifications[city]["fort63"]));
 			m += '<TD width=79 style="background:#FFFFFF">' + Seed.fortifications[city]["fort55"];
 			if (wall >= 8 && blacksmith >= 8 && fletching >= 7 && geometry >= 7 && max > 0) m += '<br>Left: ' + max + '</td>';
 			else if (t.showReq) {
@@ -9706,12 +10018,31 @@ Tabs.OverView = {
 				m += '</td>';
 			}
 		}
+		if (uW.fortcost['frt63']) {
+			m += '</tr><TR valign=top align=right><TD width=85 style="background-color:' + Colors.OverviewDarkRow + ';">' + uW.fortcost['frt63'][0] + '</td>';
+			for (i = 0; i < Seed.cities.length; i++) {
+				city = 'city' + Seed.cities[i][0];
+				if (Seed.buildings[city].pos1 == null) wall = 0;
+				else wall = parseInt(Seed.buildings[city].pos1[1]);
+				var WallSpace = 0;
+				for (var b = 1; b < (wall + 1); b++) {
+					WallSpace += (b * 3000)
+				};
+				max = WallSpace / 2 / 1 - (parseInt(Seed.fortifications[city]["fort53"])*2) - (parseInt(Seed.fortifications[city]["fort55"])*4) - (parseIntNan(Seed.fortifications[city]["fort63"]));
+				m += '<TD width=79 style="background:#FFFFFF">' + Seed.fortifications[city]["fort63"];
+				if (wall >= 8 && max > 0) m += '<br>Left: ' + max + '</td>';
+				else if (t.showReq) {
+					if (wall < 8) m += '<br><FONT COLOR= "CC0000">Wall: ' + wall + '(8)</font>';
+					m += '</td>';
+				}
+			}	
+		}
 		m += '<TR valign=top align=right><TD width=85 style="background-color:' + Colors.OverviewDarkRow + ';">Wall defences</td>';
 		for (i = 0; i < Seed.cities.length; i++) {
 			city = 'city' + Seed.cities[i][0];
 			if (Seed.buildings[city].pos1 == null) wall = 0;
 			else wall = parseInt(Seed.buildings[city].pos1[1]);
-			build = (parseInt(Seed.fortifications[city]["fort53"]) * 2) + (parseInt(Seed.fortifications[city]["fort55"]) * 4);
+			build = (parseInt(Seed.fortifications[city]["fort53"]) * 2) + (parseInt(Seed.fortifications[city]["fort55"]) * 4) + (parseIntNan(Seed.fortifications[city]["fort63"]));
 			var WallSpace = 0;
 			for (var b = 1; b < (wall + 1); b++) {
 				WallSpace += (b * 3000)
@@ -10013,19 +10344,19 @@ Tabs.OverView = {
 		clearTimeout(t.displayTimer);
 		//Useful links
 		var u = '<DIV class=ptstat>USEFUL LINKS</div><DIV id=ptLinks><TABLE align=center cellpadding=1 cellspacing=0><TR>';
-		u += '<TD width="300px" ; border:none">Scripts</td><TD width="300px" ; border:none">Information sites</td></tr>';
+		u += '<TD width="300px" ; border:none"><b>Scripts</b></td><TD width="300px" ; border:none"><b>Information sites</b></td></tr>';
 		u += '<TR><TD width="300px" ; border:none"><a href="https://greasyfork.org/en/scripts/893-koc-power-tools" target="_blank">Power Tools</a></td>';
-		u += '<TD width="300px" ; border:none"><a href="http://koctools.com/index.php?pageid=servers" target="_blank">KOCTools</a></td></tr>';
-		u += '<TR><TD width="100px" ; border:none"><a href="https://greasyfork.org/en/scripts/893-koc-power-tools" target="_blank">Power Tools WIKI</a></td>';
-		u += '<TD width="300px" ; border:none"><a href="http://koc.weezeewig.com/index.sjs?f=ListServers" target="_blank">KOC Mapper</a></td></tr>';
+		u += '<TD width="300px" ; border:none"><a href="https://www.facebook.com/groups/SolarsKOCinfoPage/" target="_blank">KOC Information (Solar\'s Facebook Group)</a></td></tr>';
 		u += '<TR><TD width="100px" ; border:none"><a href="https://greasyfork.org/en/scripts/892-koc-power-bot" target="_blank">Power Bot</a></td>';
-		u += '<TD width="300px" ; border:none"><a href="http://kocmon.com/">Kocmon</a></td></tr>';
-		u += '<TR><TD width="100px" ; border:none"><a href="https://greasyfork.org/en/scripts/892-koc-power-bot" target="_blank">Power Bot WIKI</a></td>';
-		u += '<TD width="300px" ; border:none"><a href="http://koc.wikia.com/wiki/" target="_blank">Koc Wikia</a></td></tr>';
-		u += '<TR><TD width="300px" ; border:none"><a href="https://greasyfork.org/en/scripts/890-koc-battle-console" target="_blank">Battle Console</a></td><TD width="100px" ; border:none"></td></tr>';
-		u += '<TR><TD width="300px" ; border:none"><a href="https://greasyfork.org/en/scripts/2610-koc-throne-room-champ-organizer" target="_blank">Combined TR/Champ Organiser (Ne0)</a></td><TD width="100px" ; border:none"></td></tr>';
-		u += '<TR><TD width="100px" ; border:none"><a href="https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/versions/?page=1#version-1.15" target="_blank">Greasemonkey (1.15)</a></td><TD width="100px" ; border:none"></td>';
-		u += '<TR><TD width="100px" ; border:none"><a href="https://addons.mozilla.org/en/firefox/addon/scriptish/" target="_blank">Scriptish</a></td><TD width="100px" ; border:none"></td>';
+		u += '<TD width="300px" ; border:none"><a href="https://www.facebook.com/Aderikstutorials/" target="_blank">Aderik\'s Tutorials</a></td></tr>';
+		u += '<TR><TD width="100px" ; border:none"><a href="https://www.facebook.com/koctrorgbyne0" target="_blank">Throne/Champ Organizer (by Ne0)</a></td>';
+		u += '<TD width="300px" ; border:none"><a href="http://kocmon.com" target="_blank">KOCMON</a></td></tr>';
+		u += '<TR><TD width="300px" ; border:none"><a href="https://greasyfork.org/en/scripts/890-koc-battle-console" target="_blank">Battle Console</a></td>';
+		u += '<TD width="100px" ; border:none"><a href="http://koc.wikia.com/wiki/" target="_blank">KofC Wiki</a></td></tr>';
+		u += '<TR><TD width="100px" ; border:none"><a href="https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/versions/?page=1#version-1.15" target="_blank">Greasemonkey (1.15)</a></td>';
+		u += '<TD width="100px" ; border:none"><a href="http://f89kocguide.weebly.com/" target="_blank">F89 Unofficial KOC Guide</a></td>';
+		u += '<TR><TD width="100px" ; border:none"><a href="https://addons.mozilla.org/en/firefox/addon/scriptish/" target="_blank">Scriptish</a></td>';
+		u += '<TD width="100px" ; border:none"><a href="http://koc.weezeewig.com/index.sjs?f=ListServers" target="_blank">KofC Mapper</a></td>';
 		u += '</tr></table></div><BR>';
 		//Crest info
 		var crestreq = {
@@ -10060,6 +10391,7 @@ Tabs.OverView = {
 			u60: "1",
 			u61: "2",
 			u62: "3",
+			u63: "10",
 		};
 		rownum = 0;
 		u += '<STYLE>.xtabH {background:#ffffe8; border:none; padding-right: 5px; padding-left: 5px; margin-left:10px; }\
@@ -10125,7 +10457,7 @@ Tabs.OverView = {
 			i = unsafeWindow.cm.UNIT_TYPES[ui];
 			unitsarr.push(i);
 		}	
-		for (r = 0; r < unitsarr.length + 13; r++) 
+		for (r = 0; r < unitsarr.length + 14; r++) 
 			infoRows[r] = [];
 		for (i = 0; i < Cities.numCities; i++) {
 			cityID = 'city' + Cities.cities[i].id;
@@ -10155,6 +10487,9 @@ Tabs.OverView = {
 			infoRows[unitsarr.length + 12][i] = Cities.cities[i]['Def62Time'];
 			if (infoRows[unitsarr.length + 12][i] > 0)
 				infoRows[unitsarr.length + 12][i] = 3600 / infoRows[unitsarr.length + 12][i];
+			infoRows[unitsarr.length + 13][i] = Cities.cities[i]['Def63Time'];
+			if (infoRows[unitsarr.length + 13][i] > 0)
+				infoRows[unitsarr.length + 13][i] = 3600 / infoRows[unitsarr.length + 12][i];
 		}
 		u += "<td align=center valign=bottom width=60px><b>Total</td></tr>";
 		var rownum = 0;
@@ -10175,6 +10510,7 @@ Tabs.OverView = {
 		_displayrow("Spike", infoRows[unitsarr.length + 10]);
 		_displayrow("Trap", infoRows[unitsarr.length + 11]);
 		_displayrow("Caltrop", infoRows[unitsarr.length + 12]);
+		_displayrow("Greek Fire", infoRows[unitsarr.length + 13]);
 		u += '</tr></table>';
 		u += '<DIV class=ptstat>MISC INFO</div><TABLE><TR><TD width="200px" style="background-color:#FFFFFF; border:none">KofC client version: ' + KOCversion + '</td>';
 		u += '<TD style="background-color:#FFFFFF; border:none"><INPUT id=ptButDebug type=submit name="SEED" value="DEBUG"></tr></td></table></div>';
@@ -10636,6 +10972,9 @@ Tabs.Attaque = {
 		t.cont = div;
 		t.state = null;
 		clearTimeout(t.displayTimer);
+		uW.ptAttackFav = Options.AttackFav;
+		uW.ptOneClickAttackPreset = Options.OneClickAttackPreset;
+		uW.ptAutoChamp = Options.marchautochamp;
 	},
 	getContent: function () {
 		var t = Tabs.Attaque;
@@ -10730,6 +11069,7 @@ Tabs.Attaque = {
 			}, false);
 			ById("ptmarch_autochamp").addEventListener('click', function () {
 				Options.marchautochamp = this.checked;
+				uW.ptAutoChamp = Options.marchautochamp;
 				saveOptions();
 				t.show();
 			}, false);
@@ -10986,7 +11326,7 @@ Tabs.Attaque = {
 		return closestNum;
 	},
 	AutoattackOnOff: function () {
-		// click click sur le bouton Activer le compte ÃƒÆ’  rebour !
+		// click click sur le bouton Activer le compte ÃƒÆ’Ã†â€™  rebour !
 		var t = Tabs.Attaque;
 		t.BOCompAttack.innerHTML = '';
 		clearTimeout(t.BOAttackTimer);
@@ -12233,13 +12573,35 @@ Tabs.Alliance = {
 	tabLabel: uW.g_js_strings.commonstr.alliance,
 	myDiv: null,
 	alliancemembers: [],
+	sortmembers: [],
 	number: 0,
 	totalmembers: 0,
 	error: false,
 	sortType: 1,
 	sortBy: 'Name',
+	Options: {
+		Monitor:false,
+		MonitorHours:1,
+		MonitorCC:"",
+		LastChecked:0,
+		MonitorId:0,
+		LastMemberList:{},
+	},	
+	
 	init: function (div) {
 		var t = Tabs.Alliance;
+		
+		if (!Options.AllianceOptions) {
+			Options.AllianceOptions = t.Options;
+		}
+		else {
+			for (var y in t.Options) {
+				if (!Options.AllianceOptions.hasOwnProperty(y)) {
+					Options.AllianceOptions[y] = t.Options[y];
+				}	
+			}
+		}
+		
 		t.myDiv = div;
 		t.myDiv.style.overflowY = 'scroll';
 		t.myDiv.style.maxHeight = '730px';
@@ -12253,7 +12615,7 @@ Tabs.Alliance = {
 			return;
 		}
 		m += '<table width=100%><tr><TD class=xtab align=center style="font-size:14px;";><b>'+Seed.allianceDiplomacies['allianceName']+'&nbsp('+Seed.allianceDiplomacies['allianceId']+')</b></td></tr></table>';
-		m += '<TABLE class=ptTab><TD width=200px>List Alliance Members</td><TD>Sort by: ' + htmlSelector({
+		m += '<TABLE class=ptTab width=100%><TD width=200px>List Alliance Members</td><TD colspan=2>Sort by: ' + htmlSelector({
 			Name: 'Name',
 			Might: 'Might',
 			glory: 'Glory',
@@ -12262,20 +12624,35 @@ Tabs.Alliance = {
 			dip: 'Days in Position',
 			uid: 'User Id',
 			fbuid: 'Facebook id'
-		}, null, 'id=searchAlli') + '</td>';
-		m += '<TD><INPUT id=alList type=submit value="List"></td>';
-		m += '<TD id=progress></td></tr>';
-		m += '<TR><TD width=200px>Show alliance diplomacies</td><TD><INPUT id=aldiplo type=submit value="List diplomacies"></td></tr></table>';
+		}, null, 'id=searchAlli') + '&nbsp;<INPUT id=alList type=submit value="List">&nbsp;<span id=ptalliprogress></span></td>';
+		m += '<TR><TD width=200px>Show alliance diplomacies</td><TD><INPUT id=aldiplo type=submit value="List diplomacies"></td>';
+		m += '<td align=right>Membership Monitor&nbsp;<INPUT id=pballimonitor type=checkbox '+ (Options.AllianceOptions.Monitor?'CHECKED ':'') +'/>&nbsp;Check Every&nbsp;<INPUT id=pballihours type=text size=2 value="' + Options.AllianceOptions.MonitorHours + '">&nbsp;hours</td></tr>';
+		m += '</tr></table>';
 		m += '<DIV class=ptstat>OVERVIEW</div><TABLE align=center cellpadding=1 cellspacing=0></table>';
-		m += '<TABLE id=alOverviewTab class=alTab><TR align="center"></tr></table>';
+		m += '<TABLE id=alOverviewTab class=alTab><TR align="center"></tr></table><div style="display:none;" id=ptalliexport align=right><input type=button value="Export to Excel" id=alListExcel>&nbsp;</div>';
 		t.myDiv.innerHTML = m;
+		
+		document.getElementById('alListExcel').addEventListener('click', function() {
+			t.ExportToExcel();
+		}, false);
+		
+		t.ToggleOption('pballimonitor','Monitor',t.ToggleAllianceMonitor);
+		document.getElementById('pballihours').addEventListener ('change', function(){
+			Options.AllianceOptions.MonitorHours = document.getElementById('pballihours').value;
+			if (isNaN(Options.AllianceOptions.MonitorHours)) {
+				Options.AllianceOptions.MonitorHours = 1;
+				document.getElementById('pballihours').value = 1;
+			}	
+            saveOptions ();
+		},false);    
+		
 		document.getElementById('alList').addEventListener('click', function () {
 			if (!t.searching) {
 				t.totalmembers = 0;
 				t.alliancemembers = [];
 				document.getElementById('alOverviewTab').innerHTML = "";
-				document.getElementById('progress').innerHTML = "";
-				document.getElementById('progress').innerHTML = uW.g_js_strings.commonstr.loadingddd;
+				document.getElementById('ptalliprogress').innerHTML = "";
+				document.getElementById('ptalliprogress').innerHTML = uW.g_js_strings.commonstr.loadingddd;
 				document.getElementById('alList').disabled = true;
 				t.error = false;
 				t.fetchAllianceMemberPage();
@@ -12291,7 +12668,40 @@ Tabs.Alliance = {
 			t.paintDiplomacy();
 		}, false);
 		//window.addEventListener('unload', t.onUnload, false);
+		
+		setTimeout(function () {
+			t.EverySecond();
+		}, 1000);
 	},
+	
+	ToggleOption : function (checkboxId, optionName, callOnChange) {
+		var t = Tabs.Alliance;
+		var checkbox = document.getElementById(checkboxId);
+		if (Options.AllianceOptions[optionName])
+			checkbox.checked = true;
+		checkbox.addEventListener ('change', new eventHandler(checkboxId, optionName, callOnChange).handler, false);
+
+		function eventHandler (checkboxId, optionName, callOnChange) {
+			this.handler = handler;
+			var optName = optionName;
+			var callback = callOnChange;
+			function handler(event){
+				Options.AllianceOptions[optionName] = this.checked;
+				saveOptions();
+				if (callback != null)
+				callback (this.checked);
+			}
+		}	
+	},
+	
+	ToggleAllianceMonitor : function () {
+		var t = Tabs.Alliance;
+		if (Options.AllianceOptions.Monitor) { // reset last sent time...
+			Options.AllianceOptions.LastChecked = 0;
+			saveOptions();
+		}
+	},
+	
 	paintMembers: function () {
 		var t = Tabs.Alliance;
 		if (document.getElementById('searchAlli').value == t.sortBy) {
@@ -12300,7 +12710,7 @@ Tabs.Alliance = {
 			t.sortType = 1;
 		}
 		t.sortBy = document.getElementById('searchAlli').value;
-		var sortmembers = t.alliancemembers.sort(function (a, b) {
+		t.sortmembers = t.alliancemembers.sort(function (a, b) {
 			var sortA = a[t.sortBy],
 				sortB = b[t.sortBy];
 			if (t.sortType > 0) {
@@ -12317,11 +12727,12 @@ Tabs.Alliance = {
 				}
 			}
 		});
-		for (var y = (sortmembers.length - 1); y >= 0; y--) {
-			t._addTab(sortmembers[y].Name, sortmembers[y].Might, sortmembers[y].LastLogin, sortmembers[y].Position, sortmembers[y].dip, sortmembers[y].uid, sortmembers[y].fbuid, sortmembers[y].Cities, sortmembers[y].avatarurl, sortmembers[y].glory, sortmembers[y].dateJoined);
+		for (var y = (t.sortmembers.length - 1); y >= 0; y--) {
+			t._addTab(t.sortmembers[y].Name, t.sortmembers[y].Might, t.sortmembers[y].LastLogin, t.sortmembers[y].Position, t.sortmembers[y].dip, t.sortmembers[y].uid, t.sortmembers[y].fbuid, t.sortmembers[y].Cities, t.sortmembers[y].avatarurl, t.sortmembers[y].glory, t.sortmembers[y].dateJoined);
 			t.myDiv.style.overflowY = 'scroll';
 		}
 		t._addTabHeader();
+		document.getElementById('ptalliexport').style.display = 'block';
 	},
 	_addTab: function (Name, Might, LastLogin, Position, dip, uid, fbuid, Cities, avatar, gloire, arrive) {
 		var t = Tabs.Alliance;
@@ -12363,7 +12774,7 @@ Tabs.Alliance = {
 	},
 	paintDiplomacy: function () {
 		document.getElementById('alOverviewTab').innerHTML = "";
-		document.getElementById('progress').innerHTML = "";
+		document.getElementById('ptalliprogress').innerHTML = "";
 		var m = '<tr><td valign=top><table class=xtab><TR><TD colspan=4 style=\'background: #33CC66;\' align=center><B>Friendly: </b></td></tr>';
 		if (Seed.allianceDiplomacies['friendly'] == null) m += '<TR><TD>No Friendlies found...</td></tr>';
 		else m += '<TR><TD><b>Alliance Name</b></td><TD><b>Members</b></td></tr>';
@@ -12397,10 +12808,52 @@ Tabs.Alliance = {
 		}
 		m += '</table></td></tr></table>';
 		document.getElementById('alOverviewTab').innerHTML = m;
+		document.getElementById('ptalliexport').style.display = 'none';
 	},
-	fetchAllianceMemberPage: function () {
+	
+	ExportToExcel: function () {
 		var t = Tabs.Alliance;
-		document.getElementById('alList').disabled = true;
+		var headers = [ "UID", "Name", "Might", "Glory", "Cities", "Position", "DIP", "Last Login", "Joined"];
+		var ExcelTable = document.createElement('table');
+		var ExcelBody = document.createElement('tbody');
+		var ExcelRow = document.createElement('tr'); 
+		var ExcelColumn = "";
+		for (i = 0; i < headers.length; i++) {
+			ExcelColumn = document.createElement('th');
+			ExcelColumn.appendChild(document.createTextNode(headers[i]));
+			ExcelRow.appendChild(ExcelColumn);
+		}
+		ExcelBody.appendChild(ExcelRow);
+    
+		var columns = [];
+
+		for (var y in t.sortmembers) {
+			columns = [];
+			columns.push(t.sortmembers[y].uid);
+			columns.push(t.sortmembers[y].Name);
+			columns.push(t.sortmembers[y].Might);
+			columns.push(t.sortmembers[y].glory);
+			columns.push(t.sortmembers[y].Cities);
+			columns.push(officerId2String(t.sortmembers[y].Position));
+			columns.push(t.sortmembers[y].dip);
+			columns.push(t.sortmembers[y].LastLogin);
+			columns.push(t.sortmembers[y].dateJoined);
+			columns.reverse();
+			ExcelRow = document.createElement('tr');
+			while (columns.length > 0) {
+				ExcelColumn = document.createElement('td');
+				ExcelColumn.appendChild(document.createTextNode(columns.pop()));
+				ExcelRow.appendChild(ExcelColumn);
+			}
+			ExcelBody.appendChild(ExcelRow);
+		}
+		ExcelTable.appendChild(ExcelBody);
+		window.open('data:application/vnd.ms-excel,' + encodeURIComponent(ExcelTable.outerHTML));
+	},
+	
+	fetchAllianceMemberPage: function (silent,notify) {
+		var t = Tabs.Alliance;
+		if (!silent) document.getElementById('alList').disabled = true;
 		var params = uW.Object.clone(uW.g_ajaxparams);
 		params.pf = 0;
 		new AjaxRequest(uW.g_ajaxpath + "ajax/allianceGetInfo.php" + uW.g_ajaxsuffix, {
@@ -12408,8 +12861,8 @@ Tabs.Alliance = {
 			parameters: params,
 			onSuccess: function (transport) {
 				var rslt = eval("(" + transport.responseText + ")");
-				t.totalmembers = (rslt["allianceInfo"]["members"]);
-				for (var i = 1; i <= 10; i++) {
+				t.totalmembers = parseIntNan(rslt["allianceInfo"]["members"]);
+				for (var i = 1; i <= Math.ceil(t.totalmembers/10); i++) {
 					params.pageNo = i;
 					params.pf = 0;
 					new AjaxRequest(uW.g_ajaxpath + "ajax/allianceGetMembersInfo.php" + uW.g_ajaxsuffix, {
@@ -12434,29 +12887,40 @@ Tabs.Alliance = {
 											dateJoined: info["memberInfo"][k]["dateJoined"],
 										});
 									}
-									document.getElementById('alOverviewTab').innerHTML = "";
-									t.paintMembers();
+									if (!silent) {
+										document.getElementById('alOverviewTab').innerHTML = "";
+										t.paintMembers();
+									}	
 								}
-								if (!t.error) document.getElementById('progress').innerHTML = '(' + (t.alliancemembers.length) + '/' + t.totalmembers + ')';
-								if (t.alliancemembers.length >= t.totalmembers) document.getElementById('alList').disabled = false;
+								if (!t.error && !silent) document.getElementById('ptalliprogress').innerHTML = '(' + (t.alliancemembers.length) + '/' + t.totalmembers + ')';
+								if (t.alliancemembers.length >= t.totalmembers) {
+									if (!silent) document.getElementById('alList').disabled = false;
+									if (notify) { notify(); }
+								}	
 							} else if (info.error) {
-								document.getElementById('alList').disabled = false;
-								document.getElementById('progress').innerHTML = "ERROR!";
+								if (!silent) {
+									document.getElementById('alList').disabled = false;
+									document.getElementById('ptalliprogress').innerHTML = "ERROR!";
+								}	
 								t.error = true;
 							}
 						},
 						onFailure: function (rslt) {;
-							notify({
-								errorMsg: 'AJAX error'
-							});
+							if (!silent) {
+								document.getElementById('alList').disabled = false;
+								document.getElementById('ptalliprogress').innerHTML = "ERROR!";
+							}	
+							t.error = true;
 						},
 					});
 				}
 			},
 			onFailure: function (rslt) {;
-				notify({
-					errorMsg: 'AJAX error'
-				});
+				if (!silent) {
+					document.getElementById('alList').disabled = false;
+					document.getElementById('ptalliprogress').innerHTML = "ERROR!";
+				}	
+				t.error = true;
 			},
 		});
 	},
@@ -12467,7 +12931,130 @@ Tabs.Alliance = {
 		var t = Tabs.Alliance;
 		mainPop.div.style.width = 750 + 'px';
 	},
+
+	EverySecond : function () {
+		var t = Tabs.Alliance;
+		var aid = getMyAlliance()[0];
+		var now = unixTime();
+		if (aid > 0) {
+			if (Options.AllianceOptions.Monitor && Options.AllianceOptions.LastChecked + (Options.AllianceOptions.MonitorHours*60*60) < now) {
+				Options.AllianceOptions.LastChecked = now;
+				if (aid != Options.AllianceOptions.MonitorId) { // new alliance, just set members, don't send message..
+					logit ('Setting alliance monitor start position for this alliance');
+					t.totalmembers = 0;
+					t.alliancemembers = [];
+					t.error = false;
+					t.fetchAllianceMemberPage(true,t.SaveMembers);
+				}
+				else {
+					logit ('Checking alliance member list for changes');
+					t.totalmembers = 0;
+					t.alliancemembers = [];
+					t.error = false;
+					t.fetchAllianceMemberPage(true,t.CompareMembers);
+				}	
+				Options.AllianceOptions.MonitorId = aid;
+				saveOptions();
+			}
+		}
+		setTimeout(function () {
+			t.EverySecond();
+		}, 1000);
+	},
+	
+	SaveMembers: function () {
+		var t = Tabs.Alliance;
+		Options.AllianceOptions.LastMemberList = {};
+		for (var y in t.alliancemembers) {
+			if (t.alliancemembers[y].uid) {
+				Options.AllianceOptions.LastMemberList[t.alliancemembers[y].uid] = t.alliancemembers[y];
+			}	
+		}
+		saveOptions();
+	},
+	
+	CompareMembers : function () {
+		var t = Tabs.Alliance;
+		var MemberChanges = false;
+		var message = '%0A Additional Members: %0A';
+    
+		for (var y in t.alliancemembers) {
+			if (t.alliancemembers[y].uid && !Options.AllianceOptions.LastMemberList[t.alliancemembers[y].uid]) {
+				MemberChanges = true;
+				message += t.alliancemembers[y].Name+' (Might '+addCommas(t.alliancemembers[y].Might)+') '+officerId2String(t.alliancemembers[y].Position)+' UID:'+t.alliancemembers[y].uid+' %0A';
+			}	
+		}
+		if (!MemberChanges) { message += 'None %0A'; }
+
+		var MemberLeft = false;
+		message += '%0A Departed Members: %0A';
+		for (var x in Options.AllianceOptions.LastMemberList) {
+			if (Options.AllianceOptions.LastMemberList[x].uid) {
+				var Found = false;
+				for (var y in t.alliancemembers) {
+					if (t.alliancemembers[y].uid && x==t.alliancemembers[y].uid) {
+						Found = true;
+						break;
+					}
+				}
+				if (!Found) {
+					MemberLeft = true;
+					MemberChanges = true;
+					message += Options.AllianceOptions.LastMemberList[x].Name+' (Might '+addCommas(Options.AllianceOptions.LastMemberList[x].Might)+') '+officerId2String(Options.AllianceOptions.LastMemberList[x].Position)+' UID:'+Options.AllianceOptions.LastMemberList[x].uid+' %0A';
+				}
+			}
+		}
+		if (!MemberLeft) { message += 'None %0A'; }
+		
+		if (MemberChanges) {
+			var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+			params.emailTo = Seed.player['name'];
+			params.subject = "Alliance Membership Change Report for "+getMyAlliance()[1];
+			params.message = message;  
+			params.requestType = "COMPOSED_MAIL";
+			new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/getEmail.php" + unsafeWindow.g_ajaxsuffix, {
+				method: "post",
+				parameters: params,
+				onSuccess: function (rslt) {
+					if (rslt.ok) { DeleteLastMessage(); }
+				},
+				onFailure: function () {},
+			},true);
+
+			// save current position...
+			t.SaveMembers();
+		}	
+	},
+	
 };
+
+function DeleteLastMessage() {
+	var params = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+	params.requestType = 'GET_MESSAGE_HEADERS_FOR_USER_INBOX';
+	params.boxType = 'outbox';
+	params.pageNo = 1;
+	new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/getEmail.php" + unsafeWindow.g_ajaxsuffix, {
+		method: "post",
+		parameters: params,
+		onSuccess: function (rslt) {
+			if (rslt.ok) {
+				if (rslt.mostRecentMessageId) {
+					var params2 = unsafeWindow.Object.clone(unsafeWindow.g_ajaxparams);
+					params2.requestType = 'ACTION_ON_MESSAGES';
+					params2.boxType = 'outbox';
+					params2.selectedAction = 'delete';
+					params2.selectedMessageIds = rslt.mostRecentMessageId;
+					new MyAjaxRequest(unsafeWindow.g_ajaxpath + "ajax/getEmail.php" + unsafeWindow.g_ajaxsuffix, {
+						method: "post",
+						parameters: params2,
+						onSuccess: function (rslt2) {},
+					},true);
+				}	
+			}
+		},
+	},true);
+};
+
 /*********************************** IRC TAB ***********************************/
 Tabs.IRC = {
 	tabOrder: 1000,
@@ -12508,8 +13095,10 @@ Tabs.IRC = {
 		window.addEventListener('unload', t.onUnload, false);
 	},
 	onUnload: function () {
-		var t = Tabs.IRC;
-		localStorage.setItem('IRCSeen_log_' + GetServerId(), JSON2.stringify(t.seenLog));
+		if (uW.ptLoaded) {
+			var t = Tabs.IRC;
+			localStorage.setItem('IRCSeen_log_' + GetServerId(), JSON2.stringify(t.seenLog));
+		}	
 	},
 	grabChat: function (uid, name, msg) {
 		var t = Tabs.IRC;
@@ -13205,26 +13794,44 @@ Tabs.Accuracy = {
 		var keyz = unsafeWindow.Object.keys(z);
 		var troopa, troopb;
 		var unitsarr = [];
-		for (var ui in unsafeWindow.cm.UNIT_TYPES){
-			unitsarr.push(0);
-		}	
+		for (ui=0;ui<keyz.length;ui++) {
+			if (keyz[ui]) {
+				var i = uW.cm.UNIT_TYPES[keyz[ui]];
+				if (i==null) {
+					if (keyz[ui]=="FORTIFICATION_TYPE_ARCHERTOWER") { i = 53; }
+					else if (keyz[ui]=="FORTIFICATION_TYPE_GREEK_FIRE")  { i = 63; }
+					else { i = 0; } // no idea what this is, but we need it in the array
+				}
+				unitsarr.push(i);
+			}	
+		}
 		
-		for (iu = 1; iu < unitsarr.length + 2; iu++) {
-			if (iu < 13) main += '<TD>' + uW.unitcost['unt' + iu][0] + '</td>';
-			else if (iu == 13) main += '<TD>WM Crossbow</td>';
-			else if (iu > 19) main += '<TD>' + uW.unitcost['unt' + (iu + 1)][0] + '</td>';
-			else main += '<TD>' + uW.unitcost['unt' + (iu - 1)][0] + '</td>';
+		for (ui = 0; ui < unitsarr.length; ui++) {
+			var u = unitsarr[ui];
+			if (u<50) {
+				main += '<TD align=right><b>' + uW.unitcost['unt'+u][0] + '</b></td>';
+			}
+			else {
+				var rowtext = uW.fortcost['frt'+u][0];
+				if (u==53) { rowtext = 'Crossbows'; } 
+				main += '<TD align=right><b>' + rowtext + '</b></td>';
+			}
 		}	
 		main += '</tr>';
 
-		for (iu = 1; iu < unitsarr.length + 2; iu++) {
-			if (iu < 13) main += '<TR><TD>' + uW.unitcost['unt' + iu][0] + '</td>';
-			else if (iu == 13) main += '<TR><TD>WM Crossbow</td>';
-			else if (iu > 19) main += '<TR><TD>' + uW.unitcost['unt' + (iu + 1)][0] + '</td>';
-			else main += '<TR><TD>' + uW.unitcost['unt' + (iu - 1)][0] + '</td>';
-			troopa = keyz[iu - 1];
-			for (ju = 1; ju < unitsarr.length + 2; ju++) {
-				troopb = keyz[ju - 1];
+		for (ui = 0; ui < unitsarr.length; ui++) {
+			var u = unitsarr[ui];
+			if (u<50) {
+				main += '<TR><TD align=right><b>' + uW.unitcost['unt'+u][0] + '</b></td>';
+			}
+			else {
+				var rowtext = uW.fortcost['frt'+u][0];
+				if (u==53) { rowtext = 'Crossbows'; } 
+				main += '<TR><TD align=right><b>' + rowtext + '</b></td>';
+			}
+			troopa = keyz[ui];
+			for (uj = 0; uj < unitsarr.length; uj++) {
+				troopb = keyz[uj];
 				if (!z[troopa] || !z[troopa][troopb])
 					main += '<TD>???</td>';
 				else
@@ -14499,108 +15106,114 @@ function display_confirm(confirm_msg, ok_function, cancel_function) {
 		}, false);
 	}
 }
-// The following code is released under public domain.
-var AutoUpdater_103659 = {
-	id: 103659,
-	days: 1,
-	name: "KOC Power Tools",
-	version: Version,
-	beta: GlobalOptions.ptupdatebeta,
-	betaUrl: 'https://koc-power-tools.googlecode.com/svn/trunk/koc_power_tools.user.js',
-	time: new Date().getTime(),
-	call: function (response, secure) {
-		GM_xmlhttpRequest({
-			method: 'GET',
-			url: this.beta ? this.betaUrl : 'http' + (secure ? 's' : '') + '://greasyfork.org/scripts/893-koc-power-tools/code/KOC Power Tools.user.js',
-			onload: function (xpr) {
-				AutoUpdater_103659.compare(xpr, response);
+
+//******************** Auto Update ***************************//
+
+var AutoUpdater = {
+    id: 173122,
+	SourceForgeURL:'svn.code.sf.net/p/koc-battle-console/code/trunk/173122.user.js',
+	GreasyForkURL:'greasyfork.org/scripts/893-koc-power-tools/code/KOC Power Tools.user.js',
+	name: 'KoC Power Tools',
+	homepage: 'https://greasyfork.org/en/scripts/893-koc-power-tools',
+    version: Version,
+	secure: true,
+    call: function(secure,response) {logit("Checking for "+this.name+" Update!"+(secure ? ' (SSL)' : ' (plain)'));
+		this.secure = secure;
+		var CheckURL = this.GreasyForkURL;
+		if (GlobalOptions.ptupdatebeta) {CheckURL = this.SourceForgeURL;}
+        GM_xmlhttpRequest({
+            method: 'GET',
+			url: 'http'+(secure ? 's' : '')+'://'+CheckURL,
+			onload: function(xpr) {AutoUpdater.compare(xpr,response);},
+            onerror: function(xpr) {if (secure) {AutoUpdater.call(false,response);} else {AutoUpdater.compare({responseText:""},response);}}
+        });
+    },
+	
+    compareVersion: function(r_version, l_version) {
+            var r_parts = r_version.split(''),
+            l_parts = l_version.split(''),
+            r_len = r_parts.length,
+            l_len = l_parts.length,
+            r = l = 0;
+            for(var i = 0, len = (r_len > l_len ? r_len : l_len); i < len && r == l; ++i) {
+                r = +(r_parts[i] || '0');
+                l = +(l_parts[i] || '0');
+            }
+            return (r !== l) ? r > l : false;
+    },
+	
+    compare: function(xpr,response) {
+        this.xversion=/\/\/\s*@version\s+(.+)\s*\n/i.exec(xpr.responseText);   
+        if (this.xversion) this.xversion = this.xversion[1];
+        else {
+			if (response) {
+				unsafeWindow.Modal.showAlert('<div align="center">'+translate('Unable to check for updates to')+' '+this.name+'.<br>'+translate('Please change the update options or visit the')+'<br><a href="'+this.homepage+'" target="_blank">'+translate('script homepage')+'</a></div>');
+			}
+			logit("Unable to check for updates :(");
+			return;
+		}
+        this.xrelnotes=/\/\/\s*@releasenotes\s+(.+)\s*\n/i.exec(xpr.responseText);   
+        if (this.xrelnotes) this.xrelnotes = this.xrelnotes[1];
+        var updated = this.compareVersion(this.xversion, this.version);   
+        if (updated) {logit('New Version Available!');                  
+ 			var body = '<BR><DIV align=center><FONT size=3><B>'+translate('New version')+' '+this.xversion+' '+translate('is available!')+'</b></font></div><BR>';
+			if (this.xrelnotes)
+				body+='<BR><div align="center" style="border:0;width:470px;height:120px;max-height:120px;overflow:auto"><b>'+translate('New Features!')+'</b><p>'+this.xrelnotes+'</p></div><BR>';
+ 			body+='<BR><DIV align=center><a class="gemButtonv2 green" id="doBotUpdate">Update</a></div>';
+ 			this.ShowUpdate(body);
+        }
+        else
+        {
+			logit("No updates available :(");
+			if (response) {
+				unsafeWindow.Modal.showAlert('<div align="center">'+translate('No updates available for')+' '+this.name+' '+translate('at this time.')+'</div>');
+			}
+        } 		
+    },
+	
+    check: function() {
+    	var now = unixTime();
+    	var lastCheck = 0;
+    	if (GM_getValue('updated_'+this.id, 0)) lastCheck = parseInt(GM_getValue('updated_'+this.id, 0));
+		if (now > (lastCheck + 60*60*12)) this.call(true,false);
+    },
+	
+	ShowUpdate: function (body) {
+		var now = unixTime();	 
+		unsafeWindow.cm.ModalManager.addMedium({
+			title: this.name,
+			body: body,
+			closeNow: false,
+			close: function () {
+				setTimeout (function (){GM_setValue('updated_'+AutoUpdater.id, now);}, 0);
+				unsafeWindow.cm.ModalManager.closeAll();
 			},
-			onerror: function (xpr) {
-				if (secure) AutoUpdater_103659.call(response, false);
-			}
+			"class": "Warning",
+			curtain: false,
+			width: 500,
+			height: 700,
+			left: 140,
+			top: 140
 		});
+		document.getElementById('doBotUpdate').addEventListener ('click', this.doUpdate, false);   
 	},
-	enable: function () {
-		GM_registerMenuCommand("Enable " + this.name + " updates", function () {
-			GM_setValue('updated_103659', new Date().getTime() + '');
-			AutoUpdater_103659.call(true, true)
-		});
+
+	doUpdate: function () {
+		unsafeWindow.cm.ModalManager.closeAll();
+		unsafeWindow.cm.ModalManager.close();
+		var now = unixTime();
+		GM_setValue('updated_'+AutoUpdater.id, now);
+		var DownloadURL = AutoUpdater.GreasyForkURL;
+		if (GlobalOptions.ptupdatebeta) {DownloadURL = AutoUpdater.SourceForgeURL;}
+		location.href = 'http'+(AutoUpdater.secure ? 's' : '')+'://'+DownloadURL;
 	},
-	compareVersion: function (r_version, l_version) {
-		var r_parts = r_version.split(''),
-			l_parts = l_version.split(''),
-			r_len = r_parts.length,
-			l_len = l_parts.length,
-			r = l = 0;
-		for (var i = 0, len = (r_len > l_len ? r_len : l_len); i < len && r == l; ++i) {
-			r = +(r_parts[i] || '0');
-			l = +(l_parts[i] || '0');
-		}
-		return (r !== l) ? r > l : false;
-	},
-	compare: function (xpr, response) {
-		this.xversion = /\/\/\s*@version\s+(.+)\s*\n/i.exec(xpr.responseText);
-		this.xname = /\/\/\s*@name\s+(.+)\s*\n/i.exec(xpr.responseText);
-		if ((this.xversion) && (this.xname[1] == this.name)) {
-			this.xversion = this.xversion[1];
-			this.xname = this.xname[1];
-		} else {
-			if ((xpr.responseText.match("the page you requested doesn't exist")) || (this.xname[1] != this.name)) {
-				//GM_setValue('updated_103659', 'off');
-			}
-			return false;
-		}
-		var updated = this.compareVersion(this.xversion, this.version);
-		if (updated) {
-			display_confirm('A new version of ' + this.xname + ' is available.\nDo you wish to install the latest version?',
-				// Ok
-				function () {
-					try {
-						location.href = this.beta ? this.betaUrl : 'https://greasyfork.org/scripts/893-koc-power-tools/code/KOC Power Tools.user.js';
-					} catch (e) {}
-				},
-				// Cancel
-				function () {
-					if (AutoUpdater_103659.xversion) {
-						if (confirm('Do you want to turn off auto updating for this script?')) {
-							//GM_setValue('updated_103659', 'off');
-							GlobalOptions.ptupdate = false;
-							GM_setValue('Options_??', JSON2.stringify(GlobalOptions));
-							AutoUpdater_103659.enable();
-							alert('Automatic updates can be re-enabled for this script from the User Script Commands submenu.');
-						}
-					}
-				}
-			);
-		} else if (response) {
-			alert('No updates available for ' + this.name);
-		}
-	},
-	check: function (tf) {
-		if (!tf) {
-			this.enable();
-		} else {
-			if (+this.time > (+GM_getValue('updated_103659', 0) + 1000 * 60 * 60 * 24 * this.days)) {
-				GM_setValue('updated_103659', this.time + '');
-				this.call(false, true);
-			}
-			GM_registerMenuCommand("Check " + this.name + " for updates", function () {
-				GM_setValue('updated_103659', new Date().getTime() + '');
-				AutoUpdater_103659.call(true, true)
-			});
-		}
-	}
+
 };
-if (typeof (GM_xmlhttpRequest) !== 'undefined' && typeof (GM_updatingEnabled) === 'undefined') { // has an updater?
-	try {
-		if (unsafeWindow.frameElement === null) {
-			AutoUpdater_103659.check(GlobalOptions.ptupdate);
-		}
-	} catch (e) {
-		AutoUpdater_103659.check(GlobalOptions.ptupdate);
-	}
+
+function translate (str) {
+    return str;    
 }
-/********* End updater code *************/
+
 //****************************
 //This is a new implementation of the CalterUwFunc class to modify a function of the 'unsafewWindow' object.
 //For reverse compatibility this implementation operates like the original, but multiple CalterUwFunc objects can be created for the same function.
@@ -15190,6 +15803,7 @@ function getTroopDefTrainEstimates(cityID, city) {
 	city.Def60Time = ((city.wallLevel > 3 && city.blacksmithLevel > 3 && city.poisonedEdgeLevel > 1) ? (90 / dsf) : 0);
 	city.Def61Time = ((city.wallLevel > 0 && city.metalAlloysLevel > 0) ? (30 / dsf) : 0);
 	city.Def62Time = ((city.wallLevel > 1 && city.blacksmithLevel > 1 && city.loggingLevel > 1) ? (60 / dsf) : 0);
+	city.Def63Time = ((city.wallLevel > 7) ? (60 / dsf) : 0);
 }
 
 function officerId2String(oid) {
@@ -15648,6 +16262,7 @@ var fortNamesShort = {
 		60: "Trap",
 		61: "Caltrops",
 		62: "Spiked Barrier",
+		63: "Greek Fire",
 	}
 	// returns {count, maxlevel}
 
@@ -15861,7 +16476,8 @@ function readColors() {
 
 function readAutoTrainOptions() {
 	var serverID = GetServerId();
-	s = GM_getValue('AutoTrainOptions_' + serverID);
+	s = GM_getValue('AutoTrainOptions_'+serverID+'_'+unsafeWindow.tvuid);
+	if (!s) s = GM_getValue('AutoTrainOptions_'+serverID);
 	if (s != null) {
 		opts = JSON2.parse(s);
 		for (k in opts) {
@@ -15879,7 +16495,7 @@ function readAutoTrainOptions() {
 
 function saveAutoTrainOptions() {
 	var serverID = GetServerId();
-	GM_setValue('AutoTrainOptions_' + serverID, JSON2.stringify(AutoTrainOptions));
+	GM_setValue('AutoTrainOptions_'+serverID+'_'+unsafeWindow.tvuid, JSON2.stringify(AutoTrainOptions));
 }
 
 function readIRCOptions() {
@@ -16133,6 +16749,14 @@ function doDefTrain(cityId, siege, unitId, num, notify) {
 		onSuccess: function (rslt) {
 			if (rslt.ok) {
 				uW.seed.queue_fort["city" + cityId].push([unitId, num, rslt.initTS, parseInt(rslt.initTS) + time, 0, time, rslt.fortifyId]);
+				if (siege==26) {
+					Seed.items.i26 = parseInt(Seed.items.i26)-1;
+					unsafeWindow.ksoItems[26].subtract();
+				}
+				if (unitId==63) {
+					Seed.items.i34002 = parseInt(Seed.items.i34002)-num;
+					unsafeWindow.ksoItems[34002].subtract(num);
+				}				
 				if (notify != null)
 					setTimeout(function () {
 						notify(null);
@@ -17441,25 +18065,123 @@ function formatUnixTime(unixTimeString, format) {
 var cdtd = {
 	views: null,
 	init: function () {
+		unsafeWindow.unwatch("update_citylist");
 		var t = cdtd;
 		t.views = new CalterUwFunc("citysel_click", [
 			[/cm\.PrestigeCityView\.render\(\)/im, 'cm.PrestigeCityView.render();cdtdhook();']
 		]);
 		unsafeWindow.cdtdhook = t.citychange;
+		unsafeWindow.ptCreateChampionPopUp = t.createchamppopup;
+		
 		if (Options.EnhCBtns) {
 			t.views.setEnable(true);
 			unsafeWindow.update_citylist2 = unsafeWindow.update_citylist;
 			unsafeWindow.update_citylist = function (e) {
 				unsafeWindow.update_citylist2(e);
+				cdtd.drawchampicon();
 				cdtd.drawdefendstatus();
 			};
 			if (Options.ColrCityBtns) t.replace();
+			cdtd.drawchampicon();
 			t.drawdefendstatus();
 		};
 	},
 	citychange: function () {
+		cdtd.drawchampicon();
 		cdtd.drawdefendstatus();
 		Tabs.Options.checkAscension(); // ascension expiry tied into enhanced city buttons
+	},
+	drawchampicon: function () {
+		var t = cdtd;
+		var e = ById('maparea_boosts_champion'); 
+		if (!e) {
+			e = document.createElement ('table');
+			e.height = "20";
+			e.style.cssFloat = 'left';
+			e.style.border = '1px';
+			e.style.borderSpacing = '1px';
+			e.style.borderCollapse = 'separate';
+			e.style.backgroundColor = '#fff';
+			e.id = 'maparea_boosts_champion';
+			e.className = 'trimg';
+			e.zIndex = '10011';
+			ById('maparea_boosts').appendChild (e);
+		}	
+		var citychamp;
+		var gotchamp = false;
+		for (y in Seed.champion.champions) {
+			citychamp = Seed.champion.champions[y];
+			if (citychamp.assignedCity == uW.currentcityid) {
+				gotchamp = true;
+				break;	
+			}
+		}
+		if (gotchamp) {
+			e.style.display = 'block';
+			e.innerHTML = '<tr><td id=maparea_boosts_championtd class="xtab trimg" style="padding:0px;"><img style="margin-left:0px;" id=maparea_boosts_champion_image height=18 src="'+ChampImagePrefix+citychamp.avatarId+ChampImageSuffix+'"></td></tr>'
+			ById('maparea_boosts_champion_image').addEventListener('mouseover',function () {uW.ptCreateChampionPopUp(e,citychamp.assignedCity,true,null,true);},false);
+			ById('maparea_boosts_champion_image').addEventListener('mouseout',function () {uW.removeTooltip();},false);
+		}
+		else {
+			e.style.display = 'none';
+		}
+	},
+	createchamppopup: function (elem,chkcityId,localchamp,champid,status) {
+		var t = cdtd;
+		effects = document.getElementById(elem.id+'effects');
+		var oureffects = '<table cellspacing=0 style="background-color:none;"><tr><td class=xtab><b><center><br>No Champion<br>Assigned!</center></b></td></tr></table>';
+		try {
+			var T = unsafeWindow.cm.ChampionManager.get("selectedChampion")
+			var Champs = unsafeWindow.cm.ChampionModalController.getCastleViewData();
+			unsafeWindow.cm.ChampionManager.selectChampion(T);
+			for (y in Champs.champions) {
+				chkchamp = Champs.champions[y];
+				if (chkchamp.id) {
+					if ((!champid && chkchamp.city == chkcityId) || (chkchamp.id == champid)) {
+						if (status) {
+							var champstatus = chkchamp.status;
+							if (champstatus != "Marching") {
+								status = ' (Defending)';
+							}
+							else {
+								status = ' (Marching)';
+							}
+						}
+						else {
+							status = '';
+						}
+						oureffects = '<table cellspacing=0 class=ptTab><tr><td colspan=2><b>'+chkchamp.name+status+'</b></td></tr><tr><td colspan=2><b>Champion Stats</b></td></tr>';
+						var gotchamp = false;
+						for (cy in chkchamp.stats.champion) {
+							cs = chkchamp.stats.champion[cy];
+							gotchamp = true;
+							oureffects+="<tr><td>"+cs.name+"</td><td>"+cs.amount+"</td></tr>";
+						}	
+						if (!gotchamp) { oureffects += '<tr><td colspan=2><i>None Available</i></td></tr>'; }
+						oureffects+="<tr><td colspan=2><b>Troop Stats</b></td></tr>";
+						var gottroop = false;
+						for (ty in chkchamp.stats.troop) {
+							ts = chkchamp.stats.troop[ty];
+							gottroop = true;
+							oureffects+="<tr><td>"+ts.name+"</td><td>"+ts.amount+"</td></tr>";
+						}	
+						if (!gottroop) { oureffects += '<tr><td colspan=2><i>None Available</i></td></tr>'; }
+						oureffects+="</table>";
+						break;
+					}	
+				}
+			}
+		}		
+		catch (err) {
+			logerr(err); // write to log
+			oureffects = '<table cellspacing=0><tr><td class=xtab><b><center>Error reading champion data :(</center></b></td></tr></table>';
+		}
+		
+		td = document.getElementById(elem.id+'td');
+		uW.jQuery('#'+td.id).children("span").remove();
+		if (status) {
+			uW.showTooltip(oureffects,td,null,'mod_maparea');return;
+		}
 	},
 	drawdefendstatus: function () {
 		var t = cdtd;
@@ -17537,7 +18259,7 @@ var cdtd = {
 					}
 				}
 			}
-			document.getElementById('mod_citylist').children[i].innerHTML = "<SPAN><FONT fontFamily='georgia,â€‹arial,â€‹sans-serif' font-weight=700 font-size=10px color=" + color + ">" + unsafeWindow.roman[i] + "</font></span>";
+			document.getElementById('mod_citylist').children[i].innerHTML = "<SPAN><FONT fontFamily='georgia,Ã¢â‚¬â€¹arial,Ã¢â‚¬â€¹sans-serif' font-weight=700 font-size=10px color=" + color + ">" + unsafeWindow.roman[i] + "</font></span>";
 		}
 	},
 	replace: function () {
@@ -17880,5 +18602,202 @@ function MarchPopup (rslt,rslt2,march) {
 
 	MarchPop.show(true);
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ptStartup();
